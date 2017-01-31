@@ -1,0 +1,48 @@
+{
+  "name": "userrepo",
+  "version": "0.0.0",
+  "description": "User Repository Service",
+  "main": "index.js",
+  "scripts": {
+    "compile": "echo 'No compile needed'",
+    "build": "../../bs/build.sh",
+    "load": "../../bs/load.sh",
+    "unload": "../../bs/unload.sh",
+    "shell": "../../bs/run_cmd.sh bash",
+    "start": "../../bs/start.sh --expose 9292 -p 9292:9292 --net=\"host\" -d",
+    "start-dev": "node --harmony_async_await . --bus amqp://localhost/codefarm",
+    "start-rel": "npm run start-dev",
+    "stop": "../../bs/stop.sh",
+    "test": "mocha --harmony_async_await --recursive",
+    "lint": "git ls-files \"*.js\" | xargs eslint",
+    "install": "if [ -n \"$gitroot\" ]; then $gitroot/src/bs/linklibs.sh; else ../../bs/linklibs.sh; fi"
+  },
+  "author": "Mattias Runge <mattias.runge@combitech.se>",
+  "license": "MIT",
+  "engines": {
+    "node": ">= 7.0.0"
+  },
+  "libraries": [
+    "service",
+    "database",
+    "msgbus",
+    "emitter",
+    "typelib",
+    "web",
+    "misc",
+    "backend"
+  ],
+  "dependencies": {
+    "async-busboy": "^0.3.3",
+    "yargs": "^6.3.0"
+  },
+  "devDependencies": {
+    "babel-eslint": "^7.1.0",
+    "chai": "^3.5.0",
+    "eslint": "^3.7.0",
+    "get-port": "^2.1.0",
+    "mocha": "^3.2.0",
+    "request": "^2.79.0",
+    "request-promise": "^4.1.1"
+  }
+}

@@ -1,0 +1,18 @@
+{
+    "plugins": [
+        [
+            "transform-async-to-module-method", {
+                "module": "bluebird",
+                "method": "coroutine"
+            }
+        ],
+        [
+            "transform-es2015-modules-commonjs", {
+                "allowTopLevelThis": false,
+                "strict": false,
+                "loose": false
+            }
+        ],
+        "babel-plugin-source-map-support-for-6"
+    ]
+}

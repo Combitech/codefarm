@@ -1,0 +1,74 @@
+"use strict";
+
+import api from "api.io/api.io-client";
+
+const DEFAULT_NOTIFY_LISTENERS_DELAY = 200;
+
+let instance;
+
+class EventMonitor {
+    constructor() {
+        this.queuedEvents = [];
+        this.listeners = [];
+        api.busMonitorApi.on("busEvent", this.notifyBusEvent.bind(this));
+        this.deferredNotifyListeners = null;
+    }
+
+    static get instance() {
+        if (!instance) {
+            instance = new this();
+        }
+
+        return instance;
+    }
+
+    notifyBusEvent(event) {
+        this.queuedEvents.push(event);
+        this._notifyListeners();
+    }
+
+    _notifyListeners(delay = DEFAULT_NOTIFY_LISTENERS_DELAY) {
+        const notify = () => {
+            const queuedEvents = this.queuedEvents;
+            for (const listener of this.listeners) {
+                listener(queuedEvents);
+            }
+            this.queuedEvents.length = 0;
+            this.deferredNotifyListeners = null;
+        };
+        if (!delay) {
+            notify();
+        } else if (!this.deferredNotifyListeners) {
+            this.deferredNotifyListeners = setTimeout(notify, delay);
+        } // else timeout is pending and update will be done later
+    }
+
+    _cancelNotifyListenersLater() {
+        if (!this.deferredNotifyListeners) {
+            clearTimeout(this.deferredNotifyListeners);
+            this.deferredNotifyListeners = null;
+        }
+    }
+
+    addEventListener(listener) {
+        this.listeners.push(listener);
+
+        return {
+            dispose: this.removeEventListener.bind(this, listener)
+        };
+    }
+
+    removeEventListener(listener) {
+        const indexToRemove = this.listeners.indexOf(listener);
+        if (indexToRemove !== -1) {
+            this.listeners.splice(indexToRemove, 1);
+        }
+    }
+
+    dispose() {
+        this._cancelNotifyListenersLater();
+        this.queuedEvents.length = 0;
+    }
+}
+
+export default EventMonitor;

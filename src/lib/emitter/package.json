@@ -1,0 +1,23 @@
+{
+  "name": "emitter",
+  "version": "0.0.0",
+  "description": "Async Event Emitter Library",
+  "main": "index.js",
+  "scripts": {
+    "compile": "echo 'No compile needed'",
+    "test": "npm run compile && mocha --harmony_async_await --recursive ./test",
+    "lint": "git ls-files \"*.js\" | xargs eslint"
+  },
+  "author": "Mattias Runge <mattias.runge@combitech.se>",
+  "license": "MIT",
+  "engines": {
+    "node": ">= 7.0.0"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "babel-eslint": "^7.1.0",
+    "chai": "^3.5.0",
+    "eslint": "^3.7.0",
+    "mocha": "^3.1.0"
+  }
+}

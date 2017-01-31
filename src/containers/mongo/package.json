@@ -1,0 +1,16 @@
+{
+  "name": "mongo",
+  "version": "0.0.0",
+  "description": "MongoDB for Code Farm",
+  "scripts": {
+    "build": "../../bs/build.sh",
+    "load": "../../bs/load.sh",
+    "unload": "../../bs/unload.sh",
+    "shell": "../../bs/run_cmd.sh bash",
+    "start": "mkdir -p /tmp/data && ../../bs/start.sh -p 27017:27017 --net=\"host\" -v /tmp/data:/data/db -d",
+    "start-dev": "mkdir -p /home/$USER/mongodbdata && ../../bs/start.sh -p 27017:27017 -v /home/$USER/mongodbdata:/data/db -d",
+    "stop": "../../bs/stop.sh"
+  },
+  "author": "Marcus Christensson <marcus.christensson@combitech.se>",
+  "license": "MIT"
+}

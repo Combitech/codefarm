@@ -1,0 +1,12 @@
+{
+  "name": "NodeBase",
+  "version": "0.0.0",
+  "description": "Base image for Code Farm node applications",
+  "scripts": {
+    "build": "../../bs/build.sh",
+    "load": "../../bs/load.sh",
+    "unload": "../../bs/unload.sh"
+  },
+  "author": "Marcus Christensson <marcus.christensson@combitech.se>",
+  "license": "MIT"
+}

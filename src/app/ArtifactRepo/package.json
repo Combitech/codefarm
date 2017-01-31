@@ -1,0 +1,57 @@
+{
+  "name": "artifactrepo",
+  "version": "0.0.0",
+  "description": "Artifact Repository Service",
+  "main": "index.js",
+  "scripts": {
+    "compile": "echo 'No compile needed'",
+    "build": "../../bs/build.sh",
+    "load": "../../bs/load.sh",
+    "unload": "../../bs/unload.sh",
+    "shell": "../../bs/run_cmd.sh bash",
+    "start": "../../bs/start.sh --expose 9999 -p 9999:9999 --net=\"host\" -d",
+    "start-dev": "node --harmony_async_await . --bus amqp://localhost/codefarm",
+    "start-rel": "npm run start-dev",
+    "stop": "../../bs/stop.sh",
+    "test": "mocha --harmony_async_await --recursive",
+    "lint": "git ls-files \"*.js\" | xargs eslint",
+    "install": "if [ -n \"$gitroot\" ]; then $gitroot/src/bs/linklibs.sh; else ../../bs/linklibs.sh; fi"
+  },
+  "author": "Marcus Christensson <marcus.christensson@combitech.se>",
+  "license": "MIT",
+  "engines": {
+    "node": ">= 7.0.0"
+  },
+  "libraries": [
+    "database",
+    "msgbus",
+    "emitter",
+    "log",
+    "restclient",
+    "service",
+    "testsupport",
+    "misc",
+    "web",
+    "version",
+    "typelib",
+    "backend"
+  ],
+  "dependencies": {
+    "async-busboy": "^0.3.3",
+    "digest-stream": "^1.0.1",
+    "fs-extra-promise": "^0.4.1",
+    "git-list-pack": "0.0.10",
+    "koa-send": "^3.2.0",
+    "moment": "^2.16.0",
+    "yargs": "^6.3.0"
+  },
+  "devDependencies": {
+    "babel-eslint": "^7.1.0",
+    "chai": "^3.5.0",
+    "eslint": "^3.7.0",
+    "get-port": "^2.1.0",
+    "mocha": "^3.1.2",
+    "request": "^2.78.0",
+    "request-promise": "^4.1.1"
+  }
+}

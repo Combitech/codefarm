@@ -1,0 +1,26 @@
+
+@import "react-toolbox/components/colors";
+@import "react-toolbox/components/globals";
+@import "react-toolbox/components/mixins";
+
+.svgGrid {
+    .gridBox {
+        stroke-width: 1;
+        stroke: $color-black;
+        shape-rendering: geometricPrecision;
+        stroke-dasharray: 2,2;
+        fill: none;
+    }
+
+    .hidden {
+        fill: none;
+    }
+
+    .path {
+        stroke: $color-black;
+        stroke-width: 1;
+        stroke-opacity: 1;
+        stroke-linecap: butt;
+        fill: none;
+    }
+}

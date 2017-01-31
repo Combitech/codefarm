@@ -1,0 +1,18 @@
+#!/bin/bash -e
+
+if [ -z "$PIPE_PATH" ]; then
+    exit 0
+fi
+
+com() {
+    echo "$1" | nc -U $PIPE_PATH -q 600
+}
+
+cwd=$(pwd)
+com="$cwd.pipe"
+hook=$(basename $0)
+
+com "$hook;$2;$3;$1"
+
+code=$(com "$hook;result")
+exit $code

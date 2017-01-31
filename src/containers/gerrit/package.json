@@ -1,0 +1,15 @@
+{
+  "name": "gerrit",
+  "version": "0.0.0",
+  "description": "Gerrit for Code Farm",
+  "scripts": {
+    "build": "../../bs/build.sh",
+    "load": "../../bs/load.sh",
+    "unload": "../../bs/unload.sh",
+    "shell": "../../bs/run_cmd.sh bash",
+    "start": "mkdir -p /tmp/gerrit && ../../bs/start.sh -e AUTH_TYPE=DEVELOPMENT_BECOME_ANY_ACCOUNT -p 8080:8080 -p 29418:29418 --net=\"host\" -v /tmp/gerrit:/var/gerrit/review_site -d",
+    "stop": "../../bs/stop.sh"
+  },
+  "author": "Marcus Christensson <marcus.christensson@combitech.se>",
+  "license": "MIT"
+}

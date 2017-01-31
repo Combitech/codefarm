@@ -1,0 +1,11 @@
+
+@import "react-toolbox/components/colors";
+
+.topBar {
+    background-color: $color-white;
+    color: $color-black;
+
+    .iconMenu {
+        margin-left: auto;
+    }
+}

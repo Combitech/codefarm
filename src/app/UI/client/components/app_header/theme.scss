@@ -1,0 +1,74 @@
+
+@import "react-toolbox/components/colors";
+@import "react-toolbox/components/globals";
+@import "react-toolbox/components/mixins";
+@import "~ui-styles/colors";
+
+.appHeader {
+    background-color: $cf-color-pane-background;
+    color: $cf-color-pane-text;
+    text-align: center;
+    position: relative;
+    padding: $layout-gutter-width * 4;
+    margin-top: $standard-increment-desktop;
+
+    h1 {
+        font-size: 5.6rem;
+        font-weight: $font-weight-thin;
+        color: $cf-color-pane-text;
+        margin-bottom: $baseline-grid;
+    }
+
+    h2 {
+        font-size: 24px;
+        font-weight: $font-weight-thin;
+        color: white;
+    }
+
+    .appIcon {
+        font-size: $layout-gutter-width * 12;
+        position: absolute;
+        bottom: $baseline-grid;
+        right: $baseline-grid * 3;
+        color: $cf-color-pane-text;
+        transform: rotate(5deg);
+        opacity: 0.5;
+    }
+
+
+}
+
+.input {
+    .inputElement {
+        color: $cf-color-pane-text;
+        border-bottom-color: $palette-indigo-50;
+
+        &:focus:not([disabled]):not([readonly]) {
+            ~ .label:not(.fixed) {
+              color: $palette-indigo-50;
+            }
+            ~ .label > .required {
+              color: $palette-indigo-50;
+            }
+            ~ .icon {
+              color: $palette-indigo-50;
+            }
+        }
+    }
+
+    .label, .hint {
+        color: $palette-indigo-50;
+    }
+
+    .bar {
+        background-color: $cf-color-pane-text;
+
+        &::before, &::after {
+            background-color: $cf-color-pane-text;
+        }
+    }
+}
+
+.values {
+    color: $color-text;
+}

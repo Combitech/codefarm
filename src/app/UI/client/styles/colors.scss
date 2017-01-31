@@ -1,0 +1,19 @@
+@import "react-toolbox/components/colors";
+
+$cf-color-selected:         $palette-orange-300;
+$cf-color-pane-background:  $palette-blue-900;
+$cf-color-pane-text:        $color-white;
+
+$cf-color-success:          $palette-green-700;
+$cf-color-error:            $palette-red-700;
+$cf-color-warning:          $palette-orange-700;
+
+$cf-color-online:           $cf-color-success;
+$cf-color-offline:          $cf-color-warning;
+
+$cf-color-job-queued:       $palette-grey-600;
+$cf-color-job-ongoing:      $palette-green-300;
+$cf-color-job-success:      $cf-color-success;
+$cf-color-job-aborted:      $cf-color-warning;
+$cf-color-job-fail:         $cf-color-error;
+$cf-color-job-skip:         $palette-blue-grey-300;

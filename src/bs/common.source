@@ -1,0 +1,4 @@
+
+build_dir="${PWD}/build"
+name="${npm_package_name,,}"
+tag="codefarm/${name}:$npm_package_version"

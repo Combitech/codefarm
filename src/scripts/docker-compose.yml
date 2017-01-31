@@ -1,0 +1,134 @@
+version: '2'
+services:
+    nodebase:
+        build:
+            context: ../containers/NodeBase
+        image: codefarm/nodebase:0.0.0
+        command: echo "Not supposed to run..."
+    appnodebase:
+        build:
+            context: ../containers/AppNodeBase
+        image: codefarm/appnodebase:0.0.0
+        depends_on:
+            - nodebase
+        command: echo "Not supposed to run..."
+    mongo:
+        build:
+            context: ../containers/mongo
+        image: codefarm/mongo:0.0.0
+        network_mode: "host"
+    rabbitmq:
+        build:
+            context: ../containers/rabbitmq
+        image: codefarm/rabbitmq:0.0.0
+        # Doesn't work good with port mapping, use host network_mode instead.
+        # Port mapping causes unexpected socket close in client if
+        # client connects before rabbitmq is fully up and running.
+        network_mode: "host"
+    gerrit:
+        build:
+            context: ../containers/gerrit
+        image: codefarm/gerrit:0.0.0
+        network_mode: "host"
+        environment:
+            - AUTH_TYPE=DEVELOPMENT_BECOME_ANY_ACCOUNT
+    mgmt:
+        build:
+            context: ../app/Mgmt
+        image: codefarm/mgmt:0.0.0
+        depends_on:
+            - appnodebase
+            - rabbitmq
+        network_mode: "host"
+    eventrepo:
+        build:
+            context: ../app/EventRepo
+        image: codefarm/eventrepo:0.0.0
+        depends_on:
+            - appnodebase
+            - mongo
+            - rabbitmq
+        network_mode: "host"
+    userrepo:
+        build:
+            context: ../app/UserRepo
+        image: codefarm/userrepo:0.0.0
+        depends_on:
+            - appnodebase
+            - mongo
+            - rabbitmq
+        network_mode: "host"
+    artifactrepo:
+        build:
+            context: ../app/ArtifactRepo
+        image: codefarm/artifactrepo:0.0.0
+        depends_on:
+            - appnodebase
+            - mongo
+            - rabbitmq
+        network_mode: "host"
+    coderepo:
+        build:
+            context: ../app/CodeRepo
+        image: codefarm/coderepo:0.0.0
+        depends_on:
+            - appnodebase
+            - mongo
+            - rabbitmq
+        network_mode: "host"
+    logrepo:
+        build:
+            context: ../app/LogRepo
+        image: codefarm/logrepo:0.0.0
+        depends_on:
+            - appnodebase
+            - mongo
+            - rabbitmq
+        network_mode: "host"
+    exec:
+        build:
+            context: ../app/Exec
+        image: codefarm/exec:0.0.0
+        depends_on:
+            - appnodebase
+            - mongo
+            - rabbitmq
+        network_mode: "host"
+        volumes:
+            - ~/docker_data:/external_data/:ro
+    baselinegen:
+        build:
+            context: ../app/BaselineGen
+        image: codefarm/baselinegen:0.0.0
+        depends_on:
+            - appnodebase
+            - mongo
+            - rabbitmq
+        network_mode: "host"
+    flowctrl:
+        build:
+            context: ../app/FlowCtrl
+        image: codefarm/flowctrl:0.0.0
+        depends_on:
+            - appnodebase
+            - mongo
+            - rabbitmq
+        network_mode: "host"
+    ui:
+        build:
+            context: ../app/UI
+        image: codefarm/iu:0.0.0
+        depends_on:
+            - appnodebase
+            - mongo
+            - rabbitmq
+        network_mode: "host"
+    dataresolve:
+        build:
+            context: ../app/DataResolve
+        image: codefarm/dataresolve:0.0.0
+        depends_on:
+            - appnodebase
+            - mongo
+            - rabbitmq
+        network_mode: "host"

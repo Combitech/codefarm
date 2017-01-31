@@ -1,0 +1,51 @@
+{
+  "name": "flowctrl",
+  "version": "0.0.0",
+  "description": "Central Flow Contrl Service",
+  "main": "index.js",
+  "scripts": {
+    "compile": "echo 'Nothing to compile'",
+    "build": "../../bs/build.sh",
+    "load": "../../bs/load.sh",
+    "unload": "../../bs/unload.sh",
+    "shell": "../../bs/run_cmd.sh bash",
+    "start": "../../bs/start.sh --expose 9191 -p 9191:9191 -d",
+    "start-dev": "node --harmony_async_await . --bus amqp://localhost/codefarm",
+    "start-rel": "npm run start-dev",
+    "stop": "../../bs/stop.sh",
+    "test": "npm run compile && mocha --harmony_async_await ./test",
+    "lint": "git ls-files \"*.js\" | xargs eslint",
+    "install": "../../bs/linklibs.sh"
+  },
+  "author": "Mattias Runge <mattias.runge@combitech.se>",
+  "license": "MIT",
+  "engines": {
+    "node": ">= 7.0.0"
+  },
+  "libraries": [
+    "database",
+    "typelib",
+    "msgbus",
+    "emitter",
+    "log",
+    "restclient",
+    "service",
+    "misc",
+    "ssh",
+    "web",
+    "testsupport"
+  ],
+  "dependencies": {
+    "async-busboy": "^0.3.3",
+    "yargs": "^6.3.0"
+  },
+  "devDependencies": {
+    "babel-eslint": "^7.1.0",
+    "chai": "^3.5.0",
+    "eslint": "^3.7.0",
+    "get-port": "^2.1.0",
+    "mocha": "^3.1.0",
+    "request": "^2.76.0",
+    "request-promise": "^4.1.1"
+  }
+}

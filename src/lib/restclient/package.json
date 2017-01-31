@@ -1,0 +1,28 @@
+{
+  "name": "restclient",
+  "version": "0.0.0",
+  "description": "REST Client Library",
+  "main": "index.js",
+  "scripts": {
+    "compile": "echo 'No compile needed'",
+    "test": "mocha --harmony_async_await --recursive",
+    "lint": "git ls-files \"*.js\" | xargs eslint",
+    "install": "if [ -n \"$gitroot\" ]; then $gitroot/src/bs/linklibs.sh; else ../../bs/linklibs.sh; fi"
+  },
+  "author": "Marcus Christensson <marcus.christensson@combitech.se>",
+  "license": "MIT",
+  "engines": {
+    "node": ">= 7.0.0"
+  },
+  "libraries": [
+      "providerclient"
+  ],
+  "dependencies": {
+    "request": "^2.78.0",
+    "request-promise": "^4.1.1"
+  },
+  "devDependencies": {
+    "babel-eslint": "^7.1.0",
+    "eslint": "^3.7.0"
+  }
+}

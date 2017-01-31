@@ -1,0 +1,268 @@
+
+@import "react-toolbox/components/colors";
+@import "react-toolbox/components/globals";
+@import "react-toolbox/components/mixins";
+@import "~ui-styles/colors";
+
+@keyframes fadein {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+}
+
+@keyframes fadeinHalf {
+    0% { opacity: 0; }
+    100% { opacity: 0.5; }
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+@keyframes spinHalf {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(180deg); }
+}
+
+.svgGrid {
+    margin: 0 auto;
+    display: block;
+
+    .path {
+        stroke: $palette-blue-grey-400;
+        opacity: 0.5;
+        stroke-width: 2;
+        animation: fadeinHalf 0.3s ease 1;
+    }
+
+    .button {
+        .background {
+            fill: transparent;
+            transition: fill 0.3s;
+        }
+
+        .icon {
+            fill: $color-white;
+        }
+
+        &:hover {
+            .background {
+                fill: $palette-blue-400;
+                transition: fill 0.3s;
+            }
+        }
+    }
+
+    .virtualBox {
+        .path {
+            stroke-width: 4;
+        }
+    }
+
+    .createBox {
+        cursor: pointer;
+        animation: fadein 0.3s ease 1;
+
+        .rectBackground {
+            fill: $color-white;
+        }
+
+        .rectBar {
+            fill: $color-black;
+            opacity: 0.5;
+        }
+
+        .rect {
+            fill: $color-white;
+        }
+
+        .text {
+            fill: $color-black;
+            font-size: $font-size-normal * 1.8;
+            font-family: Roboto, Helvetica, Arial, "sans-serif";
+            font-weight: $font-weight-semi-bold;
+            text-transform: uppercase;
+            letter-spacing: 0;
+        }
+
+        &:hover {
+            .rect {
+                fill: $palette-grey-300;
+            }
+        }
+    }
+
+    .genericBox {
+        cursor: pointer;
+
+        .rectSelector {
+            fill: none;
+            transition: fill 0.3s;
+        }
+
+        .rect {
+            fill: $palette-blue-500;
+            transition: fill 0.3s;
+        }
+
+        .text {
+            fill: $color-white;
+            font-size: $font-size-normal * 2;
+            font-family: Roboto, Helvetica, Arial, "sans-serif";
+        }
+
+        &:hover {
+            .rect {
+                fill: $palette-blue-800;
+            }
+
+            .text {
+                font-weight: $font-weight-semi-bold;
+            }
+        }
+    }
+
+    .genericBoxSelected {
+        .rectSelector {
+            fill: $cf-color-selected;
+            transition: fill 0.3s;
+        }
+
+        .rect {
+            fill: $palette-blue-800;
+        }
+
+        .text {
+            font-weight: $font-weight-semi-bold;
+        }
+
+        .button {
+            pointer-events: none;
+
+            .icon {
+                fill: none;
+            }
+        }
+    }
+
+    .genericBoxUnselectable {
+        pointer-events: none;
+
+        .rect {
+            fill: $palette-blue-200;
+            transition: fill 0.3s;
+        }
+
+        .button {
+            pointer-events: none;
+
+            .icon {
+                fill: none;
+            }
+        }
+    }
+
+    .genericBoxSecondary {
+        .rect {
+            fill: $palette-blue-grey-400;
+            transition: fill 0.3s;
+        }
+    }
+
+    .statusBox {
+        cursor: pointer;
+
+        .rect {
+            stroke: $palette-blue-grey-400;
+            stroke-width: 1;
+            fill: $color-white;
+            transition: fill 0.3s;
+        }
+
+        .circle {
+            stroke: $palette-blue-grey-400;
+            stroke-width: 1;
+            fill: $color-white;
+        }
+
+        .icon {
+            fill: $cf-color-pane-background;
+        }
+
+        .neutral {
+            .icon {
+                fill: $cf-color-job-queued;
+            }
+        }
+
+        .queued {
+            .icon {
+                fill: $cf-color-job-queued;
+            }
+        }
+
+        .ongoing {
+            display: inline-block;
+            transform-origin: 50% 50%;
+            animation: spin 1s infinite linear;
+
+            .icon {
+                fill: $cf-color-job-ongoing;
+            }
+        }
+
+        .success, .happy {
+            .icon {
+                fill: $cf-color-job-success;
+            }
+        }
+
+        .aborted {
+            .icon {
+                fill: $cf-color-job-aborted;
+            }
+        }
+
+        .fail, .unhappy {
+            .icon {
+                fill: $cf-color-job-fail;
+            }
+        }
+
+        .skip {
+            .icon {
+                fill: $cf-color-job-skip;
+            }
+        }
+
+        .text {
+            fill: $color-black;
+            font-size: $font-size-normal * 2;
+            font-family: Roboto, Helvetica, Arial, "sans-serif";
+        }
+
+        &:hover {
+            .rect {
+                fill: $palette-blue-grey-50;
+                transition: fill 0.1s;
+            }
+
+            .text {
+                font-weight: $font-weight-semi-bold;
+            }
+        }
+    }
+
+    .statusBoxSelected {
+        pointer-events: none;
+
+        .rect {
+            fill: $palette-blue-grey-100;
+            transition: fill 0.3s;
+        }
+
+        .text {
+            font-weight: $font-weight-semi-bold;
+        }
+    }
+}

@@ -1,0 +1,52 @@
+{
+  "name": "eventrepo",
+  "version": "0.0.0",
+  "description": "Event Repository Service",
+  "main": "index.js",
+  "scripts": {
+    "compile": "echo 'No compile needed'",
+    "build": "../../bs/build.sh",
+    "load": "../../bs/load.sh",
+    "unload": "../../bs/unload.sh",
+    "shell": "../../bs/run_cmd.sh bash",
+    "start": "../../bs/start.sh --expose 9090 -p 9090:9090 --net=\"host\" -d",
+    "start-dev": "node --harmony_async_await . --bus amqp://localhost/codefarm",
+    "start-rel": "npm run start-dev",
+    "stop": "../../bs/stop.sh",
+    "lint": "git ls-files \"*.js\" | xargs eslint",
+    "test": "mocha --harmony_async_await --recursive",
+    "install": "if [ -n \"$gitroot\" ]; then $gitroot/src/bs/linklibs.sh; else ../../bs/linklibs.sh; fi"
+  },
+  "author": "Mattias Runge <mattias.runge@combitech.se>",
+  "license": "MIT",
+  "engines": {
+    "node": ">= 7.0.0"
+  },
+  "libraries": [
+    "database",
+    "emitter",
+    "typelib",
+    "log",
+    "misc",
+    "msgbus",
+    "service",
+    "web",
+    "testsupport"
+  ],
+  "dependencies": {
+    "clone": "^2.0.0",
+    "moment": "^2.16.0",
+    "yargs": "^6.0.0"
+  },
+  "devDependencies": {
+    "babel-eslint": "^7.1.0",
+    "chai": "^3.5.0",
+    "eslint": "^3.7.0",
+    "get-port": "^2.1.0",
+    "mocha": "^3.1.0",
+    "mongo-mock": "^2.1.0",
+    "request": "^2.76.0",
+    "request-promise": "^4.1.1",
+    "sinon": "^1.17.6"
+  }
+}

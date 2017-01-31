@@ -1,0 +1,15 @@
+{
+  "name": "rabbitmq",
+  "version": "0.0.0",
+  "description": "RabbitMQ for Code Farm",
+  "scripts": {
+    "build": "../../bs/build.sh",
+    "load": "../../bs/load.sh",
+    "unload": "../../bs/unload.sh",
+    "shell": "../../bs/run_cmd.sh bash",
+    "start": "../../bs/start.sh --hostname my-rabbit --network host -d",
+    "stop": "../../bs/stop.sh"
+  },
+  "author": "Marcus Christensson <marcus.christensson@combitech.se>",
+  "license": "MIT"
+}

@@ -1,0 +1,31 @@
+{
+  "name": "misc",
+  "version": "0.0.0",
+  "description": "Miscellaneous Helper Utilities Library",
+  "main": "index.js",
+  "scripts": {
+    "compile": "echo 'No compile needed'",
+    "test": "mocha --harmony_async_await --recursive",
+    "lint": "git ls-files \"*.js\" | xargs eslint",
+    "install": "if [ -n \"$gitroot\" ]; then $gitroot/src/bs/linklibs.sh; else ../../bs/linklibs.sh; fi"
+  },
+  "author": "Marcus Christensson <marcus.christensson@combitech.se>",
+  "license": "MIT",
+  "engines": {
+    "node": ">= 7.0.0"
+  },
+  "libraries": [
+    "testsupport"
+  ],
+  "dependencies": {
+    "boolean-parser": "^0.0.2",
+    "flat": "^2.0.1",
+    "traverse": "^0.6.6"
+  },
+  "devDependencies": {
+    "babel-eslint": "^7.1.0",
+    "chai": "^3.5.0",
+    "eslint": "^3.7.0",
+    "mocha": "^3.1.0"
+  }
+}

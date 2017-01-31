@@ -1,0 +1,32 @@
+{
+  "name": "ssh",
+  "version": "0.0.0",
+  "description": "SSH Library",
+  "main": "index.js",
+  "scripts": {
+    "compile": "echo 'No compilation needed'",
+    "test": "mocha --recursive ./test",
+    "lint": "git ls-files \"*.js\" | xargs eslint",
+    "install": "if [ -n \"$gitroot\" ]; then $gitroot/src/bs/linklibs.sh; else ../../bs/linklibs.sh; fi"
+  },
+  "author": "Mattias Runge <mattias.runge@combitech.se>",
+  "license": "MIT",
+  "engines": {
+    "node": ">= 7.0.0"
+  },
+  "libraries": [
+    "misc"
+  ],
+  "dependencies": {
+    "bluebird": "^3.4.6",
+    "fs-extra-promise": "^0.4.1",
+    "ssh2": "^0.5.4",
+    "string-argv": "0.0.2"
+  },
+  "devDependencies": {
+    "babel-eslint": "^7.1.0",
+    "chai": "^3.5.0",
+    "eslint": "^3.7.0",
+    "mocha": "^3.1.0"
+  }
+}

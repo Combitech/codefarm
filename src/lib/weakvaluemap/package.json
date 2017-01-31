@@ -1,0 +1,27 @@
+{
+  "name": "weakvaluemap",
+  "version": "0.0.0",
+  "description": "A map where the values are stored using weak references",
+  "main": "index.js",
+  "scripts": {
+    "compile": "echo 'No compile needed'",
+    "test": "echo 'No tests defined' && exit 1",
+    "lint": "git ls-files \"*.js\" | xargs eslint",
+    "install": "if [ -n \"$gitroot\" ]; then $gitroot/src/bs/linklibs.sh; else ../../bs/linklibs.sh; fi"
+  },
+  "author": "Marcus Christensson <marcus.christensson@combitech.se>",
+  "license": "MIT",
+  "engines": {
+    "node": ">= 7.0.0"
+  },
+  "libraries": [
+    "log"
+  ],
+  "dependencies": {
+    "weak": "^1.0.1"
+  },
+  "devDependencies": {
+    "babel-eslint": "^7.1.0",
+    "eslint": "^3.7.0"
+  }
+}

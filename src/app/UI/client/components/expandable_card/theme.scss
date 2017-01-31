@@ -1,0 +1,12 @@
+@import "react-toolbox/components/colors";
+@import "react-toolbox/components/globals";
+
+.expandableCard {
+    position: relative;
+    .expandButton {
+        position: absolute;
+        top: $layout-gutter-width-sm;
+        right: $layout-gutter-width-sm;
+        display: inline-block;
+    }
+}

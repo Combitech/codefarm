@@ -1,0 +1,30 @@
+
+@import "react-toolbox/components/colors";
+@import "react-toolbox/components/globals";
+
+.breadcrumb {
+    font-size: $font-size-big;
+    color: $color-text-secondary;
+    display: inline-block;
+    line-height: $unit * 3.6;
+
+    &:before {
+        content: '\E5CC';
+        vertical-align: middle;
+        display: inline-block;
+        font-family: "Material Icons";
+        font-weight: normal;
+        font-style: normal;
+        font-size: $font-size-big;
+        margin: 0 $baseline-grid;
+        color: $color-text-secondary;
+    }
+
+    &:first-child:before {
+        display: none;
+    }
+
+    &:last-child {
+        color: $color-text;
+    }
+}

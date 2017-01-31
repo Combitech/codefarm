@@ -1,0 +1,25 @@
+
+@import "react-toolbox/components/colors";
+@import "~ui-styles/colors";
+
+.appTabs {
+    .navigationContainer {
+        background-color: $cf-color-pane-background;
+
+        .navigation {
+            box-shadow: none;
+        }
+
+        .label {
+            color: $cf-color-pane-text;
+        }
+
+        .pointer {
+            background-color: $cf-color-selected;
+        }
+    }
+
+    .tab {
+        padding: 0;
+    }
+}

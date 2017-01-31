@@ -1,0 +1,42 @@
+
+@import "react-toolbox/components/colors";
+@import "react-toolbox/components/globals";
+@import "react-toolbox/components/mixins";
+@import "~ui-styles/colors";
+
+.content {
+    margin-left: $baseline-grid * 40;
+    margin-top: $standard-increment-desktop;
+}
+
+.jobStatusIcon {
+    color: $color-white;
+    &Queued {
+        background: $cf-color-job-queued;
+    }
+    &Ongoing {
+        background: $cf-color-job-ongoing;
+    }
+    &Success {
+        background: $cf-color-job-success;
+    }
+    &Aborted {
+        background: $cf-color-job-aborted;
+    }
+    &Fail {
+        background: $cf-color-job-fail;
+    }
+    &Skip {
+        background: $cf-color-job-skip;
+    }
+}
+
+.slaveIcon {
+    color: $color-white;
+    &Online {
+        background: $cf-color-online;
+    }
+    &Offline {
+        background: $cf-color-offline;
+    }
+}

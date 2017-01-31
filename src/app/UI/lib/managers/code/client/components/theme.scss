@@ -1,0 +1,119 @@
+
+@import "react-toolbox/components/colors";
+@import "react-toolbox/components/globals";
+@import "~ui-styles/colors";
+
+.content {
+    margin-left: $baseline-grid * 40;
+    margin-top: $standard-increment-desktop;
+
+    .flow {
+        padding-bottom: $layout-gutter-width-sm * 2;
+    }
+}
+
+.revisionListItemContent {
+    width: 100%;
+    vertical-align: middle;
+
+    .revisionInfo {
+        &Comment {
+            font-size: $font-size-normal;
+            color: $color-text;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        &Legend {
+            font-size: $font-size-small;
+            color: $color-text-secondary;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+    }
+
+    .revisionStatusContainer {
+        float: right;
+        vertical-align: middle;
+
+        .revisionStatus {
+            float: right;
+            color: white;
+
+            &-success {
+                background-color: $cf-color-success;
+            }
+            &-fail {
+                background-color: $cf-color-error;
+            }
+        }
+    }
+}
+
+.overviewTable {
+    width: 100%;
+
+    td {
+        vertical-align: top;
+    }
+
+    .avatarCell {
+        padding-top: $layout-gutter-width;
+        text-align: center;
+        width: $baseline-grid * 14;
+    }
+
+    .dataCell {
+        padding: $layout-gutter-width;
+    }
+
+    .avatar {
+        margin-bottom: $baseline-grid * 2;
+        max-width: $baseline-grid * 14;
+    }
+
+    .time {
+        font-size: $font-size-small;
+        font-weight: $font-weight-thin;
+        color: $color-text-secondary;
+        margin-bottom: $baseline-grid;
+    }
+
+    .overviewItem {
+        .title {
+            font-size: $font-size-big;
+            font-weight: $font-weight-bold;
+            color: $color-primary-dark;
+            margin-bottom: $baseline-grid;
+        }
+
+        .description {
+            font-size: $font-size-small;
+            font-weight: $font-weight-normal;
+            color: $color-text-secondary;
+            margin-bottom: $baseline-grid;
+            padding: $baseline-grid * 2;
+            border-left: 4px solid $palette-grey-200;
+            white-space: pre-line;
+        }
+
+
+
+        .table {
+            font-size: $font-size-small;
+
+            .head {
+                font-weight: $font-weight-normal;
+                padding-right: $baseline-grid;
+                padding-bottom: $baseline-grid;
+            }
+
+            .data {
+                color: $color-text-secondary;
+                padding-bottom: $baseline-grid;
+            }
+        }
+    }
+}

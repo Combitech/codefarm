@@ -1,0 +1,32 @@
+{
+  "name": "typelib",
+  "version": "0.0.0",
+  "description": "Type Library",
+  "main": "index.js",
+  "scripts": {
+    "compile": "echo 'No compile needed'",
+    "test": "mocha --harmony_async_await --recursive",
+    "lint": "git ls-files \"*.js\" | xargs eslint",
+    "install": "if [ -n \"$gitroot\" ]; then $gitroot/src/bs/linklibs.sh; else ../../bs/linklibs.sh; fi"
+  },
+  "author": "Mattias Runge <mattias.runge@combitech.se>",
+  "license": "MIT",
+  "engines": {
+    "node": ">= 7.0.0"
+  },
+  "libraries": [
+    "misc",
+    "emitter",
+    "weakvaluemap"
+  ],
+  "dependencies": {
+    "clone": "^2.1.0",
+    "deep-assign": "^2.0.0",
+    "qs": "^6.3.0",
+    "uuid": "^3.0.1"
+  },
+  "devDependencies": {
+    "babel-eslint": "^7.1.0",
+    "eslint": "^3.7.0"
+  }
+}

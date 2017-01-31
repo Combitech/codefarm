@@ -1,0 +1,45 @@
+{
+  "name": "scripts",
+  "version": "0.0.0",
+  "description": "Scripts to create data in services for an dev environment",
+  "main": "index.js",
+  "scripts": {
+    "lint": "git ls-files \"*.js\" | xargs eslint",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "service-cmd":  "node --harmony_async_await ./service-cmd.js",
+    "revision-cmd": "node --harmony_async_await ./revision-cmd.js",
+    "job-cmd": "node --harmony_async_await ./job-cmd.js",
+    "log-cmd": "node --harmony_async_await ./log-cmd.js",
+    "create-config": "node --harmony_async_await ./create-config.js",
+    "create-userrepo-backend": "node --harmony_async_await ./create-userrepo-backend.js",
+    "create-user": "node --harmony_async_await ./create-user.js",
+    "create-team": "node --harmony_async_await ./create-team.js",
+    "create-coderepo-git-backend": "node --harmony_async_await ./create-coderepo-git-backend.js",
+    "create-coderepo-gerrit-backend": "node --harmony_async_await ./create-coderepo-gerrit-backend.js",
+    "create-git-repo": "node --harmony_async_await ./create-git-repo.js",
+    "create-artifactrepo-backend": "node --harmony_async_await ./create-artifactrepo-backend.js",
+    "create-artifact-repo": "node --harmony_async_await ./create-artifact-repo.js",
+    "create-artifact": "node --harmony_async_await ./create-artifact.js",
+    "create-logrepo-backend": "node --harmony_async_await ./create-logrepo-backend.js",
+    "create-log-repo": "node --harmony_async_await ./create-log-repo.js",
+    "create-log": "node --harmony_async_await ./create-log.js",
+    "create-slave": "node --harmony_async_await ./create-slave.js",
+    "create-baseline": "node --harmony_async_await ./create-baseline.js",
+    "create-flow": "node --harmony_async_await ./create-flow.js",
+    "create-step": "node --harmony_async_await ./create-step.js",
+    "create-all": "npm run create-userrepo-backend && npm run create-artifactrepo-backend && npm run create-user && npm run create-git-repo && npm run create-slave && npm run create-baseline && npm run create-flow && npm run create-step",
+    "cleanup-all": "./cleanup.sh"
+  },
+  "author": "Mattias Runge <mattias.runge@combitech.se>",
+  "license": "MIT",
+  "dependencies": {
+    "fs-extra-promise": "^0.4.1",
+    "request": "^2.78.0",
+    "request-promise": "^4.1.1",
+    "yargs": "^6.4.0"
+  },
+  "devDependencies": {
+    "babel-eslint": "^7.0.0",
+    "eslint": "^3.7.0"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "name": "AppNodeBase",
+  "version": "0.0.0",
+  "description": "Base image for Code Farm node applications",
+  "scripts": {
+    "prebuild": "../../bs/bundle_deps.sh",
+    "build": "../../bs/build.sh",
+    "load": "../../bs/load.sh",
+    "unload": "../../bs/unload.sh"
+  },
+  "author": "Marcus Christensson <marcus.christensson@combitech.se>",
+  "license": "MIT"
+}

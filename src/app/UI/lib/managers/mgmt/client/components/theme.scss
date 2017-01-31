@@ -1,0 +1,57 @@
+
+@import "react-toolbox/components/colors";
+@import "react-toolbox/components/globals";
+@import "react-toolbox/components/mixins";
+
+.content {
+    margin-left: $baseline-grid * 40;
+    margin-top: $standard-increment-desktop;
+
+    .button {
+        float: right;
+        margin-left: $layout-gutter-width;
+    }
+
+    .topRightInput {
+        float: right;
+        width: $baseline-grid * 30;
+        margin-left: $layout-gutter-width;
+        margin-top: -2 * $unit;
+    }
+
+    .topRightDropdown {
+        @extend .topRightInput;
+    }
+
+    .nodeGraph {
+        padding-left: $layout-gutter-width;
+        padding-right: $layout-gutter-width;
+        .cellContainer {
+            vertical-align: top;
+            margin-bottom: $layout-gutter-width-sm;
+        }
+    }
+
+    .eventMonitor {
+        padding-left: $layout-gutter-width;
+        padding-right: $layout-gutter-width;
+        .dataCell {
+            vertical-align: middle;
+            line-height: normal;
+        }
+        .rawData {
+            line-height: normal;
+        }
+    }
+
+}
+
+/** Cytoscape draws elements in a canvas and cannot use css classes for styling,
+ * therefore the below colors are duplicated in state_colors.js */
+$cf-color-state-not_created: $palette-grey-600;
+$cf-color-state-created: $palette-grey-600;
+$cf-color-state-connected: $palette-yellow-600;
+$cf-color-state-setup: $palette-orange-600;
+$cf-color-state-online: $palette-green-600;
+$cf-color-state-offline: $palette-red-600;
+$cf-color-state-exit: $palette-grey-600;
