@@ -55,10 +55,14 @@ const getOpts = (opts = {}) => {
                     },
                     "queue": {
                         "name": queueName,
-                        "durable": true,
-                        "exclusive": true
+                        "options": {
+                            "durable": true,
+                            "exclusive": false
+                        }
                     }
                 };
+
+                console.log(res);
 
                 if (!res.exchange.name) {
                     throw new Error("bus exchange name must be given");
