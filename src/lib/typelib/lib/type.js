@@ -16,12 +16,15 @@ class Type {
         this.saved = false;
         this.tags = [];
         this.refs = [];
+        this.comments = [];
 
         synchronize(this, "save");
         synchronize(this, "remove");
         synchronize(this, "tag");
         synchronize(this, "untag");
         synchronize(this, "addRef");
+        synchronize(this, "comment");
+        synchronize(this, "uncomment");
     }
 
     static getType() {
@@ -143,12 +146,12 @@ class Type {
     async _removeHook() {
     }
 
-    async notifyEvent(event, oldData, newData, parentIds = []) {
+    async notifyEvent(event, oldData, newData) {
         const mb = await this.constructor._getMb();
         let emittedEvent = null;
 
         if (mb) {
-            emittedEvent = await mb.emitEvent(parentIds, event, this.type, oldData, newData);
+            emittedEvent = await mb.emitEvent([], event, this.type, oldData, newData);
         }
 
         await notification.emit(`${this.constructor.typeName}.${event}`, this);
@@ -156,7 +159,7 @@ class Type {
         return emittedEvent;
     }
 
-    async save(parentIds = []) {
+    async save() {
         const old = await this.constructor.findOneRaw({ _id: this._id });
         const event = old ? "updated" : "created";
 
@@ -175,11 +178,11 @@ class Type {
 
         // Emit event in next tick since event listeners might save
         process.nextTick(() => {
-            this.notifyEvent(event, old, newObj, parentIds);
+            this.notifyEvent(event, old, newObj);
         });
     }
 
-    async remove(parentIds = []) {
+    async remove() {
         const old = await this.constructor.findOneRaw({ _id: this._id });
 
         if (old) {
@@ -189,12 +192,12 @@ class Type {
             await db.removeOne(this.constructor.typeName, this._id);
 
             process.nextTick(() => {
-                this.notifyEvent("removed", old, null, parentIds);
+                this.notifyEvent("removed", old, null);
             });
         }
     }
 
-    async tag(parentIds, tag) {
+    async tag(tag) {
         if (!tag) {
             throw new Error("Can not tag with null");
         }
@@ -208,11 +211,11 @@ class Type {
 
         this.tags.splice(this.tags.length, 0, ...newTags);
 
-        await this.save(parentIds);
+        await this.save();
         await notification.emit(`${this.constructor.typeName}.tagged`, this, tag);
     }
 
-    async untag(parentIds, tag) {
+    async untag(tag) {
         if (!tag) {
             throw new Error("Can not tag with null");
         }
@@ -229,11 +232,11 @@ class Type {
             this.tags.splice(index, 1);
         }
 
-        await this.save(parentIds);
+        await this.save();
         await notification.emit(`${this.constructor.typeName}.untagged`, this, tag);
     }
 
-    async addRef(parentIds, ref) {
+    async addRef(ref) {
         if (!ref) {
             throw new Error("Can not add null ref");
         }
@@ -260,8 +263,34 @@ class Type {
 
         this.refs.splice(this.refs.length, 0, ...newRefs);
 
-        await this.save(parentIds);
+        await this.save();
         await notification.emit(`${this.constructor.typeName}.ref_added`, this, ref);
+    }
+
+    async comment(comment) {
+        comment.id = uuid();
+
+        this.comments.push(comment);
+
+        await this.save();
+        await notification.emit(`${this.constructor.typeName}.commented`, this, comment);
+    }
+
+    async uncomment(id) {
+        if (!id) {
+            throw new Error("Can not uncomment without id");
+        }
+
+        const index = this.comments.findIndex((comment) => comment.id === id);
+
+        if (index === -1) {
+            return;
+        }
+
+        const comment = this.comments.splice(index, 1)[0];
+
+        await this.save();
+        await notification.emit(`${this.constructor.typeName}.uncommented`, this, comment);
     }
 }
 

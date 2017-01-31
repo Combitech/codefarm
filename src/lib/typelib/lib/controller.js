@@ -6,7 +6,7 @@ const qs = require("qs");
 const instances = {};
 
 class Controller {
-    constructor(Type, support = [ "read", "create", "update", "remove", "tag", "ref" ]) {
+    constructor(Type, support = [ "read", "create", "update", "remove", "tag", "ref", "comment" ]) {
         this.Type = Type;
         this.collectionName = this.Type.typeName;
         this.support = support;
@@ -22,6 +22,9 @@ class Controller {
         this._addAction("untag", this._untag);
 
         this._addAction("addref", this._addRef);
+
+        this._addAction("comment", this._comment);
+        this._addAction("uncomment", this._uncomment);
     }
 
     static get instance() {
@@ -192,7 +195,7 @@ class Controller {
         const obj = await this._getTypeInstance(ctx, id);
 
         const tags = ensureArray(ctx.request.body.tag);
-        await obj.tag([], tags);
+        await obj.tag(tags);
 
         ctx.type = "json";
         ctx.body = JSON.stringify({ result: "success", action: "tag", data: obj.serialize() }, null, 2);
@@ -205,7 +208,7 @@ class Controller {
 
         const obj = await this._getTypeInstance(ctx, id);
         const tags = ensureArray(ctx.request.body.tag);
-        await obj.untag([], tags);
+        await obj.untag(tags);
 
         ctx.type = "json";
         ctx.body = JSON.stringify({ result: "success", action: "untag", data: obj.serialize() }, null, 2);
@@ -224,12 +227,47 @@ class Controller {
 
         const refs = ensureArray(ctx.request.body.ref);
 
-        await obj.addRef([], refs);
+        await obj.addRef(refs);
 
         ctx.type = "json";
         ctx.body = JSON.stringify({ result: "success", action: "addref", data: obj.serialize() }, null, 2);
     }
 
+    async _comment(ctx, id) {
+        if (!this.support.includes("comment")) {
+            ctx.throw("Comment not supported", 501);
+        }
+
+        if (!ctx.request.body.user || !ctx.request.body.user._ref) {
+            ctx.throw("No user ref supplied", 400);
+        }
+
+        if (!ctx.request.body.text) {
+            ctx.throw("No text supplied", 400);
+        }
+
+        if (!ctx.request.body.time) {
+            ctx.throw("No time supplied", 400);
+        }
+
+        const obj = await this._getTypeInstance(ctx, id);
+        await obj.comment(ctx.request.body);
+
+        ctx.type = "json";
+        ctx.body = JSON.stringify({ result: "success", action: "comment", data: obj.serialize() }, null, 2);
+    }
+
+    async _uncomment(ctx, id) {
+        if (!this.support.includes("comment")) {
+            ctx.throw("Uncomment not supported", 501);
+        }
+
+        const obj = await this._getTypeInstance(ctx, id);
+        await obj.uncomment(ctx.request.body.id);
+
+        ctx.type = "json";
+        ctx.body = JSON.stringify({ result: "success", action: "uncomment", data: obj.serialize() }, null, 2);
+    }
 }
 
 module.exports = Controller;
