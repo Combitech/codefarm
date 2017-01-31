@@ -7,21 +7,24 @@ import Avatar from "react-toolbox/lib/avatar";
 import Input from "react-toolbox/lib/input";
 import { Button } from "react-toolbox/lib/button";
 import PatchItem from "./overview_items/Patch";
-import BaselineItem from "./overview_items/Baseline";
-import JobItem from "./overview_items/Job";
 import moment from "moment";
 import UserAvatar from "../UserAvatar";
-import FontIcon from "react-toolbox/lib/font_icon";
 import api from "api.io/api.io-client";
 
-const ICON = {
-    NO_AVATAR: "person",
-    BASELINE_QUALIFIED: "info_outline",
-    INCLUDED_IN_JOB: "info_outline",
-    FINISHED_JOB: {
-        success: "thumb_up",
-        fail: "thumb_down"
-    }
+const icons = {
+    unknown: "/Cheser/48x48/status/dialog-question.png",
+    queued: "/Cheser/48x48/actions/document-open-recent.png",
+    ongoing: "/Cheser/48x48/status/appointment-soon.png",
+    success: "/Cheser/48x48/emblems/emblem-default.png",
+    aborted: "/Cheser/48x48/status/dialog-warning.png",
+    fail: "/Cheser/48x48/emblems/emblem-dropbox-unsyncable.png",
+    skip: "/Cheser/48x48/actions/system-log-out.png",
+    neutral: "/Cheser/48x48/emotes/face-plain.png",
+    happy: "/Cheser/48x48/emotes/face-laugh.png",
+    unhappy: "/Cheser/48x48/emotes/face-crying.png",
+    user: "/Cheser/48x48/status/avatar-default.png",
+    job: "/Cheser/48x48/actions/system-run.png",
+    baseline: "/Cheser/48x48/apps/accessories-text-editor.png"
 };
 
 class Overview extends Component {
@@ -41,12 +44,12 @@ class Overview extends Component {
         console.log("comment", this.state.comment.value);
 
         api.type.action(this.props.item.type, this.props.item._id, "comment", {
-            user: {
-                _ref: true,
-                name: "Someone", // TODO
-                type: "userrepo.user",
-                id: false
-            },
+            // user: {
+            //     _ref: true,
+            //     name: "Someone", // TODO
+            //     type: "userrepo.user",
+            //     id: false
+            // },
             time: moment.utc().format(),
             text: this.state.comment.value
         })
@@ -75,10 +78,14 @@ class Overview extends Component {
                 type: PatchItem,
                 id: `comment-${comment.id}`,
                 time: time,
-                title: `${comment.user.name} wrote a comment`,
-                description: comment.text,
-                details: {
-                }
+                avatar: (
+                    <img
+                        className={this.props.theme.icon}
+                        src={icons.user}
+                    />
+                ),
+                title: "Someone wrote a comment",
+                description: comment.text
             });
         }
 
@@ -95,11 +102,12 @@ class Overview extends Component {
                 type: PatchItem,
                 id: `patch-${patch.index}`,
                 avatar: (
-                    <UserAvatar
-                        email={patch.email}
-                        className={this.props.theme.avatar}
-                        noAvatarIconName={ICON.NO_AVATAR}
-                    />
+                    <Avatar className={this.props.theme.avatar}>
+                        <UserAvatar
+                            email={patch.email}
+                            noAvatarIconName="person"
+                        />
+                    </Avatar>
                 ),
                 time: time,
                 title: title,
@@ -115,12 +123,16 @@ class Overview extends Component {
 
             list.push({
                 timestamp: time.unix(),
-                type: BaselineItem,
                 id: `baseline-${baseline._id}`,
-                avatar: <FontIcon value={ICON.BASELINE_QUALIFIED} />,
+                avatar: (
+                    <img
+                        className={this.props.theme.icon}
+                        src={icons.baseline}
+                    />
+                ),
                 time: time,
-                title: `Qualified for the ${baseline.name} baseline `,
-                description: `This baseline, with id ${baseline._id}, triggers steps ... bla bla bla ...`,
+                title: `Qualified for baseline ${baseline.name} `,
+                description: `${baseline._id}`,
                 details: {
                     content: baseline.content
                 }
@@ -136,31 +148,47 @@ class Overview extends Component {
 
             list.push({
                 timestamp: timeCreated.unix(),
-                type: JobItem,
                 id: `jobcreated-${job._id}`,
-                avatar: <FontIcon value={ICON.INCLUDED_IN_JOB} />,
+                avatar: (
+                    <img
+                        className={this.props.theme.icon}
+                        src={icons.job}
+                    />
+                ),
                 time: timeCreated,
-                title: `Included in the ${job.name} job`,
-                description: `This job with id ${job._id} does this and that`,
-                details: {
-                }
+                title: `Included in job ${job.name}`,
+                description: `${job._id}`
             });
 
             if (job.finished) {
                 const timeFinished = moment(job.finished);
+                const statusIcon = icons[job.status];
+                let title = `Job ${job.name} `;
 
-                const iconName = job.status === "success" ? ICON.FINISHED_JOB.success : ICON.FINISHED_JOB.fail;
+                if (job.status === "success") {
+                    title += "successfull";
+                } else if (job.status === "aborted") {
+                    title += "was aborted";
+                } else if (job.status === "skip") {
+                    title += "was skipped";
+                } else if (job.status === "fail") {
+                    title += " failed";
+                } else {
+                    title += " finished with unknown status";
+                }
 
                 list.push({
                     timestamp: timeFinished.unix(),
-                    type: JobItem,
                     id: `jobfinished-${job._id}`,
-                    avatar: <FontIcon value={iconName} />,
+                    avatar: (
+                        <img
+                            className={this.props.theme.icon}
+                            src={statusIcon}
+                        />
+                    ),
                     time: timeFinished,
-                    title: `Job ${job.name} finished with status: ${job.status}`,
-                    description: `This job with id ${job._id} does this and that`,
-                    details: {
-                    }
+                    title: title,
+                    description: ` ${job._id}`
                 });
             }
         }
@@ -170,7 +198,7 @@ class Overview extends Component {
         return (
             <div>
                 <Row>
-                    <Col xs={12} md={5}>
+                    <Col xs={12} md={6}>
                         <h3>About</h3>
                         <div className={this.props.theme.tags}>
                             {this.props.item.tags.map((tag) => (
@@ -178,87 +206,57 @@ class Overview extends Component {
                             ))}
                         </div>
                     </Col>
-                    <Col xs={12} md={5}>
+                    <Col xs={12} md={6}>
                         <h3>Events</h3>
-                        <table>
-                            <tbody>
-                                <tr>
-                                    <td>
-                                        <Input
-                                            type="text"
-                                            label="Comment"
-                                            name="comment"
-                                            floating={true}
-                                            multiline={true}
-                                            value={this.state.comment.value}
-                                            onChange={this.state.comment.set}
-                                        />
-                                    </td>
-                                    <td>
-                                        <Button
-                                            label="Comment"
-                                            onClick={() => this.onComment()}
-                                        />
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
                         <table className={this.props.theme.overviewTable}>
                             <tbody>
+                                <tr>
+                                    <td className={this.props.theme.avatarCell}>
+                                        <img
+                                            className={this.props.theme.icon}
+                                            src={icons.user}
+                                        />
+                                    </td>
+                                    <td className={this.props.theme.dataCell}>
+                                        <div className={this.props.theme.description}>
+                                            <Input
+                                                className={this.props.theme.commentInput}
+                                                type="text"
+                                                placeholder="Please leave a comment..."
+                                                name="comment"
+                                                multiline={true}
+                                                value={this.state.comment.value}
+                                                onChange={this.state.comment.set}
+                                            />
+                                            <Button
+                                                className={this.props.theme.commentButton}
+                                                label="Comment"
+                                                raised={true}
+                                                primary={true}
+                                                onClick={() => this.onComment()}
+                                            />
+                                            <div style={{ clear: "both" }}></div>
+                                        </div>
+                                    </td>
+                                </tr>
                                 {list.map((item) => (
                                     <tr
                                         key={item.id}
                                     >
                                         <td className={this.props.theme.avatarCell}>
-                                            <div className={this.props.theme.time}>
-                                                {item.time.format("HH:mm:ss")}
-                                            </div>
-                                            <div className={this.props.theme.time}>
-                                                {item.time.format("ddd, MMMM DDDo")}
-                                            </div>
-                                            <div className={this.props.theme.time}>
-                                                {item.time.format("YYYY")}
-                                            </div>
+                                            {item.avatar}
                                         </td>
                                         <td className={this.props.theme.dataCell}>
-                                            <h5>{item.title}</h5><br/>
-                                            <div>{item.description}</div>
-                                        </td>
-                                        {/*<td className={this.props.theme.avatarCell}>
-                                            {typeof item.avatar === "string" ? (
-                                                <Avatar
-                                                    className={this.props.theme.avatar}
-                                                    image={item.avatar}
-                                                />
-                                            ) : (
-                                                <div className={this.props.theme.avatar}>
-                                                    {item.avatar}
-                                                </div>
-                                            )}
-                                            <div className={this.props.theme.time}>
-                                                {item.time.format("HH:mm:ss")}
-                                            </div>
-                                            <div className={this.props.theme.time}>
-                                                {item.time.format("ddd, MMMM DDDo")}
-                                            </div>
-                                            <div className={this.props.theme.time}>
-                                                {item.time.format("YYYY")}
+                                            <h5 className={this.props.theme.title}>
+                                                {item.title}
+                                                <span className={this.props.theme.time}>
+                                                    {item.time.format("HH:mm:ss - dddd, MMMM DDDo YYYY")}
+                                                </span>
+                                            </h5>
+                                            <div className={this.props.theme.description}>
+                                                {item.description}
                                             </div>
                                         </td>
-                                        <td className={this.props.theme.dataCell}>
-                                            <div className={this.props.theme.overviewItem}>
-                                                <div className={this.props.theme.title}>
-                                                    {item.title}
-                                                </div>
-                                                <div className={this.props.theme.description}>
-                                                    {item.description}
-                                                </div>
-                                                <item.type
-                                                    theme={this.props.theme}
-                                                    item={item}
-                                                />
-                                            </div>
-                                        </td>*/}
                                     </tr>
                                 ))}
                             </tbody>

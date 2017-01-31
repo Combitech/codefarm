@@ -238,10 +238,6 @@ class Controller {
             ctx.throw("Comment not supported", 501);
         }
 
-        if (!ctx.request.body.user || !ctx.request.body.user._ref) {
-            ctx.throw("No user ref supplied", 400);
-        }
-
         if (!ctx.request.body.text) {
             ctx.throw("No text supplied", 400);
         }

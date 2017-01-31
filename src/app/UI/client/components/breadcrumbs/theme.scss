@@ -3,7 +3,7 @@
 @import "react-toolbox/components/globals";
 
 .breadcrumb {
-    font-size: $font-size-big;
+    font-size: $font-size-normal;
     color: $color-text-secondary;
     display: inline-block;
     line-height: $unit * 3.6;
@@ -15,7 +15,7 @@
         font-family: "Material Icons";
         font-weight: normal;
         font-style: normal;
-        font-size: $font-size-big;
+        font-size: $font-size-normal;
         margin: 0 $baseline-grid;
         color: $color-text-secondary;
     }

@@ -62,7 +62,7 @@
     .avatarCell {
         padding-top: $layout-gutter-width;
         text-align: center;
-        width: $baseline-grid * 14;
+        width: $baseline-grid * 6;
     }
 
     .dataCell {
@@ -71,14 +71,43 @@
 
     .avatar {
         margin-bottom: $baseline-grid * 2;
-        max-width: $baseline-grid * 14;
+    }
+
+    .icon {
+        margin-bottom: $baseline-grid * 2;
+        height: 48px;
     }
 
     .time {
         font-size: $font-size-small;
-        font-weight: $font-weight-thin;
+        font-weight: $font-weight-normal;
+        color: $color-text-secondary;
+        margin-left: $baseline-grid;
+    }
+
+    .title {
+        font-size: $font-size-big;
+        font-weight: $font-weight-bold;
+        margin-bottom: $baseline-grid;
+    }
+
+    .description {
+        font-size: $font-size-small;
+        font-weight: $font-weight-normal;
         color: $color-text-secondary;
         margin-bottom: $baseline-grid;
+        padding: $baseline-grid * 2;
+        border-left: 4px solid $palette-grey-200;
+        white-space: pre-line;
+    }
+
+    .commentInput {
+        padding: 0;
+        padding-bottom: $baseline-grid
+    }
+
+    .commentButton {
+        float: right;
     }
 
     .overviewItem {
