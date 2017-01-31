@@ -80,7 +80,12 @@ class Control {
 
         notification.on("executor.allocated", async (executor) => {
             const job = await Job.findOne({ _id: executor.jobId });
-            await job.setOngoing(executor.slaveId, executor.logId);
+            await job.setAllocated(executor.slaveId);
+        });
+
+        notification.on("executor.started", async (executor) => {
+            const job = await Job.findOne({ _id: executor.jobId });
+            await job.setOngoing(executor.logId);
         });
 
         notification.on("executor.finished", async (executor, result) => {

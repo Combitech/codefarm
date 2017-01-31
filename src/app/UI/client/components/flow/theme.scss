@@ -201,6 +201,12 @@
             }
         }
 
+        .allocated {
+            .icon {
+                fill: $cf-color-job-allocated;
+            }
+        }
+
         .ongoing {
             display: inline-block;
             transform-origin: 50% 50%;

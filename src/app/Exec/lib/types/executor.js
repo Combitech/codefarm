@@ -33,6 +33,7 @@ class Executor extends Type {
         this.uri = false;
         this.logId = false;
         this.workspace = false;
+        this.started = false;
         this.finished = false;
         this.executing = false;
 
@@ -282,9 +283,6 @@ class Executor extends Type {
         this.workspace = path.join(pathname, `slave-${this.slaveId}`, `job-${this.jobId}`);
         this.privateKeyPath = slave.privateKeyPath;
 
-        this.logId = await this.allocateLog("interactive", [ "stdout", "stderr" ]);
-        this.allocated = true;
-
         try {
             await notification.emit(`${this.constructor.typeName}.allocated`, this);
             await this.save();
@@ -301,7 +299,10 @@ class Executor extends Type {
     async start(job) {
         await this._logln(`Starting execution of ${this.jobName}`);
         try {
+            this.logId = await this.allocateLog("interactive", [ "stdout", "stderr" ]);
             await notification.emit(`${this.constructor.typeName}.started`, this);
+            this.started = true;
+            await this.save();
             await this._attach();
             await this._uploadScript(job.script);
             await this._executeScript(this.getJobInfo(job));
@@ -317,10 +318,13 @@ class Executor extends Type {
     }
 
     async resume() {
-        if (this.finished) {
-            await this.remove();
-        } else {
-            try {
+        try {
+            if (this.finished) {
+                await this.remove();
+            } else if (!this.started) {
+                const job = await Job.findOne({ _id: this.jobId });
+                await this.start(job);
+            } else {
                 await this._attach();
 
                 if (!this.executing) {
@@ -328,16 +332,16 @@ class Executor extends Type {
                     await this._uploadScript(job.script);
                     await this._executeScript(this.getJobInfo(job));
                 }
-            } catch (error) {
-                await this._logln("Error while trying to resume execution", LEVEL.ERROR);
-                await this._logln(error, LEVEL.ERROR);
-
-                await notification.emit(`${this.constructor.typeName}.failure`, this);
-                await this.detach();
-                await this.remove();
-
-                throw error;
             }
+        } catch (error) {
+            await this._logln("Error while trying to resume execution", LEVEL.ERROR);
+            await this._logln(error, LEVEL.ERROR);
+
+            await notification.emit(`${this.constructor.typeName}.failure`, this);
+            await this.detach();
+            await this.remove();
+
+            throw error;
         }
     }
 

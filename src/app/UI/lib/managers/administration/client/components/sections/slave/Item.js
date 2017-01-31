@@ -129,6 +129,17 @@ class Item extends Component {
                             </table>
                         </Col>
                         <Col xs={12} md={7} className={this.props.theme.panel}>
+                            <h6 className={this.props.theme.title}>Allocated jobs</h6>
+                            <TAList
+                                type="exec.job"
+                                query={{ slaveId: this.props.item._id, status: "allocated" }}
+                                onSelect={(item) => {
+                                    this.context.router.push({
+                                        pathname: pathBuilder.fromType("exec.job", item)
+                                    });
+                                }}
+                                ListItemComponent={JobListItem}
+                            />
                             <h6 className={this.props.theme.title}>Running jobs</h6>
                             <TAList
                                 type="exec.job"
@@ -143,7 +154,7 @@ class Item extends Component {
                             <h6 className={this.props.theme.title}>Finished jobs</h6>
                             <TAList
                                 type="exec.job"
-                                query={{ slaveId: this.props.item._id, status: { $nin: [ "queued", "ongoing" ] } }}
+                                query={{ slaveId: this.props.item._id, status: { $nin: [ "queued", "allocated", "ongoing" ] } }}
                                 onSelect={(item) => {
                                     this.context.router.push({
                                         pathname: pathBuilder.fromType("exec.job", item)

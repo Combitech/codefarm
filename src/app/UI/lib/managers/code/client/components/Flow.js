@@ -77,7 +77,7 @@ class FlowComponent extends Component {
 
         if (statuses.has("fail") || statuses.has("aborted")) {
             firstStep.meta.status = "unhappy";
-        } else if (statuses.has("unknown") || statuses.has("queued") || statuses.has("ongoing")) {
+        } else if (statuses.has("unknown") || statuses.has("allocated") || statuses.has("queued") || statuses.has("ongoing")) {
             firstStep.meta.status = "neutral";
         } else if (statuses.has("success") || statuses.has("skip")) {
             firstStep.meta.status = "happy";

@@ -7,6 +7,7 @@ import { flattenArray } from "misc";
 const statusIcons = {
     unknown: "/Cheser/256x256/status/dialog-question.png",
     queued: "/Cheser/256x256/actions/document-open-recent.png",
+    allocated: "/Cheser/256x256/actions/document-open-recent.png",
     ongoing: "/Cheser/256x256/status/appointment-soon.png",
     success: "/Cheser/256x256/emblems/emblem-default.png",
     aborted: "/Cheser/256x256/status/dialog-warning.png",

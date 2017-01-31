@@ -7,6 +7,7 @@ const { notification } = require("typelib");
 
 const STATUS = {
     QUEUED: "queued",
+    ALLOCATED: "allocated",
     ONGOING: "ongoing",
     SUCCESS: "success",
     ABORTED: "aborted",
@@ -20,7 +21,7 @@ const REVISION_STATE = {
 
 const values = (obj) => Object.keys(obj).map((key) => obj[key]);
 
-const notFinishedStatusList = [ STATUS.ONGOING, STATUS.QUEUED ];
+const notFinishedStatusList = [ STATUS.ONGOING, STATUS.QUEUED, STATUS.ALLOCATED ];
 
 class Job extends Type {
     constructor(data) {
@@ -77,7 +78,7 @@ class Job extends Type {
             this.finished = false;
         }
 
-        if (this.status !== STATUS.QUEUED) {
+        if (this.lastRunId !== false) {
             this.currentRun.finished = this.finished;
             this.currentRun.status = this.status;
             this.currentRun.slaveId = this.slaveId;
@@ -176,8 +177,13 @@ class Job extends Type {
         await this.save();
     }
 
-    async setOngoing(slaveId, stdOutLogId) {
+    async setAllocated(slaveId) {
         this.slaveId = slaveId;
+        this.status = STATUS.ALLOCATED;
+        await this.save();
+    }
+
+    async setOngoing(stdOutLogId) {
         if (this.lastRunId === false) {
             this.lastRunId = 0;
         } else {

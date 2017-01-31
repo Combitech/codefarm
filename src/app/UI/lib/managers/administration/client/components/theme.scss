@@ -14,6 +14,9 @@
     &Queued {
         background: $cf-color-job-queued;
     }
+    &Allocated {
+        background: $cf-color-job-allocated;
+    }
     &Ongoing {
         background: $cf-color-job-ongoing;
     }

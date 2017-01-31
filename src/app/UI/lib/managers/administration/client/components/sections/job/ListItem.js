@@ -8,6 +8,7 @@ import { StringUtil } from "misc";
 
 const jobStatusIcon = {
     "queued": "schedule",
+    "allocated": "update",
     "ongoing": "loop",
     "success": "done",
     "aborted": "priority_high",
