@@ -29,6 +29,15 @@ class ProviderClient extends AsyncEventEmitter {
     }
 
     /**
+     * Used in checks to se that child classes are of ProviderClient heritage
+     * @return {ProviderClient} The type
+     * @public
+     */
+    static me() {
+        return ProviderClient;
+    }
+
+    /**
      * Method to implement startup procedure if any,
      * called by the service layer
      * @public

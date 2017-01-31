@@ -62,8 +62,6 @@ const getOpts = (opts = {}) => {
                     }
                 };
 
-                console.log(res);
-
                 if (!res.exchange.name) {
                     throw new Error("bus exchange name must be given");
                 }

@@ -20,21 +20,6 @@
         }
     },
     "logrepo": {
-        "lb": {
-            "exchange": {
-                "name": "log",
-                "type": "topic",
-                "options": {
-                    "durable": true
-                }
-            },
-            "queue": {
-                "name": "LogRepo-lines",
-                "options": {
-                    "durable": true
-                }
-            }
-        },
         "web": {
             "port": 9696
         }
@@ -50,17 +35,6 @@
         }
     },
     "exec": {
-        "logRepo": {
-            "mb": {
-                "exchange": {
-                    "name": "log",
-                    "type": "topic",
-                    "options": {
-                        "durable": true
-                    }
-                }
-            }
-        },
         "web": {
             "port": 9494
         }

@@ -27,6 +27,7 @@
     "database",
     "typelib",
     "msgbus",
+    "logbus",
     "emitter",
     "log",
     "restclient",

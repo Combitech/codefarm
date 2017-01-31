@@ -2,7 +2,7 @@
 
 const os = require("os");
 const Database = require("database");
-const MsgBus = require("msgbus");
+const LogBus = require("logbus");
 const Web = require("web");
 const { Service } = require("service");
 const RestClient = require("restclient");
@@ -25,7 +25,7 @@ class Main extends Service {
             name: this.name
         });
         await this.need("logrepo", "logrepo", RestClient, this.config.logRepo);
-        await this.need("lb", "mgmt", MsgBus, this.config.logRepo.mb);
+        await this.need("lb", "mgmt", LogBus);
     }
 
     async onOnline() {

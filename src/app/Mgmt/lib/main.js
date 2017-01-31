@@ -24,6 +24,9 @@ class Main extends Service {
         await this.provide("MsgBus", {
             uri: this.config.msgbus
         });
+        await this.provide("LogBus", {
+            uri: this.config.msgbus
+        });
         // Push msgBus dependency to get rid of circular require dependency
         Config.setMb(this.mgr.msgBus);
     }

@@ -66,15 +66,7 @@ class Executor extends Type {
     async _log(str, level = LEVEL.STDOUT, tag = "exe", time) {
         if (this.logId) {
             const lb = await serviceMgr.use("lb");
-            lb.publishRaw({
-                _id: this.logId,
-                data: {
-                    time: time,
-                    level: level,
-                    tag: tag,
-                    str: str
-                }
-            });
+            await lb.publish(this.logId, time, level, tag, str);
         }
 
         if (str[str.length - 1] === "\n") {

@@ -266,7 +266,7 @@ class Manager {
         }
         assertType(providerName, "providerName", "string");
 
-        if (Object.getPrototypeOf(Client) !== ProviderClient) {
+        if (!Client.me || Client.me() !== ProviderClient) {
             throw new Error("Client must extend ProviderClient");
         }
 

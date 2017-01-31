@@ -2,7 +2,7 @@
 
 const os = require("os");
 const Database = require("database");
-const MsgBus = require("msgbus");
+const LogBus = require("logbus");
 const Web = require("web");
 const { Service } = require("service");
 const Repositories = require("./controllers/repositories");
@@ -23,7 +23,10 @@ class Main extends Service {
         await this.need("db", "mgmt", Database, {
             name: this.name
         });
-        await this.need("lb", "mgmt", MsgBus, this.config.lb);
+        await this.need("lb", "mgmt", LogBus, {
+            queue: true,
+            name: this.name
+        });
     }
 
     async onOnline() {
