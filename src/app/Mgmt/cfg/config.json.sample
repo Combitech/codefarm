@@ -1,32 +1,20 @@
 {
     "flowctrl": {
-        "db": {
-            "name": "FlowCtrl"
-        },
         "web": {
             "port": "9191"
         }
     },
     "baselinegen": {
-        "db": {
-            "name": "BaselineGen"
-        },
         "web": {
             "port": "9797"
         }
     },
     "userrepo": {
-        "db": {
-            "name": "UserRepo"
-        },
         "web": {
             "port": "9292"
         }
     },
     "eventrepo": {
-        "db": {
-            "name": "EventRepo"
-        },
         "web": {
             "port": "9090"
         }
@@ -47,34 +35,21 @@
                 }
             }
         },
-        "db": {
-            "name": "LogRepo"
-        },
         "web": {
             "port": 9696
-        },
-        "logdir": "/tmp/logs"
+        }
     },
     "coderepo": {
-        "db": {
-            "name": "CodeRepo"
-        },
         "web": {
             "port": 9393
         }
     },
     "artifactrepo": {
-        "db": {
-            "name": "ArtifactRepo"
-        },
         "web": {
             "port": 9999
         }
     },
     "exec": {
-        "db": {
-            "name": "Exec"
-        },
         "logRepo": {
             "mb": {
                 "exchange": {
@@ -96,9 +71,6 @@
         }
     },
     "dataresolve": {
-        "db": {
-            "name": "DataResolve"
-        },
         "web": {
             "port": 8989
         }

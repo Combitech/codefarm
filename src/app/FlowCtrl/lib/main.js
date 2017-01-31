@@ -19,7 +19,9 @@ class Main extends Service {
             uri: `http://${os.hostname()}:${this.config.web.port}`
         });
 
-        await this.need("db", "mgmt", Database, this.config.db);
+        await this.need("db", "mgmt", Database, {
+            name: this.name
+        });
         await this.need("baselinegen", "baselinegen", RestClient);
         await this.need("exec", "exec", RestClient);
         await this.need("coderepo", "coderepo", RestClient);

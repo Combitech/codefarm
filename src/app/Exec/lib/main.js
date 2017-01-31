@@ -21,7 +21,9 @@ class Main extends Service {
             uri: `http://${os.hostname()}:${this.config.web.port}`
         });
 
-        await this.need("db", "mgmt", Database, this.config.db);
+        await this.need("db", "mgmt", Database, {
+            name: this.name
+        });
         await this.need("logrepo", "logrepo", RestClient, this.config.logRepo);
         await this.need("lb", "mgmt", MsgBus, this.config.logRepo.mb);
     }

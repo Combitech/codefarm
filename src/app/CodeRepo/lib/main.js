@@ -21,7 +21,9 @@ class Main extends Service {
         await this.provide("REST", {
             uri: `http://${os.hostname()}:${this.config.web.port}`
         });
-        await this.need("db", "mgmt", Database, this.config.db);
+        await this.need("db", "mgmt", Database, {
+            name: this.name
+        });
         await this.need("userrepo", "userrepo", RestClient);
     }
 
