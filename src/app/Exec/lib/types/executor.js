@@ -269,12 +269,12 @@ class Executor extends Type {
         return this._convToEnvObj(jobInfo, false, 6);
     }
 
-    async start(job, slave) {
+    async allocate(job, slave) {
         this.jobId = job._id;
         this.jobName = job.name;
         this.slaveId = slave._id;
 
-        await this._logln(`Starting execution of ${job.name}`);
+        await this._logln(`Allocating executor on slave ${this.slaveId} for job ${this.jobId}`);
 
         const { pathname } = url.parse(slave.uri);
 
@@ -283,11 +283,25 @@ class Executor extends Type {
         this.privateKeyPath = slave.privateKeyPath;
 
         this.logId = await this.allocateLog("interactive", [ "stdout", "stderr" ]);
+        this.allocated = true;
 
         try {
             await notification.emit(`${this.constructor.typeName}.allocated`, this);
             await this.save();
+        } catch (error) {
+            await this._logln("Error while allocating executor", LEVEL.ERROR);
+            await this._logln(error, LEVEL.ERROR);
+            await notification.emit(`${this.constructor.typeName}.failure`, this);
+            await this.remove();
 
+            throw error;
+        }
+    }
+
+    async start(job) {
+        await this._logln(`Starting execution of ${this.jobName}`);
+        try {
+            await notification.emit(`${this.constructor.typeName}.started`, this);
             await this._attach();
             await this._uploadScript(job.script);
             await this._executeScript(this.getJobInfo(job));

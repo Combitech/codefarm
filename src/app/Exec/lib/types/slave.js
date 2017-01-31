@@ -16,6 +16,11 @@ class Slave extends Type {
         if (data) {
             this.set(data);
         }
+
+        // Add id as tag
+        if (!this.tags.includes(this._id)) {
+            this.tags.push(this._id);
+        }
     }
 
     static get serviceName() {

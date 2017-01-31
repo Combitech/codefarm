@@ -13,7 +13,7 @@ class Control {
     constructor() {
         this.executors = [];
 
-        synchronize(this, "_startJobs");
+        synchronize(this, "_allocateJob");
     }
 
     static get instance() {
@@ -132,7 +132,7 @@ class Control {
                 const obj = await readType(typeName, id, getter);
                 await executor.notifyInfo("type_read", obj);
             } catch (error) {
-                console.error("type_read error", error);
+                ServiceMgr.instance.log("error", "type_read error", error);
                 await executor.notifyError(error.message || error);
             }
         });
@@ -167,7 +167,7 @@ class Control {
                 }
                 await executor.notifyInfo("type_created", obj);
             } catch (error) {
-                console.error("type_create error", error);
+                ServiceMgr.instance.log("error", "type_create error", error);
                 await executor.notifyError(error.message || error);
             }
         });
@@ -177,7 +177,7 @@ class Control {
                 const obj = await executor.typeAction(typeName, id, action, data);
                 await executor.notifyInfo("type_action_done", obj);
             } catch (error) {
-                console.error("type_action error", error);
+                ServiceMgr.instance.log("error", "type_action error", error);
                 await executor.notifyError(error.message || error);
             }
         });
@@ -194,7 +194,7 @@ class Control {
                 }
                 await executor.notifyInfo("type_updated", obj);
             } catch (error) {
-                console.error("type_update error", error);
+                ServiceMgr.instance.log("error", "type_update error", error);
                 await executor.notifyError(error.message || error);
             }
         });
@@ -254,7 +254,7 @@ class Control {
                 }
                 await executor.notifyInfo("file_uploaded", obj);
             } catch (error) {
-                console.error("file_upload error", error);
+                ServiceMgr.instance.log("error", "file_upload error", error);
                 await executor.notifyError(error.message || error);
             }
         });
@@ -274,7 +274,7 @@ class Control {
                 }
                 await executor.notifyInfo("revision_merged", obj);
             } catch (error) {
-                console.error("revision_merge error", error);
+                ServiceMgr.instance.log("error", "revision_merge error", error);
                 await executor.notifyError(error.message || error);
             }
         });
@@ -285,7 +285,7 @@ class Control {
             try {
                 await executor.resume();
             } catch (error) {
-                console.error("Error resuming executor", error);
+                ServiceMgr.instance.log("error", "Error resuming executor", error);
             }
         }
 
@@ -295,46 +295,105 @@ class Control {
     async _getSlaveExecList() {
         const slaves = await Slave.findMany({ offline: false });
 
-        // Sort on the slaves with the most resources free on top
-        return slaves
-        .map((slave) => {
-            const executors = this.executors.filter((executor) => executor.slaveId === slave._id);
+        return slaves.map((slave) => {
+            const numRunningOnSlave = this.executors.filter((executor) => executor.slaveId === slave._id).length;
 
             return {
                 slave: slave,
-                free: slave.executors - executors.length
+                free: slave.executors - numRunningOnSlave
             };
         });
     }
 
-    async _startJobs() {
-        // TODO: Optimize, _startJobs is now synchronized and is a bottle-neck...
-        const jobs = await Job.findMany({ status: "queued" }, { sort: [ [ "created", -1 ] ] });
-
-        const slavesExec = await this._getSlaveExecList();
-        slavesExec.sort((a, b) => b.free - a.free);
-
-        for (const job of jobs) {
-            let slaveExec;
-            if (job.executeOnSlaveId) {
-                slaveExec = slavesExec.find((slaveExec) => slaveExec.free > 0 && job.executeOnSlaveId === slaveExec.slave._id);
-            } else {
-                const tagCriteria = new TagCriteria(job.criteria);
-                slaveExec = slavesExec.find((slaveExec) => slaveExec.free > 0 && tagCriteria.match(slaveExec.slave.tags));
-            }
-
+    async _getLeastUtilizedSlave(tagCriteria) {
+        let slave = false;
+        let slaveExecList = await this._getSlaveExecList();
+        slaveExecList = slaveExecList.sort((a, b) => b.free - a.free);
+        if (slaveExecList.length > 0) {
+            const slaveExec = slaveExecList.find((slaveExec) =>
+                slaveExec.free > 0 && tagCriteria.match(slaveExec.slave.tags)
+            );
             if (slaveExec) {
-                const executor = new Executor();
-                this.executors.push(executor);
-                try {
-                    await executor.start(job, slaveExec.slave);
-                } catch (error) {
-                    console.error("Error starting executor", error);
-                }
-                slaveExec.free--;
-                slavesExec.sort((a, b) => b.free - a.free);
+                slave = slaveExec.slave;
             }
         }
+
+        return slave;
+    }
+
+    async _getOldestJob(excludeJobIds = []) {
+        const query = {
+            status: "queued"
+        };
+        if (excludeJobIds.length > 0) {
+            query._id = {
+                $nin: excludeJobIds
+            };
+        }
+        const jobs = await Job.findMany(query, {
+            sort: [ [ "created", -1 ] ],
+            limit: 1
+        });
+
+        return jobs.length === 1 ? jobs[0] : false;
+    }
+
+    async _allocateJob(excludeJobIds = []) {
+        const job = await this._getOldestJob(excludeJobIds);
+        if (!job) {
+            ServiceMgr.instance.log("verbose", "_allocateJob - found no jobs");
+
+            return false;
+        }
+
+        const tagCriteria = new TagCriteria(job.criteria);
+        const leastUtlizedSlave = await this._getLeastUtilizedSlave(tagCriteria);
+        if (!leastUtlizedSlave) {
+            ServiceMgr.instance.log("verbose", `_allocateJob - found no slave matching criteria ${job.criteria}`);
+
+            return false;
+        }
+
+        // Allocate executor
+        let executor = new Executor();
+        this.executors.push(executor);
+        try {
+            // allocate on an executor will trigger the event executor.allocated which
+            // will set the job to ongoing
+            await executor.allocate(job, leastUtlizedSlave);
+            ServiceMgr.instance.log("verbose", `_allocateJob - Allocated executor ${executor._id} on slave ${leastUtlizedSlave._id} for job ${job._id}`);
+        } catch (error) {
+            ServiceMgr.instance.log("error", "Error allocating executor", error);
+            executor = null;
+        }
+
+        return {
+            job: job,
+            executor: executor
+        };
+    }
+
+    async _startJobs() {
+        let alloc;
+        const skipJobIds = [];
+        let numJobsStarted = 0;
+        while (alloc = await this._allocateJob(skipJobIds)) {
+            const executor = alloc.executor;
+            if (executor) {
+                try {
+                    ServiceMgr.instance.log("verbose", `_startJobs - starting job ${alloc.job._id}`);
+                    await executor.start(alloc.job);
+                    numJobsStarted++;
+                } catch (error) {
+                    ServiceMgr.instance.log("error", "Error starting executor", error);
+                }
+            } else {
+                ServiceMgr.instance.log("verbose", `_startJobs - skipping job ${alloc.job._id}`);
+                // Failed to allocate executor, skip this job ID again
+                skipJobIds.push(alloc.job._id);
+            }
+        }
+        ServiceMgr.instance.log("verbose", `_startJobs - started ${numJobsStarted} jobs`);
     }
 
     async _waitForJobCompletion(jobId) {
@@ -360,7 +419,6 @@ class Control {
         if (!slave.offline) {
             const job = new Job({
                 name: `Verify_slave_${slave._id}`,
-                executeOnSlaveId: slave._id, // Exec on explicit slave instead criteria matching...
                 requeueOnFailure: false,
                 script: `#!/bin/bash
                     echo "My job is to verify slave ${slave._id}"
@@ -371,7 +429,9 @@ class Control {
                     _id: "dummy-baseline-1",
                     name: `Dummy baseline to verify slave ${slave._id}`,
                     content: []
-                }
+                },
+                // All slaves have their ID as a tag... This will match a specific slave
+                criteria: `${slave._id}`
             });
             const finishedJobPromise = this._waitForJobCompletion(job._id);
             job.save();

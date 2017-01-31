@@ -11,7 +11,7 @@
     "shell": "../../bs/run_cmd.sh bash",
     "start": "../../bs/start.sh --expose 9494 -p 9494:9494 -d",
     "prestart-dev": "npm run compile",
-    "start-dev": "npm run start-rel",
+    "start-dev": "node --harmony_async_await . --bus amqp://localhost/codefarm",
     "start-rel": "node --harmony_async_await . --bus amqp://localhost/codefarm",
     "stop": "../../bs/stop.sh",
     "test": "npm run compile && mocha --harmony_async_await ./test",

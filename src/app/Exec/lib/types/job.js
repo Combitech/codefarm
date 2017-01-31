@@ -185,7 +185,7 @@ class Job extends Type {
         }
         this.status = STATUS.ONGOING;
 
-        this.addLog("stdout", stdOutLogId, false);
+        await this.addLog("stdout", stdOutLogId, false);
         await this.save();
     }
 
