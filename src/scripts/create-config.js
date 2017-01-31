@@ -14,7 +14,7 @@ const argv = yargs
     alias: "config",
     describe: "Configuration file",
     type: "string",
-    default: path.join(__dirname, "..", "app", "Mgmt", "cfg", "config.json")
+    default: path.join(__dirname, "config.json")
 })
 .option("s", {
     alias: "service",
@@ -72,7 +72,7 @@ const run = async () => {
     } else {
         console.error(`Cannot find service ${argv.service} in config`);
     }
-}
+};
 
 run()
 .catch((error) => {
