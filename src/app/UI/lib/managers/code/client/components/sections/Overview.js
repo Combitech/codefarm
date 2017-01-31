@@ -4,12 +4,15 @@ import Component from "ui-lib/component";
 import { Row, Col } from "react-flexbox-grid";
 import Chip from "react-toolbox/lib/chip";
 import Avatar from "react-toolbox/lib/avatar";
+import Input from "react-toolbox/lib/input";
+import { Button } from "react-toolbox/lib/button";
 import PatchItem from "./overview_items/Patch";
 import BaselineItem from "./overview_items/Baseline";
 import JobItem from "./overview_items/Job";
 import moment from "moment";
 import UserAvatar from "../UserAvatar";
 import FontIcon from "react-toolbox/lib/font_icon";
+import api from "api.io/api.io-client";
 
 const ICON = {
     NO_AVATAR: "person",
@@ -30,12 +33,54 @@ class Overview extends Component {
                 "content.id": props.item._id
             };
         }, true);
+
+        this.addStateVariable("comment", "");
+    }
+
+    onComment() {
+        console.log("comment", this.state.comment.value);
+
+        api.type.action(this.props.item.type, this.props.item._id, "comment", {
+            user: {
+                _ref: true,
+                name: "Someone", // TODO
+                type: "userrepo.user",
+                id: false
+            },
+            time: moment.utc().format(),
+            text: this.state.comment.value
+        })
+        .then((response) => {
+            if (response.result !== "success") {
+                console.error("comment failed", response);
+            } else {
+                return this.state.comment.set();
+            }
+        })
+        .catch((error) => {
+            console.error("comment failed", error);
+        });
     }
 
     render() {
         this.log("render", this.props, this.state);
 
         const list = [];
+
+        for (const comment of this.props.item.comments) {
+            const time = moment(comment.time);
+
+            list.push({
+                timestamp: time.unix(),
+                type: PatchItem,
+                id: `comment-${comment.id}`,
+                time: time,
+                title: `${comment.user.name} wrote a comment`,
+                description: comment.text,
+                details: {
+                }
+            });
+        }
 
         for (const patch of this.props.item.patches) {
             const time = moment(patch.submitted);
@@ -134,7 +179,30 @@ class Overview extends Component {
                         </div>
                     </Col>
                     <Col xs={12} md={5}>
-                        <h3>History</h3>
+                        <h3>Events</h3>
+                        <table>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <Input
+                                            type="text"
+                                            label="Comment"
+                                            name="comment"
+                                            floating={true}
+                                            multiline={true}
+                                            value={this.state.comment.value}
+                                            onChange={this.state.comment.set}
+                                        />
+                                    </td>
+                                    <td>
+                                        <Button
+                                            label="Comment"
+                                            onClick={() => this.onComment()}
+                                        />
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
                         <table className={this.props.theme.overviewTable}>
                             <tbody>
                                 {list.map((item) => (
@@ -142,6 +210,21 @@ class Overview extends Component {
                                         key={item.id}
                                     >
                                         <td className={this.props.theme.avatarCell}>
+                                            <div className={this.props.theme.time}>
+                                                {item.time.format("HH:mm:ss")}
+                                            </div>
+                                            <div className={this.props.theme.time}>
+                                                {item.time.format("ddd, MMMM DDDo")}
+                                            </div>
+                                            <div className={this.props.theme.time}>
+                                                {item.time.format("YYYY")}
+                                            </div>
+                                        </td>
+                                        <td className={this.props.theme.dataCell}>
+                                            <h5>{item.title}</h5><br/>
+                                            <div>{item.description}</div>
+                                        </td>
+                                        {/*<td className={this.props.theme.avatarCell}>
                                             {typeof item.avatar === "string" ? (
                                                 <Avatar
                                                     className={this.props.theme.avatar}
@@ -175,7 +258,7 @@ class Overview extends Component {
                                                     item={item}
                                                 />
                                             </div>
-                                        </td>
+                                        </td>*/}
                                     </tr>
                                 ))}
                             </tbody>

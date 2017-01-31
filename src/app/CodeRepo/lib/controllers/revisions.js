@@ -5,7 +5,7 @@ const { Controller } = require("typelib");
 
 class Revisions extends Controller {
     constructor() {
-        super(Revision, [ "read", "tag", "ref" ]);
+        super(Revision, [ "read", "tag", "ref", "comment" ]);
 
         this._addAction("merge", this._merge);
     }
