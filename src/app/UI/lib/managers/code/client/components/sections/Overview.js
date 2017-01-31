@@ -69,6 +69,7 @@ class Overview extends Component {
         this.log("render", this.props, this.state);
 
         const list = [];
+        const latestPatch = this.props.item.patches[this.props.item.patches.length - 1];
 
         for (const comment of this.props.item.comments) {
             const time = moment(comment.time);
@@ -198,16 +199,34 @@ class Overview extends Component {
         return (
             <div>
                 <Row>
-                    <Col xs={12} md={6}>
-                        <h3>About</h3>
+                    <Col xs={12} md={7}>
+                        <h4>Author</h4>
+                        <div>
+                            <Avatar className={this.props.theme.avatar}>
+                                <UserAvatar
+                                    email={latestPatch.email}
+                                    noAvatarIconName="person"
+                                />
+                            </Avatar>
+                            <div>{latestPatch.name}</div>
+                        </div>
+
+                        <h4>Revision</h4>
+                        <div>
+                            <pre>
+                                {JSON.stringify(latestPatch, null, 2)}
+                            </pre>
+                        </div>
+
+                        <h4>Tags</h4>
                         <div className={this.props.theme.tags}>
                             {this.props.item.tags.map((tag) => (
                                 <Chip key={tag}>{tag}</Chip>
                             ))}
                         </div>
                     </Col>
-                    <Col xs={12} md={6}>
-                        <h3>Events</h3>
+                    <Col xs={12} md={5}>
+                        <h4>Events</h4>
                         <table className={this.props.theme.overviewTable}>
                             <tbody>
                                 <tr>

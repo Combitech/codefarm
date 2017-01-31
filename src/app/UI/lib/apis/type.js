@@ -2,6 +2,7 @@
 
 const api = require("api.io");
 const { ServiceMgr } = require("service");
+const moment = require("moment");
 
 let instance;
 
@@ -46,6 +47,8 @@ class TypeApi {
         this.exports = typeApiExports;
         this.subscriptions = [];
         this.clients = [];
+        this.cache = {};
+        this.flushing = false;
     }
 
     static get instance() {
@@ -73,10 +76,14 @@ class TypeApi {
         const mb = await ServiceMgr.instance.msgBus;
 
         mb.on("data", this.onEvent.bind(this));
+
+        this.flushing = false;
+        this.interval = setInterval(() => this.flush(), 1000);
     }
 
-    async onEvent(data) {
+    async sendCached(data) {
         const event = `${data.event}.${data.type}`;
+        const eventId = `${event}.${data.typeId}`;
         const payload = {
             olddata: data.olddata,
             newdata: data.newdata
@@ -85,14 +92,50 @@ class TypeApi {
         typeApiExports.emit(event, payload);
         ServiceMgr.instance.log("debug", "Emit event", event, payload);
 
-        const id = data.newdata ? data.newdata._id : data.olddata._id;
-
-        const eventId = `${event}.${id}`;
         typeApiExports.emit(eventId, payload);
         ServiceMgr.instance.log("debug", "Emit event", eventId, payload);
     }
 
+    async flush() {
+        this.flushing = true;
+        const keys = Object.keys(this.cache);
+
+        for (const key of Object.keys(this.cache)) {
+            if (moment().add(1, "second").isAfter(this.cache[key])) {
+                const data = this.cache[key];
+                delete this.cache[key];
+
+                await this.sendCached(data);
+            }
+        }
+
+        this.flushing = false;
+    }
+
+    async onEvent(data) {
+        const fullevent = `${data.event}.${data.type}.${data.typeId}`;
+
+        if (!this.cache[fullevent]) {
+            this.cache[fullevent] = {
+                cached: moment(),
+                event: data.event,
+                type: data.type,
+                typeId: data.typeId,
+                olddata: data.olddata,
+                newdata: data.newdata
+            };
+        } else {
+            this.cache[fullevent].newdata = data.newdata;
+            this.cache[fullevent].event = data.event;
+        }
+
+        await this.flush();
+    }
+
     async dispose() {
+        clearInterval(this.interval);
+        this.interval = null;
+
         for (const subscription of this.subscriptions) {
             api.off(subscription);
         }
