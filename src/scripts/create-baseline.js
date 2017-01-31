@@ -3,7 +3,7 @@
 const fs = require("fs");
 const path = require("path");
 const rp = require("request-promise");
-const { baselinegen: configBaselineGen } = require("../app/Mgmt/cfg/config.json");
+const { baselinegen: configBaselineGen } = require("./config.json");
 
 const run = async () => {
     console.log(`Adding a new baseline specification`);

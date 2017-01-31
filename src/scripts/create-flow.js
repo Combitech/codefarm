@@ -3,7 +3,7 @@
 const fs = require("fs");
 const path = require("path");
 const rp = require("request-promise");
-const { flowctrl: configFlowCtrl } = require("../app/Mgmt/cfg/config.json");
+const { flowctrl: configFlowCtrl } = require("./config.json");
 
 const run = async () => {
     console.log(`Adding a new flow`);

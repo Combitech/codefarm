@@ -4,7 +4,7 @@ const fs = require("fs-extra-promise");
 const yargs = require("yargs");
 const path = require("path");
 const rp = require("request-promise");
-const { userrepo: configUserRepo } = require("../app/Mgmt/cfg/config.json");
+const { userrepo: configUserRepo } = require("./config.json");
 
 const argv = yargs
 .help("help")

@@ -4,7 +4,7 @@ const fs = require("fs");
 const yargs = require("yargs");
 const path = require("path");
 const rp = require("request-promise");
-const { logrepo: configLogRepo } = require("../app/Mgmt/cfg/config.json");
+const { logrepo: configLogRepo } = require("./config.json");
 
 const argv = yargs
 .help("help")

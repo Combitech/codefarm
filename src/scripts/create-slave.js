@@ -3,7 +3,7 @@
 const fs = require("fs-extra-promise");
 const path = require("path");
 const rp = require("request-promise");
-const { exec: configExec } = require("../app/Mgmt/cfg/config.json");
+const { exec: configExec } = require("./config.json");
 
 const run = async () => {
     console.log(`Adding a new slave`);

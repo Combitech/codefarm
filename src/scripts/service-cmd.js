@@ -3,7 +3,7 @@
 const path = require("path");
 const yargs = require("yargs");
 const rp = require("request-promise");
-const config = require("../app/Mgmt/cfg/config.json");
+const config = require("./config.json");
 
 const argv = yargs
 .usage("Usage: $0 -s [service]")
