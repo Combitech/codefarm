@@ -1,9 +1,9 @@
 "use strict";
 
 const log = require("log");
-const Koa = require("/home/patrik/codefarm/src/lib/web/node_modules/koa");
-const bodyParser = require("/home/patrik/codefarm/src/lib/web/node_modules/koa-bodyparser");
-const { AsyncEventEmitter } = require("/home/patrik/codefarm/src/lib/typelib/node_modules/emitter");
+const Koa = require("koa");
+const bodyParser = require("koa-bodyparser");
+const { AsyncEventEmitter } = require("emitter");
 
 class GithubEventEmitter extends AsyncEventEmitter {
     constructor() {
