@@ -5,6 +5,7 @@ const { ServiceMgr } = require("service");
 const moment = require("moment");
 
 let instance;
+const UPDATE_RATE_LIMIT_MS = 1000;
 
 const typeApiExports = api.register("type", {
     get: api.export(async (session, type, query) => {
@@ -78,7 +79,7 @@ class TypeApi {
         mb.on("data", this.onEvent.bind(this));
 
         this.flushing = false;
-        this.interval = setInterval(() => this.flush(), 1000);
+        this.interval = setInterval(() => this.flush(), UPDATE_RATE_LIMIT_MS);
     }
 
     async sendCached(data) {
@@ -101,7 +102,7 @@ class TypeApi {
         const keys = Object.keys(this.cache);
 
         for (const key of Object.keys(this.cache)) {
-            if (moment().add(1, "second").isAfter(this.cache[key])) {
+            if (moment().add(UPDATE_RATE_LIMIT_MS, "ms").isAfter(this.cache[key])) {
                 const data = this.cache[key];
                 delete this.cache[key];
 
@@ -126,7 +127,6 @@ class TypeApi {
             };
         } else {
             this.cache[fullevent].newdata = data.newdata;
-            this.cache[fullevent].event = data.event;
         }
 
         await this.flush();
