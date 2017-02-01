@@ -69,24 +69,32 @@ class Step extends Type {
             if (this.jobs.length > 0) {
                 const jobIds = this.jobs.map((job) => job.jobId);
                 const exec = await ServiceMgr.instance.use("exec");
-                const finishedJobs = await exec.get("/job", {
-                    _id: {
-                        $in: jobIds
-                    },
-                    result: {
-                        $ne: false
+                try {
+                    const finishedJobs = await exec.get("/job", {
+                        _id: {
+                            $in: jobIds
+                        },
+                        result: {
+                            $ne: false
+                        }
+                    });
+                    for (const job of finishedJobs) {
+                        ServiceMgr.instance.log("info", `Step ${this.name} found job ${job._id} which has finished, performing step job finish`);
+                        await this.finishJob(job._id, job.status);
                     }
-                });
-                for (const job of finishedJobs) {
-                    ServiceMgr.instance.log("info", `Step ${this.name} found job ${job._id} which has finished, performing step job finish`);
-                    await this.finishJob(job._id, job.status);
+                } catch (error) {
+                    ServiceMgr.instance.log("error", `Step ${this.name} failed to request finished jobs`, error);
                 }
             }
         }
 
         if (!this.schedule) {
             if (this.jobs.length < this.concurrency) {
-                await this.requestBaseline();
+                try {
+                    await this.requestBaseline();
+                } catch (error) {
+                    ServiceMgr.instance.log("error", `Step ${this.name} failed to request baseline ${this.baseline}`, error);
+                }
             }
         } else {
             // TODO: Check time against schedule
@@ -99,7 +107,6 @@ class Step extends Type {
         // TODO: parentIds
         ServiceMgr.instance.log("verbose", `Step ${this.name} requesting baseline ${this.baseline}`);
         const result = await baselineGen.post(`/specification/${this.baseline}/request`);
-
         if (result.result !== "success") {
             throw Error(`Failed to request new baseline: ${result.error}`);
         }
@@ -159,7 +166,7 @@ class Step extends Type {
         await this.save();
 
         for (const jobId of jobIds) {
-            await exec.delete(`/job/${jobId}`);
+            await exec.remove(`/job/${jobId}`);
         }
     }
 
