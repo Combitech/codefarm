@@ -6,6 +6,7 @@ import {
     Section as TASection,
     List as TAList
 } from "ui-components/type_admin";
+import BaselineListItem from "./ListItem";
 
 class List extends Component {
     constructor(props) {
@@ -39,6 +40,7 @@ class List extends Component {
                 <TAList
                     type={this.props.type}
                     filter={this.state.filter.value}
+                    ListItemComponent={BaselineListItem}
                     onSelect={(item) => {
                         this.context.router.push({
                             pathname: `${this.props.pathname}/${item._id}`
