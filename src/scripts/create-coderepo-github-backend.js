@@ -14,26 +14,36 @@ const argv = yargs
     describe: "Backend id",
     type: "string",
     requiresArg: true,
-    default: "Gerrit"
+    default: "Github"
 })
 .option("t", {
     alias: "type",
     describe: "Backend type",
     type: "string",
     requiresArg: true,
-    default: "gerrit"
+    default: "github"
 })
-.option("uri", {
-    describe: "URI to use when connection to gerrit",
+.option("username", {
+    describe: "GitHub username to authenticate as",
+    type: "string",
+    requiresArg: true
+})
+.option("token", {
+    describe: "Authentication token to use",
+    type: "string",
+    requiresArg: true
+})
+.option("webhookURL", {
+    describe: "Webhook callback URL",
     type: "string",
     requiresArg: true,
-    default: "ssh://admin@localhost:29418"
+    default: "https://secor.runge.se"
 })
-.option("privateKeyPath", {
-    describe: "Private key matching the public key uploaded for the user specified with the --uri option",
-    type: "string",
+.option("port", {
+    describe: "Local web server port",
+    type: "number",
     requiresArg: true,
-    default: path.join("/home", process.env.USER, ".ssh", "id_rsa")
+    default: 3000
 })
 .argv;
 
@@ -44,8 +54,10 @@ const run = async () => {
         body: {
             _id: argv.id,
             backendType: argv.type,
-            uri: argv.uri,
-            privateKeyPath: argv.privateKeyPath
+            username: argv.username,
+            authToken: argv.token,
+            webhookURL: argv.webhookURL,
+            port: argv.port
         },
         json: true
     });
