@@ -10,7 +10,7 @@ class EventMonitor {
     constructor() {
         this.queuedEvents = [];
         this.listeners = [];
-        api.busMonitorApi.on("busEvent", this.notifyBusEvent.bind(this));
+        this.started = false;
         this.deferredNotifyListeners = null;
     }
 
@@ -20,6 +20,17 @@ class EventMonitor {
         }
 
         return instance;
+    }
+
+    _tryStart() {
+        this.busEventSubscription = api.busMonitorApi.on("busEvent", this.notifyBusEvent.bind(this));
+    }
+
+    _tryStop() {
+        if (this.busEventSubscription) {
+            api.busMonitorApi.off(this.busEventSubscription);
+            this.busEventSubscription = null;
+        }
     }
 
     notifyBusEvent(event) {
@@ -53,6 +64,10 @@ class EventMonitor {
     addEventListener(listener) {
         this.listeners.push(listener);
 
+        if (this.listeners.length > 0) {
+            this._tryStart();
+        }
+
         return {
             dispose: this.removeEventListener.bind(this, listener)
         };
@@ -63,11 +78,15 @@ class EventMonitor {
         if (indexToRemove !== -1) {
             this.listeners.splice(indexToRemove, 1);
         }
+        if (this.listeners.length === 0) {
+            this._tryStop();
+        }
     }
 
     dispose() {
         this._cancelNotifyListenersLater();
         this.queuedEvents.length = 0;
+        this.tryStop();
     }
 }
 
