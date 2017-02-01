@@ -52,6 +52,45 @@
     }
 }
 
+.information {
+    width: 95%;
+    font-size: $font-size-small;
+    margin-bottom: $layout-gutter-width-sm;
+
+    tbody tr:nth-child(odd) {
+        background-color: $palette-blue-grey-50;
+    }
+
+    td {
+        padding: $unit;
+        // Make <Link> left aligned within property table
+        a {
+            display: inline;
+        }
+
+        .name {
+            font-weight: $font-weight-semi-bold;
+            padding-left: $layout-gutter-width-sm / 2;
+        }
+
+        .email {
+            padding-left: $layout-gutter-width-sm / 2;
+        }
+    }
+
+    td:first-child {
+        font-weight: $font-weight-semi-bold;
+    }
+
+    td:last-child {
+        color: $color-text-secondary;
+    }
+
+    td.monospace {
+        font-family: "Roboto Mono";
+    }
+}
+
 .overviewTable {
     width: 100%;
 

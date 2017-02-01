@@ -200,30 +200,72 @@ class Overview extends Component {
             <div>
                 <Row>
                     <Col xs={12} md={7}>
-                        <h4>Author</h4>
-                        <div>
-                            <Avatar className={this.props.theme.avatar}>
-                                <UserAvatar
-                                    email={latestPatch.email}
-                                    noAvatarIconName="person"
-                                />
-                            </Avatar>
-                            <div>{latestPatch.name}</div>
-                        </div>
-
                         <h4>Revision</h4>
-                        <div>
-                            <pre>
-                                {JSON.stringify(latestPatch, null, 2)}
-                            </pre>
-                        </div>
-
-                        <h4>Tags</h4>
-                        <div className={this.props.theme.tags}>
-                            {this.props.item.tags.map((tag) => (
-                                <Chip key={tag}>{tag}</Chip>
-                            ))}
-                        </div>
+                        <table className={this.props.theme.information}>
+                            <tbody>
+                                <tr>
+                                    <td>Author</td>
+                                    <td>
+                                        <Avatar className={this.props.theme.avatar}>
+                                            <UserAvatar
+                                                email={latestPatch.email}
+                                                noAvatarIconName="person"
+                                            />
+                                        </Avatar>
+                                        <span className={this.props.theme.name}>
+                                            {latestPatch.name}
+                                        </span>
+                                        <span className={this.props.theme.email}>
+                                            {`<${latestPatch.email}>`}
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Status</td>
+                                    <td>
+                                        {this.props.item.status}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Repository</td>
+                                    <td>
+                                        {this.props.item.repository}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Patches</td>
+                                    <td>
+                                        {this.props.item.patches.length}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Refname</td>
+                                    <td className={this.props.theme.monospace}>
+                                        {latestPatch.change.refname}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>SHA1</td>
+                                    <td className={this.props.theme.monospace}>
+                                        {latestPatch.change.newrev}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Previous SHA1</td>
+                                    <td className={this.props.theme.monospace}>
+                                        {latestPatch.change.oldrev}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Tags</td>
+                                    <td>
+                                        {this.props.item.tags.map((tag) => (
+                                            <Chip key={tag}>{tag}</Chip>
+                                        ))}
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </Col>
                     <Col xs={12} md={5}>
                         <h4>Events</h4>
@@ -250,7 +292,6 @@ class Overview extends Component {
                                             <Button
                                                 className={this.props.theme.commentButton}
                                                 label="Comment"
-                                                raised={true}
                                                 primary={true}
                                                 onClick={() => this.onComment()}
                                             />
