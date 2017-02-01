@@ -47,7 +47,7 @@ class Page extends Component {
             <div>
                 <AppMenu
                     primaryText="Repositories"
-                    icon="keyboard"
+                    icon="code"
                     items={items}
                 />
                 <div className={this.props.theme.content}>
