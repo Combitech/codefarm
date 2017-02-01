@@ -92,6 +92,26 @@ const baselineSpecs = [
             defaultCollector(`${flowIdTag} AND step:CG:success`)
         ]
     }, {
+        _id: "Test5",
+        collectors: [
+            defaultCollector(`${flowIdTag} AND step:CG:success`)
+        ]
+    }, {
+        _id: "Test6",
+        collectors: [
+            defaultCollector(`${flowIdTag} AND step:CG:success`)
+        ]
+    }, {
+        _id: "Test7",
+        collectors: [
+            defaultCollector(`${flowIdTag} AND step:CG:success`)
+        ]
+    }, {
+        _id: "Test8",
+        collectors: [
+            defaultCollector(`${flowIdTag} AND step:CG:success`)
+        ]
+    }, {
         _id: "Join-1-2",
         collectors: [
             defaultCollector(`${flowIdTag} AND step:Test1:success AND step:Test2:success`)
@@ -102,9 +122,29 @@ const baselineSpecs = [
             defaultCollector(`${flowIdTag} AND step:Test3:success AND step:Test4:success`)
         ]
     }, {
-        _id: "Join",
+        _id: "Join-5-6",
+        collectors: [
+            defaultCollector(`${flowIdTag} AND step:Test5:success AND step:Test6:success`)
+        ]
+    }, {
+        _id: "Join-7-8",
+        collectors: [
+            defaultCollector(`${flowIdTag} AND step:Test7:success AND step:Test8:success`)
+        ]
+    }, {
+        _id: "Join-1-2-3-4",
         collectors: [
             defaultCollector(`${flowIdTag} AND step:Join-1-2:success AND step:Join-3-4:success`)
+        ]
+    }, {
+        _id: "Join-5-6-7-8",
+        collectors: [
+            defaultCollector(`${flowIdTag} AND step:Join-5-6:success AND step:Join-7-8:success`)
+        ]
+    }, {
+        _id: "Join",
+        collectors: [
+            defaultCollector(`${flowIdTag} AND step:Join-1-2-3-4:success AND step:Join-5-6-7-8:success`)
         ]
     }
 ];
@@ -138,13 +178,37 @@ const steps = [
         "Test4", defaultScript, defaultSlaveCriteria, [ "CG" ]
     ),
     slaveScriptBlSpec(
+        "Test5", defaultScript, defaultSlaveCriteria, [ "CG" ]
+    ),
+    slaveScriptBlSpec(
+        "Test6", defaultScript, defaultSlaveCriteria, [ "CG" ]
+    ),
+    slaveScriptBlSpec(
+        "Test7", defaultScript, defaultSlaveCriteria, [ "CG" ]
+    ),
+    slaveScriptBlSpec(
+        "Test8", defaultScript, defaultSlaveCriteria, [ "CG" ]
+    ),
+    slaveScriptBlSpec(
         "Join-1-2", defaultScript, defaultSlaveCriteria, [ "Test1", "Test2" ]
     ),
     slaveScriptBlSpec(
         "Join-3-4", defaultScript, defaultSlaveCriteria, [ "Test3", "Test4" ]
     ),
     slaveScriptBlSpec(
-        "Join", defaultScript, defaultSlaveCriteria, [ "Join-1-2", "Join-3-4" ]
+        "Join-5-6", defaultScript, defaultSlaveCriteria, [ "Test5", "Test6" ]
+    ),
+    slaveScriptBlSpec(
+        "Join-7-8", defaultScript, defaultSlaveCriteria, [ "Test7", "Test8" ]
+    ),
+    slaveScriptBlSpec(
+        "Join-1-2-3-4", defaultScript, defaultSlaveCriteria, [ "Join-1-2", "Join-3-4" ]
+    ),
+    slaveScriptBlSpec(
+        "Join-5-6-7-8", defaultScript, defaultSlaveCriteria, [ "Join-5-6", "Join-7-8" ]
+    ),
+    slaveScriptBlSpec(
+        "Join", defaultScript, defaultSlaveCriteria, [ "Join-1-2-3-4", "Join-5-6-7-8" ]
     )
 ];
 
