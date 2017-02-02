@@ -91,6 +91,91 @@
     }
 }
 
+.revisionList {
+    width: 100%;
+    font-size: 1.3rem;
+    margin-bottom: $layout-gutter-width-sm;
+    margin-left: -$unit;
+    margin-right: -$unit;
+
+    .avatar {
+        width: $unit * 2;
+        height: $unit * 2;
+        margin-right: $unit / 2;
+    }
+
+    .headerSha1 {
+        width: $unit * 10;
+    }
+
+    .headerTime {
+        width: $unit * 17;
+    }
+
+    .headerAuthor {
+        width: $unit * 30;
+    }
+
+    tbody.submittedHeader, tbody.mergedHeader {
+        font-weight: $font-weight-semi-bold;
+    }
+
+    tbody.submittedList {
+        tr {
+            cursor: pointer;
+            color: $color-text-secondary;
+
+            &:nth-child(odd) {
+                background-color: $palette-amber-50;
+            }
+        }
+    }
+
+    tbody.submittedTitle {
+        td {
+            padding-left: 0;
+        }
+    }
+
+    tbody.mergedTitle {
+        td {
+            padding-top: $layout-gutter-width * 2;
+            padding-left: 0;
+        }
+    }
+
+    tbody.mergedList {
+        tr {
+            cursor: pointer;
+            color: $color-text-secondary;
+
+            &:nth-child(odd) {
+                background-color: $palette-blue-grey-50;
+            }
+
+            &:hover {
+                opacity: 0.8;
+            }
+        }
+    }
+
+    td {
+        padding: $unit / 2 $unit;
+        // Make <Link> left aligned within property table
+        a {
+            display: inline;
+        }
+
+        &.monospace {
+            font-family: "Roboto Mono";
+        }
+    }
+
+    tr {
+        border-spacing: 0;
+    }
+}
+
 .overviewTable {
     width: 100%;
 

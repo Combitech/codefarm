@@ -239,6 +239,12 @@ class Overview extends Component {
                                     </td>
                                 </tr>
                                 <tr>
+                                    <td>Comment</td>
+                                    <td className={this.props.theme.monospace}>
+                                        <pre>{latestPatch.change.comment}</pre>
+                                    </td>
+                                </tr>
+                                <tr>
                                     <td>Refname</td>
                                     <td className={this.props.theme.monospace}>
                                         {latestPatch.change.refname}
