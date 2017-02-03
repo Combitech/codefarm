@@ -30,26 +30,27 @@ class Type {
         return `${this.serviceName}.${this.typeName}`;
     }
 
-    serialize(removeVolatileParams = true) {
-        // TODO: Optimize clone below, cannot use clone directly since that copies functions as well...
-        let data = JSON.parse(JSON.stringify(this));
-        if (removeVolatileParams) {
-            data = this._serializeForDb(data);
-        }
-
-        return data;
+    serialize() {
+        return this._serializeForDb();
     }
 
-    _serializeForDb(data) {
-        const result = {};
-
-        for (const [ key, value ] of Object.entries(data)) {
-            if (!key.startsWith("__") && (typeof value !== "function")) {
-                result[key] = value;
+    _serializeForDb() {
+        /* Perform serialization in two steps:
+         * 1. Remove internal fields prefixed with __
+         * 2. Do clone
+         * One reason why we remove the internal fields first is because we
+         * clone using JSON.stringify which doesn't accept circular data.
+         * Since we remove the internal fields first, we are safe.
+         */
+        const data = Object.assign({}, this);
+        for (const key of Object.keys(data)) {
+            if (key.startsWith("__")) {
+                delete data[key];
             }
         }
 
-        return result;
+        // TODO: Optimize clone below, cannot use clone directly since that copies functions as well...
+        return JSON.parse(JSON.stringify(data));
     }
 
     static async validateBase(event, data) {
@@ -166,8 +167,8 @@ class Type {
         this.saved = new Date();
 
         await this._saveHook(old);
-        const newObj = this.serialize(false);
-        const newObjDb = this._serializeForDb(newObj);
+        const newObj = this.serialize();
+        const newObjDb = this._serializeForDb();
 
         const db = await this.constructor._getDb();
         if (old) {
