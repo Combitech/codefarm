@@ -35,8 +35,7 @@ describe("ArtifactRepo", () => {
                     port: await getPort()
                 },
                 db: {
-                    testMode: true,
-                    name: "MyDB"
+                    testMode: true
                 },
                 bus: {
                     testMode: true
@@ -93,6 +92,7 @@ describe("ArtifactRepo", () => {
     };
 
     const addRepo = async (data) => {
+        console.log("addRepo", data.backend);
         const result = await rp({
             method: "POST",
             url: `${baseUrl}/repository`,
@@ -294,7 +294,7 @@ describe("ArtifactRepo", () => {
                 });
                 assert(false, "unexpected respository creation");
             } catch (error) {
-                assert.strictEqual(error.statusCode, 500);
+                assert.strictEqual(error.statusCode, 400);
                 assert.strictEqual(error.error.result, "fail");
                 assert.strictEqual(error.error.error, "Unknown backend name non-existing-backend");
             }

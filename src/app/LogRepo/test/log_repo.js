@@ -262,7 +262,7 @@ describe("LogRepo", () => {
                 });
                 assert(false, "unexpected respository creation");
             } catch (error) {
-                assert.strictEqual(error.statusCode, 500);
+                assert.strictEqual(error.statusCode, 400);
                 assert.strictEqual(error.error.result, "fail");
                 assert.strictEqual(error.error.error, "Unknown backend name non-existing-backend");
             }

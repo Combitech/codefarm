@@ -14,13 +14,18 @@ class LogBus extends MsgBus {
             }
         };
 
-        if (config && config.queue) {
-            opts.queue = {
-                name: `${config.name}-loglines`,
-                options: {
-                    durable: true
-                }
-            };
+        if (config) {
+            if (config.queue) {
+                opts.queue = {
+                    name: `${config.name}-loglines`,
+                    options: {
+                        durable: true
+                    }
+                };
+            }
+            if (config.testMode) {
+                opts.testMode = config.testMode;
+            }
         }
 
         super(opts);

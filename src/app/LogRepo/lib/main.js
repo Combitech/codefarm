@@ -20,13 +20,8 @@ class Main extends Service {
         await this.provide("REST", {
             uri: `http://${os.hostname()}:${this.config.web.port}`
         });
-        await this.need("db", "mgmt", Database, {
-            name: this.name
-        });
-        await this.need("lb", "mgmt", LogBus, {
-            queue: true,
-            name: this.name
-        });
+        await this.need("db", "mgmt", Database, Object.assign({ name: this.name }, this.config.db));
+        await this.need("lb", "mgmt", LogBus, Object.assign({ queue: true, name: this.name }, this.config.lb));
     }
 
     async onOnline() {

@@ -50,6 +50,9 @@ class Repository extends Type {
     static async validate(event, data) {
         if (event === "create") {
             assertType(data.backend, "data.backend", "string");
+            // Check that backend exists
+            BackendProxy.instance.getBackend(data.backend);
+
             if (data.versionScheme &&
                 VERSION_SCHEMES.indexOf(data.versionScheme) === -1) {
                 throw new Error(`Invalid version scheme ${data.versionScheme}`);

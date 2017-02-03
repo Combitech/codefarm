@@ -85,7 +85,11 @@ class Database extends ProviderClient {
         }
 
         if (options && options.limit) {
-            cursor = cursor.limit(options.limit);
+            if (this.config.testMode) {
+                // TODO: Implement limit
+            } else {
+                cursor = cursor.limit(options.limit);
+            }
         }
 
         return cursor.toArray();

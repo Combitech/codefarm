@@ -50,6 +50,9 @@ describe("Exec", () => {
                 bus: {
                     testMode: true
                 },
+                logBus: {
+                    testMode: true
+                },
                 exec: {
                     /* Configure to use test object REST API */
                     testMode: true,
@@ -150,7 +153,7 @@ describe("Exec", () => {
                 },
                 db: {
                     testMode: true,
-                    name: "MyDB"
+                    name: "MyDb"
                 },
                 web: {
                     port: restServicePort
@@ -205,7 +208,7 @@ describe("Exec", () => {
 
             assert.equal(data.result, "success");
             assert.equal(data.data.uri, `ssh://${process.env.USER}@localhost:/tmp`);
-            assert.deepEqual(data.data.tags, [ "tag1", "tag2" ]);
+            assert.deepEqual(data.data.tags, [ "tag1", "tag2", data.data._id ]);
             assert.equal(data.data.executors, 1);
             assert.equal(data.data.privateKeyPath, privateKeyPath);
 
@@ -220,7 +223,7 @@ describe("Exec", () => {
 
             assert.equal(data._id, id);
             assert.equal(data.uri, `ssh://${process.env.USER}@localhost:/tmp`);
-            assert.deepEqual(data.tags, [ "tag1", "tag2" ]);
+            assert.deepEqual(data.tags, [ "tag1", "tag2", data._id ]);
             assert.equal(data.executors, 1);
             assert.equal(data.privateKeyPath, privateKeyPath);
         });
@@ -246,7 +249,7 @@ describe("Exec", () => {
 
             assert.equal(data.result, "success");
             assert.equal(data.data.uri, `ssh://${process.env.USER}@localhost:/tmp`);
-            assert.deepEqual(data.data.tags, [ "tag1", "tag2" ]);
+            assert.deepEqual(data.data.tags, [ "tag1", "tag2", data.data._id ]);
             assert.equal(data.data.executors, 1);
             assert.equal(data.data.privateKeyPath, privateKeyPath);
         });
@@ -277,7 +280,7 @@ describe("Exec", () => {
 
             assert.equal(data.result, "success");
             assert.equal(data.data.uri, `ssh://${process.env.USER}@localhost:/tmp`);
-            assert.deepEqual(data.data.tags, [ "tag1", "tag2" ]);
+            assert.deepEqual(data.data.tags, [ "tag1", "tag2", data.data._id ]);
             assert.equal(data.data.executors, 1);
             assert.equal(data.data.privateKeyPath, privateKeyPath);
         });

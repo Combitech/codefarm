@@ -21,11 +21,9 @@ class Main extends Service {
             uri: `http://${os.hostname()}:${this.config.web.port}`
         });
 
-        await this.need("db", "mgmt", Database, {
-            name: this.name
-        });
+        await this.need("db", "mgmt", Database, Object.assign({ name: this.name }, this.config.db));
         await this.need("logrepo", "logrepo", RestClient, this.config.logRepo);
-        await this.need("lb", "mgmt", LogBus);
+        await this.need("lb", "mgmt", LogBus, this.config.logBus);
     }
 
     async onOnline() {

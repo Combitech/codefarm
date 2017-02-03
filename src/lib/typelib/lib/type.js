@@ -188,6 +188,9 @@ class Type {
         if (old) {
             await this._removeHook();
 
+            // Remove from _typeInstanceMap
+            this.constructor._typeInstanceMap.remove(this._id);
+
             const db = await this.constructor._getDb();
             await db.removeOne(this.constructor.typeName, this._id);
 
