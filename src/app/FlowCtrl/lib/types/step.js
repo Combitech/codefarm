@@ -43,6 +43,22 @@ class Step extends Type {
         return ServiceMgr.instance.msgBus;
     }
 
+    async _getRestClientByType(type) {
+        const [ serviceId, typeName ] = type.split(".");
+
+        if (!ServiceMgr.instance.has(serviceId)) {
+            throw new Error(`Unknown type (${type})`);
+        }
+
+        const restClient = await ServiceMgr.instance.use(serviceId);
+
+        return {
+            serviceId,
+            typeName,
+            restClient: restClient
+        };
+    }
+
     static async validate(event, data) {
         assertProp(data, "_id", false);
         assertProp(data, "jobIds", false);
@@ -69,6 +85,7 @@ class Step extends Type {
             if (this.jobs.length > 0) {
                 const jobIds = this.jobs.map((job) => job.jobId);
                 const exec = await ServiceMgr.instance.use("exec");
+
                 try {
                     const finishedJobs = await exec.get("/job", {
                         _id: {
@@ -78,6 +95,7 @@ class Step extends Type {
                             $ne: false
                         }
                     });
+
                     for (const job of finishedJobs) {
                         ServiceMgr.instance.log("info", `Step ${this.name} found job ${job._id} which has finished, performing step job finish`);
                         await this.finishJob(job._id, job.status);
@@ -104,9 +122,10 @@ class Step extends Type {
     async requestBaseline() {
         const baselineGen = await ServiceMgr.instance.use("baselinegen");
 
-        // TODO: parentIds
         ServiceMgr.instance.log("verbose", `Step ${this.name} requesting baseline ${this.baseline}`);
+
         const result = await baselineGen.post(`/specification/${this.baseline}/request`);
+
         if (result.result !== "success") {
             throw Error(`Failed to request new baseline: ${result.error}`);
         }
@@ -118,11 +137,12 @@ class Step extends Type {
 
             return await this.runTagScript(null, baseline, "success");
         }
+
         ServiceMgr.instance.log("verbose", `Step ${this.name} creating exec.job`);
 
         const exec = await ServiceMgr.instance.use("exec");
 
-        const result = await exec.post("/job", { // TODO: parentIds
+        const result = await exec.post("/job", {
             name: this.name,
             criteria: this.criteria,
             script: this.script,
@@ -137,13 +157,7 @@ class Step extends Type {
         await this.save();
 
         for (const ref of baseline.content) {
-            const [ serviceId, typeName ] = ref.type.split(".");
-
-            if (!ServiceMgr.instance.has(serviceId)) {
-                throw new Error(`Baseline contained type (${ref.type}) we don't recognize, can not add job ref`);
-            }
-
-            const restClient = await ServiceMgr.instance.use(serviceId);
+            const { typeName, restClient } = await this._getRestClientByType(ref.type);
 
             for (const id of ref.id) {
                 await restClient.post(`/${typeName}/${id}/addref`, {
@@ -184,6 +198,7 @@ class Step extends Type {
     }
 
     async runTagScript(jobId, baseline, result) {
+        const defaultTag = `step:${this.name}:${result}`;
         const sandbox = {
             data: {
                 id: this._id,
@@ -194,20 +209,14 @@ class Step extends Type {
                 content: {},
                 result: result
             },
-            tags: [ `step:${this.name}:${result}` ],
+            tags: [ defaultTag ],
             untag: []
         };
 
         if (this.tagScript) {
             ServiceMgr.instance.log("verbose", `Step ${this.name} running tag script`);
             for (const ref of baseline.content) {
-                const [ serviceId, typeName ] = ref.type.split(".");
-
-                if (!ServiceMgr.instance.has(serviceId)) {
-                    throw new Error(`Baseline contained type (${ref.type}) we don't recognize, can not fetch objects`);
-                }
-
-                const restClient = await ServiceMgr.instance.use(serviceId);
+                const { typeName, restClient } = await this._getRestClientByType(ref.type);
 
                 sandbox.data.content[ref.name] = [];
 
@@ -221,13 +230,7 @@ class Step extends Type {
         }
 
         for (const ref of baseline.content) {
-            const [ serviceId, typeName ] = ref.type.split(".");
-
-            if (!ServiceMgr.instance.has(serviceId)) {
-                throw new Error(`Baseline contained type (${ref.type}) we don't recognize, can not tag`);
-            }
-
-            const restClient = await ServiceMgr.instance.use(serviceId);
+            const { typeName, restClient } = await this._getRestClientByType(ref.type);
 
             for (const id of ref.id) {
                 if (sandbox.tags.length > 0) {
@@ -243,6 +246,13 @@ class Step extends Type {
                 }
             }
         }
+
+        // Important to tag baseline after baseline content has been tagged!
+        const { restClient } = await this._getRestClientByType("baselinegen.baseline");
+
+        await restClient.post(`/baseline/${baseline._id}/tag`, {
+            tag: defaultTag
+        });
     }
 }
 

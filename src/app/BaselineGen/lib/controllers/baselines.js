@@ -5,7 +5,7 @@ const Baseline = require("../types/baseline");
 
 class Baselines extends Controller {
     constructor() {
-        super(Baseline, [ "read" ]);
+        super(Baseline, [ "read", "tag" ]);
     }
 }
 
