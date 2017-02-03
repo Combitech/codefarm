@@ -63,7 +63,7 @@ class GithubBackend extends AsyncEventEmitter {
                 submitted: moment.unix(event.pull_request.created_at).utc().format(),
                 comment: event.pull_request.title,
                 change: {
-                    oldrev: changeSha,
+                    oldrev: event.pull_request.base.sha,
                     newrev: changeSha,
                     refname: event.pull_request.head.ref // Use event.refName all the time instead?
                 }
