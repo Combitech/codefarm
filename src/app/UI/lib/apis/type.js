@@ -99,8 +99,6 @@ class TypeApi {
 
     async flush() {
         this.flushing = true;
-        const keys = Object.keys(this.cache);
-
         for (const key of Object.keys(this.cache)) {
             if (moment().add(UPDATE_RATE_LIMIT_MS, "ms").isAfter(this.cache[key])) {
                 const data = this.cache[key];
