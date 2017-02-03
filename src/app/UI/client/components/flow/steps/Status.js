@@ -4,18 +4,26 @@ import Component from "ui-lib/component";
 import { sizes, filters } from "ui-components/svg_grid";
 import { flattenArray } from "misc";
 
+const clock = [
+    "/Cheser/extras/255x255/status/status-clock-face.png",
+    "/Cheser/extras/255x255/status/status-clock-large.png",
+    "/Cheser/extras/255x255/status/status-clock-small.png",
+    "/Cheser/extras/255x255/status/status-clock-face-center.png"
+];
+
 const statusIcons = {
-    unknown: "/Cheser/256x256/status/dialog-question.png",
-    queued: "/Cheser/256x256/actions/document-open-recent.png",
-    allocated: "/Cheser/256x256/actions/document-open-recent.png",
-    ongoing: "/Cheser/256x256/apps/xfce4-clock.png",
-    success: "/Cheser/256x256/emblems/emblem-default.png",
-    aborted: "/Cheser/256x256/status/dialog-warning.png",
-    fail: "/Cheser/256x256/emblems/emblem-dropbox-unsyncable.png",
-    skip: "/Cheser/256x256/actions/system-log-out.png",
-    neutral: "/Cheser/256x256/emotes/face-plain.png",
-    happy: "/Cheser/256x256/emotes/face-laugh.png",
-    unhappy: "/Cheser/256x256/emotes/face-crying.png"
+    unknown: [ "/Cheser/extras/255x255/status/status-unknown.png" ],
+    queued: clock,
+    allocated: clock,
+    ongoing: clock,
+    success: [ "/Cheser/extras/255x255/status/status-success.png" ],
+    aborted: [ "/Cheser/extras/255x255/status/status-aborted.png" ],
+    fail: [ "/Cheser/extras/255x255/status/status-fail.png" ],
+    skip: [ "/Cheser/extras/255x255/status/status-skip.png" ],
+    neutral: [ "/Cheser/extras/255x255/status/status-neutral.png" ],
+    happy: [ "/Cheser/extras/255x255/status/status-happy.png" ],
+    unhappy: [ "/Cheser/extras/255x255/status/status-unhappy.png" ],
+    shadow: [ "/Cheser/extras/255x255/status/status-shadow.png" ]
 };
 
 class Status extends Component {
@@ -24,9 +32,9 @@ class Status extends Component {
 
         this.borderSize = 0;
         this.boxVerticalMargin = 20;
-        this.verticalMargin = 8;
+        this.verticalMargin = 6;
         this.horizontalMargin = 8;
-        this.iconMargin = 20;
+        this.iconMargin = -12;
         this.fontSize = 25;
 
         // TODO: We can only show one, how do we select which?
@@ -84,28 +92,33 @@ class Status extends Component {
                     y={boxY}
                     filter={`url(#${filters.SHADOW})`}
                 />
-
-                <circle
-                    className={this.props.theme.circle}
-                    cx={circleCenterX}
-                    cy={circleCenterY}
-                    r={circleRadius}
-                    filter={`url(#${filters.SHADOW})`}
-                />
-                <g
-                    className={this.props.theme[status]}
+                <image
+                    className={this.props.theme.icon}
+                    x={iconX}
+                    y={iconY}
                     width={iconSize}
                     height={iconSize}
-                >
-                    <image
-                        className={this.props.theme.icon}
-                        x={iconX}
-                        y={iconY}
-                        width={iconSize}
-                        height={iconSize}
-                        href={statusIcon}
-                    />
-                </g>
+                    href={statusIcons.shadow}
+                />
+                {statusIcon.map((icon, index) => {
+                    const className = `${status}-${index}`;
+                    return (
+                        <g
+                            className={`${this.props.theme[status]} ${this.props.theme[className]}`}
+                            width={iconSize}
+                            height={iconSize}
+                        >
+                            <image
+                                className={`${this.props.theme.icon} ${this.props.theme['icon-' + index]}`}
+                                x={iconX}
+                                y={iconY}
+                                width={iconSize}
+                                height={iconSize}
+                                href={icon}
+                            />
+                        </g>
+                    );
+                })}
                 <text
                     className={this.props.theme.text}
                     width={textWidth}

@@ -26,15 +26,9 @@ const icons = {
     baseline: "/Cheser/48x48/apps/accessories-text-editor.png"
 };
 
-class Overview extends Component {
+class Job extends Component {
     constructor(props) {
         super(props);
-
-        this.addTypeListStateVariable("baselines", "baselinegen.baseline", (props) => {
-            return {
-                "content.id": props.item._id
-            };
-        }, true);
 
         this.addStateVariable("comment", "");
     }
@@ -196,7 +190,7 @@ class Overview extends Component {
         return (
             <div>
                 <Row>
-                    <Col xs={12} md={6}>
+                    <Col xs={12} md={7}>
                         <h4>Revision</h4>
                         <table className={this.props.theme.information}>
                             <tbody>
@@ -270,7 +264,7 @@ class Overview extends Component {
                             </tbody>
                         </table>
                     </Col>
-                    <Col xs={12} md={6}>
+                    <Col xs={12} md={5}>
                         <h4>Events</h4>
                         <table className={this.props.theme.overviewTable}>
                             <tbody>
@@ -331,10 +325,11 @@ class Overview extends Component {
     }
 }
 
-Overview.propTypes = {
+Job.propTypes = {
     theme: React.PropTypes.object,
     item: React.PropTypes.object.isRequired,
-    itemExt: React.PropTypes.object.isRequired
+    itemExt: React.PropTypes.object.isRequired,
+    job: React.PropTypes.object
 };
 
-export default Overview;
+export default Job;

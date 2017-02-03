@@ -24,6 +24,18 @@
     to { transform: rotate(180deg); }
 }
 
+@keyframes pend {
+    0% { transform: rotate(20deg); }
+    50% { transform: rotate(-20deg); }
+    100% { transform: rotate(20deg); }
+}
+
+@keyframes pendHalf {
+    0% { transform: rotate(10deg); }
+    50% { transform: rotate(-10deg); }
+    100% { transform: rotate(10deg); }
+}
+
 @keyframes pulsate {
     0% { transform: scale(0.7, 0.7); opacity: 0.6; }
     25% { opacity: 1.0; }
@@ -187,12 +199,6 @@
             transition: fill 0.3s;
         }
 
-        .circle {
-            stroke: $palette-blue-grey-400;
-            stroke-width: 1;
-            fill: $color-white;
-        }
-
         .icon {
             fill: $cf-color-pane-background;
         }
@@ -204,6 +210,17 @@
         }
 
         .queued {
+            display: inline-block;
+            transform-origin: 50% 50%;
+
+            &-1 {
+                animation: pend 2s infinite ease-in-out;
+            }
+
+            &-2 {
+                animation: pendHalf 4s infinite ease-in-out;
+            }
+
             .icon {
                 fill: $cf-color-job-queued;
             }
@@ -218,7 +235,14 @@
         .ongoing {
             display: inline-block;
             transform-origin: 50% 50%;
-            animation: pulsate 2s infinite ease-out;
+
+            &-1 {
+                animation: spin 2s infinite linear;
+            }
+
+            &-2 {
+                animation: spin 4s infinite linear;
+            }
 
             .icon {
                 fill: $cf-color-job-ongoing;
