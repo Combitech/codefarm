@@ -14,11 +14,9 @@
   "engines": {
     "node": ">= 7.0.0"
   },
-  "libraries": [
-    "log"
-  ],
+  "libraries": [],
   "dependencies": {
-    "weak": "^1.0.1"
+    "weak-value-map": "https://github.com/christensson/weak-value-map"
   },
   "devDependencies": {
     "babel-eslint": "^7.1.0",
