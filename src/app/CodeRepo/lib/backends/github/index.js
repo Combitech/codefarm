@@ -1,6 +1,6 @@
 "use strict";
 
-const log = require("log");
+const { ServiceMgr } = require("service");
 const rp = require("request-promise");
 const moment = require("moment");
 const { AsyncEventEmitter } = require("emitter");
@@ -29,11 +29,11 @@ class GithubBackend extends AsyncEventEmitter {
 
     async start() {
         // Start event monitoring towards github
-
         try {
-            await this._startMonitorEventStream();
+            const result = await this._startMonitorEventStream();
+            ServiceMgr.instance.log("verbose", result);
         } catch (err) {
-            log.error("Failed to setup local web server: ", err);
+            ServiceMgr.instance.log("error", `Failed to setup GitHub webhook server: ${err}`);
         }
     }
 
@@ -42,43 +42,47 @@ class GithubBackend extends AsyncEventEmitter {
     }
 
     async _onPing(event) {
-        console.log("ping event received");
+        ServiceMgr.instance.log("verbose", "ping event received");
+        ServiceMgr.instance.log("debug", event);
     }
 
     async _onPullRequestOpen(event) {
-        console.log("pull-request-open received");
-        console.log(event);
+        ServiceMgr.instance.log("verbose" ,"pull-request-open received");
+        ServiceMgr.instance.log("debug", event);
 
-        const changeId = event.pull_request.head.sha;
+        const changeId = event.pull_request.id;
+        const changeSha = event.pull_request.head.sha;
         const repositoryId = event.repository.name;
+        const email = await this._getCommitAuthor(repositoryId, changeSha);
         const repository = await this.Repository.findOne({ _id: repositoryId });
         if (repository) {
             const ref = {
                 index: 1,
-                email: null,
+                email: email,
                 name: event.pull_request.user.login,
                 submitted: moment.unix(event.pull_request.created_at).utc().format(),
                 comment: event.pull_request.title,
                 change: {
-                    oldrev: null,
-                    newrev: null,
-                    refname: null // Use event.refName all the time instead?
+                    oldrev: changeSha,
+                    newrev: changeSha,
+                    refname: event.pull_request.head.ref // Use event.refName all the time instead?
                 }
             };
 
+            ServiceMgr.instance.log("verbose", ref);
             await this.Revision.allocate(repository._id, changeId, ref);
-            log.info(`GitHub event allocated revision ${changeId}`);
+            ServiceMgr.instance.log("verbose", `GitHub event allocated revision ${changeId}`);
         }
     }
 
     async _startMonitorEventStream() {
         this.githubEmitter.addListener("ping", this._onPing.bind(this));
         this.githubEmitter.addListener("pull-request-open", this._onPullRequestOpen.bind(this));
-        await this.githubEmitter.start(this.backend.port);
+        return await this.githubEmitter.start(this.backend.port);
     }
 
     async _createWebHook(repository) {
-        console.log(`github create webhook ${repository._id}`);
+        ServiceMgr.instance.log("verbose", `Creating GitHub webhooks on ${repository._id}`);
         const uri = `${GITHUB_API_BASE}/repos/${this.backend.username}/${repository._id}/hooks`;
         const data = {
             "name": "web",
@@ -93,6 +97,18 @@ class GithubBackend extends AsyncEventEmitter {
         await this._sendRequest(uri, data);
     }
 
+    async _getCommitAuthor(repository, commitSha) {
+        const url = `${GITHUB_API_BASE}/repos/${this.backend.username}/${repository}/commits/${commitSha}`;
+        try {
+            const result = await this._sendRequest(url, {}, "GET");
+            return result.commit.author.email;
+        }
+        catch (err) {
+            ServiceMgr.instance.log("info", `Unable to get commit author for ${repository}:${commitSha}`);
+            return null;
+        }
+    }
+
     async _sendRequest(uri, body, method = "POST") {
         const auth = Buffer.from(`${this.backend.username}:${this.backend.authToken}`).toString("base64");
         const options = {
@@ -100,7 +116,7 @@ class GithubBackend extends AsyncEventEmitter {
             uri: uri,
             headers: {
                 "User-Agent": "Code Farm",
-                "Authorization": "Basic ".concat(auth)
+                "Authorization": `Basic ${auth}`
             },
             body: body,
             json: true // Automatically stringifies the body to JSON
@@ -110,7 +126,7 @@ class GithubBackend extends AsyncEventEmitter {
     }
 
     async create(repository) {
-        console.log(`github create repo ${repository._id}`);
+        ServiceMgr.instance.log("verbose", `Creating GitHub repo ${repository._id}`);
         const uri = `${GITHUB_API_BASE}/user/repos`;
         const data = {
             "name": repository._id,
@@ -122,7 +138,9 @@ class GithubBackend extends AsyncEventEmitter {
     }
 
     async merge(/* repository, revision */) {
-//        log.info(`github merge ${revision._id} in repo ${repository._id}`);
+        // TODO: implement this
+        throw new Error("Not implemented");
+//        ServiceMgr.instance.log("info", `github merge ${revision._id} in repo ${repository._id}`);
     }
 
     async getUri(backend, repository) {
@@ -135,7 +153,7 @@ class GithubBackend extends AsyncEventEmitter {
     }
 
     async remove(repository) {
-        console.log(`github delete repo ${repository._id}`);
+        ServiceMgr.instance.log("verbose", `Deleting GitHub repo ${repository._id}`);
         await this._sendRequest(`${GITHUB_API_BASE}/repos/${this.backend.username}/${repository._id}`, {}, "DELETE");
     }
 

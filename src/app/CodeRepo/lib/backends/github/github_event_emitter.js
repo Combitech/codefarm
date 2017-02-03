@@ -1,5 +1,6 @@
 "use strict";
 
+const { ServiceMgr } = require("service");
 const log = require("log");
 const Koa = require("koa");
 const bodyParser = require("koa-bodyparser");
@@ -8,10 +9,6 @@ const { AsyncEventEmitter } = require("emitter");
 class GithubEventEmitter extends AsyncEventEmitter {
     constructor() {
         super();
-    }
-
-    async testEventStream() {
-        // Should trigger a ping
     }
 
     async _setupWebServer(port) {
@@ -27,10 +24,11 @@ class GithubEventEmitter extends AsyncEventEmitter {
                 if (body.action && body.action === "opened") {
                     this.emit("pull-request-open", body);
                 } else {
-                    console.log("unknown pull-request event received");
+                    ServiceMgr.instance.log("verbose", "unknown pull-request event received");
                 }
             } else {
-                console.log("unknown event received");
+                ServiceMgr.instance.log("verbose", "unknown event received");
+                ServiceMgr.instance.log("debug", body);
             }
 
             ctx.response.status = 200;
@@ -48,17 +46,16 @@ class GithubEventEmitter extends AsyncEventEmitter {
     }
 
     async teardownWebServer() {
-        console.log("Tearing down web hook server");
+        ServiceMgr.instance.log("verbose", "Tearing down web hook server");
         this.app.close();
     }
 
     async start(port) {
-        await this._setupWebServer(port);
+        return await this._setupWebServer(port);
     }
 
     async dispose() {
-        this.disposed = true;
-        this.teardownWebServer();
+        await this.teardownWebServer();
         this.removeAllListeners();
     }
 }
