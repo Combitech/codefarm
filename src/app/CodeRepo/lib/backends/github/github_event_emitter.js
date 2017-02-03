@@ -12,11 +12,11 @@ class GithubEventEmitter extends AsyncEventEmitter {
     }
 
     async _setupWebServer(port) {
-        this.app = new Koa();
+        const app = new Koa();
 
-        this.app.use(bodyParser());
+        app.use(bodyParser());
 
-        this.app.use(async (ctx) => {
+        app.use(async (ctx) => {
             const body = ctx.request.body;
             if (body && body.zen) {
                 this.emit("ping", body);
@@ -34,20 +34,20 @@ class GithubEventEmitter extends AsyncEventEmitter {
             ctx.response.status = 200;
         });
 
-        const server = this.app.listen(port);
+        this.server = app.listen(port);
 
         return new Promise((resolve, reject) => {
-            server.on("listening", () => {
-                server.removeListener("error", reject);
+            this.server.on("listening", () => {
+                this.server.removeListener("error", reject);
                 resolve(`Webhook server up on port ${port}`);
             });
-            server.once("error", reject);
+            this.server.once("error", reject);
         });
     }
 
     async teardownWebServer() {
         ServiceMgr.instance.log("verbose", "Tearing down web hook server");
-        this.app.close();
+        this.server.close();
     }
 
     async start(port) {
