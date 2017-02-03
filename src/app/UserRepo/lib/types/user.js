@@ -43,6 +43,8 @@ class User extends Type {
     serialize() {
         const data = super.serialize();
         data.numKeys = data.keys.length;
+
+        // We don't want to expose the keys
         delete data.keys;
 
         // We don't want to send the avatar on each request
