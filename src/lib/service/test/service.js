@@ -138,6 +138,7 @@ describe("A Service", () => {
             type: `${testInfo.name}.state`,
             tags: [],
             refs: [],
+            comments: [],
             saved: false,
             name: testInfo.name,
             state: "CONNECTED",
@@ -169,9 +170,6 @@ describe("A Service", () => {
         expectedMsg.newdata.state = "CONNECTED";
         expectedMsg.newdata.uses.mgmtCfg.state = "NOT_CREATED";
         expectedMsg.parentIds = [];
-        if (baseMessage._id) {
-            expectedMsg.parentIds.push(baseMessage._id);
-        }
         if (extraProps) {
             deepAssign(expectedMsg, extraProps);
         }
@@ -195,7 +193,7 @@ describe("A Service", () => {
         expectedMsg.newdata.created = msg.newdata.created;
         expectedMsg.newdata.state = "SETUP";
         expectedMsg.newdata.uses.mgmtCfg.state = "ONLINE";
-        expectedMsg.parentIds = [ baseMessage._id ];
+        expectedMsg.parentIds = [];
         if (extraProps) {
             deepAssign(expectedMsg, extraProps);
         }
@@ -219,7 +217,7 @@ describe("A Service", () => {
         expectedMsg.newdata.created = msg.newdata.created;
         expectedMsg.newdata.state = "ONLINE";
         expectedMsg.newdata.uses.mgmtCfg.state = "ONLINE";
-        expectedMsg.parentIds = [ baseMessage._id ];
+        expectedMsg.parentIds = [];
         if (extraProps) {
             deepAssign(expectedMsg, extraProps);
         }
@@ -243,7 +241,7 @@ describe("A Service", () => {
         expectedMsg.newdata._id = msg.newdata._id;
         expectedMsg.newdata.created = msg.newdata.created;
         expectedMsg.newdata.state = "OFFLINE";
-        expectedMsg.parentIds = [ baseMessage._id ];
+        expectedMsg.parentIds = [];
         if (extraProps) {
             deepAssign(expectedMsg, extraProps);
         }

@@ -20,8 +20,6 @@
     "weakvaluemap"
   ],
   "dependencies": {
-    "clone": "^2.1.0",
-    "deep-assign": "^2.0.0",
     "qs": "^6.3.0",
     "uuid": "^3.0.1"
   },

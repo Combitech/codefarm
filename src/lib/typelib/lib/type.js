@@ -1,7 +1,6 @@
 "use strict";
 
 const { v4: uuid } = require("uuid");
-const clone = require("clone");
 const { assertProp, assertType, ensureArray, synchronize } = require("misc");
 const WeakValueMap = require("weakvaluemap");
 const notification = require("./notification");
@@ -32,7 +31,8 @@ class Type {
     }
 
     serialize(removeVolatileParams = true) {
-        let data = clone(this);
+        // TODO: Optimize clone below, cannot use clone directly since that copies functions as well...
+        let data = JSON.parse(JSON.stringify(this));
         if (removeVolatileParams) {
             data = this._serializeForDb(data);
         }
@@ -43,9 +43,9 @@ class Type {
     _serializeForDb(data) {
         const result = {};
 
-        for (const key of Object.keys(data)) {
-            if (!key.startsWith("__")) {
-                result[key] = data[key];
+        for (const [ key, value ] of Object.entries(data)) {
+            if (!key.startsWith("__") && (typeof value !== "function")) {
+                result[key] = value;
             }
         }
 

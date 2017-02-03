@@ -28,8 +28,10 @@ describe("CmdLineOpts", () => {
                 },
                 queue: {
                     name: queue1,
-                    durable: true,
-                    exclusive: true
+                    options: {
+                        durable: true,
+                        exclusive: false
+                    }
                 }
             };
             assert.deepEqual(cfg1, cfg1Expected);
@@ -52,8 +54,10 @@ describe("CmdLineOpts", () => {
                 },
                 queue: {
                     name: queue1,
-                    durable: true,
-                    exclusive: true
+                    options: {
+                        durable: true,
+                        exclusive: false
+                    }
                 }
             };
             assert.deepEqual(cfg1, cfg1Expected);
@@ -76,8 +80,10 @@ describe("CmdLineOpts", () => {
                 },
                 queue: {
                     name: queue1,
-                    durable: true,
-                    exclusive: true
+                    options: {
+                        durable: true,
+                        exclusive: false
+                    }
                 }
             };
             assert.deepEqual(cfg1, cfg1Expected);
@@ -100,8 +106,10 @@ describe("CmdLineOpts", () => {
                 },
                 queue: {
                     name: queue1,
-                    durable: true,
-                    exclusive: true
+                    options: {
+                        durable: true,
+                        exclusive: false
+                    }
                 }
             };
             assert.deepEqual(cfg1, cfg1Expected);
