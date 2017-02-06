@@ -77,7 +77,7 @@ const slaveScriptBlSpec = (
     visible = true
 ) => defaultBlSpec(name, script, slaveCriteria, false, parentStepNames, visible);
 
-const baselineSpecs = [
+let baselineSpecs = [
     {
         _id: "Select",
         collectors: [
@@ -114,7 +114,7 @@ if (argv.simple) {
         ]
     });
 } else {
-    baselineSpecs.concat([
+    baselineSpecs = baselineSpecs.concat([
         {
             _id: "Test3",
             collectors: [
@@ -188,7 +188,7 @@ const defaultScript = `
 `;
 const defaultSlaveCriteria = "slave1";
 
-const steps = [
+let steps = [
     tagBlSpec(
         "Select", `tags.push("${flowIdTag}");`, [], false
     ),
@@ -211,7 +211,7 @@ if (argv.simple) {
         "Join", defaultScript, defaultSlaveCriteria, [ "Join-1-2" ]
     ));
 } else {
-    steps.concat([
+    steps = steps.concat([
         slaveScriptBlSpec(
             "Test3", defaultScript, defaultSlaveCriteria, [ "CG" ]
         ),
