@@ -12,7 +12,8 @@ import {
 
 const BACKEND_TYPE = {
     GIT: "git",
-    GERRIT: "gerrit"
+    GERRIT: "gerrit",
+    GITHUB: "github"
 };
 
 class Edit extends Component {
@@ -54,6 +55,26 @@ class Edit extends Component {
                 editable: true,
                 required: () => this.state.backendType.value === BACKEND_TYPE.GERRIT,
                 defaultValue: ""
+            },
+            "username": {
+                editable: true,
+                required: () => this.state.backendType.value === BACKEND_TYPE.GITHUB,
+                defaultValue: ""
+            },
+            "authToken": {
+                editable: true,
+                required: () => this.state.backendType.value === BACKEND_TYPE.GITHUB,
+                defaultValue: ""
+            },
+            "webhookURL": {
+                editable: true,
+                required: () => this.state.backendType.value === BACKEND_TYPE.GITHUB,
+                defaultValue: ""
+            },
+            "port": {
+                editable: true,
+                required: () => this.state.backendType.value === BACKEND_TYPE.GITHUB,
+                defaultValue: ""
             }
         };
 
@@ -63,7 +84,8 @@ class Edit extends Component {
     getBackendTypes() {
         return [
             { value: BACKEND_TYPE.GIT, label: "Local Git" },
-            { value: BACKEND_TYPE.GERRIT, label: "Gerrit" }
+            { value: BACKEND_TYPE.GERRIT, label: "Gerrit" },
+            { value: BACKEND_TYPE.GITHUB, label: "GitHub" }
         ];
     }
 
@@ -155,6 +177,50 @@ class Edit extends Component {
                                 disabled={this.props.item && !this.itemProperties.privateKeyPath.editable}
                                 value={this.state.privateKeyPath.value}
                                 onChange={this.state.privateKeyPath.set}
+                            />
+                        </div>
+                    }
+                    {this.state.backendType.value === BACKEND_TYPE.GITHUB &&
+                        <div>
+                            <Input
+                                type="text"
+                                label="Github user name"
+                                name="username"
+                                floating={true}
+                                required={this.itemProperties.username.required()}
+                                disabled={this.props.item && !this.itemProperties.username.editable}
+                                value={this.state.username.value}
+                                onChange={this.state.username.set}
+                            />
+                            <Input
+                                type="text"
+                                label="Authentication token"
+                                name="authToken"
+                                floating={true}
+                                required={this.itemProperties.authToken.required()}
+                                disabled={this.props.item && !this.itemProperties.authToken.editable}
+                                value={this.state.authToken.value}
+                                onChange={this.state.authToken.set}
+                            />
+                            <Input
+                                type="url"
+                                label="Webhook callback URL"
+                                name="webhookURL"
+                                floating={true}
+                                required={this.itemProperties.webhookURL.required()}
+                                disabled={this.props.item && !this.itemProperties.webhookURL.editable}
+                                value={this.state.webhookURL.value}
+                                onChange={this.state.webhookURL.set}
+                            />
+                            <Input
+                                type="number"
+                                label="Local port for webhooks"
+                                name="port"
+                                floating={true}
+                                required={this.itemProperties.port.required()}
+                                disabled={this.props.item && !this.itemProperties.port.editable}
+                                value={this.state.port.value}
+                                onChange={this.state.port.set}
                             />
                         </div>
                     }

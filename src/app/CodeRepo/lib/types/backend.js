@@ -62,6 +62,15 @@ class Backend extends Type {
                 assertType(data.uri, "data.uri", "string");
                 assertType(data.privateKeyPath, "data.privateKeyPath", "string");
                 break;
+            case "github":
+                if (data.port) {
+                    data.port = parseInt(data.port, 10);
+                }
+                assertType(data.port, "data.port", "number");
+                assertType(data.username, "data.username", "string");
+                assertType(data.authToken, "data.authToken", "string");
+                assertType(data.webhookURL, "data.webhookURL", "string");
+                break;
             default:
                 throw new Error(`Unknown backend type ${data.backendType}`);
             }

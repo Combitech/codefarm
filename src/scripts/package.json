@@ -16,6 +16,7 @@
     "create-team": "node --harmony_async_await ./create-team.js",
     "create-coderepo-git-backend": "node --harmony_async_await ./create-coderepo-git-backend.js",
     "create-coderepo-gerrit-backend": "node --harmony_async_await ./create-coderepo-gerrit-backend.js",
+    "create-coderepo-github-backend": "node --harmony_async_await ./create-coderepo-github-backend.js",
     "create-git-repo": "node --harmony_async_await ./create-git-repo.js",
     "create-artifactrepo-backend": "node --harmony_async_await ./create-artifactrepo-backend.js",
     "create-artifact-repo": "node --harmony_async_await ./create-artifact-repo.js",
