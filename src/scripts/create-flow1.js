@@ -1,13 +1,30 @@
 "use strict";
 
 const rp = require("request-promise");
+const yargs = require("yargs");
 const {
     flowctrl: configFlowCtrl,
     baselinegen: configBaselineGen
 } = require("./config.json");
 
-const flowId = "Flow1";
-const flowIdTag = `step:flow:${flowId}`;
+const argv = yargs
+.usage("Usage: $0")
+.help("help")
+.strict()
+.option("i", {
+    alias: "id",
+    describe: "Flow id",
+    type: "string",
+    default: "Flow1"
+})
+.option("simple", {
+    describe: "Num steps in parallel after CG",
+    type: "boolean",
+    default: false
+})
+.argv;
+
+const flowIdTag = `step:flow:${argv.id}`;
 
 const defaultCollector = (
     criteria,
@@ -34,7 +51,7 @@ const defaultBlSpec = (
 ) => {
     return {
         name: name,
-        flow: flowId,
+        flow: argv.id,
         concurrency: 1,
         baseline: name, // Use baseline with same name as step
         criteria: slaveCriteria,
@@ -82,72 +99,85 @@ const baselineSpecs = [
             defaultCollector(`${flowIdTag} AND step:CG:success`)
         ]
     }, {
-        _id: "Test3",
-        collectors: [
-            defaultCollector(`${flowIdTag} AND step:CG:success`)
-        ]
-    }, {
-        _id: "Test4",
-        collectors: [
-            defaultCollector(`${flowIdTag} AND step:CG:success`)
-        ]
-    }, {
-        _id: "Test5",
-        collectors: [
-            defaultCollector(`${flowIdTag} AND step:CG:success`)
-        ]
-    }, {
-        _id: "Test6",
-        collectors: [
-            defaultCollector(`${flowIdTag} AND step:CG:success`)
-        ]
-    }, {
-        _id: "Test7",
-        collectors: [
-            defaultCollector(`${flowIdTag} AND step:CG:success`)
-        ]
-    }, {
-        _id: "Test8",
-        collectors: [
-            defaultCollector(`${flowIdTag} AND step:CG:success`)
-        ]
-    }, {
         _id: "Join-1-2",
         collectors: [
             defaultCollector(`${flowIdTag} AND step:Test1:success AND step:Test2:success`)
         ]
-    }, {
-        _id: "Join-3-4",
-        collectors: [
-            defaultCollector(`${flowIdTag} AND step:Test3:success AND step:Test4:success`)
-        ]
-    }, {
-        _id: "Join-5-6",
-        collectors: [
-            defaultCollector(`${flowIdTag} AND step:Test5:success AND step:Test6:success`)
-        ]
-    }, {
-        _id: "Join-7-8",
-        collectors: [
-            defaultCollector(`${flowIdTag} AND step:Test7:success AND step:Test8:success`)
-        ]
-    }, {
-        _id: "Join-1-2-3-4",
-        collectors: [
-            defaultCollector(`${flowIdTag} AND step:Join-1-2:success AND step:Join-3-4:success`)
-        ]
-    }, {
-        _id: "Join-5-6-7-8",
-        collectors: [
-            defaultCollector(`${flowIdTag} AND step:Join-5-6:success AND step:Join-7-8:success`)
-        ]
-    }, {
-        _id: "Join",
-        collectors: [
-            defaultCollector(`${flowIdTag} AND step:Join-1-2-3-4:success AND step:Join-5-6-7-8:success`)
-        ]
     }
 ];
+
+if (argv.simple) {
+    baselineSpecs.push({
+        _id: "Join",
+        collectors: [
+            defaultCollector(`${flowIdTag} AND step:Join-1-2:success`)
+        ]
+    });
+} else {
+    baselineSpecs.concat([
+        {
+            _id: "Test3",
+            collectors: [
+                defaultCollector(`${flowIdTag} AND step:CG:success`)
+            ]
+        }, {
+            _id: "Test4",
+            collectors: [
+                defaultCollector(`${flowIdTag} AND step:CG:success`)
+            ]
+        }, {
+            _id: "Test5",
+            collectors: [
+                defaultCollector(`${flowIdTag} AND step:CG:success`)
+            ]
+        }, {
+            _id: "Test6",
+            collectors: [
+                defaultCollector(`${flowIdTag} AND step:CG:success`)
+            ]
+        }, {
+            _id: "Test7",
+            collectors: [
+                defaultCollector(`${flowIdTag} AND step:CG:success`)
+            ]
+        }, {
+            _id: "Test8",
+            collectors: [
+                defaultCollector(`${flowIdTag} AND step:CG:success`)
+            ]
+        }, {
+            _id: "Join-3-4",
+            collectors: [
+                defaultCollector(`${flowIdTag} AND step:Test3:success AND step:Test4:success`)
+            ]
+        }, {
+            _id: "Join-5-6",
+            collectors: [
+                defaultCollector(`${flowIdTag} AND step:Test5:success AND step:Test6:success`)
+            ]
+        }, {
+            _id: "Join-7-8",
+            collectors: [
+                defaultCollector(`${flowIdTag} AND step:Test7:success AND step:Test8:success`)
+            ]
+        }, {
+            _id: "Join-1-2-3-4",
+            collectors: [
+                defaultCollector(`${flowIdTag} AND step:Join-1-2:success AND step:Join-3-4:success`)
+            ]
+        }, {
+            _id: "Join-5-6-7-8",
+            collectors: [
+                defaultCollector(`${flowIdTag} AND step:Join-5-6:success AND step:Join-7-8:success`)
+            ]
+        }, {
+            _id: "Join",
+            collectors: [
+                defaultCollector(`${flowIdTag} AND step:Join-1-2-3-4:success AND step:Join-5-6-7-8:success`)
+            ]
+        }
+    ]);
+}
 
 const defaultScript = `
     #!/bin/bash
@@ -172,45 +202,54 @@ const steps = [
         "Test2", defaultScript, defaultSlaveCriteria, [ "CG" ]
     ),
     slaveScriptBlSpec(
-        "Test3", defaultScript, defaultSlaveCriteria, [ "CG" ]
-    ),
-    slaveScriptBlSpec(
-        "Test4", defaultScript, defaultSlaveCriteria, [ "CG" ]
-    ),
-    slaveScriptBlSpec(
-        "Test5", defaultScript, defaultSlaveCriteria, [ "CG" ]
-    ),
-    slaveScriptBlSpec(
-        "Test6", defaultScript, defaultSlaveCriteria, [ "CG" ]
-    ),
-    slaveScriptBlSpec(
-        "Test7", defaultScript, defaultSlaveCriteria, [ "CG" ]
-    ),
-    slaveScriptBlSpec(
-        "Test8", defaultScript, defaultSlaveCriteria, [ "CG" ]
-    ),
-    slaveScriptBlSpec(
         "Join-1-2", defaultScript, defaultSlaveCriteria, [ "Test1", "Test2" ]
-    ),
-    slaveScriptBlSpec(
-        "Join-3-4", defaultScript, defaultSlaveCriteria, [ "Test3", "Test4" ]
-    ),
-    slaveScriptBlSpec(
-        "Join-5-6", defaultScript, defaultSlaveCriteria, [ "Test5", "Test6" ]
-    ),
-    slaveScriptBlSpec(
-        "Join-7-8", defaultScript, defaultSlaveCriteria, [ "Test7", "Test8" ]
-    ),
-    slaveScriptBlSpec(
-        "Join-1-2-3-4", defaultScript, defaultSlaveCriteria, [ "Join-1-2", "Join-3-4" ]
-    ),
-    slaveScriptBlSpec(
-        "Join-5-6-7-8", defaultScript, defaultSlaveCriteria, [ "Join-5-6", "Join-7-8" ]
-    ),
-    slaveScriptBlSpec(
-        "Join", defaultScript, defaultSlaveCriteria, [ "Join-1-2-3-4", "Join-5-6-7-8" ]
     )
 ];
+
+if (argv.simple) {
+    steps.push(slaveScriptBlSpec(
+        "Join", defaultScript, defaultSlaveCriteria, [ "Join-1-2" ]
+    ));
+} else {
+    steps.concat([
+        slaveScriptBlSpec(
+            "Test3", defaultScript, defaultSlaveCriteria, [ "CG" ]
+        ),
+        slaveScriptBlSpec(
+            "Test4", defaultScript, defaultSlaveCriteria, [ "CG" ]
+        ),
+        slaveScriptBlSpec(
+            "Test5", defaultScript, defaultSlaveCriteria, [ "CG" ]
+        ),
+        slaveScriptBlSpec(
+            "Test6", defaultScript, defaultSlaveCriteria, [ "CG" ]
+        ),
+        slaveScriptBlSpec(
+            "Test7", defaultScript, defaultSlaveCriteria, [ "CG" ]
+        ),
+        slaveScriptBlSpec(
+            "Test8", defaultScript, defaultSlaveCriteria, [ "CG" ]
+        ),
+        slaveScriptBlSpec(
+            "Join-3-4", defaultScript, defaultSlaveCriteria, [ "Test3", "Test4" ]
+        ),
+        slaveScriptBlSpec(
+            "Join-5-6", defaultScript, defaultSlaveCriteria, [ "Test5", "Test6" ]
+        ),
+        slaveScriptBlSpec(
+            "Join-7-8", defaultScript, defaultSlaveCriteria, [ "Test7", "Test8" ]
+        ),
+        slaveScriptBlSpec(
+            "Join-1-2-3-4", defaultScript, defaultSlaveCriteria, [ "Join-1-2", "Join-3-4" ]
+        ),
+        slaveScriptBlSpec(
+            "Join-5-6-7-8", defaultScript, defaultSlaveCriteria, [ "Join-5-6", "Join-7-8" ]
+        ),
+        slaveScriptBlSpec(
+            "Join", defaultScript, defaultSlaveCriteria, [ "Join-1-2-3-4", "Join-5-6-7-8" ]
+        )
+    ]);
+}
 
 const run = async () => {
     const restCreateType = async (uri, type, data, verbose = false) => {
@@ -247,8 +286,8 @@ const run = async () => {
 
     // Create flowctrl stuff
     await flowCtrlCreate("flow", {
-        _id: flowId,
-        description: `Flow with id ${flowId}`
+        _id: argv.id,
+        description: `Flow with id ${argv.id}`
     });
 
     const stepIds = {};
