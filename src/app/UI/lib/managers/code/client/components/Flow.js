@@ -1,8 +1,7 @@
 
 import React from "react";
 import Component from "ui-lib/component";
-import { Flow } from "ui-components/flow";
-import Step from "./Step";
+import { Flow, StepStatus } from "ui-components/flow";
 import moment from "moment";
 
 class FlowComponent extends Component {
@@ -26,7 +25,7 @@ class FlowComponent extends Component {
             meta: {
                 status: "neutral"
             },
-            type: Step,
+            type: StepStatus,
             disabled: () => false,
             active: () => !this.props.step.value,
             parentIds: [],
@@ -47,22 +46,24 @@ class FlowComponent extends Component {
             const jobRefs = this.props.itemExt.data.refs.filter((ref) => ref.name === step.name);
 
             jobRefs.sort((a, b) => moment(a.data.created).isBefore(b.data.created) ? 1 : -1);
+            const job = jobRefs[0] ? jobRefs[0].data : false;
 
-            if (jobRefs[0]) {
-                status = jobRefs[0].data.status;
+            if (job) {
+                status = job.status;
             }
 
             statuses.add(status || "unknown");
 
             return {
                 id: step._id,
-                type: Step,
+                type: StepStatus,
                 name: step.name,
                 meta: {
                     status: status,
                     revision: this.props.item,
                     flow: this.props.flow,
-                    step: step
+                    step: step,
+                    job: job
                 },
                 disabled: () => false,
                 active: () => this.props.step.value === step.name,

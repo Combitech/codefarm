@@ -2,7 +2,6 @@
 import React from "react";
 import Component from "ui-lib/component";
 import { sizes, filters } from "ui-components/svg_grid";
-import { flattenArray } from "misc";
 
 const clock = [
     "/Cheser/extras/255x255/status/status-clock-face.png",
@@ -36,23 +35,11 @@ class Status extends Component {
         this.horizontalMargin = 8;
         this.iconMargin = -12;
         this.fontSize = 25;
-
-        // TODO: We can only show one, how do we select which?
-        this.addTypeItemStateVariable("job", "exec.job", (props) => {
-            if (props.baselines.length === 0) {
-                return false;
-            }
-
-            return flattenArray(
-                props.baselines
-                .map((baseline) => baseline.tags))
-                .filter((tag) => tag.startsWith("job:"))
-                .map((tag) => tag.replace("job:", "")
-            )[0] || false;
-        }, true);
     }
 
     render() {
+        this.log("render", this.props, JSON.stringify(this.state, null, 2));
+
         const width = sizes.gridSize * this.props.item.columnSpan;
         const height = sizes.gridSize * this.props.item.rowSpan;
         const verticalMiddle = (height / 2);
@@ -77,7 +64,7 @@ class Status extends Component {
 
         const selectedClassName = this.props.item.active() ? this.props.theme.statusBoxSelected : "";
 
-        const status = this.state.job ? this.state.job.status : (this.props.item.meta.status || "unknown");
+        const status = this.props.item.meta.job ? this.props.item.meta.job.status : (this.props.item.meta.status || "unknown");
         const statusIcon = statusIcons[status];
 
         return (
@@ -101,15 +88,18 @@ class Status extends Component {
                     href={statusIcons.shadow}
                 />
                 {statusIcon.map((icon, index) => {
-                    const className = `${status}-${index}`;
+                    const statusClassName = `${status}-${index}`;
+                    const iconClassName = `icon-${index}`;
+
                     return (
                         <g
-                            className={`${this.props.theme[status]} ${this.props.theme[className]}`}
+                            key={icon}
+                            className={`${this.props.theme[status]} ${this.props.theme[statusClassName]}`}
                             width={iconSize}
                             height={iconSize}
                         >
                             <image
-                                className={`${this.props.theme.icon} ${this.props.theme['icon-' + index]}`}
+                                className={`${this.props.theme.icon} ${this.props.theme[iconClassName]}`}
                                 x={iconX}
                                 y={iconY}
                                 width={iconSize}
@@ -134,14 +124,10 @@ class Status extends Component {
     }
 }
 
-Status.defaultProps = {
-    baselines: []
-};
-
 Status.propTypes = {
     theme: React.PropTypes.object,
     item: React.PropTypes.object.isRequired,
-    baselines: React.PropTypes.array
+    job: React.PropTypes.object
 };
 
 export default Status;
