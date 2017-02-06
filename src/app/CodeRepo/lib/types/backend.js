@@ -67,7 +67,9 @@ class Backend extends Type {
                     data.port = parseInt(data.port, 10);
                 }
                 assertType(data.port, "data.port", "number");
-                assertType(data.username, "data.username", "string");
+                assertType(data.target, "data.target", "string");
+                assertType(data.isOrganization, "data.isOrganization", "boolean");
+                assertType(data.authUser, "data.authUser", "string");
                 assertType(data.authToken, "data.authToken", "string");
                 assertType(data.webhookURL, "data.webhookURL", "string");
                 break;
