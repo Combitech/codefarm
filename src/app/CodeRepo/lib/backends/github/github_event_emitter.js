@@ -23,13 +23,17 @@ class GithubEventEmitter extends AsyncEventEmitter {
             } else if (body && body.pull_request) {
                 if (body.action && body.action === "opened") {
                     this.emit("pull-request-open", body);
+                } else if (body.action && body.action === "synchronize") {
+                    this.emit("pull-request-update", body);
+                } else if (body.action && body.action === "closed") {
+                    this.emit("pull-request-closed", body);
                 } else {
                     ServiceMgr.instance.log("verbose", "unknown pull-request event received");
                     ServiceMgr.instance.log("verbose", JSON.stringify(body, null, 2));
                 }
             } else {
                 ServiceMgr.instance.log("verbose", "unknown event received");
-                ServiceMgr.instance.log("debug", JSON.stringify(body, null, 2));
+                ServiceMgr.instance.log("verbose", JSON.stringify(body, null, 2));
             }
 
             ctx.response.status = 200;
