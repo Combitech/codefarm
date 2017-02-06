@@ -4,6 +4,7 @@ import Component from "ui-lib/component";
 import Input from "react-toolbox/lib/input";
 import Dropdown from "react-toolbox/lib/dropdown";
 import Autocomplete from "react-toolbox/lib/autocomplete";
+import Checkbox from "react-toolbox/lib/checkbox"
 import {
     Form as TAForm,
     Section as TASection,
@@ -56,7 +57,17 @@ class Edit extends Component {
                 required: () => this.state.backendType.value === BACKEND_TYPE.GERRIT,
                 defaultValue: ""
             },
-            "username": {
+            "target": {
+                editable: true,
+                required: () => this.state.backendType.value === BACKEND_TYPE.GITHUB,
+                defaultValue: ""
+            },
+            "isOrganization": {
+                editable: true,
+                required: () => this.state.backendType.value === BACKEND_TYPE.GITHUB,
+                defaultValue: true
+            },
+            "authUser": {
                 editable: true,
                 required: () => this.state.backendType.value === BACKEND_TYPE.GITHUB,
                 defaultValue: ""
@@ -184,17 +195,36 @@ class Edit extends Component {
                         <div>
                             <Input
                                 type="text"
-                                label="Github user name"
-                                name="username"
+                                label="GitHub target (organization or user)"
+                                name="target"
                                 floating={true}
-                                required={this.itemProperties.username.required()}
-                                disabled={this.props.item && !this.itemProperties.username.editable}
-                                value={this.state.username.value}
-                                onChange={this.state.username.set}
+                                required={this.itemProperties.target.required()}
+                                disabled={this.props.item && !this.itemProperties.target.editable}
+                                value={this.state.target.value}
+                                onChange={this.state.target.set}
+                            />
+                            <Checkbox
+                                type="text"
+                                label="Target is an organization"
+                                name="isOrganization"
+                                required={this.itemProperties.isOrganization.required()}
+                                disabled={this.props.item && !this.itemProperties.isOrganization.editable}
+                                checked={this.state.isOrganization.value}
+                                onChange={this.state.isOrganization.set}
                             />
                             <Input
                                 type="text"
-                                label="Authentication token"
+                                label="Github user to authenticate as"
+                                name="authUser"
+                                floating={true}
+                                required={this.itemProperties.authUser.required()}
+                                disabled={this.props.item && !this.itemProperties.authUser.editable}
+                                value={this.state.authUser.value}
+                                onChange={this.state.authUser.set}
+                            />
+                            <Input
+                                type="text"
+                                label="GitHub user authentication token"
                                 name="authToken"
                                 floating={true}
                                 required={this.itemProperties.authToken.required()}

@@ -2,7 +2,7 @@
 
 const { ServiceMgr } = require("service");
 const log = require("log");
-const Koa = require("koa");
+const Koa = require("koa2");
 const bodyParser = require("koa-bodyparser");
 const { AsyncEventEmitter } = require("emitter");
 
@@ -25,7 +25,7 @@ class GithubEventEmitter extends AsyncEventEmitter {
                     this.emit("pull-request-open", body);
                 } else {
                     ServiceMgr.instance.log("verbose", "unknown pull-request event received");
-                    ServiceMgr.instance.log("debug", JSON.stringify(body, null, 2));
+                    ServiceMgr.instance.log("verbose", JSON.stringify(body, null, 2));
                 }
             } else {
                 ServiceMgr.instance.log("verbose", "unknown event received");

@@ -46,10 +46,7 @@ class GithubBackend extends AsyncEventEmitter {
         ServiceMgr.instance.log("debug", event);
     }
 
-    async _onPullRequestOpen(event) {
-        ServiceMgr.instance.log("verbose" ,"pull-request-open received");
-        ServiceMgr.instance.log("debug", event);
-
+    async _createRevision(event) {
         const changeId = event.pull_request.id;
         const changeSha = event.pull_request.head.sha;
         const repositoryId = event.repository.name;
@@ -69,10 +66,22 @@ class GithubBackend extends AsyncEventEmitter {
                 }
             };
 
-            ServiceMgr.instance.log("verbose", ref);
+            ServiceMgr.instance.log("debug", ref);
             await this.Revision.allocate(repository._id, changeId, ref);
             ServiceMgr.instance.log("verbose", `GitHub event allocated revision ${changeId}`);
         }
+    }
+
+    async _onPullRequestUpdate(event) {
+        ServiceMgr.instance.log("verbose" ,"pull-request-update received");
+        ServiceMgr.instance.log("debug", event);
+        await this._createRevision(event)
+    }
+
+    async _onPullRequestOpen(event) {
+        ServiceMgr.instance.log("verbose" ,"pull-request-open received");
+        ServiceMgr.instance.log("debug", event);
+        await this._createRevision(event);
     }
 
     async _startMonitorEventStream() {
@@ -83,7 +92,7 @@ class GithubBackend extends AsyncEventEmitter {
 
     async _createWebHook(repository) {
         ServiceMgr.instance.log("verbose", `Creating GitHub webhooks on ${repository._id}`);
-        const uri = `${GITHUB_API_BASE}/repos/${this.backend.username}/${repository._id}/hooks`;
+        const uri = `${GITHUB_API_BASE}/repos/${this.backend.target}/${repository._id}/hooks`;
         const data = {
             "name": "web",
             "active": true,
@@ -98,7 +107,8 @@ class GithubBackend extends AsyncEventEmitter {
     }
 
     async _getCommitAuthor(repository, commitSha) {
-        const url = `${GITHUB_API_BASE}/repos/${this.backend.username}/${repository}/commits/${commitSha}`;
+        const url = `${GITHUB_API_BASE}/repos/${this.backend.target}/${repository}/commits/${commitSha}`;
+        console.log("Get commit author: ", url);
         try {
             const result = await this._sendRequest(url, {}, "GET");
             return result.commit.author.email;
@@ -110,7 +120,7 @@ class GithubBackend extends AsyncEventEmitter {
     }
 
     async _sendRequest(uri, body, method = "POST") {
-        const auth = Buffer.from(`${this.backend.username}:${this.backend.authToken}`).toString("base64");
+        const auth = Buffer.from(`${this.backend.authUser}:${this.backend.authToken}`).toString("base64");
         const options = {
             method: method,
             uri: uri,
@@ -127,7 +137,14 @@ class GithubBackend extends AsyncEventEmitter {
 
     async create(repository) {
         ServiceMgr.instance.log("verbose", `Creating GitHub repo ${repository._id}`);
-        const uri = `${GITHUB_API_BASE}/user/repos`;
+
+        let uri;
+        if (this.backend.isOrganization) {
+            uri = `${GITHUB_API_BASE}/orgs/${this.backend.target}/repos`;
+        }
+        else {
+            uri = `${GITHUB_API_BASE}/user/repos`;
+        }
         const data = {
             "name": repository._id,
             "auto_init": true
@@ -144,7 +161,7 @@ class GithubBackend extends AsyncEventEmitter {
     }
 
     async getUri(backend, repository) {
-        return `${GITHUB_BASE}/${this.backend.username}/${repository._id}`;
+        return `${GITHUB_BASE}/${this.backend.target}/${repository._id}`;
     }
 
 
@@ -154,7 +171,7 @@ class GithubBackend extends AsyncEventEmitter {
 
     async remove(repository) {
         ServiceMgr.instance.log("verbose", `Deleting GitHub repo ${repository._id}`);
-        await this._sendRequest(`${GITHUB_API_BASE}/repos/${this.backend.username}/${repository._id}`, {}, "DELETE");
+        await this._sendRequest(`${GITHUB_API_BASE}/repos/${this.backend.target}/${repository._id}`, {}, "DELETE");
     }
 
     async dispose() {
