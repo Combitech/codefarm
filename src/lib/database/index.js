@@ -1,6 +1,6 @@
 "use strict";
 
-const { MongoClient: mongo, Binary } = require("mongodb");
+const { MongoClient: mongo } = require("mongodb");
 const { v4: uuid } = require("uuid");
 const ProviderClient = require("providerclient");
 
@@ -173,8 +173,12 @@ const createState = async (db, collection, data) => {
     });
 };
 
-const toBinary = (buffer) => new Binary(buffer);
+const encodeBinary = (buffer, coding = "base64") =>
+    new Buffer(buffer).toString(coding);
+const decodeBinary = (buffer, coding = "base64") =>
+    new Buffer(buffer, coding);
 
 module.exports = Database;
 module.exports.createState = createState;
-module.exports.toBinary = toBinary;
+module.exports.encodeBinary = encodeBinary;
+module.exports.decodeBinary = decodeBinary;

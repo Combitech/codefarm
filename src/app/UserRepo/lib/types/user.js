@@ -5,7 +5,7 @@ const { assertType, assertProp, StreamConverter } = require("misc");
 const { Type } = require("typelib");
 const BackendProxy = require("../backend_proxy");
 const Team = require("./team");
-const { toBinary } = require("database");
+const { encodeBinary, decodeBinary } = require("database");
 
 class User extends Type {
     constructor(data) {
@@ -130,7 +130,7 @@ class User extends Type {
 
     async setAvatar(parentIds, fileStream) {
         const fileBuf = await new StreamConverter(fileStream).toBuffer();
-        const binData = toBinary(fileBuf);
+        const binData = encodeBinary(fileBuf);
 
         this.avatar = {
             data: binData,
@@ -153,9 +153,9 @@ class User extends Type {
 
         ctx.type = this.avatar.meta.mimeType;
         if (binary) {
-            ctx.body = this.avatar.data.buffer;
+            ctx.body = decodeBinary(this.avatar.data);
         } else {
-            ctx.body = this.avatar.data.buffer.toString("base64");
+            ctx.body = decodeBinary(this.avatar.data).toString("base64");
         }
     }
 }
