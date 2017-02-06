@@ -23,6 +23,16 @@ const argv = yargs
     requiresArg: true,
     default: "github"
 })
+.option("target", {
+    describe: "Target organization or user",
+    type: "string",
+    requiresArg: true
+})
+.option("target", {
+    describe: "Is target organization?",
+    type: "boolean",
+    requiresArg: true
+})
 .option("username", {
     describe: "GitHub username to authenticate as",
     type: "string",
@@ -54,7 +64,9 @@ const run = async () => {
         body: {
             _id: argv.id,
             backendType: argv.type,
-            username: argv.username,
+            target: target,
+            isOrganization: isOrganization,
+            authUser: argv.username,
             authToken: argv.token,
             webhookURL: argv.webhookURL,
             port: argv.port

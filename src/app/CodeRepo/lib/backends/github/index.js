@@ -11,8 +11,18 @@ const GITHUB_BASE = "https://github.com";
 
 /*
 To get started with github:
-1. blalbabla
-2. blalalalala
+1. Create a new user to use as integrator
+2. Setup a personal token for that user in GitHub 'Settings'
+2.1 Make sure the 'repo' and 'admin:repo_hook' categories are checked
+2.2 If you want to be able to delete repositories also check 'delete_repo'
+3. Create the backend in the UI, provide the token and other data
+
+Creating a new repository:
+1. Use the UI to create the new repository
+2. Under repository settings, only allow merge squash under "Merge button"
+
+Connecting to an existing repository:
+TODO: connecting to existing repo not yet supported
 */
 
 class GithubBackend extends AsyncEventEmitter {
@@ -46,6 +56,21 @@ class GithubBackend extends AsyncEventEmitter {
         ServiceMgr.instance.log("debug", event);
     }
 
+    _createRef(email, event) {
+        return {
+            index: 1,
+            email: email,
+            name: event.pull_request.user.login,
+            submitted: moment.unix(event.pull_request.created_at).utc().format(),
+            comment: event.pull_request.title,
+            change: {
+                oldrev: event.pull_request.base.sha,
+                newrev: event.pull_request.head.sha,
+                refname: event.pull_request.head.ref
+            }
+        };
+    }
+
     async _createRevision(event) {
         const changeId = event.pull_request.id;
         const changeSha = event.pull_request.head.sha;
@@ -53,33 +78,47 @@ class GithubBackend extends AsyncEventEmitter {
         const email = await this._getCommitAuthor(repositoryId, changeSha);
         const repository = await this.Repository.findOne({ _id: repositoryId });
         if (repository) {
-            const ref = {
-                index: 1,
-                email: email,
-                name: event.pull_request.user.login,
-                submitted: moment.unix(event.pull_request.created_at).utc().format(),
-                comment: event.pull_request.title,
-                change: {
-                    oldrev: event.pull_request.base.sha,
-                    newrev: changeSha,
-                    refname: event.pull_request.head.ref // Use event.refName all the time instead?
-                }
-            };
+            const ref = this._createRef(changeSha, email, event);
+            ServiceMgr.instance.log("debug", `Created revision ref ${ref}`);
+            ServiceMgr.instance.log("verbose", `GitHub event allocating revision ${changeId}`);
 
-            ServiceMgr.instance.log("debug", ref);
-            await this.Revision.allocate(repository._id, changeId, ref);
-            ServiceMgr.instance.log("verbose", `GitHub event allocated revision ${changeId}`);
+            return await this.Revision.allocate(repository._id, changeId, ref);
+        }
+    }
+
+    async _onPullRequestClosed(event) {
+        ServiceMgr.instance.log("verbose", "pull-request-closed received");
+        ServiceMgr.instance.log("debug", event);
+
+        if (event.pull_request.merged === true) {
+            const repositoryId = event.repository.name;
+            const repository = await this.Repository.findOne({ _id: repositoryId });
+            // Make sure that we know about repo
+            if (repository) {
+                // And that we know about revision...
+                const changeId = event.pull_request.id;
+                const revision = await this.Revision.findOne({ _id: changeId });
+                if (revision) {
+                    const changeSha = event.pull_request.head.sha;
+                    const email = await this._getCommitAuthor(repositoryId, changeSha);
+                    const ref = this._createRef(email, event);
+
+                    await revision.setMerged(ref);
+                    await this.emit("revision.merged", revision);
+                    ServiceMgr.instance.log("info", `GitHub event merged revision ${changeId}`);
+                }
+            }
         }
     }
 
     async _onPullRequestUpdate(event) {
-        ServiceMgr.instance.log("verbose" ,"pull-request-update received");
+        ServiceMgr.instance.log("verbose", "pull-request-update received");
         ServiceMgr.instance.log("debug", event);
-        await this._createRevision(event)
+        await this._createRevision(event);
     }
 
     async _onPullRequestOpen(event) {
-        ServiceMgr.instance.log("verbose" ,"pull-request-open received");
+        ServiceMgr.instance.log("verbose", "pull-request-open received");
         ServiceMgr.instance.log("debug", event);
         await this._createRevision(event);
     }
@@ -87,6 +126,9 @@ class GithubBackend extends AsyncEventEmitter {
     async _startMonitorEventStream() {
         this.githubEmitter.addListener("ping", this._onPing.bind(this));
         this.githubEmitter.addListener("pull-request-open", this._onPullRequestOpen.bind(this));
+        this.githubEmitter.addListener("pull-request-update", this._onPullRequestUpdate.bind(this));
+        this.githubEmitter.addListener("pull-request-closed", this._onPullRequestClosed.bind(this));
+
         return await this.githubEmitter.start(this.backend.port);
     }
 
