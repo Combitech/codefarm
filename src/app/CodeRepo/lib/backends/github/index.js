@@ -78,7 +78,7 @@ class GithubBackend extends AsyncEventEmitter {
         const email = await this._getCommitAuthor(repositoryId, changeSha);
         const repository = await this.Repository.findOne({ _id: repositoryId });
         if (repository) {
-            const ref = this._createRef(changeSha, email, event);
+            const ref = this._createRef(email, event);
             ServiceMgr.instance.log("debug", `Created revision ref ${ref}`);
             ServiceMgr.instance.log("verbose", `GitHub event allocating revision ${changeId}`);
 
