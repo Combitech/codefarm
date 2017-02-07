@@ -75,7 +75,7 @@ class GithubBackend extends AsyncEventEmitter {
 
     async _onPing(event) {
         ServiceMgr.instance.log("verbose", "ping event received");
-        ServiceMgr.instance.log("debug", event);
+        ServiceMgr.instance.log("debug", JSON.stringify(event, null, 2));
     }
 
     _createRef(email, event) {
@@ -135,20 +135,20 @@ class GithubBackend extends AsyncEventEmitter {
 
     async _onPullRequestUpdate(event) {
         ServiceMgr.instance.log("verbose", "pull_request_update received");
-        ServiceMgr.instance.log("debug", event);
+        ServiceMgr.instance.log("debug", JSON.stringify(event, null, 2));
         await this._createRevision(event);
     }
 
     async _onPullRequestOpen(event) {
         ServiceMgr.instance.log("verbose", "pull_request_open received");
-        ServiceMgr.instance.log("debug", event);
+        ServiceMgr.instance.log("debug", JSON.stringify(event, null, 2));
         await this._createRevision(event);
     }
 
     async _onPullRequestReview(event) {
         ServiceMgr.instance.log("verbose", "pull_request_review received");
-        ServiceMgr.instance.log("debug", event);
-        ServiceMgr.instance.log("verbose", `Review ${event.state} for ${event.pull_request.id}`);
+        ServiceMgr.instance.log("debug", JSON.stringify(event, null, 2));
+        ServiceMgr.instance.log("verbose", `Review ${event.review.state} for ${event.pull_request.id}`);
     }
 
     async _startMonitorEventStream() {
@@ -179,7 +179,6 @@ class GithubBackend extends AsyncEventEmitter {
 
     async _getCommitAuthor(repository, commitSha) {
         const url = `${GITHUB_API_BASE}/repos/${this.backend.target}/${repository}/commits/${commitSha}`;
-        console.log("Get commit author: ", url);
         try {
             const result = await this._sendRequest(url, {}, "GET");
 

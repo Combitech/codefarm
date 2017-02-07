@@ -20,24 +20,8 @@ class GithubEventEmitter extends AsyncEventEmitter {
             const header = ctx.request.header;
             const body = ctx.request.body;
 
-            if (body) {
-                console.log("body");
-            }
-
-            if (body.action) {
-                console.log("body");
-            }
-
-            if (header) {
-                console.log("header");
-            }
-
-            if (header["x-github-event"]) {
-                console.log("event header: ", header["x-github-event"]);
-            }
-
             // We need a body with an action and a header with an event type
-            if (body && body.action && header && header["x-github-event"]) {
+            if (body && header && header["x-github-event"]) {
                 switch (header["x-github-event"]) {
                 case "ping":
                     this.emit("ping", body);
