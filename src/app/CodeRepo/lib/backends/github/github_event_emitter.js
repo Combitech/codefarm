@@ -1,7 +1,6 @@
 "use strict";
 
 const { ServiceMgr } = require("service");
-const log = require("log");
 const Koa = require("koa2");
 const bodyParser = require("koa-bodyparser");
 const { AsyncEventEmitter } = require("emitter");

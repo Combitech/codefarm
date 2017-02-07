@@ -5,6 +5,12 @@ const { Type } = require("typelib");
 const BackendProxy = require("../backend_proxy");
 const Repository = require("./repository");
 
+const ReviewState = {
+    APPROVED: "approved",
+    REJECTED: "rejected"
+};
+
+
 class Revision extends Type {
     constructor(data) {
         super();
@@ -12,6 +18,7 @@ class Revision extends Type {
         this.repository = false;
         this.status = "submitted";
         this.patches = [];
+        this.reviews = [];
 
         if (data) {
             this.set(data);
@@ -89,6 +96,33 @@ class Revision extends Type {
 
         await this.save(parentIds);
     }
+
+    async addReview(userId, state) {
+        // Modify previous review for userId
+        const review = this.reviews.find((r) => r.userId === userId);
+        if (review) {
+            review.state = state;
+        } else {
+            this.reviews.push({ userId: userId, state: state });
+        }
+
+        // Regenerate review tags
+        this.tags = this.tags.filter((tag) => !tag.startsWith("review:"));
+        let approvecount = 0;
+        let rejectcount = 0;
+        for (const review in this.reviews) {
+            if (review.state === ReviewState.APPROVED) {
+                this.tags.push(`review:approved:${approvecount}`);
+                approvecount++;
+            } else if (review.state === ReviewState.REJECTED) {
+                this.tags.push(`review:rejected:${rejectcount}`);
+                rejectcount++;
+            }
+        }
+
+        await this.save();
+    }
 }
 
 module.exports = Revision;
+module.exports.ReviewState = ReviewState;

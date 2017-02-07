@@ -94,7 +94,7 @@ class GithubBackend extends AsyncEventEmitter {
     }
 
     async _createRevision(event) {
-        const changeId = event.pull_request.id;
+        const changeId = event.pull_request.id.toString();
         const changeSha = event.pull_request.head.sha;
         const repositoryId = event.repository.name;
         const email = await this._getCommitAuthor(repositoryId, changeSha);
@@ -151,6 +151,22 @@ class GithubBackend extends AsyncEventEmitter {
         ServiceMgr.instance.log("verbose", "pull_request_review received");
         ServiceMgr.instance.log("debug", JSON.stringify(event, null, 2));
         ServiceMgr.instance.log("verbose", `Review ${event.review.state} for ${event.pull_request.id}`);
+
+        const repository = await this.Repository.findOne({ _id: event.repository.name });
+        if (repository) {
+            const revision = await this.Revision.findOne({ _id: event.pull_request.id });
+            if (revision) {
+                const userId = event.review.user.id;
+                const state = event.review.state;
+                if (state === "changes_requested") {
+                    revision.addReview(userId, this.Revision.ReviewState.REJECTED);
+                } else if (state === "approved") {
+                    revision.addReview(userId, this.Revision.ReviewState.APPROVED);
+                } else {
+                    ServiceMgr.instance.log("verbose", `unknown review state ${state} on ${revision._id}`);
+                }
+            }
+        }
     }
 
     async _startMonitorEventStream() {
