@@ -30,8 +30,10 @@ class Overview extends Component {
     constructor(props) {
         super(props);
 
+        // Subscribe to baselines that contain my id
         this.addTypeListStateVariable("baselines", "baselinegen.baseline", (props) => {
             return {
+                "content.type": props.item.type,
                 "content.id": props.item._id
             };
         }, true);
