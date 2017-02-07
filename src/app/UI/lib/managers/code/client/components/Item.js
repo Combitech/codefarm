@@ -17,14 +17,17 @@ class Item extends Component {
 
         this.addTypeItemStateVariable("itemExt", "dataresolve.data", async (props) => {
             const result = await api.rest.post("dataresolve.data", {
-                ref: {
-                    id: props.item._id,
-                    type: props.item.type
-                },
-                spec: {
-                    paths: [
-                        "$.refs[*]"
-                    ]
+                resolver: "RefResolve",
+                opts: {
+                    ref: {
+                        id: props.item._id,
+                        type: props.item.type
+                    },
+                    spec: {
+                        paths: [
+                            "$.refs[*]"
+                        ]
+                    }
                 }
             });
 

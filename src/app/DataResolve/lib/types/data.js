@@ -3,16 +3,20 @@
 const { ServiceMgr } = require("service");
 const { assertType, assertProp } = require("misc");
 const { Type } = require("typelib");
-const Resolver = require("../resolver");
+const RefResolver = require("../resolvers/ref_resolver");
+
+const resolvers = {
+    "RefResolve": RefResolver
+};
 
 class Data extends Type {
     constructor(data) {
         super();
 
-        this.ref = false;
-        this.spec = false;
         this.data = false;
         this.watchRefs = false;
+        this.resolver = false;
+        this.opts = false;
 
         if (data) {
             this.set(data);
@@ -37,16 +41,22 @@ class Data extends Type {
 
     static async validate(event, data) {
         assertProp(data, "_id", false);
-        assertProp(data, "ref", true);
-        assertType(data.ref, "data.ref", "object");
+        assertProp(data, "opts", true);
+        assertProp(data, "resolver", true);
+        assertType(data.resolver, "data.resolver", "string");
+        if (!Object.keys(resolvers).includes(data.resolver)) {
+            throw new Error(`Unknown resolver ${data.resolver}`);
+        }
         assertProp(data, "data", false);
         assertProp(data, "watchRefs", false);
+        const resolver = resolvers[data.resolver].instance;
+        await resolver.validate(event, data);
     }
 
     static async factory(data) {
         let obj = await this.findOne({
-            ref: data.ref,
-            spec: data.spec
+            resolver: data.resolver,
+            opts: data.opts
         });
 
         if (obj) {
@@ -61,9 +71,13 @@ class Data extends Type {
         return obj;
     }
 
+    get _resolverInstance() {
+        return resolvers[this.resolver].instance;
+    }
+
     async resolve(updatedRef = false) {
         const startTs = Date.now();
-        const { data, refs } = await Resolver.instance.resolve(this.ref, this.spec, this.data, updatedRef, this._id);
+        const { data, refs } = await this._resolverInstance.resolve(this, updatedRef);
 
         this.data = data;
         this.watchRefs = refs;

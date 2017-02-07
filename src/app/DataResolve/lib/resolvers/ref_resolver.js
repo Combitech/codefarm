@@ -1,6 +1,7 @@
 "use strict";
 
 const { ServiceMgr } = require("service");
+const { assertType, assertProp } = require("misc");
 const jsonPath = require("jsonpath-plus");
 const clone = require("clone");
 
@@ -9,7 +10,7 @@ let instance;
 const matchRef = (ref, type, id) =>
     type === ref.type && (ref.id.constructor === Array ? ref.id.includes(id) : ref.id === id);
 
-class Resolver {
+class RefResolver {
     constructor() {
         this.config = {};
     }
@@ -24,6 +25,16 @@ class Resolver {
 
     async start(config = {}) {
         this.config = config;
+    }
+
+    async validate(event, data) {
+        assertType(data.opts, "data.opts", "object");
+        assertProp(data.opts, "ref", true);
+        assertType(data.opts.ref, "data.opts.ref", "object");
+    }
+
+    async resolve(obj, updatedRef = false) {
+        return this._resolve(obj.opts.ref, obj.opts.spec, obj.data, updatedRef, obj._id);
     }
 
     async _get(ref, sourceId) {
@@ -80,7 +91,7 @@ class Resolver {
         return refs;
     }
 
-    async resolve(ref, spec = false, oldData, updatedRef = false, sourceId = false) {
+    async _resolve(ref, spec = false, oldData, updatedRef = false, sourceId = false) {
         let root = oldData;
         if (!oldData || !updatedRef || matchRef(ref, updatedRef.type, updatedRef.id)) {
             root = await this._get(ref, sourceId);
@@ -100,4 +111,4 @@ class Resolver {
     }
 }
 
-module.exports = Resolver;
+module.exports = RefResolver;

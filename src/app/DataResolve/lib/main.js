@@ -6,7 +6,7 @@ const Web = require("web");
 const RestClient = require("restclient");
 const Datas = require("./controllers/datas");
 const { Service } = require("service");
-const Resolver = require("./resolver");
+const RefResolver = require("./resolvers/ref_resolver");
 const Control = require("./control");
 
 class Main extends Service {
@@ -32,8 +32,8 @@ class Main extends Service {
 
         const routes = Object.assign({}, this.routes, Datas.instance.routes);
 
-        await Resolver.instance.start(this.config.resolver);
-        this.addDisposable(Resolver.instance);
+        await RefResolver.instance.start(this.config.resolver);
+        this.addDisposable(RefResolver.instance);
 
         await Control.instance.start();
         this.addDisposable(Control.instance);

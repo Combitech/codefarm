@@ -144,13 +144,16 @@ describe("DataResolve", () => {
             dataChild1.value = "hello1";
         });
 
-        const resolve = (ref, spec) => rp({
+        const resolve = (resolver, ref, spec) => rp({
             method: "POST",
             url: `http://localhost:${testInfo.config.web.port}/data`,
             json: true,
             body: {
-                ref: ref,
-                spec: spec
+                resolver: resolver,
+                opts: {
+                    ref: ref,
+                    spec: spec
+                }
             }
         });
 
@@ -190,14 +193,14 @@ describe("DataResolve", () => {
                     type: "service.type"
                 };
 
-                const result = await resolve(ref);
+                const result = await resolve("RefResolve", ref);
 
                 assert.equal(result.result, "success");
 
                 const obj = result.data;
 
-                assert.deepEqual(obj.ref, ref);
-                assert.deepEqual(obj.spec, false);
+                assert.deepEqual(obj.opts.ref, ref);
+                assert.isUndefined(obj.opts.spec);
                 assert.deepEqual(obj.watchRefs, [ ref ]);
                 assert.equal(obj.data._id, "0");
                 assert.equal(obj.data.type, "service.type");
@@ -213,14 +216,14 @@ describe("DataResolve", () => {
                     type: "service.type"
                 };
 
-                const result = await resolve(ref);
+                const result = await resolve("RefResolve", ref);
 
                 assert.equal(result.result, "success");
 
                 const obj = result.data;
 
-                assert.deepEqual(obj.ref, ref);
-                assert.deepEqual(obj.spec, false);
+                assert.deepEqual(obj.opts.ref, ref);
+                assert.isUndefined(obj.opts.spec);
                 assert.deepEqual(obj.watchRefs, [ ref ]);
                 assert.equal(obj.data.length, 3);
                 assert.equal(obj.data[0].value, "hello0");
@@ -240,14 +243,14 @@ describe("DataResolve", () => {
                     ]
                 };
 
-                const result = await resolve(ref, spec);
+                const result = await resolve("RefResolve", ref, spec);
 
                 assert.equal(result.result, "success");
 
                 const obj = result.data;
 
-                assert.deepEqual(obj.ref, ref);
-                assert.deepEqual(obj.spec, spec);
+                assert.deepEqual(obj.opts.ref, ref);
+                assert.deepEqual(obj.opts.spec, spec);
                 assert.deepEqual(obj.watchRefs, [ ref, dataParent.refs[0] ]);
                 assert.equal(obj.data._id, "0");
                 assert.equal(obj.data.type, "service.type");
@@ -269,14 +272,14 @@ describe("DataResolve", () => {
                     ]
                 };
 
-                const result = await resolve(ref, spec);
+                const result = await resolve("RefResolve", ref, spec);
 
                 assert.equal(result.result, "success");
 
                 const obj = result.data;
 
-                assert.deepEqual(obj.ref, ref);
-                assert.deepEqual(obj.spec, spec);
+                assert.deepEqual(obj.opts.ref, ref);
+                assert.deepEqual(obj.opts.spec, spec);
                 assert.deepEqual(obj.watchRefs, [ ref, dataParent.child2 ]);
                 assert.equal(obj.data._id, "0");
                 assert.equal(obj.data.type, "service.type");
@@ -300,14 +303,14 @@ describe("DataResolve", () => {
                     ]
                 };
 
-                const result = await resolve(ref, spec);
+                const result = await resolve("RefResolve", ref, spec);
 
                 assert.equal(result.result, "success");
 
                 const obj = result.data;
 
-                assert.deepEqual(obj.ref, ref);
-                assert.deepEqual(obj.spec, spec);
+                assert.deepEqual(obj.opts.ref, ref);
+                assert.deepEqual(obj.opts.spec, spec);
                 assert.deepEqual(obj.watchRefs, [ ref, dataParent.child2, dataChild2.child1 ]);
                 assert.equal(obj.data._id, "0");
                 assert.equal(obj.data.type, "service.type");
@@ -331,14 +334,14 @@ describe("DataResolve", () => {
                     ]
                 };
 
-                const result = await resolve(ref, spec);
+                const result = await resolve("RefResolve", ref, spec);
 
                 assert.equal(result.result, "success");
 
                 const obj = result.data;
 
-                assert.deepEqual(obj.ref, ref);
-                assert.deepEqual(obj.spec, spec);
+                assert.deepEqual(obj.opts.ref, ref);
+                assert.deepEqual(obj.opts.spec, spec);
                 assert.deepEqual(obj.watchRefs, [ ref, dataParent.children ]);
                 assert.equal(obj.data._id, "0");
                 assert.equal(obj.data.type, "service.type");
@@ -365,14 +368,14 @@ describe("DataResolve", () => {
                     ]
                 };
 
-                const result = await resolve(ref, spec);
+                const result = await resolve("RefResolve", ref, spec);
 
                 assert.equal(result.result, "success");
 
                 const obj = result.data;
 
-                assert.deepEqual(obj.ref, ref);
-                assert.deepEqual(obj.spec, spec);
+                assert.deepEqual(obj.opts.ref, ref);
+                assert.deepEqual(obj.opts.spec, spec);
                 assert.deepEqual(obj.watchRefs, [ ref, dataParent.refs[0] ]);
                 assert.equal(obj.data._id, "0");
                 assert.equal(obj.data.type, "service.type");
@@ -425,14 +428,14 @@ describe("DataResolve", () => {
                     ]
                 };
 
-                const result = await resolve(ref, spec);
+                const result = await resolve("RefResolve", ref, spec);
 
                 assert.equal(result.result, "success");
 
                 const obj = result.data;
 
-                assert.deepEqual(obj.ref, ref);
-                assert.deepEqual(obj.spec, spec);
+                assert.deepEqual(obj.opts.ref, ref);
+                assert.deepEqual(obj.opts.spec, spec);
                 assert.deepEqual(obj.watchRefs, [ ref, dataParent.child2, dataChild2.child1 ]);
                 assert.equal(obj.data._id, "0");
                 assert.equal(obj.data.type, "service.type");
