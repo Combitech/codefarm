@@ -136,12 +136,14 @@ class GithubBackend extends AsyncEventEmitter {
     async _onPullRequestUpdate(event) {
         ServiceMgr.instance.log("verbose", "pull_request_update received");
         ServiceMgr.instance.log("debug", JSON.stringify(event, null, 2));
+
         await this._createRevision(event);
     }
 
     async _onPullRequestOpen(event) {
         ServiceMgr.instance.log("verbose", "pull_request_open received");
         ServiceMgr.instance.log("debug", JSON.stringify(event, null, 2));
+
         await this._createRevision(event);
     }
 
@@ -212,8 +214,7 @@ class GithubBackend extends AsyncEventEmitter {
         let uri;
         if (this.backend.isOrganization) {
             uri = `${GITHUB_API_BASE}/orgs/${this.backend.target}/repos`;
-        }
-        else {
+        } else {
             uri = `${GITHUB_API_BASE}/user/repos`;
         }
         const data = {
