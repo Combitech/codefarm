@@ -104,53 +104,35 @@
     margin-right: -$unit;
     border-spacing: 0;
 
-    .avatar {
-        width: $unit * 2;
-        height: $unit * 2;
-        margin-right: $unit / 2;
-    }
-
-    .headerRev {
-        width: $unit * 10;
-    }
-
-    .headerTime {
-        width: $unit * 17;
-    }
-
-    .headerAuthor {
-        width: $unit * 30;
-    }
-
-    tbody.header {
-        font-weight: $font-weight-semi-bold;
-    }
-
-    tbody.title {
-        td {
-            padding-top: $layout-gutter-width * 2;
-            padding-left: 0;
+    tbody {
+        &.header {
+            font-weight: $font-weight-semi-bold;
         }
-    }
 
-    tbody.list {
-        tr {
-            cursor: pointer;
-            color: $color-text-secondary;
-
-            &:nth-child(odd) {
-                background-color: $palette-grey-50;
+        &.title {
+            td {
+                padding-top: $layout-gutter-width * 2;
             }
 
-            &:hover {
-                opacity: 0.8;
+            &:first-child td {
+                padding-top: 0;
             }
         }
-    }
 
-    td.runColumn {
-        text-align: center;
-        width: $unit;
+        &.list {
+            tr {
+                cursor: pointer;
+                color: $color-text-secondary;
+
+                &:nth-child(odd) {
+                    background-color: $palette-grey-50;
+                }
+
+                &:hover {
+                    opacity: 0.8;
+                }
+            }
+        }
     }
 
     td {
@@ -162,6 +144,29 @@
 
         &.monospace {
             font-family: "Roboto Mono";
+        }
+
+        &.runColumn {
+            text-align: center;
+            width: $unit;
+        }
+
+        &.headerRev {
+            width: $unit * 10;
+        }
+
+        &.headerTime {
+            width: $unit * 17;
+        }
+
+        &.headerAuthor {
+            width: $unit * 30;
+        }
+
+        .avatar {
+            width: $unit * 2;
+            height: $unit * 2;
+            margin-right: $unit / 2;
         }
     }
 
