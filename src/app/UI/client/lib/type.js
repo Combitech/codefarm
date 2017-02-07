@@ -121,35 +121,35 @@ class Type {
     }
 
     async subscribeToItemAsync(...args) {
-        const [ subscription, promise ] = this._subscribeToItem(...args);
+        const [ subscriptionId, promise ] = this._subscribeToItem(...args);
 
         await promise;
 
-        return subscription.id;
+        return subscriptionId;
     }
 
     async subscribeToListAsync(...args) {
-        const [ subscription, promise ] = this._subscribeToList(...args);
+        const [ subscriptionId, promise ] = this._subscribeToList(...args);
 
         await promise;
 
-        return subscription.id;
+        return subscriptionId;
     }
 
     subscribeToItem(...args) {
-        const [ subscription, promise ] = this._subscribeToItem(...args);
+        const [ subscriptionId, promise ] = this._subscribeToItem(...args);
 
         promise.catch((error) => console.error(error));
 
-        return subscription.id;
+        return subscriptionId;
     }
 
     subscribeToList(...args) {
-        const [ subscription, promise ] = this._subscribeToList(...args);
+        const [ subscriptionId, promise ] = this._subscribeToList(...args);
 
         promise.catch((error) => console.error(error));
 
-        return subscription.id;
+        return subscriptionId;
     }
 
     _subscribeToItem(type, id, dataFn) {
