@@ -11,18 +11,40 @@ const GITHUB_BASE = "https://github.com";
 
 /*
 To get started with github:
-1. Create a new user to use as integrator
+1. Create a new user to use as integrator for the user/organization.
 2. Setup a personal token for that user in GitHub 'Settings'
 2.1 Make sure the 'repo' and 'admin:repo_hook' categories are checked
 2.2 If you want to be able to delete repositories also check 'delete_repo'
 3. Create the backend in the UI, provide the token and other data
 
-Creating a new repository:
-1. Use the UI to create the new repository
-2. Under repository settings, only allow merge squash under "Merge button"
+Creating a new GitHub backend:
+1. As the GitHub backend makes use of webhooks for events, a unique local port
+   needs to be reachable from the github server for every started GitHub
+   backend, alternatively port forwarding set up.
+2. Use the UI to create the new repository, with:
+   * target <- either a username or organization name
+   * isOrganization <- flag to indicate if target is organization
+   * authUser <- username previously created as integrator
+   * authToken <- token previously created in integrator account
+   * webHookUrl <- reachable HTTPS URL for webhook events from GitHub servers
+   * port <- local port which will host a webserver listening to webhook events
+3. Under repository settings, only allow merge squash under "Merge button"
 
-Connecting to an existing repository:
-TODO: connecting to existing repo not yet supported
+Example configuration:
+    target -> "Combitech"
+    isOrganization -> true
+    authUser -> "ebbqeadm"
+    authToken -> "faded42f502fbad3d88034751d9c847552d3b9b4"
+    webHookURL -> "https://secor.runge.se"
+    port -> 3000
+
+    The above will create a GitHub backend with new repositories created in
+    the Combitech organization space. Operations will be authenticated as
+    "ebbqeadm" and use the provided token. Webhooks will be set up so that
+    events are sent to "https://secor.runge.se" and a web server started
+    locally on port 3000 listening for these events. In the above example
+    we have also previously set up port forwarding from secor.runge.se to
+    the local machine.
 */
 
 class GithubBackend extends AsyncEventEmitter {
@@ -86,7 +108,7 @@ class GithubBackend extends AsyncEventEmitter {
         }
     }
 
-    async _onPullRequestClosed(event) {
+    async _onPullRequestClose(event) {
         ServiceMgr.instance.log("verbose", "pull-request-closed received");
         ServiceMgr.instance.log("debug", event);
 
@@ -112,22 +134,29 @@ class GithubBackend extends AsyncEventEmitter {
     }
 
     async _onPullRequestUpdate(event) {
-        ServiceMgr.instance.log("verbose", "pull-request-update received");
+        ServiceMgr.instance.log("verbose", "pull_request_update received");
         ServiceMgr.instance.log("debug", event);
         await this._createRevision(event);
     }
 
     async _onPullRequestOpen(event) {
-        ServiceMgr.instance.log("verbose", "pull-request-open received");
+        ServiceMgr.instance.log("verbose", "pull_request_open received");
         ServiceMgr.instance.log("debug", event);
         await this._createRevision(event);
     }
 
+    async _onPullRequestReview(event) {
+        ServiceMgr.instance.log("verbose", "pull_request_review received");
+        ServiceMgr.instance.log("debug", event);
+        ServiceMgr.instance.log("verbose", `Review ${event.state} for ${event.pull_request.id}`);
+    }
+
     async _startMonitorEventStream() {
         this.githubEmitter.addListener("ping", this._onPing.bind(this));
-        this.githubEmitter.addListener("pull-request-open", this._onPullRequestOpen.bind(this));
-        this.githubEmitter.addListener("pull-request-update", this._onPullRequestUpdate.bind(this));
-        this.githubEmitter.addListener("pull-request-closed", this._onPullRequestClosed.bind(this));
+        this.githubEmitter.addListener("pull_request_opened", this._onPullRequestOpen.bind(this));
+        this.githubEmitter.addListener("pull_request_updated", this._onPullRequestUpdate.bind(this));
+        this.githubEmitter.addListener("pull_request_closed", this._onPullRequestClose.bind(this));
+        this.githubEmitter.addListener("pull_request_review", this._onPullRequestReview.bind(this));
 
         return await this.githubEmitter.start(this.backend.port);
     }
@@ -138,7 +167,7 @@ class GithubBackend extends AsyncEventEmitter {
         const data = {
             "name": "web",
             "active": true,
-            "events": [ "pull_request" ],
+            "events": [ "pull_request", "pull_request_review" ],
             "config": {
                 "url": this.backend.webhookURL,
                 "content_type": "json"
@@ -153,10 +182,11 @@ class GithubBackend extends AsyncEventEmitter {
         console.log("Get commit author: ", url);
         try {
             const result = await this._sendRequest(url, {}, "GET");
+
             return result.commit.author.email;
-        }
-        catch (err) {
+        } catch (err) {
             ServiceMgr.instance.log("info", `Unable to get commit author for ${repository}:${commitSha}`);
+
             return null;
         }
     }
