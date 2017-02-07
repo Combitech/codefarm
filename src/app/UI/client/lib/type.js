@@ -1,6 +1,5 @@
 
 import api from "api.io/api.io-client";
-import sift from "sift";
 import loader from "ui-lib/loader";
 
 class Type {
@@ -32,12 +31,19 @@ class Type {
                     throw error;
                 }
             },
-            addEventHandler: (event, handlerFn) => {
-                subscription.logInfo(`Added event handler for ${event}`, api);
+            addEventHandler: (event, handlerFn, id, query) => {
+                subscription.logInfo(`Added event handler for ${event} with query=${JSON.stringify(query)}`, api);
+                let opts;
+                if ((typeof id !== "undefined") && Object.keys(query || {}).length > 0) {
+                    opts = {
+                        id: id,
+                        query: query
+                    };
+                }
                 subscription.apiEvents.push(api.type.on(event, (data) => {
                     subscription.logInfo(`Got event ${event}`, data);
                     handlerFn(data);
-                }));
+                }, opts));
             },
             setData: (data) => {
                 if (subscription.dead) {
@@ -196,23 +202,18 @@ class Type {
                 return;
             }
 
-            const data = sift(subscription.query, [ payload.newdata ])[0];
-
-            // If data matched query, we should add it to our list
-            if (data) {
-                const list = subscription.lastValue.slice(0);
-                list.push(data);
-                subscription.setData(list);
-            }
-        });
+            const list = subscription.lastValue.slice(0);
+            const data = payload.newdata;
+            list.push(data);
+            subscription.setData(list);
+        }, subscription.id, { newdata: subscription.query });
 
         subscription.addEventHandler(`updated.${type}`, (payload) => {
             if (subscription.dead) {
                 return;
             }
 
-            const data = sift(subscription.query, [ payload.newdata ])[0];
-            const index = subscription.lastValue.findIndex((item) => item._id === payload.newdata._id);
+            const data = payload.newdata;
 
             // If data matches query we must handle it
             if (data) {
@@ -220,6 +221,7 @@ class Type {
 
                 // If data already exists in our list replace it,
                 // if it does not exist add it
+                const index = subscription.lastValue.findIndex((item) => item._id === payload.newdata._id);
                 if (index !== -1) {
                     list[index] = data;
                 } else {
@@ -227,7 +229,18 @@ class Type {
                 }
 
                 subscription.setData(list);
-            } else if (index !== -1) {
+            }
+        }, subscription.id, { newdata: subscription.query });
+
+        subscription.addEventHandler(`updated.${type}`, (payload) => {
+            if (subscription.dead) {
+                return;
+            }
+
+            const index = subscription.lastValue.findIndex((item) => item._id === payload.olddata._id);
+
+            // If data matches query we must handle it
+            if (index !== -1) {
                 const list = subscription.lastValue.slice(0);
 
                 // Item exists in our list but no longer matches query,
@@ -236,6 +249,9 @@ class Type {
 
                 subscription.setData(list);
             }
+        }, `${subscription.id}-update-remove`, {
+            olddata: subscription.query,
+            $not: { newdata: subscription.query }
         });
 
         subscription.addEventHandler(`removed.${type}`, (payload) => {
@@ -243,7 +259,7 @@ class Type {
                 return;
             }
 
-            const data = sift(subscription.query, [ payload.olddata ])[0];
+            const data = payload.olddata;
             const index = subscription.lastValue.findIndex((item) => item._id === data._id);
 
             // If data matches our query and is in our list (it should be!),
@@ -255,7 +271,7 @@ class Type {
 
                 subscription.setData(list);
             }
-        });
+        }, subscription.id, { olddata: subscription.query });
 
         subscription.logInfo("Subscription created", subscription);
 
