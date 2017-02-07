@@ -13,7 +13,7 @@ class Item extends Component {
     constructor(props) {
         super(props);
 
-        this.addStateVariable("step", "CommitGate");
+        this.addStateVariable("step", "");
 
         this.addTypeItemStateVariable("itemExt", "dataresolve.data", async (props) => {
             const result = await api.rest.post("dataresolve.data", {

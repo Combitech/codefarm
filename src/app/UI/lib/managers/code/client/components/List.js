@@ -72,13 +72,23 @@ class List extends Component {
         const Header = () => (
             <tbody className={this.props.theme.header}>
                 <tr>
-                    <td>SHA1</td>
-                    <td>Time</td>
-                    <td>Author</td>
-                    <td>Comment</td>
-                    {this.state.steps.map((step) => (
-                        <td key={step.name}>{step.name}</td>
-                    ))}
+                    <td className={this.props.theme.headerRev}>Rev</td>
+                    <td className={this.props.theme.headerTime}>Time</td>
+                    <td className={this.props.theme.headerAuthor}>Author</td>
+                    <td className={this.props.theme.headerComment}>Comment</td>
+                    {this.state.steps.map((step) => {
+                        const ucname = step.name.replace(/[a-z]/g, "");
+
+                        return (
+                            <td
+                                key={step.name}
+                                className={this.props.theme.runColumn}
+                                title={step.name}
+                            >
+                                {ucname}
+                            </td>
+                        );
+                    })}
                 </tr>
             </tbody>
         );
@@ -124,7 +134,10 @@ class List extends Component {
                                 }
 
                                 return (
-                                    <td key={step.name}>
+                                    <td
+                                        className={this.props.theme.runColumn}
+                                        key={step.name}
+                                    >
                                         <StatusIcon
                                             className={this.props.theme.statusIcon}
                                             status={status}

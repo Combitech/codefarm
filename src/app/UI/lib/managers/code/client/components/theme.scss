@@ -110,7 +110,7 @@
         margin-right: $unit / 2;
     }
 
-    .headerSha1 {
+    .headerRev {
         width: $unit * 10;
     }
 
@@ -127,7 +127,7 @@
     }
 
     tbody.title {
-        td {
+        td.runColumn {
             padding-top: $layout-gutter-width * 2;
             padding-left: 0;
         }
@@ -146,6 +146,11 @@
                 opacity: 0.8;
             }
         }
+    }
+
+    td.runColumn {
+        text-align: center;
+        width: $unit;
     }
 
     td {
@@ -282,7 +287,7 @@
         background-color: $palette-grey-100;
     }
 
-    td.runColumn {
+    .runColumn {
         text-align: center;
     }
 }
