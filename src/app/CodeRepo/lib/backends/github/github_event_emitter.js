@@ -17,25 +17,59 @@ class GithubEventEmitter extends AsyncEventEmitter {
         app.use(bodyParser());
 
         app.use(async (ctx) => {
+            const header = ctx.request.header;
             const body = ctx.request.body;
-            if (body && body.zen) {
-                this.emit("ping", body);
-            } else if (body && body.pull_request) {
-                if (body.action && body.action === "opened") {
-                    this.emit("pull-request-open", body);
-                } else if (body.action && body.action === "synchronize") {
-                    this.emit("pull-request-update", body);
-                } else if (body.action && body.action === "closed") {
-                    this.emit("pull-request-closed", body);
-                } else {
-                    ServiceMgr.instance.log("verbose", "unknown pull-request event received");
-                    ServiceMgr.instance.log("verbose", JSON.stringify(body, null, 2));
-                }
-            } else {
-                ServiceMgr.instance.log("verbose", "unknown event received");
-                ServiceMgr.instance.log("verbose", JSON.stringify(body, null, 2));
+
+            if (body) {
+                console.log("body");
             }
 
+            if (body.action) {
+                console.log("body");
+            }
+
+            if (header) {
+                console.log("header");
+            }
+
+            if (header["x-github-event"]) {
+                console.log("event header: ", header["x-github-event"]);
+            }
+
+            // We need a body with an action and a header with an event type
+            if (body && body.action && header && header["x-github-event"]) {
+                switch (header["x-github-event"]) {
+                case "ping":
+                    this.emit("ping", body);
+                    break;
+
+                case "pull_request":
+                    switch (body.action) {
+                    case "opened":
+                        this.emit("pull_request_opened", body);
+                        break;
+                    case "synchronize":
+                        this.emit("pull_request_updated", body);
+                        break;
+                    case "closed":
+                        this.emit("pull_request_closed", body);
+                        break;
+
+                    default:
+                        ServiceMgr.instance.log("verbose", "unknown pull-request event received");
+                        ServiceMgr.instance.log("verbose", JSON.stringify(body, null, 2));
+                    }
+                    break;
+
+                case "pull_request_review":
+                    this.emit("pull_request_review", body);
+                    break;
+
+                default:
+                    ServiceMgr.instance.log("verbose", `unknown event ${header["x-github-event"]} received`);
+                    ServiceMgr.instance.log("verbose", JSON.stringify(body, null, 2));
+                }
+            }
             ctx.response.status = 200;
         });
 
