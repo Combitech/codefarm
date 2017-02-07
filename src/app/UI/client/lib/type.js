@@ -82,10 +82,12 @@ class Type {
                 subscription.loader.dispose();
 
                 delete this.subscriptions[subscription.id];
+                subscription.logInfo(`Removed, now ${Object.keys(this.subscriptions).length} active subscriptions`);
             }
         };
 
         this.subscriptions[subscription.id] = subscription;
+        subscription.logInfo(`Added, now ${Object.keys(this.subscriptions).length} active subscriptions`);
 
         return subscription;
     }
@@ -160,7 +162,6 @@ class Type {
 
     _subscribeToItem(type, id, dataFn) {
         const subscription = this._createSubscription(true, type, { _id: id }, dataFn);
-
         subscription.logInfo(`Creating item subscription for id ${id}`);
 
         subscription.addEventHandler(`created.${type}.${id}`, (payload) => {
