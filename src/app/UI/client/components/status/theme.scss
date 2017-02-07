@@ -1,0 +1,63 @@
+
+@import "~ui-styles/animations";
+
+.statusIcon {
+    position: relative;
+    display: inline-block;
+
+    .layer {
+        position: absolute;
+        top: 0;
+        left: 0;
+    }
+
+    .neutral {
+    }
+
+    .queued {
+        display: inline-block;
+        transform-origin: 50% 50%;
+
+        &-1 {
+            animation: pend 2s infinite ease-in-out;
+        }
+
+        &-2 {
+            animation: pendHalf 4s infinite ease-in-out;
+        }
+    }
+
+    .allocated {
+    }
+
+    .ongoing {
+        display: inline-block;
+        transform-origin: 50% 50%;
+
+        &-1 {
+            animation: spin 2s infinite linear;
+        }
+
+        &-2 {
+            animation: spin 4s infinite linear;
+        }
+    }
+
+    .success {
+    }
+
+    .happy {
+    }
+
+    .aborted {
+    }
+
+    .fail {
+    }
+
+    .unhappy {
+    }
+
+    .skip {
+    }
+}

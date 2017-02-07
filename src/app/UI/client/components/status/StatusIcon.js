@@ -1,0 +1,54 @@
+
+
+import React from "react";
+import Component from "ui-lib/component";
+import statusIcons from "ui-lib/status_icons";
+
+class StatusIcon extends Component {
+    constructor(props) {
+        super(props);
+    }
+
+    render() {
+        this.log("render", this.props, JSON.stringify(this.state, null, 2));
+
+        const statusIcon = statusIcons[this.props.status];
+        const style = {
+            width: this.props.size,
+            height: this.props.size
+        };
+
+        return (
+            <div
+                className={`${this.props.theme.statusIcon} ${this.props.className || ""}`}
+                style={style}
+            >
+                {statusIcon.map((icon, index) => {
+                    const statusClassName = `${this.props.status}-${index}`;
+
+                    return (
+                        <div
+                            key={icon}
+                            className={`${this.props.theme.layer} ${this.props.theme[this.props.status]} ${this.props.theme[statusClassName]}`}
+                            style={style}
+                        >
+                            <img
+                                style={style}
+                                src={icon}
+                            />
+                        </div>
+                    );
+                })}
+            </div>
+        );
+    }
+}
+
+StatusIcon.propTypes = {
+    theme: React.PropTypes.object,
+    className: React.PropTypes.string,
+    status: React.PropTypes.string.isRequired,
+    size: React.PropTypes.number.isRequired
+};
+
+export default StatusIcon;

@@ -11,7 +11,7 @@ class UserAvatar extends Component {
             return {
                 "email": props.email
             };
-        }, true);
+        }, false);
     }
 
     render() {

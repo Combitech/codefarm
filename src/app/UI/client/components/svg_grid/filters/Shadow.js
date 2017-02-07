@@ -9,7 +9,7 @@ class Shadow extends React.Component {
 
     render() {
         return (
-            <filter id={filters.SHADOW} height="130%">
+            <filter id={this.props.id} height="130%">
                 <feGaussianBlur in="SourceAlpha" stdDeviation="3" />
                 <feOffset dx="0" dy="1" result="offsetblur" />
                 <feComponentTransfer>
@@ -23,5 +23,13 @@ class Shadow extends React.Component {
         );
     }
 }
+
+Shadow.defaultProps = {
+    id: filters.SHADOW
+};
+
+Shadow.propTypes = {
+    id: React.PropTypes.string
+};
 
 export default Shadow;

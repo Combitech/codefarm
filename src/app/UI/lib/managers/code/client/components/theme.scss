@@ -122,35 +122,18 @@
         width: $unit * 30;
     }
 
-    tbody.submittedHeader, tbody.mergedHeader {
+    tbody.header {
         font-weight: $font-weight-semi-bold;
     }
 
-    tbody.submittedList {
-        tr {
-            cursor: pointer;
-            color: $color-text-secondary;
-
-            &:nth-child(odd) {
-                background-color: $palette-amber-50;
-            }
-        }
-    }
-
-    tbody.submittedTitle {
-        td {
-            padding-left: 0;
-        }
-    }
-
-    tbody.mergedTitle {
+    tbody.title {
         td {
             padding-top: $layout-gutter-width * 2;
             padding-left: 0;
         }
     }
 
-    tbody.mergedList {
+    tbody.list {
         tr {
             cursor: pointer;
             color: $color-text-secondary;
@@ -274,5 +257,32 @@
                 padding-bottom: $baseline-grid;
             }
         }
+    }
+}
+
+.statusIcon {
+    vertical-align: middle;
+}
+
+.jobTable {
+    width: 100%;
+
+    th.subjobColumn {
+    }
+
+    th.runColumn {
+        width: 50px;
+    }
+
+    td {
+        padding: $unit / 2;
+    }
+
+    tbody tr:nth-child(odd) {
+        background-color: $palette-grey-100;
+    }
+
+    td.runColumn {
+        text-align: center;
     }
 }

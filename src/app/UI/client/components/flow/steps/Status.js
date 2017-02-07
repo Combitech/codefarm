@@ -1,29 +1,8 @@
 
 import React from "react";
 import Component from "ui-lib/component";
-import { sizes, filters } from "ui-components/svg_grid";
-
-const clock = [
-    "/Cheser/extras/255x255/status/status-clock-face.png",
-    "/Cheser/extras/255x255/status/status-clock-large.png",
-    "/Cheser/extras/255x255/status/status-clock-small.png",
-    "/Cheser/extras/255x255/status/status-clock-face-center.png"
-];
-
-const statusIcons = {
-    unknown: [ "/Cheser/extras/255x255/status/status-unknown.png" ],
-    queued: clock,
-    allocated: clock,
-    ongoing: clock,
-    success: [ "/Cheser/extras/255x255/status/status-success.png" ],
-    aborted: [ "/Cheser/extras/255x255/status/status-aborted.png" ],
-    fail: [ "/Cheser/extras/255x255/status/status-fail.png" ],
-    skip: [ "/Cheser/extras/255x255/status/status-skip.png" ],
-    neutral: [ "/Cheser/extras/255x255/status/status-neutral.png" ],
-    happy: [ "/Cheser/extras/255x255/status/status-happy.png" ],
-    unhappy: [ "/Cheser/extras/255x255/status/status-unhappy.png" ],
-    shadow: [ "/Cheser/extras/255x255/status/status-shadow.png" ]
-};
+import { sizes } from "ui-components/svg_grid";
+import statusIcons from "ui-lib/status_icons";
 
 class Status extends Component {
     constructor(props) {
@@ -77,7 +56,7 @@ class Status extends Component {
                     height={boxHeight}
                     x={boxX}
                     y={boxY}
-                    filter={`url(#${filters.SHADOW})`}
+                    filter={`url(#${this.props.shadowId})`}
                 />
                 <image
                     className={this.props.theme.icon}
@@ -127,7 +106,8 @@ class Status extends Component {
 Status.propTypes = {
     theme: React.PropTypes.object,
     item: React.PropTypes.object.isRequired,
-    job: React.PropTypes.object
+    job: React.PropTypes.object,
+    shadowId: React.PropTypes.string
 };
 
 export default Status;

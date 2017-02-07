@@ -7,6 +7,7 @@ import {
 } from "ui-components/type_admin";
 import Avatar from "react-toolbox/lib/avatar";
 import UserAvatar from "./UserAvatar";
+import { StatusIcon } from "ui-components/status";
 import moment from "moment";
 
 class List extends Component {
@@ -24,6 +25,13 @@ class List extends Component {
             return {
                 repository: props.item._id,
                 status: "merged"
+            };
+        }, true);
+
+        this.addTypeListStateVariable("steps", "flowctrl.step", (props) => {
+            return {
+                flow: "Flow1", // TODO
+                visible: true
             };
         }, true);
     }
@@ -51,6 +59,86 @@ class List extends Component {
 
         const controls = this.props.controls.slice(0);
 
+        const Title = (props) => (
+            <tbody className={this.props.theme.title}>
+                <tr>
+                    <td colSpan={4 + this.state.steps.length}>
+                        <h5>{props.label}</h5>
+                    </td>
+                </tr>
+            </tbody>
+        );
+
+        const Header = () => (
+            <tbody className={this.props.theme.header}>
+                <tr>
+                    <td>SHA1</td>
+                    <td>Time</td>
+                    <td>Author</td>
+                    <td>Comment</td>
+                    {this.state.steps.map((step) => (
+                        <td key={step.name}>{step.name}</td>
+                    ))}
+                </tr>
+            </tbody>
+        );
+
+        const Revisions = (props) => (
+            <tbody className={this.props.theme.list}>
+                {props.list.slice(0).reverse().map((revision) => {
+                    const latestPatch = revision.patches[revision.patches.length - 1];
+
+                    return (
+                        <tr
+                            key={revision._id}
+                            onClick={() => this.onSelect(revision)}
+                        >
+                            <td className={this.props.theme.monospace}>
+                                {latestPatch.change.newrev.substr(0, 7)}
+                            </td>
+                            <td>{latestPatch.submitted}</td>
+                            <td>
+                                <Avatar className={this.props.theme.avatar}>
+                                    <UserAvatar
+                                        email={latestPatch.email}
+                                        noAvatarIconName="person"
+                                    />
+                                </Avatar>
+                                {latestPatch.name}
+                            </td>
+                            <td>{latestPatch.comment.split("\n", 1)[0]}</td>
+                            {this.state.steps.map((step) => {
+                                // TODO: Clean this up!
+                                let status = "unknown";
+
+                                if (revision.tags.includes(`step:${step.name}:success`)) {
+                                    status = "success";
+                                } else if (revision.tags.includes(`step:${step.name}:fail`)) {
+                                    status = "fail";
+                                } else if (revision.tags.includes(`step:${step.name}:skip`)) {
+                                    status = "skip";
+                                } else if (revision.tags.includes(`step:${step.name}:aborted`)) {
+                                    status = "aborted";
+                                } else if (revision.refs.find((ref) => ref.name === step.name)) {
+                                    status = "ongoing";
+                                }
+
+                                return (
+                                    <td key={step.name}>
+                                        <StatusIcon
+                                            className={this.props.theme.statusIcon}
+                                            status={status}
+                                            size={24}
+                                        />
+                                    </td>
+                                );
+                            })}
+                        </tr>
+                    );
+                })}
+            </tbody>
+        );
+
         return (
             <TASection
                 controls={controls}
@@ -60,86 +148,13 @@ class List extends Component {
                 <div className={this.props.theme.container}>
                     <div>
                         <table className={this.props.theme.revisionList}>
-                            <tbody className={this.props.theme.submittedTitle}>
-                                <tr>
-                                    <td colSpan={4}>
-                                        <h5>Submitted</h5>
-                                    </td>
-                                </tr>
-                            </tbody>
-                            <tbody className={this.props.theme.submittedHeader}>
-                                <tr>
-                                    <td>SHA1</td>
-                                    <td>Time</td>
-                                    <td>Author</td>
-                                    <td>Comment</td>
-                                </tr>
-                            </tbody>
-                            <tbody className={this.props.theme.submittedList}>
-                                {this.state.submitted.slice(0).reverse().map((revision) => {
-                                    const latestPatch = revision.patches[revision.patches.length - 1];
+                            <Title label="Submitted" />
+                            <Header />
+                            <Revisions list={this.state.submitted} />
 
-                                    return (
-                                        <tr onClick={() => this.onSelect(revision)}>
-                                            <td className={this.props.theme.monospace}>
-                                                {latestPatch.change.newrev.substr(0, 7)}
-                                            </td>
-                                            <td>{latestPatch.submitted}</td>
-                                            <td>
-                                                <Avatar className={this.props.theme.avatar}>
-                                                    <UserAvatar
-                                                        email={latestPatch.email}
-                                                        noAvatarIconName="person"
-                                                    />
-                                                </Avatar>
-                                                {latestPatch.name}
-                                            </td>
-                                            <td>{latestPatch.comment.split("\n", 1)[0]}</td>
-                                        </tr>
-                                    );
-                                })}
-                            </tbody>
-                            <tbody className={this.props.theme.mergedTitle}>
-                                <tr>
-                                    <td colSpan={4}>
-                                        <h5>Merged</h5>
-                                    </td>
-                                </tr>
-                            </tbody>
-                            <tbody className={this.props.theme.mergedHeader}>
-                                <tr>
-                                    <td className={this.props.theme.headerSha1}>SHA1</td>
-                                    <td className={this.props.theme.headerTime}>Time</td>
-                                    <td className={this.props.theme.headerAuthor}>Author</td>
-                                    <td className={this.props.theme.headerComment}>Comment</td>
-                                </tr>
-                            </tbody>
-                            <tbody className={this.props.theme.mergedList}>
-                                {this.state.merged.slice(0).reverse().map((revision) => {
-                                    const latestPatch = revision.patches[revision.patches.length - 1];
-
-                                    return (
-                                        <tr onClick={() => this.onSelect(revision)}>
-                                            <td className={this.props.theme.monospace}>
-                                                {latestPatch.change.newrev.substr(0, 7)}
-                                            </td>
-                                            <td>
-                                                {moment(latestPatch.submitted).local().format("YYYY-MM-DD HH:mm:ss")}
-                                            </td>
-                                            <td>
-                                                <Avatar className={this.props.theme.avatar}>
-                                                    <UserAvatar
-                                                        email={latestPatch.email}
-                                                        noAvatarIconName="person"
-                                                    />
-                                                </Avatar>
-                                                {latestPatch.name}
-                                            </td>
-                                            <td>{latestPatch.comment.split("\n", 1)[0]}</td>
-                                        </tr>
-                                    );
-                                })}
-                            </tbody>
+                            <Title label="Merged" />
+                            <Header />
+                            <Revisions list={this.state.merged} />
                         </table>
                     </div>
                 </div>

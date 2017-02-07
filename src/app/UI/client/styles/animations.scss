@@ -1,0 +1,40 @@
+
+@keyframes fadein {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+}
+
+@keyframes fadeinHalf {
+    0% { opacity: 0; }
+    100% { opacity: 0.5; }
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+@keyframes spinHalf {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(180deg); }
+}
+
+@keyframes pend {
+    0% { transform: rotate(20deg); }
+    50% { transform: rotate(-20deg); }
+    100% { transform: rotate(20deg); }
+}
+
+@keyframes pendHalf {
+    0% { transform: rotate(10deg); }
+    50% { transform: rotate(-10deg); }
+    100% { transform: rotate(10deg); }
+}
+
+@keyframes pulsate {
+    0% { transform: scale(0.7, 0.7); opacity: 0.6; }
+    25% { opacity: 1.0; }
+    50% { transform: scale(1.1, 1.1); opacity: 0.8; }
+    75% { opacity: 1.0; }
+    100% { transform: scale(0.7, 0.7); opacity: 0.6; }
+}

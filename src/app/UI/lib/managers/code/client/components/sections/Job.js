@@ -1,48 +1,91 @@
 
 import React from "react";
 import Component from "ui-lib/component";
-import { Flow } from "ui-components/flow";
-import { Row, Col } from "react-flexbox-grid";
-import Chip from "react-toolbox/lib/chip";
-import Avatar from "react-toolbox/lib/avatar";
-import Input from "react-toolbox/lib/input";
-import { Button } from "react-toolbox/lib/button";
-import moment from "moment";
-import UserAvatar from "../UserAvatar";
+import { StatusIcon } from "ui-components/status";
 
 class Job extends Component {
     constructor(props) {
         super(props);
+
+        this.addStateVariable("run", false);
     }
 
     render() {
         this.log("render", this.props, this.state);
 
-        const steps = [];
+        const rows = [];
 
-        steps.push({
-            id: "First",
-            name: "Overview",
-            meta: {
-                status: "neutral"
-            },
-            type: Step,
-            disabled: () => false,
-            active: () => !this.props.step.value,
-            parentIds: [],
-            handlers: {
-                onClick: () => this.props.step.set()
-            }
+        rows.push({
+            name: "TC1",
+            status: "fail",
+            runs: [
+                {
+                    name: "#1",
+                    status: "success"
+                },
+                {
+                    name: "#2",
+                    status: "fail"
+                },
+                {
+                    name: "#3",
+                    status: "success"
+                },
+                {
+                    name: "#4",
+                    status: "success"
+                },
+                {
+                    name: "#5",
+                    status: "success"
+                }
+            ]
         });
 
         return (
             <div>
-                <Flow
-                    theme={this.props.theme}
-                    steps={steps}
-                    columnSpan={8}
-                />
-
+                <table className={this.props.theme.jobTable}>
+                    <thead>
+                        <tr>
+                            <th className={this.props.theme.subjobColumn}></th>
+                            {rows[0].runs.map((run) => (
+                                <th
+                                    key={run.name}
+                                    className={this.props.theme.runColumn}
+                                >
+                                    {run.name}
+                                </th>
+                            ))}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {rows.map((row) => (
+                            <tr
+                                key={row.name}
+                            >
+                                <td
+                                     className={this.props.theme.subjobColumn}
+                                 >
+                                    <span>{row.name}</span>
+                                </td>
+                                {row.runs.map((run) => (
+                                    <td
+                                        key={run.name}
+                                        className={this.props.theme.runColumn}
+                                    >
+                                        {run.status && (
+                                            <StatusIcon
+                                                className={this.props.theme.statusIcon}
+                                                status={run.status}
+                                                size={24}
+                                            />
+                                        )}
+                                    </td>
+                                ))}
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
             </div>
         );
     }

@@ -1,7 +1,13 @@
 
 import React from "react";
 import Component from "ui-lib/component";
-import { SvgGrid, SvgGridItem, SvgGridPath } from "ui-components/svg_grid";
+import {
+    SvgGrid,
+    SvgGridItem,
+    SvgGridPath,
+    SvgGridDefs
+} from "ui-components/svg_grid";
+import SvgShadowFilter from "ui-components/svg_grid/filters/Shadow";
 import StepVirtual from "./steps/Virtual";
 
 class Flow extends Component {
@@ -199,6 +205,7 @@ class Flow extends Component {
             return null;
         }
 
+        const shadowId = `shadow-filter-${this.id}`;
         const flow = this.getFlow(this.props.steps);
         this.log("Flow", flow);
 
@@ -211,7 +218,10 @@ class Flow extends Component {
                 columns={flow.columns}
                 rows={flow.rows}
             >
-                {flow.paths.map((path) => (
+                <SvgGridDefs>
+                    <SvgShadowFilter id={shadowId} />
+                </SvgGridDefs>
+                {this.props.pathSpan && flow.paths.map((path) => (
                     <SvgGridPath
                         key={`${path.from}-${path.to}`}
                         fromKey={path.from}
@@ -233,6 +243,7 @@ class Flow extends Component {
                         <item.type
                             theme={this.props.theme}
                             item={item}
+                            shadowId={shadowId}
                         />
                     </SvgGridItem>
                 ))}
