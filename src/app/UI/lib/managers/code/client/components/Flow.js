@@ -13,7 +13,7 @@ class FlowComponent extends Component {
                 flow: props.flow._id,
                 visible: true
             };
-        }, true);
+        }, false);
     }
 
     render() {

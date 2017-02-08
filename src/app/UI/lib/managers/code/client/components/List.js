@@ -33,7 +33,7 @@ class List extends Component {
                 flow: "Flow1", // TODO
                 visible: true
             };
-        }, true);
+        }, false);
     }
 
     onSelect(item) {
