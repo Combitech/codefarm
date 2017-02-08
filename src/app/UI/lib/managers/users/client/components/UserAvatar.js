@@ -9,14 +9,19 @@ class UserAvatar extends Component {
     }
 
     render() {
-        const imgUri = `/userrepo/user/${this.props.userId}/avatar?binary=true`;
+        let avatar = null;
+        if (this.props.meta) {
+            const imgUri = `/userrepo/user/${this.props.userId}/avatar?binary=true`;
 
-        return (
-            <img
-                src={imgUri}
-                className={this.props.className}
-            />
-        );
+            avatar = (
+                <img
+                    src={imgUri}
+                    className={this.props.className}
+                />
+            );
+        }
+
+        return avatar;
     }
 }
 
