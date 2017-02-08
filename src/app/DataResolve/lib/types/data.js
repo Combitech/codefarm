@@ -3,11 +3,7 @@
 const { ServiceMgr } = require("service");
 const { assertType, assertProp } = require("misc");
 const { Type } = require("typelib");
-const RefResolver = require("../resolvers/ref_resolver");
-
-const resolvers = {
-    "RefResolve": RefResolver
-};
+const ResolverProxy = require("../resolver_proxy");
 
 class Data extends Type {
     constructor(data) {
@@ -44,13 +40,9 @@ class Data extends Type {
         assertProp(data, "opts", true);
         assertProp(data, "resolver", true);
         assertType(data.resolver, "data.resolver", "string");
-        if (!Object.keys(resolvers).includes(data.resolver)) {
-            throw new Error(`Unknown resolver ${data.resolver}`);
-        }
         assertProp(data, "data", false);
         assertProp(data, "watchRefs", false);
-        const resolver = resolvers[data.resolver].instance;
-        await resolver.validate(event, data);
+        await ResolverProxy.instance.validate(data.resolver, event, data);
     }
 
     static async factory(data) {
@@ -71,13 +63,13 @@ class Data extends Type {
         return obj;
     }
 
-    get _resolverInstance() {
-        return resolvers[this.resolver].instance;
-    }
-
     async resolve(updatedRef = false) {
         const startTs = Date.now();
-        const { data, refs } = await this._resolverInstance.resolve(this, updatedRef);
+        const { data, refs } = await ResolverProxy.instance.resolve(
+            this.resolver,
+            this,
+            updatedRef
+        );
 
         this.data = data;
         this.watchRefs = refs;
