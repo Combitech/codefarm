@@ -1,7 +1,6 @@
 
 import api from "api.io/api.io-client";
 import loader from "ui-lib/loader";
-import clone from "clone";
 
 class Type {
     constructor() {
@@ -25,13 +24,7 @@ class Type {
                 subscription.loader.set();
 
                 try {
-                    // Fix: Force _id to always be string to counteract our
-                    // own JSON.parse function in _buildFindQuery in controller.js
-                    const getQuery = clone(subscription.query);
-                    if (getQuery._id) {
-                        getQuery._id = `"${getQuery._id}"`;
-                    }
-                    const data = await api.type.get(subscription.type, getQuery);
+                    const data = await api.type.get(subscription.type, subscription.query);
                     subscription.setData(subscription.item ? data[0] : data);
                 } catch (error) {
                     subscription.setError(error);

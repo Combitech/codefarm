@@ -50,16 +50,17 @@ class Controller {
     _buildFindQuery(ctx) {
         const decodedQuery = qs.parse(ctx.query);
         const query = {};
+        const skipParseKeys = [ "_id" ];
 
-        const parse = (value) => {
+        const parse = (value, parseAsJson = true) => {
             if (typeof value === "string") {
                 try {
-                    return JSON.parse(value);
+                    return parseAsJson ? JSON.parse(value) : value;
                 } catch (error) {
                 }
             } else if (typeof value === "object") {
                 for (const [ k, v ] of Object.entries(value)) {
-                    value[k] = parse(v);
+                    value[k] = parse(v, !skipParseKeys.includes(k));
                 }
             }
 
