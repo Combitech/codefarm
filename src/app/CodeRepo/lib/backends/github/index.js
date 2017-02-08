@@ -154,7 +154,7 @@ class GithubBackend extends AsyncEventEmitter {
 
         const repository = await this.Repository.findOne({ _id: event.repository.name });
         if (repository) {
-            const revision = await this.Revision.findOne({ _id: event.pull_request.id });
+            const revision = await this.Revision.findOne({ _id: event.pull_request.id.toString() });
             if (revision) {
                 const userId = event.review.user.id;
                 const state = event.review.state;
@@ -259,7 +259,7 @@ class GithubBackend extends AsyncEventEmitter {
 
     async remove(repository) {
         ServiceMgr.instance.log("verbose", `Deleting GitHub repo ${repository._id}`);
-        await this._sendRequest(`${GITHUB_API_BASE}/repos/${this.backend.target}/${repository._id}`, {}, "DELETE");
+//        await this._sendRequest(`${GITHUB_API_BASE}/repos/${this.backend.target}/${repository._id}`, {}, "DELETE");
     }
 
     async dispose() {

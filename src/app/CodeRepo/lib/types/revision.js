@@ -110,7 +110,8 @@ class Revision extends Type {
         this.tags = this.tags.filter((tag) => !tag.startsWith("review:"));
         let approvecount = 0;
         let rejectcount = 0;
-        for (const review in this.reviews) {
+
+        this.reviews.forEach((review) => {
             if (review.state === ReviewState.APPROVED) {
                 this.tags.push(`review:approved:${approvecount}`);
                 approvecount++;
@@ -118,7 +119,7 @@ class Revision extends Type {
                 this.tags.push(`review:rejected:${rejectcount}`);
                 rejectcount++;
             }
-        }
+        });
 
         await this.save();
     }
