@@ -244,17 +244,16 @@ class GithubBackend extends AsyncEventEmitter {
             // Handle repo exist error and connect to repo instead
             if (err.name === "StatusCodeError" && err.statusCode === 422 &&
                 err.error.errors[0].message === "name already exists on this account") {
-                ServiceMgr.instance.log("verbose", `GitHub repo ${repository._id} already exists`);
+                ServiceMgr.instance.log("verbose", `Connecting to existing GitHub repo ${repository._id}`);
             } else {
-                ServiceMgr.instance.log("info", `Creating GitHub repo ${repository._id} error: ${err}`);
+                ServiceMgr.instance.log("verbose", `Error creating GitHub repo ${repository._id}: ${err.message}`);
             }
         }
 
         try {
             await this._createWebHook(repository);
         } catch (err) {
-            ServiceMgr.instance.log("info", `Creating GitHub repo ${repository._id} webhook error`);
-            ServiceMgr.instance.log("debug", `${err}`);
+            ServiceMgr.instance.log("verbose", `Error creating GitHub repo ${repository._id} webhook: ${err.message}`);
         }
     }
 
@@ -275,7 +274,11 @@ class GithubBackend extends AsyncEventEmitter {
 
     async remove(repository) {
         ServiceMgr.instance.log("verbose", `Deleting GitHub repo ${repository._id}`);
-        await this._sendRequest(`${GITHUB_API_BASE}/repos/${this.backend.target}/${repository._id}`, {}, "DELETE");
+        try {
+            await this._sendRequest(`${GITHUB_API_BASE}/repos/${this.backend.target}/${repository._id}`, {}, "DELETE");
+        } catch (err) {
+            ServiceMgr.instance.log("verbose", `Error deleting GitHub repo ${repository._id}: ${err.message}`);
+        }
     }
 
     async dispose() {
