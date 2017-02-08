@@ -17,6 +17,10 @@ class RestClient extends ProviderClient {
         return "REST";
     }
 
+    get url() {
+        return this.config.uri;
+    }
+
     /**
      * Perform HTTP get and parse response according to contentType
      * @param {String} path HREF path added to the end of baseUrl
@@ -26,7 +30,7 @@ class RestClient extends ProviderClient {
      */
     async get(path, params = {}) {
         const opts = {
-            uri: url.resolve(this.config.uri, path),
+            uri: url.resolve(this.url, path),
             qs: params,
             json: true
         };
@@ -53,7 +57,7 @@ class RestClient extends ProviderClient {
     async post(path, data, params = {}) {
         const opts = {
             method: "POST",
-            uri: url.resolve(this.config.uri, path),
+            uri: url.resolve(this.url, path),
             body: data,
             qs: params,
             json: true
@@ -81,7 +85,7 @@ class RestClient extends ProviderClient {
     async postMultipart(path, data, params = {}) {
         const opts = {
             method: "POST",
-            uri: url.resolve(this.config.uri, path),
+            uri: url.resolve(this.url, path),
             formData: data,
             qs: params,
             json: true
@@ -109,7 +113,7 @@ class RestClient extends ProviderClient {
     async patch(path, data, params = {}) {
         const opts = {
             method: "PATCH",
-            uri: url.resolve(this.config.uri, path),
+            uri: url.resolve(this.url, path),
             body: data,
             qs: params,
             json: true
@@ -137,7 +141,7 @@ class RestClient extends ProviderClient {
     async remove(path, data, params = {}) {
         const opts = {
             method: "DELETE",
-            uri: url.resolve(this.config.uri, path),
+            uri: url.resolve(this.url, path),
             body: data,
             qs: params,
             json: true

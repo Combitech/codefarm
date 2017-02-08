@@ -7,6 +7,7 @@ const Web = require("web");
 const RestClient = require("restclient");
 const { Service } = require("service");
 const MgmtMgr = require("./managers/mgmt");
+const ServiceProxy = require("./service_proxy");
 
 const Apis = [
     require("./apis/rest"),
@@ -34,14 +35,16 @@ class Main extends Service {
             await this.want(serviceId, serviceId, RestClient);
         }
 
-        const routes = Object.assign({}, this.routes);
-
         await MgmtMgr.instance.start();
         this.addDisposable(MgmtMgr.instance);
         this.mgr.addMgmtBusListener(MgmtMgr.instance.getServiceMonitorBusListener());
 
         const mb = this.msgBus;
         mb.addListener("data", MgmtMgr.instance.getEventMonitorBusListener());
+
+        await ServiceProxy.instance.start();
+        this.addDisposable(ServiceProxy.instance);
+        ServiceProxy.instance.addProxyRoute("get", "userrepo", "user", "avatar");
 
         for (const Api of Apis) {
             await Api.instance.start();
@@ -69,6 +72,8 @@ class Main extends Service {
         }
 
         this.config.web.api = api;
+
+        const routes = Object.assign({}, this.routes, ServiceProxy.instance.routes);
 
         await Web.instance.start(this.config.web, routes);
         this.addDisposable(Web.instance);
