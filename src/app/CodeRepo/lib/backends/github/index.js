@@ -147,6 +147,38 @@ class GithubBackend extends AsyncEventEmitter {
         await this._createRevision(event);
     }
 
+    async _onPush(event) {
+        ServiceMgr.instance.log("verbose", "push received");
+        ServiceMgr.instance.log("debug", JSON.stringify(event, null, 2));
+
+        // TODO: List of special branches that should create Revision objects instead of hardcoded
+        if (event.ref === "refs/heads/master") {
+            const repositoryId = event.repository.name;
+            const repository = await this.Repository.findOne({ _id: repositoryId });
+            // Make sure that we know about repo
+            if (repository) {
+                for (const commit of event.commits) {
+                    const ref = {
+                        index: 1,
+                        email: commit.author.email,
+                        name: commit.author.name,
+                        submitted: moment.unix(commit.timestamp).utc().format(),
+                        comment: commit.message,
+                        change: {
+                            oldrev: null,
+                            newrev: commit.id,
+                            refname: commit.id // Use event.refName all the time instead?
+                        }
+                    };
+                    const revision = await this.Revision.allocate(repository._id, commit.id, ref);
+                    await revision.setMerged();
+                    await this.emit("revision.merged", revision);
+                }
+                ServiceMgr.instance.log("verbose", `Created ${event.commits.length} revisions as merged`);
+            }
+        }
+    }
+
     async _onPullRequestReview(event) {
         ServiceMgr.instance.log("verbose", "pull_request_review received");
         ServiceMgr.instance.log("debug", JSON.stringify(event, null, 2));
@@ -175,6 +207,7 @@ class GithubBackend extends AsyncEventEmitter {
         this.githubEmitter.addListener("pull_request_updated", this._onPullRequestUpdate.bind(this));
         this.githubEmitter.addListener("pull_request_closed", this._onPullRequestClose.bind(this));
         this.githubEmitter.addListener("pull_request_review", this._onPullRequestReview.bind(this));
+        this.githubEmitter.addListener("push", this._onPush.bind(this));
 
         return await this.githubEmitter.start(this.backend.port);
     }
@@ -185,7 +218,7 @@ class GithubBackend extends AsyncEventEmitter {
         const data = {
             "name": "web",
             "active": true,
-            "events": [ "pull_request", "pull_request_review" ],
+            "events": [ "pull_request", "pull_request_review", "push" ],
             "config": {
                 "url": this.backend.webhookURL,
                 "content_type": "json"
