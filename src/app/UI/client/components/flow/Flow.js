@@ -153,7 +153,7 @@ class Flow extends Component {
             item.row = 0;
 
             for (let i = 0; i < neighbours.indexOf(item); i++) {
-                item.row += neighbours[i].rowSpan;
+                item.row += neighbours[i].rowSpan + this.props.rowSpacing;
             }
         }
 
@@ -163,7 +163,7 @@ class Flow extends Component {
             let height = 0;
 
             for (const neighbour of neighbours) {
-                height += neighbour.rowSpan;
+                height += neighbour.rowSpan + this.props.rowSpacing;
             }
 
             item.row -= height / 2;
@@ -256,6 +256,7 @@ Flow.defaultProps = {
     gridSize: 25,
     columnSpan: 8,
     rowSpan: 3,
+    rowSpacing: 0,
     pathSpan: 2
 };
 
@@ -266,6 +267,7 @@ Flow.propTypes = {
     gridSize: React.PropTypes.number,
     columnSpan: React.PropTypes.number,
     rowSpan: React.PropTypes.number,
+    rowSpacing: React.PropTypes.number,
     pathSpan: React.PropTypes.number
 };
 
