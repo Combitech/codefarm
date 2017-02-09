@@ -8,100 +8,22 @@ import {
 import Avatar from "react-toolbox/lib/avatar";
 import UserAvatar from "./UserAvatar";
 import { StatusIcon } from "ui-components/status";
-import moment from "moment";
 
-class List extends Component {
+class Revisions extends React.PureComponent {
     constructor(props) {
         super(props);
-
-        this.addTypeListStateVariable("submitted", () => "coderepo.revision", (props) => {
-            return {
-                repository: props.item._id,
-                status: "submitted"
-            };
-        }, true);
-
-        this.addTypeListStateVariable("merged", () => "coderepo.revision", (props) => {
-            return {
-                repository: props.item._id,
-                status: "merged"
-            };
-        }, true);
-
-        this.addTypeListStateVariable("steps", "flowctrl.step", (props) => {
-            return {
-                flow: "Flow1", // TODO
-                visible: true
-            };
-        }, false);
-    }
-
-    onSelect(item) {
-        this.context.router.push({
-            pathname: `${this.props.pathname}/${item._id}`
-        });
     }
 
     render() {
-        this.log("render", this.props, this.state);
-
-        if (this.state.errorAsync.value) {
-            return (
-                <div>{this.state.errorAsync.value}</div>
-            );
-        }
-
-        if (this.state.loadingAsync.value) {
-            return (
-                <TALoadIndicator />
-            );
-        }
-
-        const controls = this.props.controls.slice(0);
-
-        const Title = (props) => (
-            <tbody className={this.props.theme.title}>
-                <tr>
-                    <td colSpan={4 + this.state.steps.length}>
-                        <h5>{props.label}</h5>
-                    </td>
-                </tr>
-            </tbody>
-        );
-
-        const Header = () => (
-            <tbody className={this.props.theme.header}>
-                <tr>
-                    <td className={this.props.theme.headerRev}>Rev</td>
-                    <td className={this.props.theme.headerTime}>Time</td>
-                    <td className={this.props.theme.headerAuthor}>Author</td>
-                    <td className={this.props.theme.headerComment}>Comment</td>
-                    {this.state.steps.map((step) => {
-                        const ucname = step.name.replace(/[a-z]/g, "");
-
-                        return (
-                            <td
-                                key={step.name}
-                                className={this.props.theme.runColumn}
-                                title={step.name}
-                            >
-                                {ucname}
-                            </td>
-                        );
-                    })}
-                </tr>
-            </tbody>
-        );
-
-        const Revisions = (props) => (
+        return (
             <tbody className={this.props.theme.list}>
-                {props.list.slice(0).reverse().map((revision) => {
+                {this.props.list.slice(0).reverse().map((revision) => {
                     const latestPatch = revision.patches[revision.patches.length - 1];
 
                     return (
                         <tr
                             key={revision._id}
-                            onClick={() => this.onSelect(revision)}
+                            onClick={() => this.props.onSelect(revision)}
                         >
                             <td className={this.props.theme.monospace}>
                                 {latestPatch.change.newrev.substr(0, 7)}
@@ -117,7 +39,7 @@ class List extends Component {
                                 {latestPatch.name}
                             </td>
                             <td>{latestPatch.comment.split("\n", 1)[0]}</td>
-                            {this.state.steps.map((step) => {
+                            {this.props.steps.map((step) => {
                                 // TODO: Clean this up!
                                 let status = "unknown";
 
@@ -151,28 +73,148 @@ class List extends Component {
                 })}
             </tbody>
         );
+    }
+}
+
+Revisions.propTypes = {
+    list: React.PropTypes.array.isRequired,
+    steps: React.PropTypes.array.isRequired,
+    onSelect: React.PropTypes.func,
+    theme: React.PropTypes.object
+};
+
+class Header extends React.PureComponent {
+    render() {
+        return (
+            <tbody className={this.props.theme.header}>
+                <tr>
+                    <td className={this.props.theme.headerRev}>Rev</td>
+                    <td className={this.props.theme.headerTime}>Time</td>
+                    <td className={this.props.theme.headerAuthor}>Author</td>
+                    <td className={this.props.theme.headerComment}>Comment</td>
+                    {this.props.steps.map((step) => {
+                        const ucname = step.name.replace(/[a-z]/g, "");
+
+                        return (
+                            <td
+                                key={step.name}
+                                className={this.props.theme.runColumn}
+                                title={step.name}
+                            >
+                                {ucname}
+                            </td>
+                        );
+                    })}
+                </tr>
+            </tbody>
+        );
+    }
+}
+
+Header.propTypes = {
+    steps: React.PropTypes.array.isRequired,
+    theme: React.PropTypes.object
+};
+
+class List extends Component {
+    constructor(props) {
+        super(props);
+
+        this.addTypeListStateVariable("submitted", () => "coderepo.revision", (props) => {
+            return {
+                repository: props.item._id,
+                status: "submitted"
+            };
+        }, true);
+
+        this.addTypeListStateVariable("merged", () => "coderepo.revision", (props) => {
+            return {
+                repository: props.item._id,
+                status: "merged"
+            };
+        }, true);
+
+        this.addTypeListStateVariable("steps", "flowctrl.step", (/* props */) => {
+            return {
+                flow: "Flow1", // TODO
+                visible: true
+            };
+        }, false);
+    }
+
+    onSelect(item) {
+        this.context.router.push({
+            pathname: `${this.props.pathname}/${item._id}`
+        });
+    }
+
+    render() {
+        this.log("render", this.props, this.state);
+
+        if (this.state.errorAsync.value) {
+            return (
+                <div>{this.state.errorAsync.value}</div>
+            );
+        }
+
+        let loadIndicator;
+        if (this.state.loadingAsync.value) {
+            loadIndicator = (
+                <TALoadIndicator />
+            );
+        }
+
+        const controls = this.props.controls.slice(0);
+
+        const Title = (props) => (
+            <tbody className={this.props.theme.title}>
+                <tr>
+                    <td colSpan={4 + this.state.steps.length}>
+                        <h5>{props.label}</h5>
+                    </td>
+                </tr>
+            </tbody>
+        );
 
         return (
-            <TASection
-                controls={controls}
-                breadcrumbs={this.props.breadcrumbs}
-            >
+            <div>
+                {loadIndicator}
+                <TASection
+                    controls={controls}
+                    breadcrumbs={this.props.breadcrumbs}
+                >
+                    <div className={this.props.theme.container}>
+                        <div>
+                            <table className={this.props.theme.revisionList}>
+                                <Title label="Submitted" />
+                                <Header
+                                    steps={this.state.steps}
+                                    theme={this.props.theme}
+                                />
+                                <Revisions
+                                    list={this.state.submitted}
+                                    steps={this.state.steps}
+                                    onSelect={(revision) => this.onSelect(revision)}
+                                    theme={this.props.theme}
+                                />
 
-                <div className={this.props.theme.container}>
-                    <div>
-                        <table className={this.props.theme.revisionList}>
-                            <Title label="Submitted" />
-                            <Header />
-                            <Revisions list={this.state.submitted} />
-
-                            <Title label="Merged" />
-                            <Header />
-                            <Revisions list={this.state.merged} />
-                        </table>
+                                <Title label="Merged" />
+                                <Header
+                                    steps={this.state.steps}
+                                    theme={this.props.theme}
+                                />
+                                <Revisions
+                                    list={this.state.merged}
+                                    steps={this.state.steps}
+                                    onSelect={(revision) => this.onSelect(revision)}
+                                    theme={this.props.theme}
+                                />
+                            </table>
+                        </div>
                     </div>
-                </div>
 
-            </TASection>
+                </TASection>
+            </div>
         );
     }
 }

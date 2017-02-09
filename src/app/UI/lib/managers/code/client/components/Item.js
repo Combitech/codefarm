@@ -48,8 +48,9 @@ class Item extends Component {
             );
         }
 
+        let loadIndicator;
         if (this.state.loadingAsync.value) {
-            return (
+            loadIndicator = (
                 <TALoadIndicator
                     theme={this.props.theme}
                 />
@@ -57,29 +58,34 @@ class Item extends Component {
         }
 
         return (
-            <TASection
-                controls={this.props.controls}
-                breadcrumbs={this.props.breadcrumbs}
-            >
-                <div className={this.props.theme.container}>
-                    <div className={this.props.theme.flow}>
-                        <Flows
-                            theme={this.props.theme}
-                            item={this.props.item}
-                            itemExt={this.state.itemExt}
-                            pathname={this.props.pathname}
-                            step={this.state.step}
-                        />
-                    </div>
-                    <Section
-                        theme={this.props.theme}
-                        item={this.props.item}
-                        itemExt={this.state.itemExt}
-                        pathname={this.props.pathname}
-                        step={this.state.step}
-                    />
-                </div>
-            </TASection>
+            <div>
+                {loadIndicator}
+                <TASection
+                    controls={this.props.controls}
+                    breadcrumbs={this.props.breadcrumbs}
+                >
+                    {this.state.itemExt &&
+                        <div className={this.props.theme.container}>
+                            <div className={this.props.theme.flow}>
+                                <Flows
+                                    theme={this.props.theme}
+                                    item={this.props.item}
+                                    itemExt={this.state.itemExt}
+                                    pathname={this.props.pathname}
+                                    step={this.state.step}
+                                />
+                            </div>
+                            <Section
+                                theme={this.props.theme}
+                                item={this.props.item}
+                                itemExt={this.state.itemExt}
+                                pathname={this.props.pathname}
+                                step={this.state.step}
+                            />
+                        </div>
+                    }
+                </TASection>
+            </div>
         );
     }
 }

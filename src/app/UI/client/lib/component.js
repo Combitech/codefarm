@@ -5,9 +5,17 @@ import type from "ui-lib/type";
 
 let instanceCounter = 0;
 
+const LifecycleState = {
+    CONSTRUCTED: "CONSTRUCTED",
+    MOUNTED: "MOUNTED",
+    NOT_MOUNTED: "NOT_MOUNTED"
+};
+
 class Component extends React.PureComponent {
     constructor(props, debug = false) {
         super(props);
+
+        this.lifecycleState = LifecycleState.CONSTRUCTED;
 
         this.debug = debug;
         this.id = instanceCounter++;
@@ -20,6 +28,10 @@ class Component extends React.PureComponent {
         this.addStateVariable("errorAsync", false);
 
         this.log("Component Constructor", JSON.stringify(this.state, null, 2));
+    }
+
+    get _isMounted() {
+        return this.lifecycleState === LifecycleState.MOUNTED;
     }
 
 
@@ -132,11 +144,15 @@ class Component extends React.PureComponent {
         type.unsubscribe(asyncVar.subId);
 
         const set = (value) => {
-            this.setState({ [asyncVar.name]: value });
+            if (this._isMounted) {
+                this.setState({ [asyncVar.name]: value });
+            }
         };
 
-        this.state.loadingAsync.set(true);
-        set(false);
+        if (this._isMounted) {
+            this.state.loadingAsync.set(true);
+            set(false);
+        }
 
         if (asyncVar.subscribe) {
             asyncVar.subId = await type.subscribeToItemAsync(asyncVar._type, asyncVar._id, set);
@@ -165,11 +181,15 @@ class Component extends React.PureComponent {
         type.unsubscribe(asyncVar.subId);
 
         const set = (value) => {
-            this.setState({ [asyncVar.name]: value });
+            if (this._isMounted) {
+                this.setState({ [asyncVar.name]: value });
+            }
         };
 
-        this.state.loadingAsync.set(true);
-        set([]);
+        if (this._isMounted) {
+            this.state.loadingAsync.set(true);
+            set([]);
+        }
 
         if (asyncVar.subscribe) {
             asyncVar.subId = await type.subscribeToListAsync(asyncVar._type, asyncVar._query, set);
@@ -182,14 +202,18 @@ class Component extends React.PureComponent {
         this.log("_loadAsyncVars", JSON.stringify(this.state, null, 2));
 
         for (const asyncVar of this.asyncVariables) {
-            if (asyncVar.list) {
-                await this._loadAsyncVarList(asyncVar, props);
-            } else {
-                await this._loadAsyncVarItem(asyncVar, props);
+            if (this._isMounted) {
+                if (asyncVar.list) {
+                    await this._loadAsyncVarList(asyncVar, props);
+                } else {
+                    await this._loadAsyncVarItem(asyncVar, props);
+                }
             }
         }
 
-        this.state.loadingAsync.set(false);
+        if (this._isMounted) {
+            this.state.loadingAsync.set(false);
+        }
     }
 
     async _componentDidMountAsync() {
@@ -214,6 +238,7 @@ class Component extends React.PureComponent {
     }
 
     componentDidMount() {
+        this.lifecycleState = LifecycleState.MOUNTED;
         this.log("componentDidMount", JSON.stringify(this.state, null, 2));
 
         for (const name of this.locationVariables) {
@@ -227,6 +252,7 @@ class Component extends React.PureComponent {
     }
 
     componentWillUnmount() {
+        this.lifecycleState = LifecycleState.NOT_MOUNTED;
         this.log("componentWillUnmount", this);
 
         for (const name of Object.keys(this.state)) {

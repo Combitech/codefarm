@@ -14,6 +14,7 @@ class LoadIndicator extends React.Component {
                     type="circular"
                     mode="indeterminate"
                     multicolor
+                    className={this.props.theme.loadingProgressBar}
                 />
             </div>
         );

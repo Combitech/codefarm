@@ -9,7 +9,12 @@ class ListComponent extends Component {
     constructor(props) {
         super(props);
 
-        this.addTypeListStateVariable("list", (props) => props.type, (props) => props.query, true);
+        this.addTypeListStateVariable(
+            "list",
+            (props) => props.type,
+            (props) => props.query,
+            true
+        );
     }
 
     render() {
@@ -21,8 +26,9 @@ class ListComponent extends Component {
             );
         }
 
+        let loadIndicator;
         if (this.state.loadingAsync.value) {
-            return (
+            loadIndicator = (
                 <LoadIndicator
                     theme={this.props.theme}
                 />
@@ -30,24 +36,27 @@ class ListComponent extends Component {
         }
 
         return (
-            <List
-                className={this.props.theme.list}
-                ripple={true}
-            >
-                <ListDivider key="top_divider" />
-                <div className={this.props.theme.divider} />
-                {this.state.list.slice(0).reverse().map((item) => (
-                    <div key={item._id}>
-                        <this.props.ListItemComponent
-                            theme={this.props.theme}
-                            onClick={this.props.onSelect}
-                            item={item}
-                            itemContext={this.props.listItemContext}
-                        />
-                        <ListDivider />
-                    </div>
-                ))}
-            </List>
+            <div>
+                {loadIndicator}
+                <List
+                    className={this.props.theme.list}
+                    ripple={true}
+                >
+                    <ListDivider key="top_divider" />
+                    <div className={this.props.theme.divider} />
+                    {this.state.list && this.state.list.slice(0).reverse().map((item) => (
+                        <div key={item._id}>
+                            <this.props.ListItemComponent
+                                theme={this.props.theme}
+                                onClick={this.props.onSelect}
+                                item={item}
+                                itemContext={this.props.listItemContext}
+                            />
+                            <ListDivider />
+                        </div>
+                    ))}
+                </List>
+            </div>
         );
     }
 }

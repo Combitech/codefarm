@@ -32,20 +32,20 @@ class Flows extends Component {
             );
         }
 
+        let loadIndicator;
         if (this.state.loadingAsync.value) {
-            return (
+            loadIndicator = (
                 <TALoadIndicator/>
             );
         }
 
+        let flows;
         if (this.state.flows.length === 0) {
-            return (
+            flows = (
                 <div>No flows found</div>
             );
-        }
-
-        if (this.state.flows.length === 1) {
-            return (
+        } else if (this.state.flows.length === 1) {
+            flows = (
                 <Flow
                     theme={this.props.theme}
                     item={this.props.item}
@@ -55,30 +55,37 @@ class Flows extends Component {
                     step={this.props.step}
                 />
             );
+        } else {
+            flows = (
+                <Tabs
+                    index={this.state.flow.value}
+                    onChange={this.state.flow.set}
+                    fixed={true}
+                >
+                    {this.state.flows.map((flow) => (
+                        <Tab
+                            label={flow._id}
+                            key={flow._id}
+                        >
+                            <Flow
+                                theme={this.props.theme}
+                                item={this.props.item}
+                                itemExt={this.props.itemExt}
+                                pathname={this.props.pathname}
+                                flow={flow}
+                                step={this.props.step}
+                            />
+                        </Tab>
+                    ))}
+                </Tabs>
+            );
         }
 
         return (
-            <Tabs
-                index={this.state.flow.value}
-                onChange={this.state.flow.set}
-                fixed={true}
-            >
-                {this.state.flows.map((flow) => (
-                    <Tab
-                        label={flow._id}
-                        key={flow._id}
-                    >
-                        <Flow
-                            theme={this.props.theme}
-                            item={this.props.item}
-                            itemExt={this.props.itemExt}
-                            pathname={this.props.pathname}
-                            flow={flow}
-                            step={this.props.step}
-                        />
-                    </Tab>
-                ))}
-            </Tabs>
+            <div>
+                {loadIndicator}
+                {flows}
+            </div>
         );
     }
 }

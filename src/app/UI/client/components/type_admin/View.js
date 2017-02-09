@@ -13,7 +13,12 @@ class View extends Component {
         this.addStateVariable("context", {});
 
         if (this.props.route.path.startsWith(":")) {
-            this.addTypeItemStateVariable("item", (props) => props.route.type, (props) => props.params[props.route.path.substr(1)], true);
+            this.addTypeItemStateVariable(
+                "item",
+                (props) => props.route.type,
+                (props) => props.params[props.route.path.substr(1)],
+                true
+            );
         }
     }
 
@@ -26,8 +31,9 @@ class View extends Component {
             );
         }
 
+        let loadIndicator;
         if (this.state.loadingAsync.value) {
-            return (
+            loadIndicator = (
                 <LoadIndicator
                     theme={this.props.theme}
                 />
@@ -43,7 +49,7 @@ class View extends Component {
         const props = {
             theme: this.props.theme,
             parentItems: parentItems,
-            item: this.state.item,
+            item: this.state.item || null,
             breadcrumbs: this.props.breadcrumbs,
             controls: [],
             pathname: this.getPathname(),
@@ -64,16 +70,20 @@ class View extends Component {
 
         if (this.props.children) {
             return (
-                <this.props.children.type
-                    {...this.props.children.props}
-                    {...props}
-                />
+                <div>
+                    {loadIndicator}
+                    <this.props.children.type
+                        {...this.props.children.props}
+                        {...props}
+                    />
+                </div>
             );
         }
 
+        const childRoutes = this.props.route.childRoutes;
         if (this.state.item) {
-            if (this.props.route.childRoutes) {
-                if (this.props.route.childRoutes.find((route) => route.path === "create")) {
+            if (childRoutes) {
+                if (childRoutes.find((route) => route.path === "create")) {
                     props.controls.push((
                         <ControlButton
                             theme={this.props.theme}
@@ -84,7 +94,7 @@ class View extends Component {
                     ));
                 }
 
-                if (this.props.route.childRoutes.find((route) => route.path === "edit")) {
+                if (childRoutes.find((route) => route.path === "edit")) {
                     props.controls.push((
                         <ControlButton
                             theme={this.props.theme}
@@ -95,7 +105,7 @@ class View extends Component {
                     ));
                 }
 
-                if (this.props.route.childRoutes.find((route) => route.path === "remove")) {
+                if (childRoutes.find((route) => route.path === "remove")) {
                     props.controls.push((
                         <ControlButton
                             theme={this.props.theme}
@@ -110,13 +120,14 @@ class View extends Component {
             if (this.props.route.Item) {
                 return (
                     <div>
+                        {loadIndicator}
                         <this.props.route.Item {...props} />
                     </div>
                 );
             }
         }
 
-        if (this.props.route.childRoutes.find((route) => route.path === "create")) {
+        if (childRoutes && childRoutes.find((route) => route.path === "create")) {
             props.controls.push((
                 <ControlButton
                     theme={this.props.theme}
@@ -128,10 +139,13 @@ class View extends Component {
         }
 
         return (
-            <this.props.route.List
-                {...props}
-                type={this.props.route.type}
-            />
+            <div className={this.props.theme.view}>
+                {loadIndicator}
+                {this.props.route.List && <this.props.route.List
+                    {...props}
+                    type={this.props.route.type}
+                />}
+            </div>
         );
     }
 }

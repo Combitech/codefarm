@@ -1,6 +1,6 @@
 import React from "react";
 import { Route, IndexRoute, IndexRedirect } from "react-router";
-import Layout from "ui-components/Layout";
+import Layout from "ui-components/app_layout";
 import IndexPage from "ui-components/IndexPage";
 import NotFoundPage from "ui-components/NotFoundPage";
 import CodePage from "ui-mgr/code/client/components";

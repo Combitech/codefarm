@@ -24,8 +24,9 @@ class Page extends Component {
             );
         }
 
+        let loadIndicator;
         if (this.state.loadingAsync.value) {
-            return (
+            loadIndicator = (
                 <TALoadIndicator/>
             );
         }
@@ -45,6 +46,7 @@ class Page extends Component {
 
         return (
             <div>
+                {loadIndicator}
                 <AppMenu
                     primaryText="Repositories"
                     icon="code"

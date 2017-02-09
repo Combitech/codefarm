@@ -3,10 +3,10 @@ import React from "react";
 import AppLoader from "ui-components/app_loader";
 import AppTopBar from "ui-components/app_top_bar";
 
-class Layout extends React.Component {
+class AppLayout extends React.Component {
     render() {
         return (
-            <div>
+            <div className={this.props.theme.appLayout}>
                 <AppLoader />
                 <AppTopBar/>
                 {this.props.children}
@@ -15,8 +15,9 @@ class Layout extends React.Component {
     }
 }
 
-Layout.propTypes = {
-    children: React.PropTypes.node
+AppLayout.propTypes = {
+    children: React.PropTypes.node,
+    theme: React.PropTypes.object
 };
 
-export default Layout;
+export default AppLayout;

@@ -3,6 +3,7 @@
 @import "react-toolbox/components/globals";
 @import "react-toolbox/components/mixins";
 
+
 .section {
     .header {
         padding: $layout-gutter-width-sm * 2;
@@ -135,6 +136,17 @@
 }
 
 .loading {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    opacity: 0.5;
+    z-index: 999;
     text-align: center;
     padding: $layout-gutter-width * 2;
+
+    .progressBar {
+        z-index: 1000;
+    }
 }
