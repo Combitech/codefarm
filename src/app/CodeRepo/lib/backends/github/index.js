@@ -2,7 +2,6 @@
 
 const { ServiceMgr } = require("service");
 const rp = require("request-promise");
-const moment = require("moment");
 const { AsyncEventEmitter } = require("emitter");
 const GithubEventEmitter = require("./github_event_emitter");
 
@@ -83,8 +82,9 @@ class GithubBackend extends AsyncEventEmitter {
             index: 1,
             email: email,
             name: event.pull_request.user.login,
-            submitted: moment.unix(event.pull_request.created_at).utc().format(),
+            submitted: event.pull_request.created_at,
             comment: event.pull_request.title,
+            pullreqnumber: event.pull_request.number,
             change: {
                 oldrev: event.pull_request.base.sha,
                 newrev: event.pull_request.head.sha,
@@ -127,7 +127,7 @@ class GithubBackend extends AsyncEventEmitter {
 
                     await revision.setMerged(ref);
                     await this.emit("revision.merged", revision);
-                    ServiceMgr.instance.log("info", `GitHub event merged revision ${changeId}`);
+                    ServiceMgr.instance.log("verbose", `GitHub event merged revision ${changeId}`);
                 }
             }
         }
@@ -162,10 +162,10 @@ class GithubBackend extends AsyncEventEmitter {
                         index: 1,
                         email: commit.author.email,
                         name: commit.author.name,
-                        submitted: moment.unix(commit.timestamp).utc().format(),
+                        submitted: commit.timestamp,
                         comment: commit.message,
                         change: {
-                            oldrev: null,
+                            oldrev: null, //TODO: set this
                             newrev: commit.id,
                             refname: commit.id // Use event.refName all the time instead?
                         }
@@ -228,14 +228,14 @@ class GithubBackend extends AsyncEventEmitter {
         await this._sendRequest(uri, data);
     }
 
-    async _getCommitAuthor(repository, commitSha) {
-        const url = `${GITHUB_API_BASE}/repos/${this.backend.target}/${repository}/commits/${commitSha}`;
+    async _getCommitAuthor(repositoryName, commitSha) {
+        const url = `${GITHUB_API_BASE}/repos/${this.backend.target}/${repositoryName}/commits/${commitSha}`;
         try {
             const result = await this._sendRequest(url, {}, "GET");
 
             return result.commit.author.email;
         } catch (err) {
-            ServiceMgr.instance.log("info", `Unable to get commit author for ${repository}:${commitSha}`);
+            ServiceMgr.instance.log("info", `Unable to get commit author for ${repositoryName}:${commitSha}`);
 
             return null;
         }
@@ -290,10 +290,20 @@ class GithubBackend extends AsyncEventEmitter {
         }
     }
 
-    async merge(/* repository, revision */) {
-        // TODO: implement this
-        throw new Error("Not implemented");
-//        ServiceMgr.instance.log("info", `github merge ${revision._id} in repo ${repository._id}`);
+    async merge(repository, revision) {
+        ServiceMgr.instance.log("verbose", `GitHub merge ${revision._id} in ${repository._id}`);
+        const ref = revision.patches[revision.patches.length - 1];
+        const uri = `${GITHUB_API_BASE}/repos/${this.backend.target}/${repository._id}/pulls/${ref.pullreqnumber}/merge`;
+        const data = {
+            "sha": ref.change.newrev,
+            "merge_method": "squash"
+        };
+
+        try {
+            await this._sendRequest(uri, data, "PUT");
+        } catch (err) {
+            console.log(err);
+        }
     }
 
     async getUri(backend, repository) {
