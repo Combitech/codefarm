@@ -44,8 +44,8 @@ class GithubEventEmitter extends AsyncEventEmitter {
                     }
                     break;
 
-                case "pull_request_review":
-                    this.emit("pull_request_review", body);
+                case "push":
+                    this.emit("push", body);
                     break;
 
                 default:
