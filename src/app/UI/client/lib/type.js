@@ -203,7 +203,7 @@ class Type {
                 return;
             }
 
-            const list = subscription.lastValue.slice(0);
+            const list = subscription.lastValue ? subscription.lastValue.slice(0) : [];
             const data = payload.newdata;
             list.push(data);
             subscription.setData(list);
@@ -218,7 +218,7 @@ class Type {
 
             // If data matches query we must handle it
             if (data) {
-                const list = subscription.lastValue.slice(0);
+                const list = subscription.lastValue ? subscription.lastValue.slice(0) : [];
 
                 // If data already exists in our list replace it,
                 // if it does not exist add it
@@ -238,7 +238,10 @@ class Type {
                 return;
             }
 
-            const index = subscription.lastValue.findIndex((item) => item._id === payload.olddata._id);
+            let index = -1;
+            if (subscription.lastValue) {
+                index = subscription.lastValue.findIndex((item) => item._id === payload.olddata._id);
+            }
 
             // If data matches query we must handle it
             if (index !== -1) {
@@ -261,7 +264,10 @@ class Type {
             }
 
             const data = payload.olddata;
-            const index = subscription.lastValue.findIndex((item) => item._id === data._id);
+            let index = -1;
+            if (subscription.lastValue) {
+                index = subscription.lastValue.findIndex((item) => item._id === data._id);
+            }
 
             // If data matches our query and is in our list (it should be!),
             // we should remove it
