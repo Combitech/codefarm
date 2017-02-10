@@ -34,7 +34,7 @@ class BaselineItem extends Component {
             }
 
             return result.data._id;
-        }, false);
+        }, true);
     }
 
     render() {
