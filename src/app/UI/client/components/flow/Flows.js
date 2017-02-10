@@ -5,22 +5,12 @@ import Component from "ui-lib/component";
 import {
     LoadIndicator as TALoadIndicator
 } from "ui-components/type_admin";
-import Flow from "./Flow";
-import * as queryBuilder from "ui-lib/query_builder";
 
 class Flows extends Component {
     constructor(props) {
         super(props);
 
         this.addStateVariable("flow", 0);
-
-        this.addTypeListStateVariable("flows", "flowctrl.flow", (props) => {
-            const flows = props.item.tags
-                .filter((tag) => tag.startsWith("step:flow:"))
-                .map((tag) => tag.replace("step:flow:", ""));
-
-            return queryBuilder.anyOf("_id", flows);
-        }, true);
     }
 
     render() {
@@ -40,18 +30,18 @@ class Flows extends Component {
         }
 
         let flowsContent;
-        if (this.state.flows.length === 0) {
+        if (this.props.flows.length === 0) {
             flowsContent = (
                 <div>No flows found</div>
             );
-        } else if (this.state.flows.length === 1) {
+        } else if (this.props.flows.length === 1) {
             flowsContent = (
-                <Flow
+                <this.props.FlowComponent
                     theme={this.props.theme}
                     item={this.props.item}
                     itemExt={this.props.itemExt}
                     pathname={this.props.pathname}
-                    flow={this.state.flows[0]}
+                    flow={this.props.flows[0]}
                     step={this.props.step}
                 />
             );
@@ -62,12 +52,12 @@ class Flows extends Component {
                     onChange={this.state.flow.set}
                     fixed={true}
                 >
-                    {this.state.flows.map((flow) => (
+                    {this.props.flows.map((flow) => (
                         <Tab
                             label={flow._id}
                             key={flow._id}
                         >
-                            <Flow
+                            <this.props.FlowComponent
                                 theme={this.props.theme}
                                 item={this.props.item}
                                 itemExt={this.props.itemExt}
@@ -82,7 +72,7 @@ class Flows extends Component {
         }
 
         return (
-            <div>
+            <div className={this.props.theme.flow}>
                 {loadIndicator}
                 {flowsContent}
             </div>
@@ -95,7 +85,9 @@ Flows.propTypes = {
     item: React.PropTypes.object.isRequired,
     itemExt: React.PropTypes.object.isRequired,
     pathname: React.PropTypes.string.isRequired,
-    step: React.PropTypes.object.isRequired
+    step: React.PropTypes.object.isRequired,
+    flows: React.PropTypes.array,
+    FlowComponent: React.PropTypes.func.isRequired
 };
 
 export default Flows;

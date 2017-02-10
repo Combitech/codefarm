@@ -5,6 +5,10 @@
 @import "~ui-styles/colors";
 @import "~ui-styles/animations";
 
+.flow {
+    padding-bottom: $layout-gutter-width-sm * 2;
+}
+
 .svgGrid {
     margin: 0 auto;
     display: block;

@@ -8,7 +8,8 @@ import {
     Section as TASection,
     LoadIndicator as TALoadIndicator
 } from "ui-components/type_admin";
-import Flows from "./Flows";
+import Flow from "./Flow";
+import { Flows } from "ui-components/flow";
 
 class BaselineItem extends Component {
     constructor(props) {
@@ -35,6 +36,21 @@ class BaselineItem extends Component {
 
             return result.data._id;
         }, true);
+
+        this.addTypeItemStateVariable("flows", "dataresolve.data", async (props) => {
+            const result = await api.rest.post("dataresolve.data", {
+                resolver: "BaselineFlowsResolve",
+                opts: {
+                    baselineName: props.item.name
+                }
+            });
+
+            if (result.result !== "success") {
+                throw new Error(result.error);
+            }
+
+            return result.data._id;
+        }, false);
     }
 
     render() {
@@ -55,6 +71,8 @@ class BaselineItem extends Component {
             );
         }
 
+        const flows = this.state.flows ? this.state.flows.data : [];
+
         return (
             <div>
                 {loadIndicator}
@@ -64,15 +82,15 @@ class BaselineItem extends Component {
                 >
                     <div className={this.props.theme.container}>
                         {this.state.itemExt &&
-                            <div className={this.props.theme.flow}>
-                                <Flows
-                                    theme={this.props.theme}
-                                    item={this.props.item}
-                                    itemExt={this.state.itemExt}
-                                    pathname={this.props.pathname}
-                                    step={this.state.step}
-                                />
-                            </div>
+                            <Flows
+                                theme={this.props.theme}
+                                item={this.props.item}
+                                itemExt={this.state.itemExt}
+                                pathname={this.props.pathname}
+                                step={this.state.step}
+                                flows={flows}
+                                FlowComponent={Flow}
+                            />
                         }
                         {this.state.step.value ? (
                             <Row>
