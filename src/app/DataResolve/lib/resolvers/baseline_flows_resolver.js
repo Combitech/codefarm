@@ -2,18 +2,16 @@
 
 const { ServiceMgr } = require("service");
 const { assertType, assertProp } = require("misc");
-const clone = require("clone");
 
 let instance;
 
-const matchRef = (ref, type, id) =>
-    type === ref.type && (ref.id.constructor === Array ? ref.id.includes(id) : ref.id === id);
-
-const typeToRef = (item) => ({
-    _ref: true,
-    id: item._id,
-    type: item.type
-});
+const typeToRef = (item) => {
+    return {
+        _ref: true,
+        id: item._id,
+        type: item.type
+    };
+};
 
 class BaselineFlowsResolver {
     constructor() {

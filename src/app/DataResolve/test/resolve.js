@@ -46,7 +46,7 @@ describe("DataResolve", () => {
         let testInfo;
         let main;
 
-        let testData = [];
+        const testData = [];
 
         const requestedRefs = [];
 
@@ -84,6 +84,7 @@ describe("DataResolve", () => {
                         getTestDataList: (type, query) => {
                             const typeList = testData.filter((data) => data.type === type);
                             const matches = sift(query, typeList);
+
                             return clone(matches);
                         }
                     }
@@ -514,7 +515,7 @@ describe("DataResolve", () => {
         });
 
         describe("BaselineFlowsResolve", async () => {
-            const steps = [{
+            const steps = [ {
                 _id: "Step1",
                 type: "flowctrl.step",
                 name: "Step1",
@@ -538,15 +539,15 @@ describe("DataResolve", () => {
                 name: "Step4",
                 flow: "Flow2",
                 baseline: "Baseline2"
-            }];
+            } ];
 
-            const flows = [{
+            const flows = [ {
                 _id: "Flow1",
                 type: "flowctrl.flow"
             }, {
                 _id: "Flow2",
                 type: "flowctrl.flow"
-            }];
+            } ];
 
             before(() => {
                 testData.length = 0;
@@ -564,7 +565,7 @@ describe("DataResolve", () => {
                     _ref: true,
                     _id: id,
                     type: type
-                }))
+                }));
 
             describe("Test Resolve REST (HTTP) API", () => {
                 let bl1DataId;
@@ -582,9 +583,8 @@ describe("DataResolve", () => {
                     assert.deepEqual(obj.opts.baselineName, baselineName);
                     assert.deepEqual(obj.data, [ flows[0] ]);
                     assertRefWatched(obj, flows[0]._id, flows[0].type);
-                    steps.filter((item) => item.baseline === baselineName).forEach((item) =>
-                        assertRefWatched(obj, item._id, item.type)
-                    );
+                    steps.filter((item) => item.baseline === baselineName)
+                        .forEach((item) => assertRefWatched(obj, item._id, item.type));
                     bl1DataId = obj._id;
                 });
 
