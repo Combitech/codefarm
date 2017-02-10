@@ -49,6 +49,7 @@
     "mongo-mock": "^2.1.0",
     "request": "^2.76.0",
     "request-promise": "^4.1.1",
+    "sift": "^3.2.6",
     "sinon": "^1.17.6"
   }
 }

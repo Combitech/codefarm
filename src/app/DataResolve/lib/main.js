@@ -7,6 +7,7 @@ const RestClient = require("restclient");
 const Datas = require("./controllers/datas");
 const { Service } = require("service");
 const RefResolver = require("./resolvers/ref_resolver");
+const BaselineFlowsResolver = require("./resolvers/baseline_flows_resolver");
 const Control = require("./control");
 
 class Main extends Service {
@@ -34,6 +35,9 @@ class Main extends Service {
 
         await RefResolver.instance.start(this.config.resolver);
         this.addDisposable(RefResolver.instance);
+
+        await BaselineFlowsResolver.instance.start(this.config.resolver);
+        this.addDisposable(BaselineFlowsResolver.instance);
 
         await Control.instance.start();
         this.addDisposable(Control.instance);
