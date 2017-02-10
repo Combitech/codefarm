@@ -222,7 +222,9 @@ class Job extends Type {
             throw new Error(`Illegal Job status ${result}`);
         }
         this.status = result;
-        this.currentRun.status = result;
+        if (this.lastRunId !== false) {
+            this.currentRun.status = result;
+        }
         await this.save();
     }
 }
