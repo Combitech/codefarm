@@ -67,8 +67,8 @@ class EditStep extends Component {
 
         tautils.createStateProperties(this, this.itemProperties, this.props.item);
 
-        this.addTypeListStateVariable("steps", "flowctrl.step", {
-            flow: this.props.parentItems[this.props.parentItems.length - 1]._id
+        this.addTypeListStateVariable("steps", "flowctrl.step", (props) => {
+            flow: props.parentItems[props.parentItems.length - 1]._id
         });
         this.addTypeListStateVariable("baselines", "baselinegen.specification");
     }

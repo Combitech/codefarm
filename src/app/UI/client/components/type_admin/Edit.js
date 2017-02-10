@@ -62,7 +62,6 @@ class Edit extends Component {
         } else {
             item = this.props.item;
         }
-
         const props = {
             theme: this.props.theme,
             parentItems: parentItems,
@@ -87,9 +86,13 @@ class Edit extends Component {
             );
         }
 
-        return (
-            <this.props.route.Create {...props} />
-        );
+        if (this.props.item) {
+            return (
+                <this.props.route.Create {...props} />
+            );
+        }
+
+        return null;
     }
 }
 
