@@ -152,7 +152,13 @@ class GithubBackend extends AsyncEventEmitter {
         ServiceMgr.instance.log("debug", JSON.stringify(event, null, 2));
 
         // TODO: List of special branches that should create Revision objects instead of hardcoded
-        if (event.ref === "refs/heads/master") {
+
+        // TODO: We skip pushes with GitHub as committer as these are the pushes done by
+        // GitHub when merging a pull request via the web interface, which is
+        // handled by the pull request handlers. Unfortunately this is also the case
+        // when using the web interface to for example create a simple file and commit it
+        // directly to master. Not sure how to differentiate...
+        if (event.ref === "refs/heads/master" && event.commits[0].committer.name !== "GitHub") {
             const repositoryId = event.repository.name;
             const repository = await this.Repository.findOne({ _id: repositoryId });
             // Make sure that we know about repo
@@ -176,6 +182,8 @@ class GithubBackend extends AsyncEventEmitter {
                 }
                 ServiceMgr.instance.log("verbose", `Created ${event.commits.length} revisions as merged`);
             }
+        } else {
+            ServiceMgr.instance.log("verbose", "Ignoring push to personal branch or pull-request merge");
         }
     }
 

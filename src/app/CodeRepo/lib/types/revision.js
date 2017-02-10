@@ -81,7 +81,7 @@ class Revision extends Type {
         }
     }
 
-    async setMerged(ref, parentIds = []) {
+    async setMerged(ref = null, parentIds = []) {
         if (this.status === "merged") {
             throw new Error("Revision already merged");
         }
@@ -92,7 +92,10 @@ class Revision extends Type {
 
         this.status = "merged";
         this.tags.push("merged");
-        this.patches.push(ref);
+
+        if (ref !== null) {
+            this.patches.push(ref);
+        }
 
         await this.save(parentIds);
     }
