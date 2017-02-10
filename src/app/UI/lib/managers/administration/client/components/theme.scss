@@ -7,6 +7,10 @@
 .content {
     margin-left: $baseline-grid * 40;
     margin-top: $standard-increment-desktop;
+
+    .flow {
+        padding-bottom: $layout-gutter-width-sm * 2;
+    }
 }
 
 .jobStatusIcon {
