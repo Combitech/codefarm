@@ -1,4 +1,5 @@
 
+import api from "api.io/api.io-client";
 import React from "react";
 import { Tab, Tabs } from "react-toolbox";
 import Component from "ui-lib/component";
@@ -6,7 +7,6 @@ import {
     LoadIndicator as TALoadIndicator
 } from "ui-components/type_admin";
 import Flow from "./Flow";
-import * as queryBuilder from "ui-lib/query_builder";
 
 class Flows extends Component {
     constructor(props) {
@@ -14,13 +14,20 @@ class Flows extends Component {
 
         this.addStateVariable("flow", 0);
 
-        this.addTypeListStateVariable("flows", "flowctrl.flow", (props) => {
-            const flows = props.item.tags
-                .filter((tag) => tag.startsWith("step:flow:"))
-                .map((tag) => tag.replace("step:flow:", ""));
+        this.addTypeItemStateVariable("flows", "dataresolve.data", async (props) => {
+            const result = await api.rest.post("dataresolve.data", {
+                resolver: "BaselineFlowsResolve",
+                opts: {
+                    baselineName: props.item.name
+                }
+            });
 
-            return queryBuilder.anyOf("_id", flows);
-        }, true);
+            if (result.result !== "success") {
+                throw new Error(result.error);
+            }
+
+            return result.data._id;
+        }, false);
     }
 
     render() {
@@ -39,19 +46,20 @@ class Flows extends Component {
             );
         }
 
+        const flows = this.state.flows && this.state.flows.data;
         let flowsContent;
-        if (this.state.flows.length === 0) {
+        if (!flows || flows.length === 0) {
             flowsContent = (
                 <div>No flows found</div>
             );
-        } else if (this.state.flows.length === 1) {
+        } else if (flows.length === 1) {
             flowsContent = (
                 <Flow
                     theme={this.props.theme}
                     item={this.props.item}
                     itemExt={this.props.itemExt}
                     pathname={this.props.pathname}
-                    flow={this.state.flows[0]}
+                    flow={flows[0]}
                     step={this.props.step}
                 />
             );
@@ -62,7 +70,7 @@ class Flows extends Component {
                     onChange={this.state.flow.set}
                     fixed={true}
                 >
-                    {this.state.flows.map((flow) => (
+                    {flows.map((flow) => (
                         <Tab
                             label={flow._id}
                             key={flow._id}

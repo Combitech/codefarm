@@ -1,9 +1,11 @@
 "use strict";
 
 const RefResolver = require("./resolvers/ref_resolver");
+const BaselineFlowsResolver = require("./resolvers/baseline_flows_resolver");
 
 const resolvers = {
-    "RefResolve": RefResolver
+    "RefResolve": RefResolver,
+    "BaselineFlowsResolve": BaselineFlowsResolver
 };
 
 let instance;

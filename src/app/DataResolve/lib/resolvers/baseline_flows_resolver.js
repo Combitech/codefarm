@@ -1,0 +1,122 @@
+"use strict";
+
+const { ServiceMgr } = require("service");
+const { assertType, assertProp } = require("misc");
+const clone = require("clone");
+
+let instance;
+
+const matchRef = (ref, type, id) =>
+    type === ref.type && (ref.id.constructor === Array ? ref.id.includes(id) : ref.id === id);
+
+class BaselineFlowsResolver {
+    constructor() {
+        this.config = {};
+    }
+
+    static get instance() {
+        if (!instance) {
+            instance = new this();
+        }
+
+        return instance;
+    }
+
+    async start(config = {}) {
+        this.config = config;
+    }
+
+    async validate(event, data) {
+        assertType(data.opts, "data.opts", "object");
+        assertProp(data.opts, "baselineName", true);
+        assertType(data.opts.baselineName, "data.opts.baselineName", "string");
+    }
+
+    async resolve(obj, updatedRef = false) {
+        return this._resolve(obj.opts, obj.data, updatedRef, obj._id);
+    }
+
+    async _get(ref, sourceId) {
+        if (this.config.testMode) {
+            return this.config.getTestData(ref, sourceId);
+        }
+
+        const [ serviceId, typeName ] = ref.type.split(".");
+
+        if (!ServiceMgr.instance.has(serviceId)) {
+            throw new Error(`No such service, ${serviceId}`);
+        }
+
+        const restClient = await ServiceMgr.instance.use(serviceId);
+
+        if (ref.id.constructor === Array) {
+            let result = [];
+            if (ref.id.length > 0) {
+                result = await restClient.get(`/${typeName}`, {
+                    _id: {
+                        $in: ref.id
+                    }
+                });
+            }
+
+            return result;
+        }
+
+        return await restClient.get(`/${typeName}/${ref.id}`, {});
+    }
+
+    async _list(type, query) {
+        if (this.config.testMode) {
+            return this.config.getTestDataList(type, query);
+        }
+
+        const [ serviceId, typeName ] = type.split(".");
+
+        if (!ServiceMgr.instance.has(serviceId)) {
+            throw new Error(`No such service, ${serviceId}`);
+        }
+
+        const restClient = await ServiceMgr.instance.use(serviceId);
+
+        return await restClient.get(`/${typeName}`, query);
+    }
+
+    async _resolve(opts, oldData, updatedRef = false, sourceId = false) {
+        let root = oldData;
+        if (!oldData || !updatedRef) {
+            const steps = await this._list("flowctrl.step", {
+                baseline: opts.baselineName
+            });
+            let flowIds = null;
+            if (steps) {
+                // Take flowId from all steps and remove duplicates
+                flowIds = steps
+                    .map((step) => step.flow)
+                    .filter((flowId, index, self) => self.indexOf(flowId) === index);
+            }
+
+            let flows = [];
+            if (flowIds && flowIds.length > 0) {
+                flows = await this._list("flowctrl.flow", {
+                    _id: { $in: flowIds }
+                });
+            }
+            root = flows;
+        }
+
+        /*
+        if (spec && spec.paths) {
+            for (const path of spec.paths) {
+                refs = refs.concat(await this._resolvePath(path, root, updatedRef, sourceId));
+            }
+        }
+        */
+
+        return { data: root, refs: [] };
+    }
+
+    async dispose() {
+    }
+}
+
+module.exports = BaselineFlowsResolver;
