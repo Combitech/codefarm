@@ -9,6 +9,12 @@ let instance;
 const matchRef = (ref, type, id) =>
     type === ref.type && (ref.id.constructor === Array ? ref.id.includes(id) : ref.id === id);
 
+const typeToRef = (item) => ({
+    _ref: true,
+    id: item._id,
+    type: item.type
+});
+
 class BaselineFlowsResolver {
     constructor() {
         this.config = {};
@@ -33,7 +39,7 @@ class BaselineFlowsResolver {
     }
 
     async resolve(obj, updatedRef = false) {
-        return this._resolve(obj.opts, obj.data, updatedRef, obj._id);
+        return this._resolve(obj.opts, obj.data, updatedRef);
     }
 
     async _get(ref, sourceId) {
@@ -81,9 +87,10 @@ class BaselineFlowsResolver {
         return await restClient.get(`/${typeName}`, query);
     }
 
-    async _resolve(opts, oldData, updatedRef = false, sourceId = false) {
+    async _resolve(opts, oldData, updatedRef = false) {
         let root = oldData;
-        if (!oldData || !updatedRef) {
+        let refs = [];
+        if (!oldData || updatedRef) {
             const steps = await this._list("flowctrl.step", {
                 baseline: opts.baselineName
             });
@@ -93,6 +100,9 @@ class BaselineFlowsResolver {
                 flowIds = steps
                     .map((step) => step.flow)
                     .filter((flowId, index, self) => self.indexOf(flowId) === index);
+
+                // Steps may update, we need to watch these
+                refs = refs.concat(steps.map(typeToRef));
             }
 
             let flows = [];
@@ -100,19 +110,12 @@ class BaselineFlowsResolver {
                 flows = await this._list("flowctrl.flow", {
                     _id: { $in: flowIds }
                 });
+                refs = refs.concat(flows.map(typeToRef));
             }
             root = flows;
         }
 
-        /*
-        if (spec && spec.paths) {
-            for (const path of spec.paths) {
-                refs = refs.concat(await this._resolvePath(path, root, updatedRef, sourceId));
-            }
-        }
-        */
-
-        return { data: root, refs: [] };
+        return { data: root, refs: refs };
     }
 
     async dispose() {

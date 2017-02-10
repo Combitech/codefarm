@@ -513,7 +513,7 @@ describe("DataResolve", () => {
             });
         });
 
-        describe.only("BaselineFlowsResolve", async () => {
+        describe("BaselineFlowsResolve", async () => {
             const steps = [{
                 _id: "Step1",
                 type: "flowctrl.step",
@@ -555,9 +555,19 @@ describe("DataResolve", () => {
             });
 
             beforeEach(async () => {
+                steps[0].flow = "Flow1";
             });
 
+            const assertRefWatched = (data, id, type) => data.watchRefs
+                .filter((ref) => ref._id === id)
+                .forEach((ref) => assert.deepEqual(ref, {
+                    _ref: true,
+                    _id: id,
+                    type: type
+                }))
+
             describe("Test Resolve REST (HTTP) API", () => {
+                let bl1DataId;
                 it("should resolve a baseline that results in one flow", async () => {
                     const baselineName = "Baseline1";
 
@@ -570,9 +580,14 @@ describe("DataResolve", () => {
                     const obj = result.data;
 
                     assert.deepEqual(obj.opts.baselineName, baselineName);
-                    assert.deepEqual(obj.watchRefs, []);
                     assert.deepEqual(obj.data, [ flows[0] ]);
+                    assertRefWatched(obj, flows[0]._id, flows[0].type);
+                    steps.filter((item) => item.baseline === baselineName).forEach((item) =>
+                        assertRefWatched(obj, item._id, item.type)
+                    );
+                    bl1DataId = obj._id;
                 });
+
                 it("should resolve a baseline that results in multiple flows", async () => {
                     const baselineName = "Baseline2";
 
@@ -585,8 +600,29 @@ describe("DataResolve", () => {
                     const obj = result.data;
 
                     assert.deepEqual(obj.opts.baselineName, baselineName);
-                    assert.deepEqual(obj.watchRefs, []);
                     assert.deepEqual(obj.data, [ flows[0], flows[1] ]);
+                    assertRefWatched(obj, flows[0]._id, flows[0].type);
+                    assertRefWatched(obj, flows[1]._id, flows[1].type);
+                    steps.filter((item) => item.baseline === baselineName).forEach((item) =>
+                        assertRefWatched(obj, item._id, item.type)
+                    );
+                });
+
+                it("should update on updated refs", async () => {
+                    const baselineName = "Baseline1";
+
+                    // Perform update
+                    steps[0].flow = "Flow2";
+                    await msgBusStub.injectTypeUpdateMessage(steps[0].type, steps[0]._id);
+                    const obj = await getResolved(bl1DataId);
+
+                    assert.deepEqual(obj.opts.baselineName, baselineName);
+                    assert.deepEqual(obj.data, [ flows[0], flows[1] ]);
+                    assertRefWatched(obj, flows[0]._id, flows[0].type);
+                    assertRefWatched(obj, flows[1]._id, flows[1].type);
+                    steps.filter((item) => item.baseline === baselineName).forEach((item) =>
+                        assertRefWatched(obj, item._id, item.type)
+                    );
                 });
             });
         });

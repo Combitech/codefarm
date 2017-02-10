@@ -45,7 +45,7 @@ class Control {
                 let needUpdate = false;
 
                 for (const ref of dataItem.watchRefs) {
-                    needUpdate = data.type === ref.type && (ref.id.constructor === Array ? ref.id.includes(data.typeId) : ref.id === data.typeId);
+                    needUpdate = data.type === ref.type && ref.id && (ref.id.constructor === Array ? ref.id.includes(data.typeId) : ref.id === data.typeId);
 
                     if (needUpdate) {
                         break;

@@ -74,7 +74,7 @@ class Data extends Type {
         this.data = data;
         this.watchRefs = refs;
         const elapsedMs = Date.now() - startTs;
-        ServiceMgr.instance.log("verbose", `Resolved ${this._id} in ${elapsedMs}ms (${updatedRef ? "partial" : "full"})`);
+        ServiceMgr.instance.log("verbose", `Resolved ${this._id} (${this.resolver}) in ${elapsedMs}ms (${updatedRef ? "partial" : "full"})`);
     }
 }
 
