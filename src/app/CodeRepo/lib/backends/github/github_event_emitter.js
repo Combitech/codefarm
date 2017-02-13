@@ -3,11 +3,14 @@
 const { ServiceMgr } = require("service");
 const Koa = require("koa2");
 const bodyParser = require("koa-bodyparser");
+const { assertProp, assertType, ensureArray, synchronize } = require("misc");
 const { AsyncEventEmitter } = require("emitter");
 
 class GithubEventEmitter extends AsyncEventEmitter {
     constructor() {
         super();
+
+        synchronize(this, "emit");
     }
 
     async _setupWebServer(port) {
@@ -29,13 +32,13 @@ class GithubEventEmitter extends AsyncEventEmitter {
                 case "pull_request":
                     switch (body.action) {
                     case "opened":
-                        this.emit("pull_request_opened", body);
+                        await this.emit("pull_request_opened", body);
                         break;
                     case "synchronize":
-                        this.emit("pull_request_updated", body);
+                        await this.emit("pull_request_updated", body);
                         break;
                     case "closed":
-                        this.emit("pull_request_closed", body);
+                        await this.emit("pull_request_closed", body);
                         break;
 
                     default:
@@ -45,7 +48,7 @@ class GithubEventEmitter extends AsyncEventEmitter {
                     break;
 
                 case "push":
-                    this.emit("push", body);
+                    await this.emit("push", body);
                     break;
 
                 default:
