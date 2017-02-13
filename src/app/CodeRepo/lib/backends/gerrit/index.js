@@ -13,7 +13,7 @@ const GerritEventEmitter = require("./gerrit_event_emitter");
 
 
 const DEFAULT_GERRIT_PORT = 29418;
-const DEFAULT_GERRIT_TIMEOUT = 15 * 1000;
+const DEFAULT_GERRIT_TIMEOUT = 60 * 1000;
 
 /*
 Note that localhost below needs to be changed to the host where
