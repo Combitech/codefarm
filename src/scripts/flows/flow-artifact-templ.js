@@ -9,8 +9,8 @@ module.exports = async (argv) => {
     const defaultCollector = (
         criteria,
         limit = 1,
-        name = "commits",
-        collectType = "coderepo.revision"
+        name = "artifacts",
+        collectType = "artifactrepo.artifact"
     ) => {
         return {
             name: name,
@@ -59,62 +59,58 @@ module.exports = async (argv) => {
 
     const baselineSpecs = [
         {
-            _id: "Select",
+            _id: "ArtSelect",
             collectors: [
                 defaultCollector(`!${flowIdTag}`)
             ]
         }, {
-            _id: "CG",
+            _id: "DC",
             collectors: [
-                defaultCollector(`${flowIdTag} AND !step:CG:success`)
+                defaultCollector(`${flowIdTag} AND !step:DC:success`)
             ]
         }, {
-            _id: "Merge",
+            _id: "Integrate",
             collectors: [
-                defaultCollector(`${flowIdTag} AND step:CG:success`)
+                defaultCollector(`${flowIdTag} AND step:DC:success`)
             ]
         }, {
-            _id: "Test",
+            _id: "ShortTest",
             collectors: [
-                defaultCollector(`${flowIdTag} AND step:Merge:success AND merged`)
+                defaultCollector(`${flowIdTag} AND step:Integrate:success`)
             ]
         }, {
-            _id: "Build",
+            _id: "LongTest",
             collectors: [
-                defaultCollector(`${flowIdTag} AND step:Merge:success AND merged`)
+                defaultCollector(`${flowIdTag} AND step:ShortTest:success`)
             ]
         }
     ];
 
     const randomDelayScript = `
         #!/bin/bash
-        delay=$(shuf -i0-3 -n 1)
+        delay=$(shuf -i3-10 -n 1)
         echo "I will sleep $delay seconds"
         sleep $delay
         exit 0
     `;
 
-    const cgScript = await fs.readFileAsync(path.join(__dirname, "..", "jobs", "status_from_commit_msg.sh"), { encoding: "utf8" });
-    const mergeScript = await fs.readFileAsync(path.join(__dirname, "..", "jobs", "merge_revision.sh"), { encoding: "utf8" });
-    const buildScript = await fs.readFileAsync(path.join(__dirname, "..", "jobs", "create_artifact.sh"), { encoding: "utf8" });
-
     const defaultSlaveCriteria = "slave1";
 
     const steps = [
         tagBlSpec(
-            "Select", `tags.push("${flowIdTag}");`, [], false
+            "ArtSelect", `tags.push("${flowIdTag}");`, [], false
         ),
         slaveScriptBlSpec(
-            "CG", cgScript, defaultSlaveCriteria
+            "DC", randomDelayScript, defaultSlaveCriteria
         ),
         slaveScriptBlSpec(
-            "Merge", mergeScript, defaultSlaveCriteria, [ "CG" ]
+            "Integrate", randomDelayScript, defaultSlaveCriteria, [ "DC" ]
         ),
         slaveScriptBlSpec(
-            "Test", randomDelayScript, defaultSlaveCriteria, [ "Merge" ]
+            "ShortTest", randomDelayScript, defaultSlaveCriteria, [ "Integrate" ]
         ),
         slaveScriptBlSpec(
-            "Build", buildScript, defaultSlaveCriteria, [ "Merge" ]
+            "LongTest", randomDelayScript, defaultSlaveCriteria, [ "ShortTest" ]
         )
     ];
 
