@@ -2,6 +2,7 @@
 
 const { ServiceMgr } = require("service");
 const rp = require("request-promise");
+const moment = require("moment");
 const { AsyncEventEmitter } = require("emitter");
 const GithubEventEmitter = require("./github_event_emitter");
 
@@ -77,57 +78,87 @@ class GithubBackend extends AsyncEventEmitter {
         ServiceMgr.instance.log("debug", JSON.stringify(event, null, 2));
     }
 
-    _createRef(email, event) {
+    _createPullReqRef(email, event, overrideSha = null) {
         return {
             index: 1,
             email: email,
             name: event.pull_request.user.login,
-            submitted: event.pull_request.created_at,
+            submitted: moment(event.pull_request.created_at).utc().format(),
             comment: event.pull_request.title,
-            pullreqnumber: event.pull_request.number,
+            pullreqnr: event.pull_request.number,
             change: {
                 oldrev: event.pull_request.base.sha,
-                newrev: event.pull_request.head.sha,
+                newrev: overrideSha ? overrideSha : event.pull_request.head.sha,
                 refname: event.pull_request.head.ref
             }
         };
     }
 
-    async _createRevision(event) {
-        const changeId = event.pull_request.id.toString();
+    async _createPullReqRevision(event) {
+        const pullReqId = event.pull_request.id.toString();
         const changeSha = event.pull_request.head.sha;
         const repositoryId = event.repository.name;
         const email = await this._getCommitAuthor(repositoryId, changeSha);
         const repository = await this.Repository.findOne({ _id: repositoryId });
         if (repository) {
-            const ref = this._createRef(email, event);
+            const ref = this._createPullReqRef(email, event);
             ServiceMgr.instance.log("debug", `Created revision ref ${ref}`);
-            ServiceMgr.instance.log("verbose", `GitHub event allocating revision ${changeId}`);
+            ServiceMgr.instance.log("verbose", `GitHub event allocating revision ${pullReqId}`);
 
-            return await this.Revision.allocate(repository._id, changeId, ref);
+            return await this.Revision.allocate(repository._id, pullReqId, ref);
+        }
+    }
+
+    async _getCommitAuthor(repositoryName, commitSha) {
+        const url = `${GITHUB_API_BASE}/repos/${this.backend.target}/${repositoryName}/commits/${commitSha}`;
+        try {
+            const result = await this._sendRequest(url, {}, "GET");
+
+            return result.commit.author.email;
+        } catch (err) {
+            ServiceMgr.instance.log("info", `Unable to get commit author for ${repositoryName}:${commitSha}`);
+
+            return null;
+        }
+    }
+
+    async _getPullRequestMergeSha(repositoryName, pullReqNumber) {
+        const uri = `${GITHUB_API_BASE}/repos/${this.backend.target}/${repositoryName}/issues/${pullReqNumber}/events`;
+        try {
+            const events = await this._sendRequest(uri, {}, "GET");
+            for (const event of events) {
+                if (event.event === "merged") {
+                    return event.commit_id;
+                }
+            }
+        } catch (err) {
+            ServiceMgr.instance.log("error", `Failed to get merge SHA for repo ${repositoryName} pull request ${pullReqNumber}: ${err}`);
+
+            return null;
         }
     }
 
     async _onPullRequestClose(event) {
         ServiceMgr.instance.log("verbose", "pull-request-closed received");
-        ServiceMgr.instance.log("debug", event);
+        ServiceMgr.instance.log("debug", JSON.stringify(event, null, 2));
 
         if (event.pull_request.merged === true) {
-            const repositoryId = event.repository.name;
-            const repository = await this.Repository.findOne({ _id: repositoryId });
+            const repositoryName = event.repository.name;
+            const repository = await this.Repository.findOne({ _id: repositoryName });
             // Make sure that we know about repo
             if (repository) {
                 // And that we know about revision...
-                const changeId = event.pull_request.id;
-                const revision = await this.Revision.findOne({ _id: changeId });
+                const pullReqId = event.pull_request.id;
+                const revision = await this.Revision.findOne({ _id: pullReqId.toString() });
                 if (revision) {
-                    const changeSha = event.pull_request.head.sha;
-                    const email = await this._getCommitAuthor(repositoryId, changeSha);
-                    const ref = this._createRef(email, event);
-
+                    // merge_commit_sha is deprecated so we cannot use it
+                    const mergeSha = await this._getPullRequestMergeSha(repositoryName, event.pull_request.number);
+                    const email = await this._getCommitAuthor(repositoryName, mergeSha);
+                    // Override sha with resolved merge sha
+                    const ref = await this._createPullReqRef(email, event, mergeSha);
                     await revision.setMerged(ref);
                     await this.emit("revision.merged", revision);
-                    ServiceMgr.instance.log("verbose", `GitHub event merged revision ${changeId}`);
+                    ServiceMgr.instance.log("verbose", `GitHub event merged revision ${pullReqId}`);
                 }
             }
         }
@@ -137,31 +168,45 @@ class GithubBackend extends AsyncEventEmitter {
         ServiceMgr.instance.log("verbose", "pull_request_update received");
         ServiceMgr.instance.log("debug", JSON.stringify(event, null, 2));
 
-        await this._createRevision(event);
+        const repositoryName = event.repository.name;
+        const repository = await this.Repository.findOne({ _id: repositoryName });
+        // Make sure that we know about repo
+        if (repository) {
+            // And that we know about revision...
+            const pullReqId = event.pull_request.id;
+            const revision = await this.Revision.findOne({ _id: pullReqId.toString() });
+            if (revision) {
+                const changeSha = event.pull_request.head.sha;
+                const email = await this._getCommitAuthor(repositoryName, changeSha);
+                const ref = await this._createPullReqRef(email, event);
+                revision.patches.push(ref);
+                revision.save();
+            }
+        }
     }
 
     async _onPullRequestOpen(event) {
         ServiceMgr.instance.log("verbose", "pull_request_open received");
         ServiceMgr.instance.log("debug", JSON.stringify(event, null, 2));
 
-        await this._createRevision(event);
+        await this._createPullReqRevision(event);
     }
 
     async _onPush(event) {
         ServiceMgr.instance.log("verbose", "push received");
         ServiceMgr.instance.log("debug", JSON.stringify(event, null, 2));
 
-        // TODO: List of special branches that should create Revision objects instead of hardcoded
+        const pullreqrev = await this.Revision.findOne({ "patches.change.newrev": event.head_commit.id });
+        if (pullreqrev) {
+            ServiceMgr.instance.log("verbose", "Ignored push initiated by pull request merge");
 
-        // TODO: We skip pushes with GitHub as committer as these are the pushes done by
-        // GitHub when merging a pull request via the web interface, which is
-        // handled by the pull request handlers. Unfortunately this is also the case
-        // when using the web interface to for example create a simple file and commit it
-        // directly to master. Not sure how to differentiate...
-        if (event.ref === "refs/heads/master" && event.commits[0].committer.name !== "GitHub") {
+            return;
+        }
+
+        // TODO: List of special branches
+        if (event.ref === "refs/heads/master") {
             const repositoryId = event.repository.name;
             const repository = await this.Repository.findOne({ _id: repositoryId });
-            // Make sure that we know about repo
             if (repository) {
                 for (const commit of event.commits) {
                     const ref = {
@@ -171,7 +216,7 @@ class GithubBackend extends AsyncEventEmitter {
                         submitted: commit.timestamp,
                         comment: commit.message,
                         change: {
-                            oldrev: null, //TODO: set this
+                            oldrev: null, // TODO: set this
                             newrev: commit.id,
                             refname: commit.id // Use event.refName all the time instead?
                         }
@@ -180,10 +225,10 @@ class GithubBackend extends AsyncEventEmitter {
                     await revision.setMerged();
                     await this.emit("revision.merged", revision);
                 }
-                ServiceMgr.instance.log("verbose", `Created ${event.commits.length} revisions as merged`);
+                ServiceMgr.instance.log("verbose", `Push created ${event.commits.length} revisions as merged`);
             }
         } else {
-            ServiceMgr.instance.log("verbose", "Ignoring push to personal branch or pull-request merge");
+            ServiceMgr.instance.log("verbose", `Ignored push to personal branch ${event.ref}`);
         }
     }
 
@@ -236,19 +281,6 @@ class GithubBackend extends AsyncEventEmitter {
         await this._sendRequest(uri, data);
     }
 
-    async _getCommitAuthor(repositoryName, commitSha) {
-        const url = `${GITHUB_API_BASE}/repos/${this.backend.target}/${repositoryName}/commits/${commitSha}`;
-        try {
-            const result = await this._sendRequest(url, {}, "GET");
-
-            return result.commit.author.email;
-        } catch (err) {
-            ServiceMgr.instance.log("info", `Unable to get commit author for ${repositoryName}:${commitSha}`);
-
-            return null;
-        }
-    }
-
     async _sendRequest(uri, body, method = "POST") {
         const auth = Buffer.from(`${this.backend.authUser}:${this.backend.authToken}`).toString("base64");
         const options = {
@@ -299,9 +331,9 @@ class GithubBackend extends AsyncEventEmitter {
     }
 
     async merge(repository, revision) {
-        ServiceMgr.instance.log("verbose", `GitHub merge ${revision._id} in ${repository._id}`);
+        ServiceMgr.instance.log("verbose", `GitHub merge pull request ${revision._id} in ${repository._id}`);
         const ref = revision.patches[revision.patches.length - 1];
-        const uri = `${GITHUB_API_BASE}/repos/${this.backend.target}/${repository._id}/pulls/${ref.pullreqnumber}/merge`;
+        const uri = `${GITHUB_API_BASE}/repos/${this.backend.target}/${repository._id}/pulls/${revision._id}/merge`;
         const data = {
             "sha": ref.change.newrev,
             "merge_method": "squash"
@@ -310,7 +342,7 @@ class GithubBackend extends AsyncEventEmitter {
         try {
             await this._sendRequest(uri, data, "PUT");
         } catch (err) {
-            console.log(err);
+            ServiceMgr.instance.log("error", `Error merging in repository: ${repository._id} revision: ${ref.change.newrev}`);
         }
     }
 
