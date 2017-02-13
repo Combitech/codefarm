@@ -28,6 +28,7 @@
     "create-baseline": "node --harmony_async_await ./create-baseline.js",
     "create-flow": "node --harmony_async_await ./create-flow.js",
     "create-flow1": "node --harmony_async_await ./create-flow1.js",
+    "create-flow-templ": "node --harmony_async_await ./create-flow-templ.js",
     "create-step": "node --harmony_async_await ./create-step.js",
     "create-all": "npm run create-userrepo-backend && npm run create-artifactrepo-backend && npm run create-user && npm run create-git-repo && npm run create-slave && npm run create-baseline && npm run create-flow && npm run create-step",
     "cleanup-all": "./cleanup.sh"
