@@ -7,16 +7,52 @@ import Chip from "react-toolbox/lib/chip";
 import { Row, Col } from "react-flexbox-grid";
 import Component from "ui-lib/component";
 import api from "api.io/api.io-client";
+import { Flows } from "ui-components/flow";
+import Flow from "./Flow";
 import {
     Section as TASection,
+    LoadIndicator as TALoadIndicator,
     ControlButton as TAControlButton
 } from "ui-components/type_admin";
+import * as queryBuilder from "ui-lib/query_builder";
 import { StringUtil } from "misc";
 
 class Item extends Component {
     constructor(props) {
         super(props);
         this.addStateVariable("statusMessage", { msg: "", type: "accept" });
+        this.addStateVariable("step", "");
+
+        this.addTypeItemStateVariable("itemExt", "dataresolve.data", async (props) => {
+            const result = await api.rest.post("dataresolve.data", {
+                resolver: "RefResolve",
+                opts: {
+                    ref: {
+                        id: props.item._id,
+                        type: props.item.type
+                    },
+                    spec: {
+                        paths: [
+                            "$.refs[*]"
+                        ]
+                    }
+                }
+            });
+
+            if (result.result !== "success") {
+                throw new Error(result.error);
+            }
+
+            return result.data._id;
+        }, true);
+
+        this.addTypeListStateVariable("flows", "flowctrl.flow", (props) => {
+            const flows = props.item.tags
+                .filter((tag) => tag.startsWith("step:flow:"))
+                .map((tag) => tag.replace("step:flow:", ""));
+
+            return queryBuilder.anyOf("_id", flows);
+        }, true);
     }
 
     _showMessage(msg, type = "accept") {
@@ -84,6 +120,21 @@ class Item extends Component {
     render() {
         this.log("render", this.props);
 
+        if (this.state.errorAsync.value) {
+            return (
+                <div>{this.state.errorAsync.value}</div>
+            );
+        }
+
+        let loadIndicator;
+        if (this.state.loadingAsync.value) {
+            loadIndicator = (
+                <TALoadIndicator
+                    theme={this.props.theme}
+                />
+            );
+        }
+
         const hasFile = this.props.item.state === "commited";
 
         let stateStr = "No file uploaded";
@@ -110,83 +161,105 @@ class Item extends Component {
             />
         ));
 
+        const flows = this.state.flows ? this.state.flows : [];
+
         return (
             <div>
+                {loadIndicator}
                 <TASection
                     controls={controls}
                     breadcrumbs={this.props.breadcrumbs}
                 >
                     <div className={this.props.theme.container}>
-                        <Row>
-                            <Col className={this.props.theme.panel}>
-                                <div className={this.props.theme.tags}>
-                                    {this.props.item.tags.map((tag) => (
-                                        <Chip key={tag}>{tag}</Chip>
-                                    ))}
-                                </div>
-                            </Col>
-                        </Row>
-                        <Row>
-                            <Col xs={12} md={5} className={this.props.theme.panel}>
-                                <h6 className={this.props.theme.title}>Properties</h6>
-                                <table className={this.props.theme.properties}>
-                                    <tbody>
-                                        <tr>
-                                            <td>Name</td>
-                                            <td>{this.props.item.name}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Version</td>
-                                            <td>{this.props.item.version}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>State</td>
-                                            <td>{stateStr}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Created</td>
-                                            <td>{this.props.item.created}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Modified</td>
-                                            <td>{this.props.item.saved}</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </Col>
-                            {hasFile &&
-                                <Col xs={12} md={7} className={this.props.theme.panel}>
-                                    <h6 className={this.props.theme.title}>File info</h6>
-                                    <table className={this.props.theme.properties}>
-                                        <tbody>
-                                            <tr>
-                                                <td>File name</td>
-                                                <td>{this.props.item.fileMeta.filename}</td>
-                                            </tr>
-                                            <tr>
-                                                <td>MIME type</td>
-                                                <td>{this.props.item.fileMeta.mimeType}</td>
-                                            </tr>
-                                            <tr>
-                                                <td>Size</td>
-                                                <td>{this.props.item.fileMeta.size} bytes</td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                    <h6 className={this.props.theme.title}>Hashes</h6>
-                                    <table className={this.props.theme.properties}>
-                                        <tbody>
-                                            {Object.keys(this.props.item.fileMeta.hashes).map((hashAlg) => (
-                                                <tr key={hashAlg}>
-                                                    <td>{StringUtil.toUpperCaseLetter(hashAlg)}</td>
-                                                    <td>{this.props.item.fileMeta.hashes[hashAlg]}</td>
-                                                </tr>
+                        {this.state.itemExt &&
+                            <Flows
+                                theme={this.props.theme}
+                                item={this.props.item}
+                                itemExt={this.state.itemExt}
+                                pathname={this.props.pathname}
+                                step={this.state.step}
+                                flows={flows}
+                                FlowComponent={Flow}
+                            />
+                        }
+                        {this.state.step.value ? (
+                            <Row>
+                                {`Selected ${this.state.step.value}`}
+                            </Row>
+                        ) : (
+                            <div>
+                                <Row>
+                                    <Col className={this.props.theme.panel}>
+                                        <div className={this.props.theme.tags}>
+                                            {this.props.item.tags.map((tag) => (
+                                                <Chip key={tag}>{tag}</Chip>
                                             ))}
-                                        </tbody>
-                                    </table>
-                                </Col>
-                            }
-                        </Row>
+                                        </div>
+                                    </Col>
+                                </Row>
+                                <Row>
+                                    <Col xs={12} md={5} className={this.props.theme.panel}>
+                                        <h6 className={this.props.theme.title}>Properties</h6>
+                                        <table className={this.props.theme.properties}>
+                                            <tbody>
+                                                <tr>
+                                                    <td>Name</td>
+                                                    <td>{this.props.item.name}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Version</td>
+                                                    <td>{this.props.item.version}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>State</td>
+                                                    <td>{stateStr}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Created</td>
+                                                    <td>{this.props.item.created}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Modified</td>
+                                                    <td>{this.props.item.saved}</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </Col>
+                                    {hasFile &&
+                                        <Col xs={12} md={7} className={this.props.theme.panel}>
+                                            <h6 className={this.props.theme.title}>File info</h6>
+                                            <table className={this.props.theme.properties}>
+                                                <tbody>
+                                                    <tr>
+                                                        <td>File name</td>
+                                                        <td>{this.props.item.fileMeta.filename}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>MIME type</td>
+                                                        <td>{this.props.item.fileMeta.mimeType}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Size</td>
+                                                        <td>{this.props.item.fileMeta.size} bytes</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                            <h6 className={this.props.theme.title}>Hashes</h6>
+                                            <table className={this.props.theme.properties}>
+                                                <tbody>
+                                                    {Object.keys(this.props.item.fileMeta.hashes).map((hashAlg) => (
+                                                        <tr key={hashAlg}>
+                                                            <td>{StringUtil.toUpperCaseLetter(hashAlg)}</td>
+                                                            <td>{this.props.item.fileMeta.hashes[hashAlg]}</td>
+                                                        </tr>
+                                                    ))}
+                                                </tbody>
+                                            </table>
+                                        </Col>
+                                    }
+                                </Row>
+                            </div>
+                        )}
                     </div>
                 </TASection>
                 <Snackbar
