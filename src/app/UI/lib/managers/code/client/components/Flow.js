@@ -1,8 +1,8 @@
 
 import React from "react";
 import Component from "ui-lib/component";
-import { Flow, StepStatus } from "ui-components/flow";
-import moment from "moment";
+import { JobFlow, StepStatus } from "ui-components/flow";
+import { ensureArray } from "misc";
 
 class FlowComponent extends Component {
     constructor(props) {
@@ -34,7 +34,6 @@ class FlowComponent extends Component {
             }
         };
 
-        const statuses = new Set();
         const steps = this.state.steps.map((step) => {
             const parentIds = step.parentSteps.slice(0);
 
@@ -42,28 +41,14 @@ class FlowComponent extends Component {
                 parentIds.push(firstStep.id);
             }
 
-            let status = false;
-            const jobRefs = this.props.itemExt.data.refs.filter((ref) => ref.name === step.name);
-
-            jobRefs.sort((a, b) => moment(a.data.created).isBefore(b.data.created) ? 1 : -1);
-            const job = jobRefs[0] ? jobRefs[0].data : false;
-
-            if (job) {
-                status = job.status;
-            }
-
-            statuses.add(status || "unknown");
-
             return {
                 id: step._id,
                 type: StepStatus,
                 name: step.name,
                 meta: {
-                    status: status,
                     revision: this.props.item,
                     flow: this.props.flow,
-                    step: step,
-                    job: job
+                    step: step
                 },
                 disabled: () => false,
                 active: () => this.props.step.value === step.name,
@@ -74,21 +59,18 @@ class FlowComponent extends Component {
             };
         });
 
-        console.log("STATUSES", statuses);
-
-        if (statuses.has("fail") || statuses.has("aborted")) {
-            firstStep.meta.status = "unhappy";
-        } else if (statuses.has("unknown") || statuses.has("allocated") || statuses.has("queued") || statuses.has("ongoing")) {
-            firstStep.meta.status = "neutral";
-        } else if (statuses.has("success") || statuses.has("skip")) {
-            firstStep.meta.status = "happy";
-        }
-
         steps.push(firstStep);
 
+        const jobRefs = [];
+        for (const data of ensureArray(this.props.itemExt.data)) {
+            jobRefs.push(...data.refs);
+        }
+
         return (
-            <Flow
+            <JobFlow
                 theme={this.props.theme}
+                jobRefs={jobRefs}
+                firstStep={firstStep}
                 steps={steps}
                 columnSpan={8}
             />

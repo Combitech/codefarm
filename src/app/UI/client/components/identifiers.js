@@ -9,6 +9,7 @@ export const EXPANDABLE_CARD = "CFExpandableCard";
 export const DYNAMIC_IMAGE = "CFDynamicImage";
 export const BREADCRUMBS = "CFBreadcrumbs";
 export const FLOW = "CFFlow";
+export const JOB_FLOW = "CFJobFlow";
 export const FLOWS = "CFFlows";
 export const STATUS = "CFStatus";
 export const TYPE_TABLE = "CFTypeTable";
