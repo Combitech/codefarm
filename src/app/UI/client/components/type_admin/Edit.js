@@ -86,13 +86,9 @@ class Edit extends Component {
             );
         }
 
-        if (this.props.item) {
-            return (
-                <this.props.route.Create {...props} />
-            );
-        }
-
-        return null;
+        return (
+            <this.props.route.Create {...props} />
+        );
     }
 }
 

@@ -37,9 +37,8 @@ class TypeTable extends Component {
             );
         }
 
-        let loadIndicator;
         if (this.state.loadingAsync.value) {
-            loadIndicator = (
+            return (
                 <TALoadIndicator/>
             );
         }
@@ -122,7 +121,6 @@ class TypeTable extends Component {
 
         return (
             <div>
-                {loadIndicator}
                 {title}
                 <Table
                     selectable={false}

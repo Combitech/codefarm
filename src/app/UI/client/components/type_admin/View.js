@@ -31,9 +31,8 @@ class View extends Component {
             );
         }
 
-        let loadIndicator;
         if (this.state.loadingAsync.value) {
-            loadIndicator = (
+            return (
                 <LoadIndicator
                     theme={this.props.theme}
                 />
@@ -70,13 +69,10 @@ class View extends Component {
 
         if (this.props.children) {
             return (
-                <div>
-                    {loadIndicator}
-                    <this.props.children.type
-                        {...this.props.children.props}
-                        {...props}
-                    />
-                </div>
+                <this.props.children.type
+                    {...this.props.children.props}
+                    {...props}
+                />
             );
         }
 
@@ -119,10 +115,7 @@ class View extends Component {
 
             if (this.props.route.Item) {
                 return (
-                    <div>
-                        {loadIndicator}
-                        <this.props.route.Item {...props} />
-                    </div>
+                    <this.props.route.Item {...props} />
                 );
             }
         }
@@ -140,7 +133,6 @@ class View extends Component {
 
         return (
             <div className={this.props.theme.view}>
-                {loadIndicator}
                 {this.props.route.List && <this.props.route.List
                     {...props}
                     type={this.props.route.type}

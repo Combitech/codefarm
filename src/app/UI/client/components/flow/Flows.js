@@ -22,9 +22,8 @@ class Flows extends Component {
             );
         }
 
-        let loadIndicator;
         if (this.state.loadingAsync.value) {
-            loadIndicator = (
+            return (
                 <TALoadIndicator/>
             );
         }
@@ -73,7 +72,6 @@ class Flows extends Component {
 
         return (
             <div className={this.props.theme.flow}>
-                {loadIndicator}
                 {flowsContent}
             </div>
         );

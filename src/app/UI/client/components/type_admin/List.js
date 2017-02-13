@@ -26,9 +26,8 @@ class ListComponent extends Component {
             );
         }
 
-        let loadIndicator;
         if (this.state.loadingAsync.value) {
-            loadIndicator = (
+            return (
                 <LoadIndicator
                     theme={this.props.theme}
                 />
@@ -36,27 +35,24 @@ class ListComponent extends Component {
         }
 
         return (
-            <div>
-                {loadIndicator}
-                <List
-                    className={this.props.theme.list}
-                    ripple={true}
-                >
-                    <ListDivider key="top_divider" />
-                    <div className={this.props.theme.divider} />
-                    {this.state.list && this.state.list.slice(0).reverse().map((item) => (
-                        <div key={item._id}>
-                            <this.props.ListItemComponent
-                                theme={this.props.theme}
-                                onClick={this.props.onSelect}
-                                item={item}
-                                itemContext={this.props.listItemContext}
-                            />
-                            <ListDivider />
-                        </div>
-                    ))}
-                </List>
-            </div>
+            <List
+                className={this.props.theme.list}
+                ripple={true}
+            >
+                <ListDivider key="top_divider" />
+                <div className={this.props.theme.divider} />
+                {this.state.list && this.state.list.slice(0).reverse().map((item) => (
+                    <div key={item._id}>
+                        <this.props.ListItemComponent
+                            theme={this.props.theme}
+                            onClick={this.props.onSelect}
+                            item={item}
+                            itemContext={this.props.listItemContext}
+                        />
+                        <ListDivider />
+                    </div>
+                ))}
+            </List>
         );
     }
 }
