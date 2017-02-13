@@ -228,19 +228,6 @@ class GerritBackend extends AsyncEventEmitter {
     async merge(repository, revision) {
         log.info(`gerrit merge ${revision._id} in repo ${repository._id}`);
         // ssh -p 29418 $USER@localhost gerrit review `git rev-parse HEAD` --code-review '+2' --submit
-        const ref = revision.patches[revision.patches.length - 1];
-        const { exitCode, errLines } = await this._execGerritCommandReadOutput(
-            `review ${ref.change.newrev} --submit`
-        );
-
-        if (exitCode !== 0) {
-            const needsCodeReviewLines = errLines.filter((line) => line.match(/needs Code-Review/));
-            if (needsCodeReviewLines.length > 0) {
-                throw new Error(`Cannot merge, needs Code-Review: ${needsCodeReviewLines[0]}`);
-            } else {
-                throw new Error(`Gerrit command failed with exit code ${exitCode}. stderr=${errLines.join("\n")}`);
-            }
-        }
 
         let revisionMergedListener;
         const revisionMergedPromise = new Promise((resolve) => {
@@ -252,13 +239,33 @@ class GerritBackend extends AsyncEventEmitter {
             revisionMergedListener = revisionMergedListener.bind(this, resolve);
             this.on("revision.merged", revisionMergedListener);
         });
-        await asyncWithTmo(
-            revisionMergedPromise,
-            DEFAULT_GERRIT_TIMEOUT,
-            new Error(`Timeout while waiting for merge of revision ${revision._id} to complete`)
-        );
-        if (revisionMergedListener) {
-            this.removeListener("revision.merged", revisionMergedListener);
+
+        try {
+            const ref = revision.patches[revision.patches.length - 1];
+            const { exitCode, errLines } = await this._execGerritCommandReadOutput(
+                `review ${ref.change.newrev} --submit`
+            );
+
+            if (exitCode !== 0) {
+                const needsCodeReviewLines = errLines.filter((line) => line.match(/needs Code-Review/));
+                if (needsCodeReviewLines.length > 0) {
+                    throw new Error(`Cannot merge, needs Code-Review: ${needsCodeReviewLines[0]}`);
+                } else {
+                    throw new Error(`Gerrit command failed with exit code ${exitCode}. stderr=${errLines.join("\n")}`);
+                }
+            }
+
+            await asyncWithTmo(
+                revisionMergedPromise,
+                DEFAULT_GERRIT_TIMEOUT,
+                new Error(`Timeout while waiting for merge of revision ${revision._id} to complete`)
+            );
+        } catch (error) {
+            throw error;
+        } finally {
+            if (revisionMergedListener) {
+                this.removeListener("revision.merged", revisionMergedListener);
+            }
         }
 
         return false;
