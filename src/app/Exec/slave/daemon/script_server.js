@@ -30,8 +30,12 @@ class ScriptServer extends AsyncEventEmitter {
         this._log("New connection");
 
         if (this.socket) {
+            const closePromise = new Promise((resolve) =>
+                this.once("connection_closed", resolve)
+            );
             this._log("Have previous connection, ending that");
             this.socket.end();
+            await closePromise;
         }
 
         this.socket = socket;
@@ -51,6 +55,7 @@ class ScriptServer extends AsyncEventEmitter {
         this.socket.on("close", () => {
             this._log("Connection closed");
             this.socket = null;
+            this.emit("connection_closed");
         });
     }
 
@@ -67,10 +72,6 @@ class ScriptServer extends AsyncEventEmitter {
             this.socket.end();
         }
         this._log("We should be dead now");
-    }
-
-    async writeln(msg) {
-        await this.socket.end(`${msg}\n`);
     }
 
     async end() {
