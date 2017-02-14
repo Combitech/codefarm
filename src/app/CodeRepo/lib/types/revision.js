@@ -7,7 +7,8 @@ const Repository = require("./repository");
 
 const ReviewState = {
     APPROVED: "approved",
-    REJECTED: "rejected"
+    REJECTED: "rejected",
+    NEUTRAL: "neutral"
 };
 
 

@@ -1,5 +1,6 @@
 "use strict";
 
+const { ServiceMgr } = require("service");
 const url = require("url");
 const readline = require("readline");
 const fs = require("fs-extra-promise");
@@ -196,6 +197,27 @@ class GerritBackend extends AsyncEventEmitter {
         }
     }
 
+    async _onCodeReviewed(event) {
+        const repository = await this.Repository.findOne({ _id: event.project });
+        if (repository) {
+            const changeId = event.changeKey.id;
+            const revision = await this.Revision.findOne({ _id: changeId });
+            if (revision) {
+                const userId = event.patchSet.uploader.name;
+                const state = parseInt(event.approvals[0].value);
+                if (state === 0) {
+                    revision.addReview(userId, this.Revision.ReviewState.NEUTRAL);
+                } else if (state < 0) {
+                    revision.addReview(userId, this.Revision.ReviewState.REJECTED);
+                } else if (state > 0) {
+                    revision.addReview(userId, this.Revision.ReviewState.APPROVED);
+                } else {
+                    ServiceMgr.instance.log("verbose", `unknown review state ${state} on ${revision._id}`);
+                }
+            }
+        }
+    }
+
     async _startMonitorEventStream() {
         const { stdout, stderr } = await this._execGerritCommand("stream-events");
 
@@ -204,6 +226,7 @@ class GerritBackend extends AsyncEventEmitter {
         });
         this.gerritEmitter.addListener("patchset-created", this._onPatchsetCreated.bind(this));
         this.gerritEmitter.addListener("change-merged", this._onChangeMerged.bind(this));
+        this.gerritEmitter.addListener("comment-added", this._onCodeReviewed.bind(this));
 
         await this.gerritEmitter.start(stdout, stderr);
     }
