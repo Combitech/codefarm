@@ -94,16 +94,16 @@ class GithubBackend extends AsyncEventEmitter {
         };
     }
 
-    async _createPullReqRevision(event) {
-        const pullReqId = event.pull_request.id.toString();
-        const changeSha = event.pull_request.head.sha;
-        const repositoryId = event.repository.name;
-        const email = await this._getCommitAuthor(repositoryId, changeSha);
-        const repository = await this.Repository.findOne({ _id: repositoryId });
+    async _createPullReqRevision(event, overrideSha = null) {
+        const repositoryName = event.repository.name;
+        const repository = await this.Repository.findOne({ _id: repositoryName });
         if (repository) {
-            const ref = this._createPullReqRef(email, event);
+            const pullReqId = event.pull_request.id.toString();
+            const changeSha = overrideSha ? overrideSha : event.pull_request.head.sha;
+            const email = await this._getCommitAuthor(repositoryName, changeSha);
+            const ref = this._createPullReqRef(email, event, overrideSha);
             ServiceMgr.instance.log("debug", `Created revision ref ${ref}`);
-            ServiceMgr.instance.log("verbose", `GitHub event allocating revision ${pullReqId}`);
+            ServiceMgr.instance.log("verbose", `GitHub revision/patch added for pull request: ${pullReqId}`);
 
             return await this.Revision.allocate(repository._id, pullReqId, ref);
         }
@@ -138,58 +138,33 @@ class GithubBackend extends AsyncEventEmitter {
         }
     }
 
-    async _onPullRequestClose(event) {
-        ServiceMgr.instance.log("verbose", "pull-request-closed received");
+    async _onPullRequestOpen(event) {
+        ServiceMgr.instance.log("verbose", "pull_request_open received");
         ServiceMgr.instance.log("debug", JSON.stringify(event, null, 2));
 
-        if (event.pull_request.merged === true) {
-            const repositoryName = event.repository.name;
-            const repository = await this.Repository.findOne({ _id: repositoryName });
-            // Make sure that we know about repo
-            if (repository) {
-                // And that we know about revision...
-                const pullReqId = event.pull_request.id;
-                const revision = await this.Revision.findOne({ _id: pullReqId.toString() });
-                if (revision) {
-                    // merge_commit_sha is deprecated so we cannot use it
-                    const mergeSha = await this._getPullRequestMergeSha(repositoryName, event.pull_request.number);
-                    const email = await this._getCommitAuthor(repositoryName, mergeSha);
-                    // Override sha with resolved merge sha
-                    const ref = await this._createPullReqRef(email, event, mergeSha);
-                    await revision.setMerged(ref);
-                    await this.emit("revision.merged", revision);
-                    ServiceMgr.instance.log("verbose", `GitHub event merged revision ${pullReqId}`);
-                }
-            }
-        }
+        await this._createPullReqRevision(event);
     }
 
     async _onPullRequestUpdate(event) {
         ServiceMgr.instance.log("verbose", "pull_request_update received");
         ServiceMgr.instance.log("debug", JSON.stringify(event, null, 2));
 
-        const repositoryName = event.repository.name;
-        const repository = await this.Repository.findOne({ _id: repositoryName });
-        // Make sure that we know about repo
-        if (repository) {
-            // And that we know about revision...
-            const pullReqId = event.pull_request.id;
-            const revision = await this.Revision.findOne({ _id: pullReqId.toString() });
-            if (revision) {
-                const changeSha = event.pull_request.head.sha;
-                const email = await this._getCommitAuthor(repositoryName, changeSha);
-                const ref = await this._createPullReqRef(email, event);
-                revision.patches.push(ref);
-                revision.save();
-            }
-        }
+        // This will create a new patch on existing revision
+        await this._createPullReqRevision(event);
     }
 
-    async _onPullRequestOpen(event) {
-        ServiceMgr.instance.log("verbose", "pull_request_open received");
+    async _onPullRequestClose(event) {
+        ServiceMgr.instance.log("verbose", "pull-request-closed received");
         ServiceMgr.instance.log("debug", JSON.stringify(event, null, 2));
 
-        await this._createPullReqRevision(event);
+        if (event.pull_request.merged === true) {
+            const mergeSha = await this._getPullRequestMergeSha(event.repository.name, event.pull_request.number);
+            // Will create a new patch on existing revision, Override pull request SHA
+            const revision = await this._createPullReqRevision(event, mergeSha);
+            revision.setMerged();
+            await this.emit("revision.merged", revision);
+            ServiceMgr.instance.log("verbose", `GitHub event merged revision ${event.pull_request.id}`);
+        }
     }
 
     async _onPush(event) {
@@ -205,8 +180,8 @@ class GithubBackend extends AsyncEventEmitter {
 
         // TODO: List of special branches
         if (event.ref === "refs/heads/master") {
-            const repositoryId = event.repository.name;
-            const repository = await this.Repository.findOne({ _id: repositoryId });
+            const repositoryName = event.repository.name;
+            const repository = await this.Repository.findOne({ _id: repositoryName });
             if (repository) {
                 for (const commit of event.commits) {
                     const ref = {
@@ -342,7 +317,7 @@ class GithubBackend extends AsyncEventEmitter {
         try {
             await this._sendRequest(uri, data, "PUT");
         } catch (err) {
-            ServiceMgr.instance.log("error", `Error merging in repository: ${repository._id} revision: ${ref.change.newrev}`);
+            ServiceMgr.instance.log("error", `Error merging in repository: ${repository._id} sha: ${ref.change.newrev}`);
         }
     }
 
