@@ -219,9 +219,9 @@ class GithubBackend extends AsyncEventEmitter {
                 const userId = event.review.user.id;
                 const state = event.review.state;
                 if (state === "changes_requested") {
-                    revision.addReview(userId, this.Revision.ReviewState.REJECTED);
+                    await revision.addReview(userId, this.Revision.ReviewState.REJECTED);
                 } else if (state === "approved") {
-                    revision.addReview(userId, this.Revision.ReviewState.APPROVED);
+                    await revision.addReview(userId, this.Revision.ReviewState.APPROVED);
                 } else {
                     ServiceMgr.instance.log("verbose", `unknown review state ${state} on ${revision._id}`);
                 }

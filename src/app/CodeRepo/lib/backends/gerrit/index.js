@@ -203,14 +203,14 @@ class GerritBackend extends AsyncEventEmitter {
             const changeId = event.changeKey.id;
             const revision = await this.Revision.findOne({ _id: changeId });
             if (revision) {
-                const userId = event.patchSet.uploader.name;
-                const state = parseInt(event.approvals[0].value);
+                const userId = event.patchSet.uploader.email;
+                const state = parseInt(event.approvals[0].value, 10);
                 if (state === 0) {
-                    revision.addReview(userId, this.Revision.ReviewState.NEUTRAL);
+                    await revision.addReview(userId, this.Revision.ReviewState.NEUTRAL);
                 } else if (state < 0) {
-                    revision.addReview(userId, this.Revision.ReviewState.REJECTED);
+                    await revision.addReview(userId, this.Revision.ReviewState.REJECTED);
                 } else if (state > 0) {
-                    revision.addReview(userId, this.Revision.ReviewState.APPROVED);
+                    await revision.addReview(userId, this.Revision.ReviewState.APPROVED);
                 } else {
                     ServiceMgr.instance.log("verbose", `unknown review state ${state} on ${revision._id}`);
                 }
