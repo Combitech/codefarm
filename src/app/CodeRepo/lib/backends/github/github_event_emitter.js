@@ -51,6 +51,10 @@ class GithubEventEmitter extends AsyncEventEmitter {
                     await this.emit("push", body);
                     break;
 
+                case "pull_request_review":
+                    await this.emit("pull_request_review", body);
+                    break;
+
                 default:
                     ServiceMgr.instance.log("verbose", `unknown event ${header["x-github-event"]} received`);
                     ServiceMgr.instance.log("verbose", JSON.stringify(body, null, 2));

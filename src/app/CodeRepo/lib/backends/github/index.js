@@ -100,7 +100,7 @@ class GithubBackend extends AsyncEventEmitter {
         if (repository) {
             const pullReqId = event.pull_request.id.toString();
             const changeSha = overrideSha ? overrideSha : event.pull_request.head.sha;
-            const email = await this._getCommitAuthor(repositoryName, changeSha);
+            const email = await this._getCommitEmail(repositoryName, changeSha);
             const ref = this._createPullReqRef(email, event, overrideSha);
             ServiceMgr.instance.log("debug", `Created revision ref ${ref}`);
             ServiceMgr.instance.log("verbose", `GitHub revision/patch added for pull request: ${pullReqId}`);
@@ -109,14 +109,38 @@ class GithubBackend extends AsyncEventEmitter {
         }
     }
 
-    async _getCommitAuthor(repositoryName, commitSha) {
+    // TODO: Find a better way for this, resolving is dependant on user having pushed in last 30 events
+    // This is a shot at resolving the username on a review by listing the user events
+    async _getUserEmail(userName) {
+        const url = `${GITHUB_API_BASE}/users/${userName}/events/public`;
+        try {
+            const result = await this._sendRequest(url, {}, "GET");
+            for (const event of result) {
+                if (event.type && event.type === "PushEvent" && event.payload && event.payload.commits) {
+                    for (const commit of event.payload.commits) {
+                        if (commit.author.name === userName) {
+                            return commit.author.email;
+                        }
+                    }
+                }
+            }
+        } catch (err) {
+            ServiceMgr.instance.log("info", `Unable to retrieve events for username ${userName}:`);
+        }
+
+        ServiceMgr.instance.log("info", `Unable to get email for username ${userName}:`);
+
+        return null;
+    }
+
+    async _getCommitEmail(repositoryName, commitSha) {
         const url = `${GITHUB_API_BASE}/repos/${this.backend.target}/${repositoryName}/commits/${commitSha}`;
         try {
             const result = await this._sendRequest(url, {}, "GET");
 
             return result.commit.author.email;
         } catch (err) {
-            ServiceMgr.instance.log("info", `Unable to get commit author for ${repositoryName}:${commitSha}`);
+            ServiceMgr.instance.log("info", `Unable to get email for ${repositoryName}:${commitSha}`);
 
             return null;
         }
@@ -216,12 +240,15 @@ class GithubBackend extends AsyncEventEmitter {
         if (repository) {
             const revision = await this.Revision.findOne({ _id: event.pull_request.id.toString() });
             if (revision) {
-                const userId = event.review.user.id;
+                const userEmail = await this._getUserEmail(event.review.user.login);
+                console.log("email:", userEmail);
                 const state = event.review.state;
-                if (state === "changes_requested") {
-                    await revision.addReview(userId, this.Revision.ReviewState.REJECTED);
+                if (state === "commented") {
+                    await revision.addReview(userEmail, this.Revision.ReviewState.NEUTRAL);
+                } else if (state === "changes_requested") {
+                    await revision.addReview(userEmail, this.Revision.ReviewState.REJECTED);
                 } else if (state === "approved") {
-                    await revision.addReview(userId, this.Revision.ReviewState.APPROVED);
+                    await revision.addReview(userEmail, this.Revision.ReviewState.APPROVED);
                 } else {
                     ServiceMgr.instance.log("verbose", `unknown review state ${state} on ${revision._id}`);
                 }

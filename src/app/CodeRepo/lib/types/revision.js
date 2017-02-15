@@ -101,13 +101,13 @@ class Revision extends Type {
         await this.save();
     }
 
-    async addReview(userId, state) {
-        // Modify previous review for userId
-        const review = this.reviews.find((r) => r.userId === userId);
+    async addReview(userEmail, state) {
+        // Modify previous review for userEmail
+        const review = this.reviews.find((r) => r.userEmail === userEmail);
         if (review) {
             review.state = state;
         } else {
-            this.reviews.push({ userId: userId, state: state });
+            this.reviews.push({ userEmail: userEmail, state: state });
         }
 
         // Regenerate review tags
