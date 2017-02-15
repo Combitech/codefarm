@@ -7,7 +7,7 @@ if [ -n "${DISABLE_LINK_LIBS}" ]; then
     exit 0
 fi
 
-# gitroot is set from outside if not a git repo
+# use existing gitroot var or assume we are in git repo and resolve
 if [ -z "$gitroot" ]; then
     gitroot=$(git rev-parse --show-toplevel)
 fi
