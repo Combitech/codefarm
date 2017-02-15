@@ -1,11 +1,31 @@
 "use strict";
 
 const MsgBus = require("msgbus");
+const MbClient = require("./mb_client");
 
-class ServiceComBus extends MsgBus {
-    constructor(config, serviceMgr) {
+let instance;
+
+class ServiceComBus {
+    constructor() {
+        this.config = {};
+        this.clients = {};
+        this.msgbus = false;
+    }
+
+    static get instance() {
+        if (!instance) {
+            instance = new this();
+        }
+
+        return instance;
+    }
+
+    async start(config) {
+        this.config = config;
+
         const opts = {
-            routingKey: serviceMgr.serviceName,
+            uri: config.uri,
+            routingKey: config.name,
             exchange: {
                 name: "servicecom",
                 type: "topic",
@@ -14,7 +34,7 @@ class ServiceComBus extends MsgBus {
                 }
             },
             queue: {
-                name: `${serviceMgr.serviceName}-servicecom`,
+                name: `${config.name}-servicecom`,
                 options: {
                     durable: true
                 }
@@ -22,11 +42,33 @@ class ServiceComBus extends MsgBus {
             testMode: config.testMode
         };
 
-        super(opts, serviceMgr);
+        this.msgbus = new MsgBus(opts);
+
+        await this.msgbus.start();
     }
 
-    static get typeName() {
-        return "ServiceComBus";
+    attachControllers(controllers) {
+        if (!this.msgbus) {
+            throw new Error("Bus must be connected before controllers can be attached");
+        }
+
+        for (const controller of controllers) {
+            controller.setMb(this.msgbus);
+        }
+    }
+
+    getClient(serviceName) {
+        return this.clients[serviceName] = (this.clients[serviceName] || new MbClient(serviceName, this.msgbus));
+    }
+
+    async dispose() {
+        if (this.msgbus) {
+            await this.msgbus.dispose();
+            this.msgbus = false;
+        }
+
+        this.config = {};
+        this.clients = {};
     }
 }
 

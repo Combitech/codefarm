@@ -3,11 +3,12 @@
 const os = require("os");
 const Web = require("web");
 const { Service } = require("service");
+const { ServiceComBus } = require("servicecom");
 const Monitor = require("./monitor");
 const Configs = require("./controllers/configs");
 const Config = require("./types/config");
 const Db = require("./db");
-const { notification: typeNotify } = require("typelib");
+const { notification } = require("typelib");
 
 class Main extends Service {
     constructor(name, version) {
@@ -42,7 +43,17 @@ class Main extends Service {
 
         const routes = [].concat(Configs.instance.routes, this.routes);
 
-        typeNotify.on("config.tagged", Configs.instance.onTagged.bind(Configs.instance));
+        await ServiceComBus.instance.start({
+            name: this.name,
+            uri: this.config.msgbus
+        });
+        this.addDisposable(ServiceComBus.instance);
+        ServiceComBus.instance.attachControllers([
+            Configs.instance,
+            this.statesControllerInstance
+        ]);
+
+        notification.on("config.tagged", Configs.instance.onTagged.bind(Configs.instance));
 
         await Monitor.instance.start();
         this.mgr.addMgmtBusListener(Monitor.instance.mgmtBusListener.bind(Monitor.instance));
@@ -56,7 +67,7 @@ class Main extends Service {
     }
 
     async onOffline() {
-        typeNotify.removeAllListeners("config.tagged");
+        notification.removeAllListeners("config.tagged");
         this.log("info", "I'm offline!");
     }
 }

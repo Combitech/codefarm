@@ -16,8 +16,8 @@ const ProviderClient = require("providerclient");
  * - "data" - Data received on RabbitMQ queue
  */
 class MsgBus extends ProviderClient {
-    constructor(config) {
-        super(config);
+    constructor(...args) {
+        super(...args);
 
         this.connection = null;
         this.channel = null;

@@ -7,7 +7,7 @@ const { Deferred } = require("misc");
 const DEFAULT_TIMEOUT_MS = 1000 * 10;
 
 class MbClient {
-    constructor(serviceName, msgbus, name) {
+    constructor(serviceName, msgbus) {
         this.serviceName = serviceName;
         this.msgbus = msgbus;
         this.requests = [];
@@ -33,7 +33,7 @@ class MbClient {
                 const r = this._retreiveRequest(request.message._id);
 
                 if (r) {
-                    console.error("Request timed out ", JSON.stringify(message, null, 2));
+                    console.error("Request timed out ", JSON.stringify(request.message, null, 2));
                     request.deferred.reject("Request timed out");
                 }
             }, request.timeout);
@@ -64,8 +64,11 @@ class MbClient {
 
         const request = this._retreiveRequest(message._id);
 
-        if (message.result !== "success") {
+        if (!request) {
+            return;
+        }
 
+        if (message.result !== "success") {
             const error = new Error(message.data);
             error.status = message.status;
 

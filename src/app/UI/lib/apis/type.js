@@ -2,6 +2,7 @@
 
 const api = require("api.io");
 const { ServiceMgr } = require("service");
+const { ServiceComBus } = require("servicecom");
 const moment = require("moment");
 
 let instance;
@@ -10,36 +11,21 @@ const UPDATE_RATE_LIMIT_MS = 1000;
 const typeApiExports = api.register("type", {
     get: api.export(async (session, type, query) => {
         const [ serviceId, typeName ] = type.split(".");
+        const client = ServiceComBus.instance.getClient(serviceId);
 
-        if (!ServiceMgr.instance.has(serviceId)) {
-            throw new Error(`No such service, ${serviceId}`);
-        }
-
-        const restClient = await ServiceMgr.instance.use(serviceId);
-
-        return await restClient.get(`/${typeName}`, query);
+        return client.list(typeName, query);
     }),
     getter: api.export(async (session, type, id, getter) => {
         const [ serviceId, typeName ] = type.split(".");
+        const client = ServiceComBus.instance.getClient(serviceId);
 
-        if (!ServiceMgr.instance.has(serviceId)) {
-            throw new Error(`No such service, ${serviceId}`);
-        }
-
-        const restClient = await ServiceMgr.instance.use(serviceId);
-
-        return await restClient.get(`/${typeName}/${id}/${getter}`);
+        return client[getter](typeName, id);
     }),
-    action: api.export(async (session, type, id, action, data = {}, query = {}) => {
+    action: api.export(async (session, type, id, action, data = {}) => {
         const [ serviceId, typeName ] = type.split(".");
+        const client = ServiceComBus.instance.getClient(serviceId);
 
-        if (!ServiceMgr.instance.has(serviceId)) {
-            throw new Error(`No such service, ${serviceId}`);
-        }
-
-        const restClient = await ServiceMgr.instance.use(serviceId);
-
-        return await restClient.post(`/${typeName}/${id}/${action}`, data, query);
+        return client[action](typeName, id, data);
     })
 });
 

@@ -255,6 +255,15 @@ class Service {
     }
 
     /**
+     * Get the service controller instance
+     * @return {Object} Controller instance
+     * @public
+     */
+    get statesControllerInstance() {
+        return States.instance;
+    }
+
+    /**
      * Get the message bus
      * @return {MsgBus} The message bus
      * @public

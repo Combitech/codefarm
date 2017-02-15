@@ -4,6 +4,7 @@ const os = require("os");
 const Database = require("database");
 const Web = require("web");
 const { Service } = require("service");
+const { ServiceComBus } = require("servicecom");
 const Specifications = require("./controllers/specifications");
 const Collectors = require("./controllers/collectors");
 const Baselines = require("./controllers/baselines");
@@ -24,6 +25,18 @@ class Main extends Service {
 
     async onOnline() {
         const routes = [].concat(Specifications.instance.routes, Collectors.instance.routes, Baselines.instance.routes, this.routes);
+
+        await ServiceComBus.instance.start({
+            name: this.name,
+            uri: this.config.msgbus
+        });
+        this.addDisposable(ServiceComBus.instance);
+        ServiceComBus.instance.attachControllers([
+            Specifications.instance,
+            Collectors.instance,
+            Baselines.instance,
+            this.statesControllerInstance
+        ]);
 
         await Control.instance.start();
         this.addDisposable(Control.instance);

@@ -9,8 +9,7 @@ const factory = {
 
         factory.instance = new Database({
             testMode: true,
-            name: `MyDB-${uuid()}`
-        });
+        }, { serviceName: `MyDB-${uuid()}`});
 
         await factory.instance.start();
 

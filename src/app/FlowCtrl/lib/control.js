@@ -27,7 +27,11 @@ class Control {
                 const steps = await Step.findMany({ baseline: data.newdata.name });
 
                 for (const step of steps) {
-                    await step.triggerJob(data.newdata);
+                    try {
+                        await step.triggerJob(data.newdata);
+                    } catch (error) {
+                        console.error(JSON.stringify(error, null, 2))
+                    }
                 }
             } else if (data.type === "exec.job" &&
                        data.event === "updated" &&

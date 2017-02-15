@@ -5,6 +5,7 @@ const { join } = require("path");
 const api = require("api.io");
 const Web = require("web");
 const RestClient = require("restclient");
+const { ServiceComBus } = require("servicecom");
 const { Service } = require("service");
 const MgmtMgr = require("./managers/mgmt");
 const ServiceProxy = require("./service_proxy");
@@ -34,6 +35,15 @@ class Main extends Service {
         for (const serviceId of secondaryRestNeeds) {
             await this.want(serviceId, serviceId, RestClient);
         }
+
+        await ServiceComBus.instance.start({
+            name: this.name,
+            uri: this.config.msgbus
+        });
+        this.addDisposable(ServiceComBus.instance);
+        ServiceComBus.instance.attachControllers([
+            this.statesControllerInstance
+        ]);
 
         await MgmtMgr.instance.start();
         this.addDisposable(MgmtMgr.instance);

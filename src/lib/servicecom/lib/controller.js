@@ -364,7 +364,7 @@ class Controller {
         !data.ref && this._throw("No ref supplied", 400);
 
         const obj = await this._getTypeInstance(id);
-        const refs = ensureArray(data);
+        const refs = ensureArray(data.ref);
         await obj.addRef(refs);
 
         return obj;

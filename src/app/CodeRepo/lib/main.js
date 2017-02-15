@@ -5,6 +5,7 @@ const Database = require("database");
 const Web = require("web");
 const { Service } = require("service");
 const RestClient = require("restclient");
+const { ServiceComBus } = require("servicecom");
 const Repositories = require("./controllers/repositories");
 const Revisions = require("./controllers/revisions");
 const Backends = require("./controllers/backends");
@@ -28,6 +29,18 @@ class Main extends Service {
 
     async onOnline() {
         const routes = [].concat(Repositories.instance.routes, Revisions.instance.routes, Backends.instance.routes, this.routes);
+
+        await ServiceComBus.instance.start({
+            name: this.name,
+            uri: this.config.msgbus
+        });
+        this.addDisposable(ServiceComBus.instance);
+        ServiceComBus.instance.attachControllers([
+            Repositories.instance,
+            Revisions.instance,
+            Backends.instance,
+            this.statesControllerInstance
+        ]);
 
         await BackendProxy.instance.start(this.config.backends, Repository, Revision);
         this.addDisposable(BackendProxy.instance);

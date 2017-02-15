@@ -41,22 +41,25 @@ describe("Tests", () => {
         const env = {};
 
         before(async () => {
-            const scb = new ServiceComBus({
+            ServiceComBus.instance.start({
+                uri: "dummy",
+                name: "myname",
                 testMode: true
-            }, { serviceName: "myname" });
-
-            scb.on("publish", async (message) => {
-                await scb.emit("data", message);
             });
 
-            ThingController.instance.setMb(scb);
+            ServiceComBus.instance.msgbus.on("publish", async (message) => {
+                await ServiceComBus.instance.msgbus.emit("data", message);
+            });
 
-            env.client = new MbClient("myname", scb);
+            ServiceComBus.instance.attachControllers([ ThingController.instance ]);
+
+            env.client = ServiceComBus.instance.getClient("myname");
         });
 
         testcases(env);
 
         after(async () => {
+            await ServiceComBus.instance.dispose();
             await Database.dispose();
         });
     });

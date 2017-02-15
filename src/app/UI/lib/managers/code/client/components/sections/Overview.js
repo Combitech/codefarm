@@ -54,13 +54,7 @@ class Overview extends Component {
             time: moment.utc().format(),
             text: this.state.comment.value
         })
-        .then((response) => {
-            if (response.result !== "success") {
-                console.error("comment failed", response);
-            } else {
-                return this.state.comment.set();
-            }
-        })
+        .then(() => this.state.comment.set())
         .catch((error) => {
             console.error("comment failed", error);
         });

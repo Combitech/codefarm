@@ -4,6 +4,7 @@ const os = require("os");
 const Database = require("database");
 const Web = require("web");
 const { Service } = require("service");
+const { ServiceComBus } = require("servicecom");
 const Events = require("./controllers/events");
 const Event = require("./types/event");
 
@@ -19,11 +20,22 @@ class Main extends Service {
         await this.provide("REST", {
             uri: `http://${os.hostname()}:${this.config.web.port}`
         });
+
         await this.need("db", "mgmt", Database, this.config.db);
     }
 
     async onOnline() {
         const routes = [].concat(Events.instance.routes, this.routes);
+
+        await ServiceComBus.instance.start({
+            name: this.name,
+            uri: this.config.msgbus
+        });
+        this.addDisposable(ServiceComBus.instance);
+        ServiceComBus.instance.attachControllers([
+            Events.instance,
+            this.statesControllerInstance
+        ]);
 
         this.msgBus.on("data", async (data) => {
             if (IGNORED_EVENTS.indexOf(data.event) === -1) {

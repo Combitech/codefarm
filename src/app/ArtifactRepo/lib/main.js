@@ -4,6 +4,7 @@ const os = require("os");
 const Database = require("database");
 const Web = require("web");
 const { Service } = require("service");
+const { ServiceComBus } = require("servicecom");
 const Repositories = require("./controllers/repositories");
 const Artifacts = require("./controllers/artifacts");
 const Backends = require("./controllers/backends");
@@ -18,11 +19,24 @@ class Main extends Service {
         await this.provide("REST", {
             uri: `http://${os.hostname()}:${this.config.web.port}`
         });
+
         await this.need("db", "mgmt", Database, this.config.db);
     }
 
     async onOnline() {
         const routes = [].concat(Repositories.instance.routes, Artifacts.instance.routes, Backends.instance.routes, this.routes);
+
+        await ServiceComBus.instance.start({
+            name: this.name,
+            uri: this.config.msgbus
+        });
+        this.addDisposable(ServiceComBus.instance);
+        ServiceComBus.instance.attachControllers([
+            Repositories.instance,
+            Artifacts.instance,
+            Backends.instance,
+            this.statesControllerInstance
+        ]);
 
         await BackendProxy.instance.start(this.config.backends);
         this.addDisposable(BackendProxy.instance);

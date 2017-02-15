@@ -5,6 +5,7 @@ const Database = require("database");
 const LogBus = require("logbus");
 const Web = require("web");
 const { Service } = require("service");
+const { ServiceComBus } = require("servicecom");
 const RestClient = require("restclient");
 const Slaves = require("./controllers/slaves");
 const Jobs = require("./controllers/jobs");
@@ -32,6 +33,18 @@ class Main extends Service {
         await this.want("exec", "exec", RestClient, this.config.exec);
 
         const routes = [].concat(Slaves.instance.routes, Jobs.instance.routes, SubJobs.instance.routes, this.routes);
+
+        await ServiceComBus.instance.start({
+            name: this.name,
+            uri: this.config.msgbus
+        });
+        this.addDisposable(ServiceComBus.instance);
+        ServiceComBus.instance.attachControllers([
+            Slaves.instance,
+            Jobs.instance,
+            SubJobs.instance,
+            this.statesControllerInstance
+        ]);
 
         await Control.instance.start();
         this.addDisposable(Control.instance);
