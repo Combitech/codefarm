@@ -19,14 +19,25 @@ class JobFlow extends Component {
             if (step.id === this.props.firstStep.id) {
                 continue;
             }
-            let status = false;
             const jobRefs = this.props.jobRefs.filter((ref) => ref.name === step.name);
 
-            jobRefs.sort((a, b) => moment(a.data.created).isBefore(b.data.created) ? 1 : -1);
-            const job = jobRefs[0] ? jobRefs[0].data : false;
-
-            if (job) {
-                status = job.status;
+            let status = false;
+            let job = false;
+            if (jobRefs.length > 0) {
+                jobRefs.sort((a, b) => moment(a.data.created).isBefore(b.data.created) ? 1 : -1);
+                job = jobRefs[0] ? jobRefs[0].data : false;
+                if (job) {
+                    status = job.status;
+                }
+            }
+            if (!status && (!step.meta.step.script && step.meta.step.tagScript)) {
+                // Step didn't have a job but a tag-script, check tags on revision instead
+                const tags = step.meta.item.tags;
+                if (tags.some((tag) => tag === `step:${step.name}:success`)) {
+                    status = "success";
+                } else if (tags.some((tag) => tag === `step:${step.name}:fail`)) {
+                    status = "fail";
+                }
             }
 
             statuses.add(status || "unknown");

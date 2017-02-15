@@ -3,6 +3,7 @@ import React from "react";
 import Component from "ui-lib/component";
 import OverviewSection from "./sections/Overview";
 import JobSection from "./sections/Job";
+import NoJobSection from "./sections/NoJob";
 
 class Section extends Component {
     constructor(props) {
@@ -15,12 +16,23 @@ class Section extends Component {
         if (this.props.step.value) {
             const jobRef = this.props.itemExt.data.refs.find((ref) => ref.name === this.props.step.value);
 
+            if (jobRef) {
+                return (
+                    <JobSection
+                        theme={this.props.theme}
+                        item={this.props.item}
+                        itemExt={this.props.itemExt}
+                        jobItem={jobRef.data}
+                    />
+                );
+            }
+
             return (
-                <JobSection
+                <NoJobSection
                     theme={this.props.theme}
                     item={this.props.item}
                     itemExt={this.props.itemExt}
-                    jobItem={jobRef.data}
+                    step={this.props.step}
                 />
             );
         }

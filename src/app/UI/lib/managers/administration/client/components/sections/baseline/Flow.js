@@ -66,7 +66,7 @@ class FlowComponent extends Component {
                 type: StepStatus,
                 name: step.name,
                 meta: {
-                    baseline: this.props.item,
+                    item: this.props.item,
                     flow: this.props.flow,
                     step: step
                 },
