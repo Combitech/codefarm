@@ -10,6 +10,7 @@ const Database = require("./lib/database");
 const ThingController = require("./lib/thing_controller");
 const HttpClient = require("../lib/http_client");
 const MbClient = require("../lib/mb_client");
+const ServiceComBus = require("../lib/bus")
 const testcases = require("./testcases");
 
 describe("Tests", () => {
@@ -40,18 +41,17 @@ describe("Tests", () => {
         const env = {};
 
         before(async () => {
-            const msgbus = new MsgBus({
-                testMode: true,
-                routingKey: "myname"
+            const scb = new ServiceComBus({
+                testMode: true
+            }, { serviceName: "myname" });
+
+            scb.on("publish", async (message) => {
+                await scb.emit("data", message);
             });
 
-            msgbus.on("publish", async (message) => {
-                await msgbus.emit("data", message);
-            });
+            ThingController.instance.setMb(scb);
 
-            ThingController.instance.setMb(msgbus);
-
-            env.client = new MbClient("myname", msgbus);
+            env.client = new MbClient("myname", scb);
         });
 
         testcases(env);

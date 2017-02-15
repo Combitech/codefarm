@@ -3,7 +3,7 @@
 const MsgBus = require("msgbus");
 
 class LogBus extends MsgBus {
-    constructor(config) {
+    constructor(config, serviceMgr) {
         const opts = {
             exchange: {
                 name: "log",
@@ -17,18 +17,19 @@ class LogBus extends MsgBus {
         if (config) {
             if (config.queue) {
                 opts.queue = {
-                    name: `${config.name}-loglines`,
+                    name: `${serviceMgr.serviceName}-loglines`,
                     options: {
                         durable: true
                     }
                 };
             }
+
             if (config.testMode) {
                 opts.testMode = config.testMode;
             }
         }
 
-        super(opts);
+        super(opts, serviceMgr);
     }
 
     static get typeName() {

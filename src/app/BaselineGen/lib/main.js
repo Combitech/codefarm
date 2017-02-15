@@ -19,7 +19,7 @@ class Main extends Service {
             uri: `http://${os.hostname()}:${this.config.web.port}`
         });
 
-        await this.need("db", "mgmt", Database, Object.assign({ name: this.name }, this.config.db));
+        await this.need("db", "mgmt", Database, this.config.db);
     }
 
     async onOnline() {

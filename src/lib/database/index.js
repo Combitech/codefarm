@@ -25,14 +25,14 @@ const createMongoMock = async (params) => {
 };
 
 class Database extends ProviderClient {
-    constructor(config) {
-        super(config);
+    constructor(...args) {
+        super(...args);
 
         if (this.config.testMode && !this.config.uri) {
             this.config.uri = "mongodb://nowhere";
         }
 
-        this.config.uri = `${this.config.uri}/${this.config.name}`;
+        this.config.uri = `${this.config.uri}/${this.serviceMgr.serviceName}`;
     }
 
     static get typeName() {

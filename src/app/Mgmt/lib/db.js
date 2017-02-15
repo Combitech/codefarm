@@ -19,7 +19,7 @@ class Db {
     }
 
     async connect(config) {
-        this._db = new Database(config);
+        this._db = new Database(config, ServiceMgr.instance);
 
         // Database connect might throw error if DB isn't running yet...
         try {

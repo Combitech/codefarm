@@ -21,14 +21,13 @@ class Main extends Service {
         await this.provide("REST", {
             uri: `http://${os.hostname()}:${this.config.web.port}`
         });
-        await this.need("db", "mgmt", Database, {
-            name: this.name
-        });
+
+        await this.need("db", "mgmt", Database, this.config.db);
         await this.need("userrepo", "userrepo", RestClient);
     }
 
     async onOnline() {
-        const routes = Object.assign({}, Repositories.instance.routes, Revisions.instance.routes, Backends.instance.routes, this.routes);
+        const routes = [].concat(Repositories.instance.routes, Revisions.instance.routes, Backends.instance.routes, this.routes);
 
         await BackendProxy.instance.start(this.config.backends, Repository, Revision);
         this.addDisposable(BackendProxy.instance);
