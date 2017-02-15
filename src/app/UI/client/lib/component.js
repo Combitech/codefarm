@@ -1,4 +1,5 @@
 
+import api from "api.io/api.io-client";
 import React from "react";
 import stateVar from "ui-lib/state_var";
 import type from "ui-lib/type";
@@ -63,6 +64,14 @@ class Component extends React.PureComponent {
         }
     }
 
+    /** Add state variable containing a list of type instances
+     * List items will be of given type matching given query.
+     * @param {String} name State variable name
+     * @param {String} type Type or function (props) => type
+     * @param {Object|Function} [query] Query or function (props) => query
+     * @param {Boolean} [subscribe] If state variable shall be updated when source updates
+     * @returns {undefined}
+     */
     addTypeListStateVariable(name, type, query = {}, subscribe = false) {
         this.log("addTypeListStateVariable", name, type, query, subscribe);
 
@@ -77,6 +86,14 @@ class Component extends React.PureComponent {
         });
     }
 
+    /** Add state variable containing one type instance
+     * Type matching type and id will be fetched
+     * @param {String} name State variable name
+     * @param {String} type Type or function (props) => type
+     * @param {String|Function} id Id or function (props) => id
+     * @param {Boolean} [subscribe] If state variable shall be updated when source updates
+     * @returns {undefined}
+     */
     addTypeItemStateVariable(name, type, id, subscribe = false) {
         this.log("addTypeItemStateVariable", name, type, id, subscribe);
 
@@ -86,6 +103,30 @@ class Component extends React.PureComponent {
             name,
             type: typeof type === "function" ? type : () => type,
             id: typeof id === "function" ? id : () => id,
+            subscribe: subscribe,
+            item: true
+        });
+    }
+
+    /** Add state variable containing one type instance
+     * Like {@link Component#addTypeItemStateVariable} except that a REST create
+     * body is given instead of an explicit id. This allows for subscribing to
+     * a new type instance.
+     * @param {String} name State variable name
+     * @param {String} type Type or function (props) => type
+     * @param {Object|Function} createBody Create body or function (props) => create body
+     * @param {Boolean} [subscribe] If state variable shall be updated when source updates
+     * @returns {undefined}
+     */
+    addTypeItemStateVariableWithCreate(name, type, createBody, subscribe = false) {
+        this.log("addTypeItemStateVariableWithCreate", name, type, createBody, subscribe);
+
+        this.state[name] = false; // eslint-disable-line react/no-direct-mutation-state
+
+        this.asyncVariables.push({
+            name,
+            type: typeof type === "function" ? type : () => type,
+            createBody: typeof createBody === "function" ? createBody : () => createBody,
             subscribe: subscribe,
             item: true
         });
@@ -128,18 +169,28 @@ class Component extends React.PureComponent {
         this.log("_loadAsyncVarItem", asyncVar);
 
         const newType = asyncVar.type(props);
-        const newId = await Promise.resolve(asyncVar.id(props));
+        if (asyncVar.createBody) {
+            const newCreateBody = asyncVar.createBody(props);
+            if (asyncVar._type === newType && JSON.stringify(asyncVar._createBody) === JSON.stringify(newCreateBody)) {
+                return; // Already loaded
+            }
 
-        if (asyncVar._type === newType && asyncVar._id === newId) {
-            return; // Already loaded
-        }
+            asyncVar._createBody = newCreateBody;
+        } else {
+            const newId = asyncVar.id(props);
 
-        if (asyncVar._type && asyncVar._id) {
-            this.log("_loadAsyncVarList", "reload");
+            if (asyncVar._type === newType && asyncVar._id === newId) {
+                return; // Already loaded
+            }
+
+            asyncVar._id = newId;
         }
 
         asyncVar._type = newType;
-        asyncVar._id = newId;
+
+        if (asyncVar._type && (asyncVar._id || asyncVar._createBody)) {
+            this.log("_loadAsyncVarItem", "reload");
+        }
 
         type.unsubscribe(asyncVar.subId);
 
@@ -152,6 +203,16 @@ class Component extends React.PureComponent {
         if (this._isMounted) {
             this.state.loadingAsync.set(true);
             set(false);
+        }
+
+        if (asyncVar._type && asyncVar._createBody) {
+            const result = await api.rest.post(asyncVar._type, asyncVar._createBody);
+
+            if (result.result !== "success") {
+                throw new Error(result.error);
+            }
+
+            asyncVar._id = result.data._id;
         }
 
         if (asyncVar.subscribe) {

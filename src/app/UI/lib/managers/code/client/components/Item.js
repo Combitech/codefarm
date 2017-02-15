@@ -17,8 +17,8 @@ class Item extends Component {
 
         this.addStateVariable("step", "");
 
-        this.addTypeItemStateVariable("itemExt", "dataresolve.data", async (props) => {
-            const result = await api.rest.post("dataresolve.data", {
+        this.addTypeItemStateVariableWithCreate("itemExt", "dataresolve.data", (props) => {
+            return {
                 resolver: "RefResolve",
                 opts: {
                     ref: {
@@ -31,13 +31,7 @@ class Item extends Component {
                         ]
                     }
                 }
-            });
-
-            if (result.result !== "success") {
-                throw new Error(result.error);
-            }
-
-            return result.data._id;
+            };
         }, true);
 
         this.addTypeListStateVariable("flows", "flowctrl.flow", (props) => {

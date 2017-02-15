@@ -17,8 +17,8 @@ class BaselineItem extends Component {
 
         this.addStateVariable("step", "");
 
-        this.addTypeItemStateVariable("itemExt", "dataresolve.data", async (props) => {
-            const result = await api.rest.post("dataresolve.data", {
+        this.addTypeItemStateVariableWithCreate("itemExt", "dataresolve.data", (props) => {
+            return {
                 resolver: "RefResolve",
                 opts: {
                     ref: props.item.content[0],
@@ -28,28 +28,16 @@ class BaselineItem extends Component {
                         ]
                     }
                 }
-            });
-
-            if (result.result !== "success") {
-                throw new Error(result.error);
-            }
-
-            return result.data._id;
+            };
         }, true);
 
-        this.addTypeItemStateVariable("flows", "dataresolve.data", async (props) => {
-            const result = await api.rest.post("dataresolve.data", {
+        this.addTypeItemStateVariableWithCreate("flows", "dataresolve.data", (props) => {
+            return {
                 resolver: "BaselineFlowsResolve",
                 opts: {
                     baselineName: props.item.name
                 }
-            });
-
-            if (result.result !== "success") {
-                throw new Error(result.error);
-            }
-
-            return result.data._id;
+            };
         }, false);
     }
 
