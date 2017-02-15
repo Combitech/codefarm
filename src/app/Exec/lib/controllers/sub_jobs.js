@@ -1,7 +1,7 @@
 "use strict";
 
 const SubJob = require("../types/sub_job");
-const { Controller } = require("typelib");
+const { Controller } = require("servicecom");
 
 class SubJobs extends Controller {
     constructor() {

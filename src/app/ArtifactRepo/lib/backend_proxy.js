@@ -39,15 +39,10 @@ class BackendProxy extends BackendProxyBase {
         return instance.uploadArtifact(repository, artifact, fileStream);
     }
 
-    async downloadArtifact(repository, artifact, ctx) {
-        const instance = this.getBackend(repository.backend);
-        await instance.downloadArtifact(repository, artifact, ctx);
-    }
-
-    async getArtifactReadStream(repository, artifact, ctx) {
+    async getArtifactReadStream(repository, artifact) {
         const instance = this.getBackend(repository.backend);
 
-        return await instance.getArtifactReadStream(repository, artifact, ctx);
+        return await instance.getArtifactReadStream(repository, artifact);
     }
 
     async removeArtifact(repository, artifact) {

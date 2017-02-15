@@ -27,7 +27,8 @@
     "service",
     "web",
     "typelib",
-    "database"
+    "database",
+    "servicecom"
   ],
   "dependencies": {
     "deep-assign": "^2.0.0",

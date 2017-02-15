@@ -1,7 +1,7 @@
 "use strict";
 
 const Step = require("../types/step");
-const { Controller } = require("typelib");
+const { Controller } = require("servicecom");
 
 class Steps extends Controller {
     constructor() {

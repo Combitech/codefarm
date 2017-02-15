@@ -41,11 +41,13 @@ class Web extends AsyncEventEmitter {
             try {
                 await next();
             } catch (error) {
-                console.error(error);
-                console.error(error.stack);
                 ctx.status = error.status || 500;
                 ctx.type = "json";
-                ctx.body = JSON.stringify({ result: "fail", error: error.message || error }, null, 2);
+                ctx.body = JSON.stringify({
+                    result: "fail",
+                    error: error.message || error,
+                    status: ctx.status
+                }, null, 2);
             }
         });
 
@@ -57,25 +59,37 @@ class Web extends AsyncEventEmitter {
 
         const apiDocRows = [];
 
-        for (const name of Object.keys(routes)) {
-            if (name === "unamed") {
-                for (const fn of routes.unamed()) {
-                    this.app.use(fn);
-                }
-            } else {
-                let method = "get";
-                let routeName = name;
+        if (routes.constructor === Array) {
+            for (const r of routes) {
+                this.app.use(route[r.method || "get"](r.route, r.handler));
 
-                if (name[0] !== "/") {
-                    [ , method, routeName ] = name.match(/(.+?)(\/.*)/);
-                }
-
-                this.app.use(route[method](routeName, routes[name]));
                 apiDocRows.push({
-                    "method": method,
-                    "route": routeName,
-                    "description": ""
+                    "method": r.method || "get",
+                    "route": r.route,
+                    "description": r.description || ""
                 });
+            }
+        } else {
+            for (const name of Object.keys(routes)) {
+                if (name === "unamed") {
+                    for (const fn of routes.unamed()) {
+                        this.app.use(fn);
+                    }
+                } else {
+                    let method = "get";
+                    let routeName = name;
+
+                    if (name[0] !== "/") {
+                        [ , method, routeName ] = name.match(/(.+?)(\/.*)/);
+                    }
+
+                    this.app.use(route[method](routeName, routes[name]));
+                    apiDocRows.push({
+                        "method": method,
+                        "route": routeName,
+                        "description": ""
+                    });
+                }
             }
         }
 

@@ -33,7 +33,8 @@
     "misc",
     "ssh",
     "web",
-    "backend"
+    "backend",
+    "servicecom"
   ],
   "dependencies": {
     "fs-extra-promise": "^0.4.1",

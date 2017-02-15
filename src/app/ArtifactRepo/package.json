@@ -34,14 +34,14 @@
     "web",
     "version",
     "typelib",
-    "backend"
+    "backend",
+    "servicecom"
   ],
   "dependencies": {
     "async-busboy": "^0.3.3",
     "digest-stream": "^1.0.1",
     "fs-extra-promise": "^0.4.1",
     "git-list-pack": "0.0.10",
-    "koa-send": "^3.2.0",
     "moment": "^2.16.0",
     "yargs": "^6.3.0"
   },

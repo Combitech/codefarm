@@ -53,8 +53,7 @@ class Repository extends Type {
             // Check that backend exists
             BackendProxy.instance.getBackend(data.backend);
 
-            if (data.versionScheme &&
-                VERSION_SCHEMES.indexOf(data.versionScheme) === -1) {
+            if (data.versionScheme && !VERSION_SCHEMES.includes(data.versionScheme)) {
                 throw new Error(`Invalid version scheme ${data.versionScheme}`);
             }
         } else if (event === "update") {

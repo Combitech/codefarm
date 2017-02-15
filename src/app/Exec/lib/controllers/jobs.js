@@ -1,7 +1,7 @@
 "use strict";
 
 const Job = require("../types/job");
-const { Controller } = require("typelib");
+const { Controller } = require("servicecom");
 
 class Jobs extends Controller {
     constructor() {
@@ -10,13 +10,12 @@ class Jobs extends Controller {
         this._addAction("rerun", this._rerun);
     }
 
-    async _rerun(ctx, id) {
-        const obj = await this._getTypeInstance(ctx, id);
+    async _rerun(id) {
+        const obj = await this._getTypeInstance(id);
 
         await obj.rerun();
 
-        ctx.type = "json";
-        ctx.body = JSON.stringify({ result: "success", action: "rerun", data: obj.serialize() }, null, 2);
+        return obj;
     }
 }
 

@@ -30,7 +30,8 @@
     "typelib",
     "web",
     "misc",
-    "testsupport"
+    "testsupport",
+    "servicecom"
   ],
   "dependencies": {
     "yargs": "^6.0.0"

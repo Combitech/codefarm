@@ -73,7 +73,7 @@ class Main extends Service {
 
         this.config.web.api = api;
 
-        const routes = Object.assign({}, this.routes, ServiceProxy.instance.routes);
+        const routes = [].concat(this.routes, ServiceProxy.instance.routes);
 
         await Web.instance.start(this.config.web, routes);
         this.addDisposable(Web.instance);

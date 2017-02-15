@@ -1,7 +1,7 @@
 "use strict";
 
 const State = require("../types/state");
-const { Controller } = require("typelib");
+const { Controller } = require("servicecom");
 
 class States extends Controller {
     constructor() {
@@ -10,13 +10,12 @@ class States extends Controller {
         this._addAction("restart", this._restart);
     }
 
-    async _restart(ctx) {
+    async _restart() {
         const obj = State.instance;
 
         obj.restart("REST restart request");
 
-        ctx.type = "json";
-        ctx.body = JSON.stringify({ result: "success", action: "restart", data: obj.serialize() }, null, 2);
+        return obj;
     }
 }
 

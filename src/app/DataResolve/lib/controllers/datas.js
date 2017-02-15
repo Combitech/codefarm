@@ -1,7 +1,7 @@
 "use strict";
 
 const Data = require("../types/data");
-const { Controller } = require("typelib");
+const { Controller } = require("servicecom");
 
 class Datas extends Controller {
     constructor() {

@@ -25,7 +25,7 @@ class Main extends Service {
     }
 
     async onOnline() {
-        const routes = Object.assign({}, Logs.instance.routes, Repositories.instance.routes, Backends.instance.routes, this.routes);
+        const routes = [].concat(Logs.instance.routes, Repositories.instance.routes, Backends.instance.routes, this.routes);
 
         await BackendProxy.instance.start(this.config.backends);
         this.addDisposable(BackendProxy.instance);

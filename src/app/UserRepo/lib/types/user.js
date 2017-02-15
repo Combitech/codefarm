@@ -112,7 +112,7 @@ class User extends Type {
         }
     }
 
-    async addKey(parentIds = [], key) {
+    async addKey(key) {
         assertType(key, "key", "string");
 
         if (key === "") {
@@ -125,10 +125,10 @@ class User extends Type {
 
         this.keys.push(key);
 
-        await this.save(parentIds);
+        await this.save();
     }
 
-    async setAvatar(parentIds, fileStream) {
+    async setAvatar(fileStream) {
         const fileBuf = await new StreamConverter(fileStream).toBuffer();
         const binData = encodeBinary(fileBuf);
 
@@ -143,20 +143,17 @@ class User extends Type {
             }
         };
 
-        await this.save(parentIds);
+        await this.save();
     }
 
-    async getAvatar(ctx, binary) {
+    async getAvatar() {
         if (!this.avatar.data) {
-            ctx.throw("No avatar uploaded", 404);
+            const error = new Error("No avatar uploaded");
+            error.status = 404;
+            throw error;
         }
 
-        ctx.type = this.avatar.meta.mimeType;
-        if (binary) {
-            ctx.body = decodeBinary(this.avatar.data);
-        } else {
-            ctx.body = decodeBinary(this.avatar.data).toString("base64");
-        }
+        return decodeBinary(this.avatar.data);
     }
 }
 

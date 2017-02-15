@@ -29,7 +29,7 @@ class Main extends Service {
     }
 
     async onOnline() {
-        const routes = Object.assign({}, Flows.instance.routes, Steps.instance.routes, this.routes);
+        const routes = [].concat(Flows.instance.routes, Steps.instance.routes, this.routes);
 
         await Control.instance.start();
         this.addDisposable(Control.instance);

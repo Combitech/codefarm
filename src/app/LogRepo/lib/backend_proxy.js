@@ -50,16 +50,10 @@ class BackendProxy extends BackendProxyBase {
         return backend.appendLog(repository, id, data);
     }
 
-    async downloadLog(repository, log, ctx) {
+    async getLogReadStream(repository, log) {
         const backend = this.getBackend(repository.backend);
 
-        await backend.downloadLog(repository, log, ctx);
-    }
-
-    async getLogReadStream(repository, log, ctx) {
-        const backend = this.getBackend(repository.backend);
-
-        return await backend.getLogReadStream(repository, log, ctx);
+        return await backend.getLogReadStream(repository, log);
     }
 
     async removeLog(repository, log) {

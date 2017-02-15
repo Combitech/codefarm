@@ -1,7 +1,7 @@
 "use strict";
 
 const Flow = require("../types/flow");
-const { Controller } = require("typelib");
+const { Controller } = require("servicecom");
 
 class Flows extends Controller {
     constructor() {

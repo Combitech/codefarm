@@ -47,10 +47,6 @@ class Repository extends Type {
         await BackendProxy.instance.saveLog(this, log);
     }
 
-    async downloadLog(log, ctx) {
-        await BackendProxy.instance.downloadLog(this, log, ctx);
-    }
-
     async _saveHook(olddata) {
         if (!olddata) {
             await BackendProxy.instance.createRepo(this);

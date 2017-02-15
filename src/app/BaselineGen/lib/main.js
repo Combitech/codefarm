@@ -23,7 +23,7 @@ class Main extends Service {
     }
 
     async onOnline() {
-        const routes = Object.assign({}, Specifications.instance.routes, Collectors.instance.routes, Baselines.instance.routes, this.routes);
+        const routes = [].concat(Specifications.instance.routes, Collectors.instance.routes, Baselines.instance.routes, this.routes);
 
         await Control.instance.start();
         this.addDisposable(Control.instance);

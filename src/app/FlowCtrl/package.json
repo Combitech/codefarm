@@ -33,7 +33,8 @@
     "misc",
     "ssh",
     "web",
-    "testsupport"
+    "testsupport",
+    "servicecom"
   ],
   "dependencies": {
     "async-busboy": "^0.3.3",

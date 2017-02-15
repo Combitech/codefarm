@@ -2,7 +2,7 @@
 
 const asyncBusboy = require("async-busboy");
 const User = require("../types/user");
-const { Controller } = require("typelib");
+const { Controller } = require("servicecom");
 
 class Users extends Controller {
     constructor() {
@@ -14,47 +14,53 @@ class Users extends Controller {
         this._addGetter("keys", this._getKeys);
     }
 
-    async _setAvatar(ctx, id) {
-        const obj = await this._getTypeInstance(ctx, id);
-        const parentIds = ctx.query.parentIds || [];
+    async _setAvatar(id, data, ctx) {
+        if (!ctx) {
+            this._throw("SetAvatar can only be called via HTTP", 400);
+        }
+
+        const obj = await this._getTypeInstance(id);
 
         const { files, fields } = await asyncBusboy(ctx.req);
+
         if (files.length !== 1) {
             throw new Error(`Expected one avatar file, ${files.length} files got`);
         }
 
-        await obj.setAvatar(parentIds, files[0], fields);
+        await obj.setAvatar(files[0], fields);
 
-        ctx.type = "json";
-        ctx.body = JSON.stringify({ result: "success", action: "addavatar", data: obj.serialize() }, null, 2);
+        return obj;
     }
 
-    async _getAvatar(ctx, id) {
-        const obj = await this._getTypeInstance(ctx, id);
-        const binary = ctx.query.binary;
-        await obj.getAvatar(ctx, binary);
+    async _getAvatar(id, ctx) {
+        if (!ctx) {
+            this._throw("GetAvatar can only be called via HTTP", 400);
+        }
+
+        const obj = await this._getTypeInstance(id);
+        const stream = await obj.getAvatar();
+
+        ctx.length = obj.avatar.meta.size;
+        ctx.type = obj.avatar.meta.mimeType;
+        ctx.body = stream;
     }
 
-    async _addKey(ctx, id) {
-        const parentIds = ctx.query.parentIds || [];
-
-        if (typeof ctx.request.body !== "string" || ctx.request.body === "") {
+    async _addKey(id, data) {
+        if (typeof data !== "string" || data === "") {
             throw new Error("Request body must be a string");
         }
 
-        const obj = await this._getTypeInstance(ctx, id);
+        const obj = await this._getTypeInstance(id);
 
-        await obj.addKey(parentIds, ctx.request.body);
+        await obj.addKey(data);
 
-        ctx.type = "json";
-        ctx.body = JSON.stringify({ result: "success", action: "addkey", data: obj.serialize() }, null, 2);
+        return obj;
     }
 
     async _getKeys(ctx, id) {
         const obj = await this._getTypeInstance(ctx, id);
 
-        ctx.type = "json";
-        ctx.body = JSON.stringify(obj.keys, null, 2);
+        return obj.keys;
     }
 }
 

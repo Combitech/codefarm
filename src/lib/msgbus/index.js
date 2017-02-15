@@ -28,6 +28,10 @@ class MsgBus extends ProviderClient {
         return "MsgBus";
     }
 
+    getRoutingKey() {
+        return this.config.routingKey || "";
+    }
+
     async start() {
         await this.connect();
     }
@@ -56,7 +60,7 @@ class MsgBus extends ProviderClient {
                 if (this.config.queue) {
                     let queue = await this.channel.assertQueue(this.config.queue.name, this.config.queue.options || { exclusive: true, durable: false });
 
-                    queue = await this.channel.bindQueue(queue.queue, this.config.exchange.name, "");
+                    queue = await this.channel.bindQueue(queue.queue, this.config.exchange.name, this.getRoutingKey());
 
                     // Use previousConsumed promise to serialize execution of
                     // message consumption...
@@ -138,14 +142,19 @@ class MsgBus extends ProviderClient {
         return this.publishRaw(message);
     }
 
-    async publishRaw(message) {
-        const routingKey = "";
+    async publishRaw(message, routingKey = "", timeout = 0) {
         const opts = {
             contentType: "application/json"
         };
 
+        if (timeout) {
+            opts.expiration = timeout.toString();
+        }
+
         if (!this.config.testMode) {
-            if (!this.channel.publish(this.exchange.name, routingKey, new Buffer(JSON.stringify(message)), opts)) {
+            const content = new Buffer(JSON.stringify(message));
+
+            if (!this.channel.publish(this.exchange.name, routingKey, content, opts)) {
                 throw new Error(`Channel publish for exchange ${this.exchange.name} failed, the channel's write buffer is full!`);
             }
         }

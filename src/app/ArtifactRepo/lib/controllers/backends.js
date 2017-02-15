@@ -1,7 +1,7 @@
 "use strict";
 
 const Backend = require("../types/backend");
-const { Controller } = require("typelib");
+const { Controller } = require("servicecom");
 
 class Backends extends Controller {
     constructor() {

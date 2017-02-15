@@ -36,10 +36,11 @@ class Main extends Service {
             uri: this.config.mongo,
             name: this.name
         };
+
         await Db.instance.connect(dbConfig);
         this.addDisposable(Db.instance);
 
-        const routes = Object.assign({}, Configs.instance.routes, this.routes);
+        const routes = [].concat(Configs.instance.routes, this.routes);
 
         typeNotify.on("config.tagged", Configs.instance.onTagged.bind(Configs.instance));
 

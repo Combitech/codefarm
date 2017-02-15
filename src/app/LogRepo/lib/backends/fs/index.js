@@ -99,38 +99,29 @@ class FsBackend {
         });
     }
 
-    async downloadLog(repository, log, ctx) {
+    async getLogReadStream(repository, log) {
         const repoPath = this._getBasePath(repository);
-        const { dir: logDir, filename: logFilename } = this._getLogPath(repoPath, log);
-
-        await this._assertRepo(repoPath);
-
-        await send(ctx, logFilename, {
-            root: logDir
-        });
-    }
-
-    async getLogReadStream(repository, log, ctx) {
-        const repoPath = this._getRepoPath(repository);
         const { absPath: logFilePath } = this._getLogPath(repoPath, log);
 
         await this._assertRepo(repoPath);
         if (!(await fs.existsAsync(logFilePath))) {
-            ctx.throw("Artifact file doesn't exist", 404);
+            const error = new Error("Log file doesn't exist");
+            error.status = 404;
+            throw error;
         }
 
         return fs.createReadStream(logFilePath);
     }
 
     async removeLog(repository, log) {
-        const repoPath = this._getRepoPath(repository);
+        const repoPath = this._getBasePath(repository);
         const { absPath: logFilePath } = this._getLogPath(repoPath, log);
 
         await this._assertRepo(repoPath);
 
         // TODO: Fix possible race, dir might be created between existsAsync and writeFileAsync
         if (!(await fs.existsAsync(logFilePath))) {
-            throw new Error("Artifact location doesn't exist");
+            throw new Error("Log location doesn't exist");
         }
 
         await fs.removeAsync(logFilePath);

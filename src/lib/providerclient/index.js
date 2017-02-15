@@ -10,12 +10,13 @@ class ProviderClient extends AsyncEventEmitter {
     /**
      * Create provider client
      * @param {String} config Parameter from the configuration
-     * @param {String} params Parameters provided via the service bus
+     * @param {Object} serviceMgr Service manager instance
      */
-    constructor(config) {
+    constructor(config, serviceMgr) {
         super();
 
         this.config = clone(config) || {};
+        this.serviceMgr = serviceMgr;
     }
 
     /**

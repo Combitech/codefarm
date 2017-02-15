@@ -1,7 +1,7 @@
 "use strict";
 
 const Config = require("../types/config");
-const { Controller } = require("typelib");
+const { Controller } = require("servicecom");
 const { ServiceMgr } = require("service");
 
 const ACTIVE_TAG = "active";

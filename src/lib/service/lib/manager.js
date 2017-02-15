@@ -302,7 +302,7 @@ class Manager {
 
         this.usedServices[id].setOnline = async function(mgr, serviceId, provideParams) {
             mgr.log("verbose", `Service ${serviceId}:${this.type} from ${this.name} set online`);
-            this.instance = new this.Client(Object.assign({}, this.config, provideParams));
+            this.instance = new this.Client(Object.assign({}, this.config, provideParams), mgr);
             await this.instance.startBase();
             this.renewHeartbeat(mgr);
             this.state = STATE.ONLINE;

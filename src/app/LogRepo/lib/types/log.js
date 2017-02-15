@@ -3,6 +3,7 @@
 const { serviceMgr } = require("service");
 const { assertType, assertProp } = require("misc");
 const { Type } = require("typelib");
+const BackendProxy = require("../backend_proxy");
 const Repository = require("./repository");
 
 const STATE = {
@@ -120,7 +121,7 @@ class Log extends Type {
 
         this.state = STATE.COMMITED;
         this.fileMeta.size = fileStream.bytesRead;
-        this.fileMeta.mimeType = "text/plain";
+        this.fileMeta.mimeType = fileStream.mimeType;
         this.fileMeta.path = fileStream.path;
         this.fileMeta.filename = fileStream.filename;
         this.fileMeta.fieldname = fileStream.fieldname;
@@ -129,14 +130,16 @@ class Log extends Type {
         await this.save();
     }
 
-    async download(ctx) {
+    async download() {
         if (this.state !== STATE.COMMITED) {
-            ctx.throw("No log uploaded", 404);
+            const error = new Error("No log uploaded");
+            error.status = 404;
+            throw error;
         }
 
-        ctx.type = this.fileMeta.mimeType;
         const repository = await Repository.findOne({ _id: this.repository });
-        await repository.downloadLog(this, ctx);
+
+        return await BackendProxy.instance.getLogReadStream(repository, this);
     }
 }
 

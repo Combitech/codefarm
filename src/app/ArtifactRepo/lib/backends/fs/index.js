@@ -2,7 +2,6 @@
 
 const path = require("path");
 const fs = require("fs-extra-promise");
-const send = require("koa-send");
 
 class FsBackend {
     constructor(name, params) {
@@ -83,24 +82,15 @@ class FsBackend {
         });
     }
 
-    async downloadArtifact(repository, artifact, ctx) {
-        const repoPath = this._getRepoPath(repository);
-        const { dir: artifactDir, filename: artifactFilename } = this._getArtifactPath(repoPath, artifact);
-
-        await this._assertRepo(repoPath);
-
-        await send(ctx, artifactFilename, {
-            root: artifactDir
-        });
-    }
-
-    async getArtifactReadStream(repository, artifact, ctx) {
+    async getArtifactReadStream(repository, artifact) {
         const repoPath = this._getRepoPath(repository);
         const { absPath: artifactFilePath } = this._getArtifactPath(repoPath, artifact);
 
         await this._assertRepo(repoPath);
         if (!(await fs.existsAsync(artifactFilePath))) {
-            ctx.throw("Artifact file doesn't exist", 404);
+            const error = new Error("Artifact file doesn't exist");
+            error.status = 404;
+            throw error;
         }
 
         return fs.createReadStream(artifactFilePath);

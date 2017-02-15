@@ -31,7 +31,7 @@ class Main extends Service {
         await this.want("coderepo", "coderepo", RestClient, this.config.codeRepo);
         await this.want("exec", "exec", RestClient, this.config.exec);
 
-        const routes = Object.assign({}, Slaves.instance.routes, Jobs.instance.routes, SubJobs.instance.routes, this.routes);
+        const routes = [].concat(Slaves.instance.routes, Jobs.instance.routes, SubJobs.instance.routes, this.routes);
 
         await Control.instance.start();
         this.addDisposable(Control.instance);

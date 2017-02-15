@@ -23,10 +23,9 @@ class Main extends Service {
     }
 
     async onOnline() {
-        const routes = Object.assign({}, Events.instance.routes, this.routes);
+        const routes = [].concat(Events.instance.routes, this.routes);
 
-        const mb = this.msgBus;
-        mb.on("data", async (data) => {
+        this.msgBus.on("data", async (data) => {
             if (IGNORED_EVENTS.indexOf(data.event) === -1) {
                 this.log("info", "Saving event ", JSON.stringify(data, null, 2));
 

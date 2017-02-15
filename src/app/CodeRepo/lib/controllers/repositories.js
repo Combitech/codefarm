@@ -1,7 +1,7 @@
 "use strict";
 
 const Repository = require("../types/repository");
-const { Controller } = require("typelib");
+const { Controller } = require("servicecom");
 
 class Repositories extends Controller {
     constructor() {
@@ -9,18 +9,16 @@ class Repositories extends Controller {
         this._addGetter("uri", this._uri);
     }
 
-    async _uri(ctx, id) {
-        const obj = await this._getTypeInstance(ctx, id);
-
+    async _uri(id) {
+        const obj = await this._getTypeInstance(id);
         const uri = await obj.getUri();
 
         if (!uri) {
-            ctx.throw("No URI built", 500);
+            this._throw("No URI built", 500);
         }
 
-        ctx.type = "json";
-        // TODO: Shall uri report in another format?
-        ctx.body = `${uri}\n`;
-    }}
+        return `${uri}\n`;
+    }
+}
 
 module.exports = Repositories;

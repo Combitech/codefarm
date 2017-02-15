@@ -151,20 +151,23 @@ class Artifact extends Type {
         await this.save(parentIds);
     }
 
-    async download(ctx) {
+    async download() {
         if (this.state !== STATE.COMMITED) {
-            ctx.throw("No artifact uploaded", 404);
+            const error = new Error("No artifact uploaded");
+            error.status = 404;
+            throw error;
         }
 
-        ctx.type = this.fileMeta.mimeType;
-
         const repository = await Repository.findOne({ _id: this.repository });
-        await BackendProxy.instance.downloadArtifact(repository, this, ctx);
+
+        return await BackendProxy.instance.getArtifactReadStream(repository, this);
     }
 
-    async validate(ctx) {
+    async validate() {
         if (this.state !== STATE.COMMITED) {
-            ctx.throw("No artifact uploaded", 404);
+            const error = new Error("No artifact uploaded");
+            error.status = 404;
+            throw error;
         }
 
         const repository = await Repository.findOne({ _id: this.repository });
@@ -172,7 +175,7 @@ class Artifact extends Type {
         const hashDigests = {};
         const hashStreams = this._getHashStreams(hashDigests, repository.hashAlgorithms);
 
-        const readStream = await BackendProxy.instance.getArtifactReadStream(repository, this, ctx);
+        const readStream = await BackendProxy.instance.getArtifactReadStream(repository, this);
         const hashFileStream = chainStreams(readStream, ...hashStreams);
 
         await new Promise((resolve, reject) => {

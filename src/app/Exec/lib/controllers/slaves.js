@@ -1,7 +1,7 @@
 "use strict";
 
 const Slave = require("../types/slave");
-const { Controller } = require("typelib");
+const { Controller } = require("servicecom");
 const Control = require("../control");
 
 class Slaves extends Controller {
@@ -11,27 +11,23 @@ class Slaves extends Controller {
         this._addAction("setOnline", this._setOnline);
     }
 
-    async _verify(ctx, id) {
-        const slave = await this._getTypeInstance(ctx, id);
-        const verifyResult = await Control.instance.verifySlave(slave);
+    async _verify(id) {
+        const slave = await this._getTypeInstance(id);
 
-        ctx.type = "json";
-        ctx.body = JSON.stringify({ result: "success", action: "verify", data: verifyResult }, null, 2);
+        return await Control.instance.verifySlave(slave);
     }
 
-    async _setOnline(ctx, id) {
-        let slave = await this._getTypeInstance(ctx, id);
-        if (ctx.request.body.offline === true || ctx.request.body.online === false) {
+    async _setOnline(id, data) {
+        const slave = await this._getTypeInstance(id);
+
+        if (data.offline === true || data.online === false) {
             await slave.setOffline();
         } else {
             await slave.setOnline();
         }
 
         // Re-read slave to get any updates
-        slave = await this._getTypeInstance(ctx, id);
-
-        ctx.type = "json";
-        ctx.body = JSON.stringify({ result: "success", action: "setOnline", data: slave }, null, 2);
+        return await this._getTypeInstance(id);
     }
 }
 

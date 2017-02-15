@@ -31,7 +31,7 @@ class Main extends Service {
             await this.want(serviceId, serviceId, RestClient);
         }
 
-        const routes = Object.assign({}, this.routes, Datas.instance.routes);
+        const routes = [].concat(this.routes, Datas.instance.routes);
 
         await RefResolver.instance.start(this.config.resolver);
         this.addDisposable(RefResolver.instance);

@@ -2,7 +2,7 @@
 
 const asyncBusboy = require("async-busboy");
 const Log = require("../types/log");
-const { Controller } = require("typelib");
+const { Controller } = require("servicecom");
 
 class Logs extends Controller {
     constructor() {
@@ -12,8 +12,12 @@ class Logs extends Controller {
         this._addGetter("download", this._download);
     }
 
-    async _upload(ctx, id) {
-        const obj = await this._getTypeInstance(ctx, id);
+    async _upload(id, data, ctx) {
+        if (!ctx) {
+            this._throw("Upload can only be called via HTTP", 400);
+        }
+
+        const obj = await this._getTypeInstance(id);
 
         const { files, fields } = await asyncBusboy(ctx.req);
         if (files.length !== 1) {
@@ -22,14 +26,20 @@ class Logs extends Controller {
 
         await obj.upload(files[0], fields);
 
-        ctx.type = "json";
-        ctx.body = JSON.stringify({ result: "success", action: "upload", data: obj.serialize() }, null, 2);
+        return obj;
     }
 
-    async _download(ctx, id) {
-        const obj = await this._getTypeInstance(ctx, id);
+    async _download(id, ctx) {
+        if (!ctx) {
+            this._throw("Download can only be called via HTTP", 400);
+        }
 
-        await obj.download(ctx);
+        const obj = await this._getTypeInstance(id);
+        const stream = await obj.download();
+
+        ctx.length = obj.fileMeta.size;
+        ctx.type = obj.fileMeta.mimeType;
+        ctx.body = stream;
     }
 }
 

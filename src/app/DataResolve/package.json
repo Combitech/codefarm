@@ -32,7 +32,8 @@
     "msgbus",
     "service",
     "web",
-    "testsupport"
+    "testsupport",
+    "servicecom"
   ],
   "dependencies": {
     "clone": "^2.1.0",

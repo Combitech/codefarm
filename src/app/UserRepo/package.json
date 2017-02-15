@@ -30,7 +30,8 @@
     "typelib",
     "web",
     "misc",
-    "backend"
+    "backend",
+    "servicecom"
   ],
   "dependencies": {
     "async-busboy": "^0.3.3",

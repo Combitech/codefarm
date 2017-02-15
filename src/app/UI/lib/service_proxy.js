@@ -7,7 +7,7 @@ let instance;
 
 class ServiceProxy {
     constructor() {
-        this.routes = {};
+        this.routes = [];
     }
 
     static get instance() {
@@ -18,8 +18,13 @@ class ServiceProxy {
         return instance;
     }
 
-    _addRoute(route, handler) {
-        this.routes[route] = handler.bind(this);
+    _addRoute(method, route, handler, description = "") {
+        this.routes.push({
+            method: method,
+            route: route,
+            handler: handler.bind(this),
+            description: description
+        });
     }
 
     async _getServiceUrl(service) {
@@ -38,9 +43,11 @@ class ServiceProxy {
             const serviceUrl = await this._getServiceUrl(service);
             const targetBasePath = `/${type}`;
             let targetPath = `${targetBasePath}/${id}`;
+
             if (getter) {
                 targetPath = `${targetPath}/${getter}`;
             }
+
             ServiceMgr.instance.log("verbose", `Proxy request to ${serviceUrl}${targetPath}`);
 
             await proxy(baseRoute, {
@@ -48,7 +55,8 @@ class ServiceProxy {
                 rewrite: (path) => path.replace(baseRoute, targetBasePath)
             })(ctx, Promise.resolve());
         };
-        this._addRoute(`${method}${route}`, routeHandler);
+
+        this._addRoute(method, route, routeHandler);
     }
 
     async start() {

@@ -1,7 +1,7 @@
 "use strict";
 
 const Revision = require("../types/revision");
-const { Controller } = require("typelib");
+const { Controller } = require("servicecom");
 
 class Revisions extends Controller {
     constructor() {
@@ -10,19 +10,14 @@ class Revisions extends Controller {
         this._addAction("merge", this._merge);
     }
 
-    async _merge(ctx, id) {
-        const parentIds = ctx.query.parentIds || [];
-
-        let revision = await this._getTypeInstance(ctx, id);
+    async _merge(id) {
+        const revision = await this._getTypeInstance(id);
 
         // TODO: Asynchronous updates done by backend as part of merge isn't updated in revision
-        await revision.merge(parentIds);
+        await revision.merge();
 
         // Re-read revision until todo above is fixed
-        revision = await this._getTypeInstance(ctx, id);
-
-        ctx.type = "json";
-        ctx.body = JSON.stringify({ result: "success", action: "merge", data: revision.serialize() }, null, 2);
+        return await this._getTypeInstance(id);
     }
 }
 

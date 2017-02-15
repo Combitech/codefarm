@@ -63,7 +63,7 @@ class Revision extends Type {
         return revision;
     }
 
-    async merge(parentIds = []) {
+    async merge() {
         if (this.status === "merged") {
             throw new Error("Revision already merged");
         }
@@ -78,11 +78,11 @@ class Revision extends Type {
 
         if (ref) {
             // Some backends calls setMerged by them self...
-            await this.setMerged(ref, parentIds);
+            await this.setMerged(ref);
         }
     }
 
-    async setMerged(ref = null, parentIds = []) {
+    async setMerged(ref = null) {
         if (this.status === "merged") {
             throw new Error("Revision already merged");
         }
@@ -98,7 +98,7 @@ class Revision extends Type {
             this.patches.push(ref);
         }
 
-        await this.save(parentIds);
+        await this.save();
     }
 
     async addReview(userId, state) {

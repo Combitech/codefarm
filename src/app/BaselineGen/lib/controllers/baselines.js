@@ -1,6 +1,6 @@
 "use strict";
 
-const { Controller } = require("typelib");
+const { Controller } = require("servicecom");
 const Baseline = require("../types/baseline");
 
 class Baselines extends Controller {
