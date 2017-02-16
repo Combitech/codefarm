@@ -74,7 +74,7 @@ class Controller {
         try {
             const method = this.methods[message.data.method];
 
-            if (!this.methods[message.data.method]) {
+            if (!method) {
                 this._throw("No such method", 400);
             }
 
@@ -102,7 +102,7 @@ class Controller {
             const list = await handler(query);
 
             ctx.type = "json";
-            ctx.body = JSON.stringify(list.map((obj) => obj.serialize()), null, 2);
+            ctx.body = JSON.stringify(list, null, 2);
         }, "List objects");
 
         this.methods.list = handler;
@@ -119,7 +119,7 @@ class Controller {
             ctx.set("Location", `/${this.collectionName}/${obj._id}`);
             ctx.status = 201;
             ctx.type = "json";
-            ctx.body = JSON.stringify({ result: "success", action: "create", data: obj.serialize() }, null, 2);
+            ctx.body = JSON.stringify({ result: "success", action: "create", data: obj }, null, 2);
         }, "Create object");
 
         this.methods.create = handler;
@@ -132,7 +132,7 @@ class Controller {
             const obj = await handler(id);
 
             ctx.type = "json";
-            ctx.body = JSON.stringify(obj.serialize(), null, 2);
+            ctx.body = JSON.stringify(obj, null, 2);
         }, "Get object");
 
         this.methods.get = handler;
@@ -147,7 +147,7 @@ class Controller {
             const obj = await handler(id, data);
 
             ctx.type = "json";
-            ctx.body = JSON.stringify({ result: "success", action: "update", data: obj.serialize() }, null, 2);
+            ctx.body = JSON.stringify({ result: "success", action: "update", data: obj }, null, 2);
         }, "Update object");
 
         this.methods.update = handler;
@@ -160,7 +160,7 @@ class Controller {
             const obj = await handler(id);
 
             ctx.type = "json";
-            ctx.body = JSON.stringify({ result: "success", action: "remove", data: obj.serialize() }, null, 2);
+            ctx.body = JSON.stringify({ result: "success", action: "remove", data: obj }, null, 2);
         }, "Remove object");
 
         this.methods.remove = handler;
@@ -197,7 +197,7 @@ class Controller {
                     ctx.body = obj;
                 } else {
                     ctx.type = "json";
-                    ctx.body = JSON.stringify(obj, null, 2);
+                    ctx.body = JSON.stringify(obj.serialize ? obj.serialize() : obj, null, 2);
                 }
             }
         }, description);
@@ -291,7 +291,9 @@ class Controller {
     async _list(query) {
         this._isAllowed("read");
 
-        return await this.Type.findMany(query);
+        const list = await this.Type.findMany(query);
+
+        return list.map((obj) => obj.serialize());
     }
 
     async _create(data) {
@@ -303,13 +305,17 @@ class Controller {
             this._throw(`Object with id ${data._id} already exist`, 400);
         }
 
-        return await this.Type.factory(data);
+        const obj = await this.Type.factory(data);
+
+        return obj.serialize();
     }
 
     async _get(id) {
         this._isAllowed("read");
 
-        return await this._getTypeInstance(id);
+        const obj = await this._getTypeInstance(id);
+
+        return obj.serialize();
     }
 
     async _update(id, data) {
@@ -321,7 +327,7 @@ class Controller {
         obj.set(data);
         await obj.save();
 
-        return obj;
+        return obj.serialize();
     }
 
     async _remove(id) {
@@ -330,7 +336,7 @@ class Controller {
         const obj = await this._getTypeInstance(id);
         await obj.remove();
 
-        return obj;
+        return obj.serialize();
     }
 
 
@@ -345,7 +351,7 @@ class Controller {
         const tags = ensureArray(data.tag);
         await obj.tag(tags);
 
-        return obj;
+        return obj.serialize();
     }
 
     async _untag(id, data) {
@@ -355,7 +361,7 @@ class Controller {
         const tags = ensureArray(data.tag);
         await obj.untag(tags);
 
-        return obj;
+        return obj.serialize();
     }
 
     async _addRef(id, data) {
@@ -367,7 +373,7 @@ class Controller {
         const refs = ensureArray(data.ref);
         await obj.addRef(refs);
 
-        return obj;
+        return obj.serialize();
     }
 
     async _comment(id, data) {
@@ -379,7 +385,7 @@ class Controller {
         const obj = await this._getTypeInstance(id);
         await obj.comment(data);
 
-        return obj;
+        return obj.serialize();
     }
 
     async _uncomment(id, data) {
@@ -388,7 +394,7 @@ class Controller {
         const obj = await this._getTypeInstance(id);
         await obj.uncomment(data.id);
 
-        return obj;
+        return obj.serialize();
     }
 }
 
