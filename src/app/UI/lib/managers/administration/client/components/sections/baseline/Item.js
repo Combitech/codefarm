@@ -22,11 +22,7 @@ class Item extends Component {
             "request"
         );
 
-        if (response.result !== "success") {
-            console.error("onForceRequest: Couldn't request baseline, response=", response);
-        } else {
-            console.log("onForceRequest: ", response);
-        }
+        console.log("onForceRequest: ", response);
     }
 
     render() {

@@ -16,10 +16,6 @@ class Edit extends Component {
 
         const result = await api.rest.save(type, id, data);
 
-        if (result.result !== "success") {
-            throw new Error(result.error);
-        }
-
         if (!options.noRedirect) {
             const pathname = options.pathname || this.props.pathname;
             this.context.router.push({ pathname });
@@ -33,12 +29,8 @@ class Edit extends Component {
 
         const result = await api.rest.post(type, data);
 
-        if (result.result !== "success") {
-            throw new Error(result.error);
-        }
-
         if (!options.noRedirect) {
-            const pathname = options.pathname || `${this.props.pathname}/${result.data._id}`;
+            const pathname = options.pathname || `${this.props.pathname}/${result._id}`;
             this.context.router.push({ pathname });
         }
 

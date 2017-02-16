@@ -30,41 +30,31 @@ class Item extends Component {
 
     async onTestConnection() {
         const id = this.props.item._id;
-        const response = await api.type.action("exec.slave", id, "verify");
+        const res = await api.type.action("exec.slave", id, "verify");
 
-        if (response.result === "success") {
-            const res = response.data;
-            if (res.ok) {
-                this._showMessage("Slave connection test OK");
-            } else {
-                this._showMessage(`Slave connection test failed with message "${res.msg}"`, "warning");
-            }
-            console.log(`Slave ${id} test connection result`, response);
+        if (res.ok) {
+            this._showMessage("Slave connection test OK");
         } else {
-            console.error("onTestConnection: Couldn't validate slave, response=", response);
+            this._showMessage(`Slave connection test failed with message "${res.msg}"`, "warning");
         }
+        console.log(`Slave ${id} test connection result`, res);
     }
 
     async onSetOfflineOnline() {
         const id = this.props.item._id;
         const setOnline = this.props.item.offline;
-        const response = await api.type.action("exec.slave", id, "setOnline", {
+        const res = await api.type.action("exec.slave", id, "setOnline", {
             online: setOnline
         });
 
-        if (response.result === "success") {
-            const res = response.data;
-            const slaveNowOnline = !res.offline;
-            const newStatus = slaveNowOnline ? "online" : "offline";
-            if (slaveNowOnline === setOnline) {
-                this._showMessage(`Slave now ${newStatus}`);
-            } else {
-                this._showMessage(`Slave still ${newStatus}`, "warning");
-            }
-            console.log(`Slave ${id} setOnline result`, response);
+        const slaveNowOnline = !res.offline;
+        const newStatus = slaveNowOnline ? "online" : "offline";
+        if (slaveNowOnline === setOnline) {
+            this._showMessage(`Slave now ${newStatus}`);
         } else {
-            console.error("onSetOfflineOnline: Couldn't perform action setOnline, response=", response);
+            this._showMessage(`Slave still ${newStatus}`, "warning");
         }
+        console.log(`Slave ${id} setOnline result`, res);
     }
 
     render() {

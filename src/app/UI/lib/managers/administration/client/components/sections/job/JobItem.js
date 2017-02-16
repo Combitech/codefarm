@@ -61,16 +61,13 @@ class Item extends Component {
     }
 
     async onRerun() {
-        const response = await api.type.action(
+        await api.type.action(
             "exec.job",
             this.props.item._id,
             "rerun"
         );
-        if (response.result === "success") {
-            this._showMessage("Job re-run requested");
-        } else {
-            console.error("onRerun: Couldn't rerun job, response=", response);
-        }
+
+        this._showMessage("Job re-run requested");
     }
 
     render() {

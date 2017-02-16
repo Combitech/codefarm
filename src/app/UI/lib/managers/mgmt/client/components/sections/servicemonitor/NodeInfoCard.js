@@ -25,14 +25,10 @@ class NodeInfoCard extends Component {
     async restartService() {
         const serviceId = this.props.service.id;
         console.log(`Restart service ${serviceId}`);
-        const response = await this.props.service.restart();
-        const serviceName = response.data.name;
-        if (response.result === "success") {
-            this.showMessage(`Service ${serviceName} restarted`);
-        } else {
-            this.showMessage(`Error restarting service ${serviceName}`);
-        }
-        console.log("Restart response", response);
+        const data = await this.props.service.restart();
+        const serviceName = data.name;
+        this.showMessage(`Service ${serviceName} restarted`);
+        console.log("Restart response", data);
     }
 
     async showServiceConfig() {

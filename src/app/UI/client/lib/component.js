@@ -206,13 +206,9 @@ class Component extends React.PureComponent {
         }
 
         if (asyncVar._type && asyncVar._createBody) {
-            const result = await api.rest.post(asyncVar._type, asyncVar._createBody);
+            const data = await api.rest.post(asyncVar._type, asyncVar._createBody);
 
-            if (result.result !== "success") {
-                throw new Error(result.error);
-            }
-
-            asyncVar._id = result.data._id;
+            asyncVar._id = data._id;
         }
 
         if (asyncVar.subscribe) {

@@ -1,81 +1,46 @@
 "use strict";
 
 const api = require("api.io");
-const { ServiceMgr } = require("service");
+const { ServiceComBus } = require("servicecom");
 
 let instance;
 
 const restApiExports = api.register("rest", {
-    list: api.export(async (session, type, params = {}) => {
+    list: api.export(async (session, type, query = {}) => {
         const [ serviceId, typeName ] = type.split(".");
+        const client = ServiceComBus.instance.getClient(serviceId);
 
-        if (!ServiceMgr.instance.has(serviceId)) {
-            throw new Error(`No such service, ${serviceId}`);
-        }
-
-        const restClient = await ServiceMgr.instance.use(serviceId);
-
-        return await restClient.get(`/${typeName}`, params);
+        return client.list(typeName, query);
     }),
-    get: api.export(async (session, type, id, getterName, params = {}) => {
+    get: api.export(async (session, type, id, getterName) => {
         const [ serviceId, typeName ] = type.split(".");
+        const client = ServiceComBus.instance.getClient(serviceId);
 
-        if (!ServiceMgr.instance.has(serviceId)) {
-            throw new Error(`No such service, ${serviceId}`);
-        }
-
-        let pathname = `/${typeName}/${id}`;
-        if (getterName) {
-            pathname = pathname.concat("/", getterName);
-        }
-
-        const restClient = await ServiceMgr.instance.use(serviceId);
-
-        return await restClient.get(pathname, params);
-    }),
-    post: api.export(async (session, type, data) => {
-        const [ serviceId, typeName ] = type.split(".");
-
-        if (!ServiceMgr.instance.has(serviceId)) {
-            throw new Error(`No such service, ${serviceId}`);
-        }
-
-        const restClient = await ServiceMgr.instance.use(serviceId);
-
-        return await restClient.post(`/${typeName}`, data);
+        return client[getterName || "get"](typeName, id);
     }),
     save: api.export(async (session, type, id, data = {}) => {
         const [ serviceId, typeName ] = type.split(".");
+        const client = ServiceComBus.instance.getClient(serviceId);
 
-        if (!ServiceMgr.instance.has(serviceId)) {
-            throw new Error(`No such service, ${serviceId}`);
-        }
-
-        const restClient = await ServiceMgr.instance.use(serviceId);
-
-        return await restClient.patch(`/${typeName}/${id}`, data);
+        return client.update(typeName, id, data);
     }),
-    remove: api.export(async (session, type, id, data = {}) => {
+    remove: api.export(async (session, type, id) => {
         const [ serviceId, typeName ] = type.split(".");
+        const client = ServiceComBus.instance.getClient(serviceId);
 
-        if (!ServiceMgr.instance.has(serviceId)) {
-            throw new Error(`No such service, ${serviceId}`);
-        }
-
-        const restClient = await ServiceMgr.instance.use(serviceId);
-
-        return await restClient.remove(`/${typeName}/${id}`, data);
+        return client.remove(typeName, id);
     }),
     action: api.export(async (session, type, id, action, data) => {
         const [ serviceId, typeName ] = type.split(".");
+        const client = ServiceComBus.instance.getClient(serviceId);
 
-        if (!ServiceMgr.instance.has(serviceId)) {
-            throw new Error(`No such service, ${serviceId}`);
-        }
+        return client[action](typeName, id, data);
+    }),
+    post: api.export(async (session, type, data) => {
+        const [ serviceId, typeName ] = type.split(".");
+        const client = ServiceComBus.instance.getClient(serviceId);
 
-        const restClient = await ServiceMgr.instance.use(serviceId);
-
-        return await restClient.post(`/${typeName}/${id}/${action}`, data);
+        return client.create(typeName, data);
     })
 });
 

@@ -13,10 +13,6 @@ class Remove extends Component {
 
         const result = await api.rest.remove(type, id);
 
-        if (result.result !== "success") {
-            throw new Error(result.error);
-        }
-
         if (!options.noRedirect) {
             this.context.router.push({
                 pathname: this.props.pathname.split("/").slice(0, -1).join("/")

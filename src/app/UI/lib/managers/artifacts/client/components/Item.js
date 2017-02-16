@@ -81,34 +81,32 @@ class Item extends Component {
     }
 
     async onValidate(item) {
-        const response = await api.rest.get(
+        const data = await api.rest.get(
             "artifactrepo.artifact",
             item._id,
             "validate"
         );
-        if (response.result === "success") {
-            const hashResults = response.data.validation;
-            const hashAlgs = Object.keys(hashResults);
-            if (hashAlgs.length > 0) {
-                let allOk = true;
-                for (const alg of hashAlgs) {
-                    const hashOk = hashResults[alg];
-                    if (!hashOk) {
-                        allOk = false;
-                    }
+
+        const hashResults = data.validation;
+        const hashAlgs = Object.keys(hashResults);
+
+        if (hashAlgs.length > 0) {
+            let allOk = true;
+            for (const alg of hashAlgs) {
+                const hashOk = hashResults[alg];
+                if (!hashOk) {
+                    allOk = false;
                 }
-                if (allOk) {
-                    this._showMessage("Artifact valid");
-                } else {
-                    this._showMessage("Artifact not valid!", "warning");
-                }
-            } else {
-                this._showMessage("Couldn't validate, no algorithms configured!");
             }
-            console.log(`artifact ${item._id} validation result`, hashResults);
+            if (allOk) {
+                this._showMessage("Artifact valid");
+            } else {
+                this._showMessage("Artifact not valid!", "warning");
+            }
         } else {
-            console.error("_validate: Couldn't validate artifact, response=", response);
+            this._showMessage("Couldn't validate, no algorithms configured!");
         }
+        console.log(`artifact ${item._id} validation result`, hashResults);
     }
 
     render() {
