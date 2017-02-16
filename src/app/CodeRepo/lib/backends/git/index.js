@@ -9,7 +9,7 @@ const moment = require("moment");
 const { promisify } = require("bluebird");
 const { SshServer } = require("ssh");
 const { Deferred } = require("misc");
-const { serviceMgr } = require("service");
+const { ServiceComBus } = require("servicecom");
 const GitIntercept = require("./git_intercept");
 
 const execAsync = promisify(exec, { multiArgs: true });
@@ -115,9 +115,9 @@ class GitBackend {
     }
 
     async _getUserPublicKeys(username) {
-        const restClient = await serviceMgr.use("userrepo");
+        const client = ServiceComBus.instance.getClient("userrepo");
 
-        return await restClient.get(`/user/${username}/keys`);
+        return client.keys("user", username);
     }
 
     async _clientCommandHandler(argv, stdin, stdout, stderr, end) {

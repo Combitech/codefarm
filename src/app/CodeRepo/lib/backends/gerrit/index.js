@@ -6,7 +6,7 @@ const readline = require("readline");
 const fs = require("fs-extra-promise");
 const moment = require("moment");
 const { SshClient } = require("ssh");
-const { serviceMgr } = require("service");
+const { ServiceComBus } = require("servicecom");
 const { asyncWithTmo } = require("misc");
 const log = require("log");
 const { AsyncEventEmitter } = require("emitter");
@@ -310,9 +310,9 @@ class GerritBackend extends AsyncEventEmitter {
     }
 
     async _getUserPublicKeys(username) {
-        const restClient = await serviceMgr.use("userrepo");
+        const client = ServiceComBus.instance.getClient("userrepo");
 
-        return await restClient.get(`/user/${username}/keys`);
+        return client.keys("user", username);
     }
 
 
