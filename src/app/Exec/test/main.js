@@ -5,7 +5,6 @@
 const { assert } = require("chai");
 const { mochaPatch } = require("testsupport");
 const path = require("path");
-const url = require("url");
 const rp = require("request-promise");
 const fs = require("fs");
 const getPort = require("get-port");
@@ -67,15 +66,11 @@ describe("Exec", () => {
                     testMode: true,
                     testResponder: async (opts) => {
                         const res = {
-                            result: "success",
-                            action: "upload",
-                            data: {
-                                _id: "testResponder-artifact-id-1",
-                                type: "artifactrepo.artifact",
-                                version: "0.0.5",
-                                name: "testResponder-artifact-name-1",
-                                repository: "testResponder-artifact-repository-id-1"
-                            }
+                            _id: "testResponder-artifact-id-1",
+                            type: "artifactrepo.artifact",
+                            version: "0.0.5",
+                            name: "testResponder-artifact-name-1",
+                            repository: "testResponder-artifact-repository-id-1"
                         };
                         if (opts.method === "POST" && opts.uri.match(/\/upload/)) {
                             // Artifact upload action
@@ -88,40 +83,15 @@ describe("Exec", () => {
                     }
                 },
                 codeRepo: {
-                    testMode: true,
-                    uri: "nowhere",
-                    testResponder: async (opts) => {
-                        let res;
-                        if (opts.method === "POST") {
-                            res = {
-                                result: "success",
-                                action: "create",
-                                data: {
-                                    _id: "testResponder-revision-id-1",
-                                    type: "coderepo.revision"
-                                }
-                            };
-                            if (opts.uri.match(/\/merge/)) {
-                                res.action = "merge";
-                                const pathname = url.parse(opts.uri).pathname;
-                                lastCodeRepoMergeRevisionId = pathname.split("/")[2];
-                            }
-                        }
-
-                        return res;
-                    }
+                    testMode: true
                 },
                 logRepo: {
                     testMode: true,
                     testResponder: async (opts) => {
                         const res = {
-                            result: "success",
-                            action: "upload",
-                            data: {
-                                _id: "testResponder-log-id-1",
-                                name: "testResponder-log-name-1",
-                                type: "logrepo.log"
-                            }
+                            _id: "testResponder-log-id-1",
+                            name: "testResponder-log-name-1",
+                            type: "logrepo.log"
                         };
                         if (opts.method === "POST" && opts.uri.match(/\/upload/)) {
                             // Log upload action

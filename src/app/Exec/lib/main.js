@@ -5,8 +5,7 @@ const Database = require("database");
 const LogBus = require("logbus");
 const Web = require("web");
 const { Service } = require("service");
-const { ServiceComBus } = require("servicecom");
-const RestClient = require("restclient");
+const { ServiceComBus, HttpClient } = require("servicecom");
 const Slaves = require("./controllers/slaves");
 const Jobs = require("./controllers/jobs");
 const SubJobs = require("./controllers/sub_jobs");
@@ -25,8 +24,8 @@ class Main extends Service {
         await this.need("db", "mgmt", Database, this.config.db);
         await this.need("lb", "mgmt", LogBus, this.config.logBus);
 
-        await this.need("logrepo", "logrepo", RestClient, this.config.logRepo);
-        await this.need("artifactrepo", "artifactrepo", RestClient, this.config.artifactRepo);
+        await this.need("logrepo", "logrepo", HttpClient, this.config.logRepo);
+        await this.need("artifactrepo", "artifactrepo", HttpClient, this.config.artifactRepo);
     }
 
     async onOnline() {

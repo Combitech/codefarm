@@ -108,12 +108,9 @@ class Control {
         });
 
         const archiveFile = async (dstServiceName, typeName, id, fileStream) => {
-            const serviceRest = await ServiceMgr.instance.use(dstServiceName);
-            const response = await serviceRest.postMultipart(`/${typeName}/${id}/upload`, {
-                file: fileStream
-            });
+            const client = await ServiceMgr.instance.use(dstServiceName);
 
-            return response.result === "success" ? response.data : false;
+            return client.upload(typeName, id, fileStream);
         };
 
         const mergeRevision = async (id) => {
@@ -246,6 +243,7 @@ class Control {
                     if (logId) {
                         const fileStream = await executor.downloadFileAsStream(data.path);
                         obj = await archiveFile("logrepo", "log", logId, fileStream);
+
                         await job.addLog(obj.name, obj._id);
                     } else {
                         throw new Error("No log id");

@@ -3,11 +3,12 @@
 const url = require("url");
 const rp = require("request-promise");
 const ProviderClient = require("providerclient");
+const Stream = require("stream");
 
 class HttpClient extends ProviderClient {
     constructor(...args) {
         super(...args);
-console.log("constructor", this.config);
+
         if (this.config.testMode && !this.config.uri) {
             this.config.uri = "http://nowhere";
         }
@@ -111,12 +112,19 @@ console.log("constructor", this.config);
     }
 
     async call(name, typeName, id, data) {
-        return this._wrappedRp({
+        const opts = {
             json: true,
             method: data ? "POST" : "GET",
-            uri: url.resolve(this.config.uri, `/${typeName}/${id}/${name}`),
-            body: data
-        });
+            uri: url.resolve(this.config.uri, `/${typeName}/${id}/${name}`)
+        };
+
+        if (data instanceof Stream.Readable) {
+            opts.formData = { file: data };
+        } else {
+            opts.body = data;
+        }
+
+        return this._wrappedRp(opts);
     }
 }
 
