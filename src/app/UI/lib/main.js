@@ -29,6 +29,7 @@ class Main extends Service {
 
     async onOnline() {
         // Add dependencies to all services without restart when they go offline
+        // Needed for the service proxy
         const secondaryRestNeeds = [
             "mgmt", "ui", "exec", "baselinegen", "flowctrl", "coderepo", "userrepo", "artifactrepo", "logrepo", "eventrepo", "dataresolve"
         ];

@@ -30,7 +30,8 @@ class Control {
                     try {
                         await step.triggerJob(data.newdata);
                     } catch (error) {
-                        console.error(JSON.stringify(error, null, 2))
+                        console.error(JSON.stringify(error, null, 2));
+                        throw error;
                     }
                 }
             } else if (data.type === "exec.job" &&

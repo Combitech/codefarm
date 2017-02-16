@@ -2,6 +2,7 @@
 
 const vm = require("vm");
 const { ServiceMgr } = require("service");
+const { ServiceComBus } = require("servicecom");
 const { assertType, assertProp } = require("misc");
 const { Type } = require("typelib");
 
@@ -41,22 +42,6 @@ class Step extends Type {
 
     static async _getMb() {
         return ServiceMgr.instance.msgBus;
-    }
-
-    async _getRestClientByType(type) {
-        const [ serviceId, typeName ] = type.split(".");
-
-        if (!ServiceMgr.instance.has(serviceId)) {
-            throw new Error(`Unknown type (${type})`);
-        }
-
-        const restClient = await ServiceMgr.instance.use(serviceId);
-
-        return {
-            serviceId,
-            typeName,
-            restClient: restClient
-        };
     }
 
     static async validate(event, data) {
@@ -157,10 +142,11 @@ class Step extends Type {
         await this.save();
 
         for (const ref of baseline.content) {
-            const { typeName, restClient } = await this._getRestClientByType(ref.type);
+            const [ serviceId, typeName ] = ref.type.split(".");
+            const client = ServiceComBus.instance.getClient(serviceId);
 
             for (const id of ref.id) {
-                await restClient.post(`/${typeName}/${id}/addref`, {
+                await client.addref(typeName, id, {
                     ref: {
                         _ref: true,
                         id: result.data._id,
@@ -173,14 +159,14 @@ class Step extends Type {
     }
 
     async abortJobs() {
-        const exec = await ServiceMgr.instance.use("exec");
+        const client = ServiceComBus.instance.getClient("exec");
 
         const jobIds = this.jobs.map((job) => job.jobId);
         this.jobs.length = 0;
         await this.save();
 
         for (const jobId of jobIds) {
-            await exec.remove(`/job/${jobId}`);
+            await client.remove("job", jobId);
         }
     }
 
@@ -216,12 +202,13 @@ class Step extends Type {
         if (this.tagScript) {
             ServiceMgr.instance.log("verbose", `Step ${this.name} running tag script`);
             for (const ref of baseline.content) {
-                const { typeName, restClient } = await this._getRestClientByType(ref.type);
+                const [ serviceId, typeName ] = ref.type.split(".");
+                const client = ServiceComBus.instance.getClient(serviceId);
 
                 sandbox.data.content[ref.name] = [];
 
                 for (const id of ref.id) {
-                    sandbox.data.content[ref.name].push(await restClient.get(`/${typeName}/${id}`));
+                    sandbox.data.content[ref.name].push(await client.get(typeName, id));
                 }
             }
 
@@ -230,17 +217,18 @@ class Step extends Type {
         }
 
         for (const ref of baseline.content) {
-            const { typeName, restClient } = await this._getRestClientByType(ref.type);
+            const [ serviceId, typeName ] = ref.type.split(".");
+            const client = ServiceComBus.instance.getClient(serviceId);
 
             for (const id of ref.id) {
                 if (sandbox.tags.length > 0) {
-                    await restClient.post(`/${typeName}/${id}/tag`, {
+                    await client.tag(typeName, id, {
                         tag: sandbox.tags
                     });
                 }
 
                 if (sandbox.untag.length > 0) {
-                    await restClient.post(`/${typeName}/${id}/untag`, {
+                    await client.untag(typeName, id, {
                         tag: sandbox.untag
                     });
                 }
@@ -248,9 +236,9 @@ class Step extends Type {
         }
 
         // Important to tag baseline after baseline content has been tagged!
-        const { restClient } = await this._getRestClientByType("baselinegen.baseline");
+        const client = ServiceComBus.instance.getClient("baselinegen");
 
-        await restClient.post(`/baseline/${baseline._id}/tag`, {
+        await client.tag("baseline", baseline._id, {
             tag: defaultTag
         });
     }

@@ -5,7 +5,6 @@ const Database = require("database");
 const Web = require("web");
 const { Service } = require("service");
 const { ServiceComBus } = require("servicecom");
-const RestClient = require("restclient");
 const Flows = require("./controllers/flows");
 const Steps = require("./controllers/steps");
 const Control = require("./control");
@@ -21,10 +20,6 @@ class Main extends Service {
         });
 
         await this.need("db", "mgmt", Database, this.config.db);
-        await this.need("baselinegen", "baselinegen", RestClient);
-        await this.need("exec", "exec", RestClient);
-        await this.need("coderepo", "coderepo", RestClient);
-        await this.need("artifactrepo", "artifactrepo", RestClient);
     }
 
     async onOnline() {
