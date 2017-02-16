@@ -78,7 +78,7 @@ Step ..> Specification : baseline
 Step ..> Flow : flow
 Baseline .right. Specification
 
-Specification *-- Collector : collectors
+Specification \*-- Collector : collectors
 @enduml
 cd_flow
 --->
