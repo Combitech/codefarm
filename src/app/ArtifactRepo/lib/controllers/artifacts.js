@@ -8,9 +8,9 @@ class Artifacts extends Controller {
     constructor() {
         super(Artifact, [ "read", "create", "tag", "ref" ]);
 
-        this._addAction("upload", this._uploadArtifact);
-        this._addGetter("download", this._downloadArtifact);
-        this._addGetter("validate", this._validateArtifact);
+        this._addAction("upload", this._uploadArtifact, "Upload artifact");
+        this._addGetter("download", this._downloadArtifact, "Download artifact");
+        this._addGetter("validate", this._validateArtifact, "Validate artifact");
     }
 
     async _uploadArtifact(id, data, ctx) {

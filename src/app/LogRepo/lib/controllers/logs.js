@@ -8,8 +8,8 @@ class Logs extends Controller {
     constructor() {
         super(Log, [ "read", "create", "remove", "tag", "ref" ]);
 
-        this._addAction("upload", this._upload);
-        this._addGetter("download", this._download);
+        this._addAction("upload", this._upload, "Upload log");
+        this._addGetter("download", this._download, "Download log");
     }
 
     async _upload(id, data, ctx) {
