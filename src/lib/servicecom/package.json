@@ -20,7 +20,8 @@
     "misc",
     "typelib",
     "database",
-    "msgbus"
+    "msgbus",
+    "emitter"
   ],
   "dependencies": {
     "moment": "^2.17.1",

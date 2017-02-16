@@ -8,8 +8,8 @@ const factory = {
         await factory.dispose();
 
         factory.instance = new Database({
-            testMode: true,
-        }, { serviceName: `MyDB-${uuid()}`});
+            testMode: true
+        }, { serviceName: `MyDB-${uuid()}` });
 
         await factory.instance.start();
 
@@ -21,6 +21,6 @@ const factory = {
             factory.instance = null;
         }
     }
-}
+};
 
 module.exports = factory;

@@ -23,21 +23,19 @@ class Main extends Service {
         });
 
         await this.need("db", "mgmt", Database, this.config.db);
-        await this.need("logrepo", "logrepo", RestClient, this.config.logRepo);
         await this.need("lb", "mgmt", LogBus, this.config.logBus);
+
+        await this.need("logrepo", "logrepo", RestClient, this.config.logRepo);
+        await this.need("artifactrepo", "artifactrepo", RestClient, this.config.artifactRepo);
     }
 
     async onOnline() {
-        await this.want("artifactrepo", "artifactrepo", RestClient, this.config.artifactRepo);
-        await this.want("coderepo", "coderepo", RestClient, this.config.codeRepo);
-        await this.want("exec", "exec", RestClient, this.config.exec);
-
         const routes = [].concat(Slaves.instance.routes, Jobs.instance.routes, SubJobs.instance.routes, this.routes);
 
-        await ServiceComBus.instance.start({
+        await ServiceComBus.instance.start(Object.assign({
             name: this.name,
             uri: this.config.msgbus
-        });
+        }, this.config.servicecom));
         this.addDisposable(ServiceComBus.instance);
         ServiceComBus.instance.attachControllers([
             Slaves.instance,

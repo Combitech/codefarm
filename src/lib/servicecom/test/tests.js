@@ -1,16 +1,13 @@
 "use strict";
 
-/* global describe it before after */
+/* global describe before after */
 
-const { assert } = require("chai");
 const getPort = require("get-port");
 const Web = require("web");
-const MsgBus = require("msgbus");
 const Database = require("./lib/database");
 const ThingController = require("./lib/thing_controller");
 const HttpClient = require("../lib/http_client");
-const MbClient = require("../lib/mb_client");
-const ServiceComBus = require("../lib/bus")
+const ServiceComBus = require("../lib/bus");
 const testcases = require("./testcases");
 
 describe("Tests", () => {
@@ -45,10 +42,6 @@ describe("Tests", () => {
                 uri: "dummy",
                 name: "myname",
                 testMode: true
-            });
-
-            ServiceComBus.instance.msgbus.on("publish", async (message) => {
-                await ServiceComBus.instance.msgbus.emit("data", message);
             });
 
             ServiceComBus.instance.attachControllers([ ThingController.instance ]);

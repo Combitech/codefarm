@@ -45,45 +45,26 @@ class Controller {
 
     setMb(msgbus) {
         this.msgbus = msgbus;
-
-        this.msgbus.on("data", this._onRequest.bind(this));
+        this.msgbus.on("request", this._onRequest.bind(this));
     }
 
-    async _respond(message, data, result = "success", status = 200) {
-        const response = {
-            _id: message._id,
-            time: moment().utc().format(),
-            type: "response",
-            data: data,
-            result: result,
-            status: status,
-            source: {
-                hostname: os.hostname(),
-                service: this.msgbus.getRoutingKey()
-            }
-        };
-
-        await this.msgbus.publishRaw(response, message.source.service);
-    }
-
-    async _onRequest(message) {
-        if (message.type !== "request" || message.data.typeName !== this.collectionName) {
+    async _onRequest(request) {
+        if (request.data.typeName !== this.collectionName) {
             return;
         }
 
         try {
-            const method = this.methods[message.data.method];
+            const method = this.methods[request.data.method];
 
             if (!method) {
                 this._throw("No such method", 400);
             }
 
+            const result = await method(...request.data.params);
 
-            const result = await method(...message.data.params);
-
-            await this._respond(message, result);
+            await this.msgbus.respond(request, result);
         } catch (error) {
-            await this._respond(message, error.message, "failure", error.status);
+            await this.msgbus.respond(request, error.message, "failure", error.status);
         }
     }
 
@@ -193,7 +174,7 @@ class Controller {
             const obj = await handler(id, ctx);
 
             // If explicitly returned nothing, then the method has set stuff on ctx itself
-            if (obj !== undefined) {
+            if (typeof obj !== "undefined") {
                 if (typeof obj !== "object") {
                     ctx.body = obj;
                 } else {

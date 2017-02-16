@@ -15,7 +15,7 @@ class Thing extends Type {
     }
 
     static get serviceName() {
-        return "scom"
+        return "scom";
     }
 
     static get typeName() {

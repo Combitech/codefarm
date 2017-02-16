@@ -10,6 +10,7 @@ const rp = require("request-promise");
 const fs = require("fs");
 const getPort = require("get-port");
 const { serviceMgr } = require("service");
+const { ServiceComBus } = require("servicecom");
 const { StreamConverter } = require("misc");
 const Main = require("../lib/main");
 const { notification: typeNotification } = require("typelib");
@@ -53,6 +54,9 @@ describe("Exec", () => {
                 logBus: {
                     testMode: true
                 },
+                servicecom: {
+                    testMode: true
+                },
                 exec: {
                     /* Configure to use test object REST API */
                     testMode: true,
@@ -64,6 +68,7 @@ describe("Exec", () => {
                     testResponder: async (opts) => {
                         const res = {
                             result: "success",
+                            action: "upload",
                             data: {
                                 _id: "testResponder-artifact-id-1",
                                 type: "artifactrepo.artifact",
@@ -77,11 +82,6 @@ describe("Exec", () => {
                             const artifactStream = opts.formData.file;
                             // Consume stream...
                             uploadedArtifactContent = await (new StreamConverter(artifactStream)).toString();
-                            res.action = "upload";
-                        } else {
-                            // Artifact create or update
-                            res.action = opts.method === "POST" ? "create" : "update";
-                            lastArtifactPostData = opts.body || opts.form;
                         }
 
                         return res;
@@ -95,6 +95,7 @@ describe("Exec", () => {
                         if (opts.method === "POST") {
                             res = {
                                 result: "success",
+                                action: "create",
                                 data: {
                                     _id: "testResponder-revision-id-1",
                                     type: "coderepo.revision"
@@ -104,18 +105,6 @@ describe("Exec", () => {
                                 res.action = "merge";
                                 const pathname = url.parse(opts.uri).pathname;
                                 lastCodeRepoMergeRevisionId = pathname.split("/")[2];
-                            } else {
-                                res.action = opts.method === "POST" ? "create" : "update";
-                            }
-                        } else {
-                            const [ , type, id, getter ] = opts.uri.split("/");
-                            if (getter === "uri") {
-                                res = `ssh://$USER:localhost:1234/${id}`;
-                            } else {
-                                res = {
-                                    _id: id,
-                                    type: `coderepo.${type}`
-                                };
                             }
                         }
 
@@ -127,6 +116,7 @@ describe("Exec", () => {
                     testResponder: async (opts) => {
                         const res = {
                             result: "success",
+                            action: "upload",
                             data: {
                                 _id: "testResponder-log-id-1",
                                 name: "testResponder-log-name-1",
@@ -138,11 +128,6 @@ describe("Exec", () => {
                             const logStream = opts.formData.file;
                             // Consume stream...
                             uploadedLogContent = await (new StreamConverter(logStream)).toString();
-                            res.action = "upload";
-                        } else {
-                            // Artifact create or update
-                            res.action = opts.method === "POST" ? "create" : "update";
-                            lastLogPostData = opts.body || opts.form;
                         }
 
                         return res;
@@ -152,8 +137,7 @@ describe("Exec", () => {
                     }
                 },
                 db: {
-                    testMode: true,
-                    name: "MyDb"
+                    testMode: true
                 },
                 web: {
                     port: restServicePort
@@ -171,6 +155,44 @@ describe("Exec", () => {
         main = new Main(testInfo.name, testInfo.version);
         serviceMgr.create(main, testInfo.config);
         await main.awaitOnline();
+
+        ServiceComBus.instance.on("request", async (request) => {
+            if (request.data.typeName === "log" && request.data.method === "create") {
+                lastLogPostData = request.data.params[0];
+
+                ServiceComBus.instance.respond(request, {
+                    _id: "testResponder-log-id-1",
+                    name: "testResponder-log-name-1",
+                    type: "logrepo.log"
+                });
+            } else if (request.data.typeName === "artifact" && request.data.method === "create") {
+                lastArtifactPostData = request.data.params[0];
+
+                ServiceComBus.instance.respond(request, {
+                    _id: "testResponder-artifact-id-1",
+                    type: "artifactrepo.artifact",
+                    version: "0.0.5",
+                    name: "testResponder-artifact-name-1",
+                    repository: "testResponder-artifact-repository-id-1"
+                });
+            } else if (request.data.typeName === "revision" && request.data.method === "merge") {
+                lastCodeRepoMergeRevisionId = request.data.params[0];
+
+                ServiceComBus.instance.respond(request, {
+                    _id: "testResponder-revision-id-1",
+                    type: "coderepo.revision"
+                });
+            } else if (request.data.typeName === "revision" && request.data.method === "get") {
+                ServiceComBus.instance.respond(request, {
+                    _id: request.data.params[0],
+                    type: `coderepo.${request.data.typeName}`
+                });
+            } else if (request.data.typeName === "repository" && request.data.method === "uri") {
+                ServiceComBus.instance.respond(request, `ssh://$USER:localhost:1234/${request.data.params[0]}`);
+            } else {
+                console.log("Got request", request);
+            }
+        });
     });
 
     beforeEach(() => {
