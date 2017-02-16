@@ -31,7 +31,7 @@ fashion using operations like *get*, *list*, *create*, *update* and *remove* on
 REST classes and instances represented by JSON.
 In Code Farm we denote the REST classes and instances *Types* and *Type instances*.
 
-All *types* have some mandatory attributes, one of these is the attribute *tags* which is a list of strings.
+All *types* have some mandatory attributes, one of these is the attribute *tags* which is a list of strings. More about tags in [Flows](#Flows) below.
 
 ## Flows
 A CI flow in Code Farm is represented by a number of *steps*. Each *step* is associated with a *baseline specification*
