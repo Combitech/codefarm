@@ -132,6 +132,7 @@ class Collector <<Array>> {
 Step ..> Specification : baseline
 Step ..> Flow : flow
 Baseline .right. Specification
+Specification \*-down- Collector : collectors
 
 @enduml
 cd_flow
