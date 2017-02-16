@@ -6,7 +6,7 @@ const clone = require("clone");
 const log = require("log");
 const MsgBus = require("msgbus");
 const { Deferred, assertType, asyncWithTmo, delay } = require("misc");
-const RestClient = require("restclient");
+const { HttpClient } = require("servicecom");
 const ProviderClient = require("providerclient");
 const STATE = require("./states");
 const { DEFAULT_HEARTBEAT_INTERVAL, DEFAULT_HEARTBEAT_TIMEOUT, DEFAULT_DISPOSE_RUN_WAIT_TIMEOUT, DEFAULT_MIN_RUN_TIME } = require("./constants");
@@ -201,7 +201,7 @@ class Manager {
         this.providedServices = {};
 
         if (this.opts.autoUseMgmt) {
-            await this.need("mgmtCfg", "mgmt", RestClient, this.opts.mgmtCfg);
+            await this.need("mgmtCfg", "mgmt", HttpClient, this.opts.mgmtCfg);
         }
 
         this.msgBus.on("data", this._consumeMgmtEvent.bind(this));
@@ -569,7 +569,7 @@ class Manager {
              * Mongo documentation: https://docs.mongodb.com/manual/tutorial/query-documents/#match-an-array-element
              */
             const activeConfigs = await this._awaitWithAbort(
-                cfgRestClient.get("/config", {
+                cfgRestClient.list("config", {
                     name: this.app.name,
                     tags: "active"
                 })

@@ -7,7 +7,7 @@ const ProviderClient = require("providerclient");
 class HttpClient extends ProviderClient {
     constructor(...args) {
         super(...args);
-
+console.log("constructor", this.config);
         if (this.config.testMode && !this.config.uri) {
             this.config.uri = "http://nowhere";
         }
@@ -47,7 +47,7 @@ class HttpClient extends ProviderClient {
         try {
             const result = await rp(opts);
 
-            if (typeof result === "object") {
+            if (typeof result === "object" && result.constructor !== Array) {
                 if (result.result !== "success") {
                     const error = new Error(result.error);
                     error.status = error.status;
@@ -76,7 +76,7 @@ class HttpClient extends ProviderClient {
     }
 
     async list(typeName, query) {
-        return rp({
+        return this._wrappedRp({
             json: true,
             method: "GET",
             uri: url.resolve(this.config.uri, `/${typeName}`),

@@ -19,7 +19,6 @@
     "log",
     "misc",
     "msgbus",
-    "restclient",
     "testsupport",
     "providerclient",
     "typelib",

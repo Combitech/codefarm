@@ -8,7 +8,7 @@ const os = require("os");
 const deepAssign = require("deep-assign");
 const { pollUntil: pollUntilBase } = require("testsupport");
 const clone = require("clone");
-const RestClient = require("restclient");
+const { HttpClient } = require("servicecom");
 const { Service, ServiceMgr } = require("../index");
 const { Deferred } = require("misc");
 
@@ -630,7 +630,7 @@ describe("A Service", () => {
             TestService = TestServiceClass;
 
             onSetupStub = sinon.stub(TestService.prototype, "onSetup", /* @this Service */ async function() {
-                await this.need(restDepId, restDepOnlineMessage.name, RestClient);
+                await this.need(restDepId, restDepOnlineMessage.name, HttpClient);
             });
             onOnlineSpy = sinon.spy(TestService.prototype, "onOnline");
             onOfflineSpy = sinon.spy(TestService.prototype, "onOffline");
@@ -717,6 +717,7 @@ describe("A Service", () => {
 
             // Check that service can be used
             const restClient = await testService1.use(restDepId);
+
             assert.strictEqual(restClient.config.uri, restDepOnlineMessage.provides.REST.uri);
 
             await mgr.dispose();
