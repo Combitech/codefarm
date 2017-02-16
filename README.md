@@ -31,11 +31,20 @@ fashion using operations like *get*, *list*, *create*, *update* and *remove* on
 REST classes and instances represented by JSON.
 In Code Farm we denote the REST classes and instances *Types* and *Type instances*.
 
-All *types* have some mandatory attributes, one of these is the attribute *tags* which is a list of strings. More about tags in [Flows](#Flows) below.
+All *types* have some mandatory attributes, one of these is the attribute *tags* which is a list of strings. More about tags in [flows section](#flows) below.
 
 ## Flows
 A CI flow in Code Farm is represented by a number of *steps*. Each *step* is associated with a *baseline specification*
-and is triggered to run when a new *baseline* is generated from the *baseline specification*.
+and is triggered to run when a new *baseline* is generated from the *baseline specification*. A *baseline* content consists of collected references to type instances.
+
+The *baseline specification* specifies what to collect before generating a baseline using the following parameters:
+* **collectType** Which type to collect
+* **criteria** A boolean expression using [boolean-parser](https://www.npmjs.com/package/boolean-parser) matching tags on type instances. For example criteria equal to `"step:CG:success AND !step:Test:fail"` will match type instances of type *collectType* that have tag `step:CG:success` but misses tag `step:Test:fail`.
+* **limit** How many type instances to collect
+* **latest** TODO
+
+When a *step* is finished all type instances included in the baseline content that triggered the step is taged with a tag of the format `step:STEP_NAME:STEP_STATUS` (e.g. `step:CG:success`, `step:Test:fail`, ...)
+
 ![CI Flow Class Diagram](https://g.gravizo.com/source/svg/cd_flow?https%3A%2F%2Fraw.githubusercontent.com%2FCombitech%2Fcodefarm%2Freadme_1%2FREADME.md)
 <!---
 cd_flow
@@ -43,9 +52,17 @@ cd_flow
 hide empty methods
 hide empty fields
 hide circle
-class Step <<Type>>
+class Step <<Type>> {
+  name : String
+  criteria : String
+  script : String
+  tagScript : String
+}
 class Flow <<Type>>
-class Baseline <<Type>>
+class Baseline <<Type>> {
+  name : String
+  content : Array
+}
 class Specification <<Type>>
 class Collector <<Array>> {
   name : String
@@ -55,8 +72,8 @@ class Collector <<Array>> {
   latest : Boolean
 }
 
-Step ..> Specification
-Step ..> Flow
+Step ..> Specification : baseline
+Step ..> Flow : flow
 Baseline .right. Specification
 
 Specification *-- Collector : collectors
