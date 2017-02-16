@@ -18,7 +18,7 @@ digraph G {
   "Commit Gate" -> Build
 }
 g_ci_flow_ex1
--->
+--->
 
 
 ## Micro-services
@@ -63,7 +63,7 @@ Specification *-- Collector : collectors
 
 @enduml
 cd_flow
--->
+--->
 
 ## External dependencies
 * RabbitMQ
