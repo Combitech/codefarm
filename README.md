@@ -57,7 +57,7 @@ class Collector {
 
 Step ..> Specification
 Step ..> Flow
-Baseline . Specification
+Baseline .. Specification
 
 Specification *-- Collector : collectors
 @enduml
