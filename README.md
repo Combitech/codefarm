@@ -1,7 +1,7 @@
 # Code Farm
 
 Code Farm is a generic Continous Integration (CI) system for executing CI flows.
-The system is deployed as a number of micro-services connected via RabbitMQ
+The system is deployed as a number of (micro-services)[#micro-services] connected via RabbitMQ
 storing state in a MongoDB database.
 
 The unique feature of Code Farm is a **developer centric view** where it's possible to
@@ -15,27 +15,37 @@ digraph G {
   node [ shape="rect" ];
   Revision -> Gate
   Gate -> Test
-  Gate" -> Build
+  Gate -> Build
 }
 g_ci_flow_ex1
 --->
 
 
 ## Micro-services
-The micro-services are designed to use different *backends* where needed, for example
+Code Farm consists of the following services:
+* **UI** - HTML5 User Interface
+* **CodeRepo** - Stores information about code repositories and revisions
+* **ArtifactRepo** - Stores information about artifact repositories and artifacts
+* **LogRepo** - Stores logs
+* **UserRepo** - Stores information about users and teams
+* **BaselineGen** - Generates baselines from baseline specifications
+* **FlowCtrl** - Requests baselines and triggers steps on generated baselines
+* **DataResolve** - Resolves complex data queries
+* **Exec** - Executes jobs on slaves
+* **Mgmt** - Responsible for managing Code Farm, distributes config etc.
+
+The services are designed to use different *backends* where needed, for example
 the *CodeRepo* micro-service responsible for handling code revisions have
 backends for interfacing with *GitHub* and *Gerrit*.
 
-The communication between the micro-services over RabbitMQ is performed in a REST-like
+The communication between the services over RabbitMQ is performed in a REST-like
 fashion using operations like *get*, *list*, *create*, *update* and *remove* on
 REST classes and instances represented by JSON.
-In Code Farm we denote the REST classes and instances *Types* and *Type instances*.
-
-All *types* have some mandatory attributes, one of these is the attribute *tags* which is a list of strings. More about tags in [flows section](#flows) below.
+In Code Farm we denote the REST classes and instances; *Types* and *Type instances*.
 
 ## Flows
 A CI flow in Code Farm is represented by a number of *steps*. Each *step* is associated with a *baseline specification*
-and is triggered to run when a new *baseline* is generated from the *baseline specification*. A *baseline* content consists of collected references to type instances.
+and is triggered to run when a new *baseline* is generated from the *baseline specification*. A *baseline* consists of collected references to type instances. The *step* may contain a *job* consisting of a custom script.
 
 The *baseline specification* specifies what to collect before generating a baseline using the following parameters:
 * **collectType** Which type to collect
