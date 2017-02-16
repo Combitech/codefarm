@@ -13,9 +13,9 @@ g_ci_flow_ex1
 digraph G {
   rankdir="LR";
   node [ shape="rect" ];
-  Revision -> "Commit Gate"
-  "Commit Gate" -> Test
-  "Commit Gate" -> Build
+  Revision -> Gate
+  Gate -> Test
+  Gate" -> Build
 }
 g_ci_flow_ex1
 --->
@@ -39,9 +39,11 @@ and is triggered to run when a new *baseline* is generated from the *baseline sp
 
 The *baseline specification* specifies what to collect before generating a baseline using the following parameters:
 * **collectType** Which type to collect
-* **criteria** A boolean expression using [boolean-parser](https://www.npmjs.com/package/boolean-parser) matching tags on type instances. For example criteria equal to `"step:CG:success AND !step:Test:fail"` will match type instances of type *collectType* that have tag `step:CG:success` but misses tag `step:Test:fail`.
+* **criteria** A boolean expression using [boolean-parser](https://www.npmjs.com/package/boolean-parser) matching tags on type instances.
 * **limit** How many type instances to collect
 * **latest** TODO
+
+For example a *baseline specification* with a *criteria* equal to `"step:CG:success AND !step:Test:fail"` will match type instances of type *collectType* that have tag `step:CG:success` but misses tag `step:Test:fail`.
 
 When a *step* is finished all type instances included in the baseline content that triggered the step is taged with a tag of the format `step:STEP_NAME:STEP_STATUS` (e.g. `step:CG:success`, `step:Test:fail`, ...)
 
@@ -80,6 +82,53 @@ Specification *-- Collector : collectors
 @enduml
 cd_flow
 --->
+
+### Example
+The following simplified *baseline specifications* and *steps* represents the flow below
+![Example CI Flow](https://g.gravizo.com/source/svg/g_ci_flow_ex1?https%3A%2F%2Fraw.githubusercontent.com%2FCombitech%2Fcodefarm%2Freadme_1%2FREADME.md)
+
+```js
+specifications = [ {
+  _id: "Gate",
+  collectors: [ {
+    name: "commits",
+    collectType: "coderepo.revision",
+    criteria: "!step:Gate:success",
+    limit: 1,
+    latest: false
+  } ]
+}, {
+  _id: "Test",
+  collectors: [ {
+    name: "commits",
+    collectType: "coderepo.revision",
+    criteria: "step:Gate:success",
+    limit: 1,
+    latest: false
+  } ]
+}, {
+  _id: "Build",
+  collectors: [ {
+    name: "commits",
+    collectType: "coderepo.revision",
+    criteria: "step:Gate:success",
+    limit: 1,
+    latest: false
+  } ]
+} ]
+
+steps = [ {
+  name: "Gate",
+  baseline: { id: "Gate" },
+}, {
+  name: "Test",
+  baseline: { id: "Test" },
+}, {
+  name: "Build",
+  baseline: { id: "Build" },
+} ]
+  
+```
 
 ## External dependencies
 * RabbitMQ
