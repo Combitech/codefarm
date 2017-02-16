@@ -5,6 +5,7 @@ const path = require("path");
 const moment = require("moment");
 const fs = require("fs-extra-promise");
 const { serviceMgr } = require("service");
+const { ServiceComBus } = require("servicecom");
 const { Type, notification } = require("typelib");
 const { SshClient } = require("ssh");
 const { SlaveCom } = require("../slavecom");
@@ -94,52 +95,34 @@ class Executor extends Type {
 
     async createType(type, data, addJobTags = true) {
         const [ serviceName, typeName ] = type.split(".");
-        const uriPath = `/${typeName}`;
-        await this._logln(`Creating type ${uriPath} @ ${serviceName}`);
-        const serviceRest = await serviceMgr.use(serviceName);
+        const client = ServiceComBus.instance.getClient(serviceName);
+
+        await this._logln(`Creating type ${typeName} @ ${serviceName}`);
 
         if (addJobTags) {
             data.tags = data.tags || [];
             data.tags = data.tags.concat(this._defaultTags);
         }
 
-        const result = await serviceRest.post(`/${typeName}`, data);
-
-        if (result.result !== "success") {
-            throw Error(`Failed to create type ${type}: ${result.error}`);
-        }
-
-        return result.data;
+        return await client.create(typeName, data);
     }
 
     async updateType(type, id, data) {
         const [ serviceName, typeName ] = type.split(".");
-        const uriPath = `/${typeName}/${id}`;
-        await this._logln(`Updating type ${uriPath} @ ${serviceName}`);
-        const serviceRest = await serviceMgr.use(serviceName);
+        const client = ServiceComBus.instance.getClient(serviceName);
 
-        const result = await serviceRest.patch(uriPath, data);
+        await this._logln(`Updating type ${typeName} @ ${serviceName}`);
 
-        if (result.result !== "success") {
-            throw Error(`Failed to update type ${type}: ${result.error}`);
-        }
-
-        return result.data;
+        return await client.update(typeName, id, data);
     }
 
     async typeAction(type, id, action, data) {
         const [ serviceName, typeName ] = type.split(".");
-        const uriPath = `/${typeName}/${id}/${action}`;
-        await this._logln(`Type action ${uriPath} @ ${serviceName}`);
-        const serviceRest = await serviceMgr.use(serviceName);
+        const client = ServiceComBus.instance.getClient(serviceName);
 
-        const result = await serviceRest.post(uriPath, data);
+        await this._logln(`Type action ${typeName} @ ${serviceName}`);
 
-        if (result.result !== "success") {
-            throw Error(`Failed to perform action on type ${type}: ${result.error}`);
-        }
-
-        return result.data;
+        return await client[action](typeName, id, data);
     }
 
     async _connect() {

@@ -1,6 +1,7 @@
 "use strict";
 
 const { notification } = require("typelib");
+const { ServiceComBus } = require("servicecom");
 const { TagCriteria, assertType, synchronize } = require("misc");
 const Slave = require("./types/slave");
 const Job = require("./types/job");
@@ -116,20 +117,16 @@ class Control {
         };
 
         const mergeRevision = async (id) => {
-            const serviceRest = await ServiceMgr.instance.use("coderepo");
-            const response = await serviceRest.post(`/revision/${id}/merge`);
+            const client = ServiceComBus.instance.getClient("coderepo");
 
-            return response.result === "success" ? response.data : false;
+            return client.merge("revision", id);
         };
 
-        const readType = async (typeName, id, getter) => {
-            const [ serviceName, type ] = typeName.split(".");
-            const serviceRest = await ServiceMgr.instance.use(serviceName);
-            const getterStr = getter ? `/${getter}` : "";
-            const idStr = id ? `/${id}` : "";
-            const response = await serviceRest.get(`/${type}${idStr}${getterStr}`);
+        const readType = async (type, id, getter) => {
+            const [ serviceName, typeName ] = type.split(".");
+            const client = ServiceComBus.instance.getClient(serviceName);
 
-            return response;
+            return client[getter || "get"](typeName, id);
         };
 
         notification.on("executor.type_read", async (executor, typeName, id, getter) => {

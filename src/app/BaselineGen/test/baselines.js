@@ -15,7 +15,7 @@ describe("BaselineGen", () => {
 
         before(async () => {
             testInfo = {
-                name: "baselinegen",
+                name: "baselinegen-baselines",
                 version: "0.0.1",
                 config: {
                     autoUseMgmt: false,
@@ -24,8 +24,7 @@ describe("BaselineGen", () => {
                         port: await getPort()
                     },
                     db: {
-                        testMode: true,
-                        name: "MyBaselinesDB"
+                        testMode: true
                     },
                     bus: {
                         testMode: true

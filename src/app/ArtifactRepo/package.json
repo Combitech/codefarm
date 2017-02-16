@@ -27,7 +27,6 @@
     "msgbus",
     "emitter",
     "log",
-    "restclient",
     "service",
     "testsupport",
     "misc",

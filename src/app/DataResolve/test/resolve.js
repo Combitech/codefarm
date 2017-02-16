@@ -47,7 +47,6 @@ describe("DataResolve", () => {
         let main;
 
         const testData = [];
-
         const requestedRefs = [];
 
         before(async () => {
@@ -62,8 +61,7 @@ describe("DataResolve", () => {
                         testPeekEventEmitter: msgBusStub.setEmitter.bind(msgBusStub)
                     },
                     db: {
-                        testMode: true,
-                        name: "MyDB"
+                        testMode: true
                     },
                     web: {
                         port: await getPort()
@@ -519,26 +517,26 @@ describe("DataResolve", () => {
                 _id: "Step1",
                 type: "flowctrl.step",
                 name: "Step1",
-                flow: "Flow1",
-                baseline: "Baseline1"
+                flow: { id: "Flow1" },
+                baseline: { id: "Baseline1" }
             }, {
                 _id: "Step2",
                 type: "flowctrl.step",
                 name: "Step2",
-                flow: "Flow1",
-                baseline: "Baseline1"
+                flow: { id: "Flow1" },
+                baseline: { id: "Baseline1" }
             }, {
                 _id: "Step3",
                 type: "flowctrl.step",
                 name: "Step3",
-                flow: "Flow1",
-                baseline: "Baseline2"
+                flow: { id: "Flow1" },
+                baseline: { id: "Baseline2" }
             }, {
                 _id: "Step4",
                 type: "flowctrl.step",
                 name: "Step4",
-                flow: "Flow2",
-                baseline: "Baseline2"
+                flow: { id: "Flow2" },
+                baseline: { id: "Baseline2" }
             } ];
 
             const flows = [ {
@@ -612,7 +610,7 @@ describe("DataResolve", () => {
                     const baselineName = "Baseline1";
 
                     // Perform update
-                    steps[0].flow = "Flow2";
+                    steps[0].flow = { id: "Flow2" };
                     await msgBusStub.injectTypeUpdateMessage(steps[0].type, steps[0]._id);
                     const obj = await getResolved(bl1DataId);
 

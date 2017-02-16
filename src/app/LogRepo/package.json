@@ -29,7 +29,6 @@
     "logbus",
     "emitter",
     "log",
-    "restclient",
     "service",
     "misc",
     "web",
