@@ -51,12 +51,13 @@ Execute `yarn` or `npm install` in the following directories:
 ```bash
 #!/bin/bash
 for serviceDir in $(ls -d src/app/*); do
-  popd $serviceDir
+  pushd $serviceDir
   npm install
   popd
 done
-popd src/scripts
+pushd src/scripts
 npm install
+popd
 ```
 ### MongoDB
 Install on host or run in docker `src/containers/mongo/Dockerfile`.
@@ -72,6 +73,20 @@ Build and start using [docker-compose](https://docs.docker.com/compose/)
 cd src/scripts
 docker-compose up rabbitmq
 ```
+
+## Start Code Farm
+### Start services (development mode)
+Execute `yarn start-dev` or `npm start-dev` in `src/app/*`
+
+### Configure
+All services except *Mgmt* needs a config to go online. The config is owned by *Mgmt*. Make sure *Mgmt* service is running and load [default config](src/scripts/config.json) using helper script:
+```bash
+cd src/scripts
+yarn create-config
+```
+
+### Navigate to UI
+Navigate your browser to [http://localhost:9898](http://localhost:9898)
 
 ## Flows
 A CI flow in Code Farm is represented by a number of *steps*. Each *step* is associated with a *baseline specification*
