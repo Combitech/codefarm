@@ -22,18 +22,18 @@ All *types* have some mandatory attributes, one of these is the attribute *tags*
 ## Flows
 A CI flow in Code Farm is represented by a number of *steps*. Each *step* is associated with a *baseline specification*
 and is triggered to run when a new *baseline* is generated from the *baseline specification*.
-![Alt text](https://g.gravizo.com/source/cd_flow?https://github.com/Combitech/codefarm/new/master?readme=1)
+![CI Flow Class Diagram](http://g.gravizo.com/source/cd_flow/https%3A%2F%2Fgithub.com%2FCombitech%2Fcodefarm%2Fblob%2Fmaster%2FREADME.md)
 <!---
 cd_flow
 @startuml
 class Step
 class Specification
 class Flow
-
+Step -> Specification
+Step -> Flow
 @enduml
 cd_flow
 -->
-)
 
 ## External dependencies
 * RabbitMQ
