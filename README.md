@@ -47,7 +47,7 @@ class Step <<Type>>
 class Flow <<Type>>
 class Baseline <<Type>>
 class Specification <<Type>>
-class Collector {
+class Collector <<Array>> {
   name : String
   collectType : String
   criteria : String
@@ -57,7 +57,7 @@ class Collector {
 
 Step ..> Specification
 Step ..> Flow
-Baseline .. Specification
+Baseline .right. Specification
 
 Specification *-- Collector : collectors
 @enduml
