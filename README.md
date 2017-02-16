@@ -43,6 +43,36 @@ fashion using operations like *get*, *list*, *create*, *update* and *remove* on
 REST classes and instances represented by JSON.
 In Code Farm we denote the REST classes and instances; *Types* and *Type instances*.
 
+## Install
+### Services
+Execute `yarn` or `npm install` in the following directories:
+* `src/app/*` (services)
+* `src/scripts`
+```bash
+#!/bin/bash
+for serviceDir in $(ls -d src/app/*); do
+  popd $serviceDir
+  npm install
+  popd
+done
+popd src/scripts
+npm install
+```
+### MongoDB
+Install on host or run in docker `src/containers/mongo/Dockerfile`.
+Build and start using [docker-compose](https://docs.docker.com/compose/)
+```bash
+cd src/scripts
+docker-compose up mongo
+```
+### RabbitMQ
+Install on host or run in docker `src/containers/rabbitmq/Dockerfile`.
+Build and start using [docker-compose](https://docs.docker.com/compose/)
+```bash
+cd src/scripts
+docker-compose up rabbitmq
+```
+
 ## Flows
 A CI flow in Code Farm is represented by a number of *steps*. Each *step* is associated with a *baseline specification*
 and is triggered to run when a new *baseline* is generated from the *baseline specification*. A *baseline* consists of collected references to type instances. The *step* may contain a *job* consisting of a custom script.
