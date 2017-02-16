@@ -8,9 +8,19 @@ class HttpClient extends ProviderClient {
     constructor(...args) {
         super(...args);
 
+        if (this.config.testMode && !this.config.uri) {
+            this.config.uri = "http://nowhere";
+        }
+
         return new Proxy(this, {
             get: (target, property) => {
-                if (Reflect.has(target, property)) {
+                if (property === "then") {
+                    // Special case when the object is
+                    // wrapped in a Promise.resolve and
+                    // tested if it is a promise by seeing
+                    // if then exists.
+                    return false;
+                } else if (Reflect.has(target, property)) {
                     return Reflect.get(target, property);
                 }
 
@@ -20,10 +30,20 @@ class HttpClient extends ProviderClient {
     }
 
     static get typeName() {
-        return "HTTP";
+        return "REST";
+    }
+
+    get url() {
+        return this.config.uri;
     }
 
     async _wrappedRp(opts) {
+        if (this.config.testResponder) {
+            return this.config.testResponder(opts);
+        } else if (this.config.testMode) {
+            return Promise.resolve("");
+        }
+
         try {
             const result = await rp(opts);
 
@@ -51,7 +71,7 @@ class HttpClient extends ProviderClient {
         return this._wrappedRp({
             json: true,
             method: "GET",
-            uri: url.resolve(this.config.url, `/${typeName}/${id}`)
+            uri: url.resolve(this.config.uri, `/${typeName}/${id}`)
         });
     }
 
@@ -59,7 +79,7 @@ class HttpClient extends ProviderClient {
         return rp({
             json: true,
             method: "GET",
-            uri: url.resolve(this.config.url, `/${typeName}`),
+            uri: url.resolve(this.config.uri, `/${typeName}`),
             qs: query
         });
     }
@@ -68,7 +88,7 @@ class HttpClient extends ProviderClient {
         return this._wrappedRp({
             json: true,
             method: "POST",
-            uri: url.resolve(this.config.url, `/${typeName}`),
+            uri: url.resolve(this.config.uri, `/${typeName}`),
             body: data
         });
     }
@@ -77,7 +97,7 @@ class HttpClient extends ProviderClient {
         return this._wrappedRp({
             json: true,
             method: "PATCH",
-            uri: url.resolve(this.config.url, `/${typeName}/${id}`),
+            uri: url.resolve(this.config.uri, `/${typeName}/${id}`),
             body: data
         });
     }
@@ -86,7 +106,7 @@ class HttpClient extends ProviderClient {
         return this._wrappedRp({
             json: true,
             method: "DELETE",
-            uri: url.resolve(this.config.url, `/${typeName}/${id}`)
+            uri: url.resolve(this.config.uri, `/${typeName}/${id}`)
         });
     }
 
@@ -94,7 +114,7 @@ class HttpClient extends ProviderClient {
         return this._wrappedRp({
             json: true,
             method: data ? "POST" : "GET",
-            uri: url.resolve(this.config.url, `/${typeName}/${id}/${name}`),
+            uri: url.resolve(this.config.uri, `/${typeName}/${id}/${name}`),
             body: data
         });
     }

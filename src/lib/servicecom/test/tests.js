@@ -22,7 +22,7 @@ describe("Tests", () => {
             await Web.instance.start(opts, ThingController.instance.routes);
 
             env.client = new HttpClient({
-                url: `http://localhost:${opts.port}`
+                uri: `http://localhost:${opts.port}`
             });
         });
 

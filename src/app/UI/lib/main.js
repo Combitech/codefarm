@@ -4,8 +4,7 @@ const os = require("os");
 const { join } = require("path");
 const api = require("api.io");
 const Web = require("web");
-const RestClient = require("restclient");
-const { ServiceComBus } = require("servicecom");
+const { ServiceComBus, HttpClient } = require("servicecom");
 const { Service } = require("service");
 const MgmtMgr = require("./managers/mgmt");
 const ServiceProxy = require("./service_proxy");
@@ -33,8 +32,9 @@ class Main extends Service {
         const secondaryRestNeeds = [
             "mgmt", "ui", "exec", "baselinegen", "flowctrl", "coderepo", "userrepo", "artifactrepo", "logrepo", "eventrepo", "dataresolve"
         ];
+
         for (const serviceId of secondaryRestNeeds) {
-            await this.want(serviceId, serviceId, RestClient);
+            await this.want(serviceId, serviceId, HttpClient);
         }
 
         await ServiceComBus.instance.start({

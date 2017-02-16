@@ -29,7 +29,6 @@
     "log",
     "service",
     "web",
-    "restclient",
     "msgbus",
     "misc",
     "servicecom"
