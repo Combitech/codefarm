@@ -8,7 +8,7 @@ The unique feature of Code Farm is a **developer centric view** where it's possi
 track how a *code revision* or *artifact* has performed in different tests and/or builds.
 
 ![Example CI Flow](https://g.gravizo.com/source/svg/g_ci_flow_ex1?https%3A%2F%2Fraw.githubusercontent.com%2FCombitech%2Fcodefarm%2Fmaster%2FREADME.md)
-<!---
+<!--
 g_ci_flow_ex1
 digraph G {
   rankdir="LR";
@@ -37,7 +37,7 @@ All *types* have some mandatory attributes, one of these is the attribute *tags*
 A CI flow in Code Farm is represented by a number of *steps*. Each *step* is associated with a *baseline specification*
 and is triggered to run when a new *baseline* is generated from the *baseline specification*.
 ![CI Flow Class Diagram](https://g.gravizo.com/source/svg/cd_flow?https%3A%2F%2Fraw.githubusercontent.com%2FCombitech%2Fcodefarm%2Fmaster%2FREADME.md)
-<!---
+<!--
 cd_flow
 @startuml
 hide empty methods
