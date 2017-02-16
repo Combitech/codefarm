@@ -7,6 +7,20 @@ storing state in a MongoDB database.
 The unique feature of Code Farm is a **developer centric view** where it's possible to
 track how a *code revision* or *artifact* has performed in different tests and/or builds.
 
+![Example CI Flow](https://g.gravizo.com/source/svg/g_ci_flow_ex1?https%3A%2F%2Fraw.githubusercontent.com%2FCombitech%2Fcodefarm%2Fmaster%2FREADME.md)
+<!---
+g_ci_flow_ex1
+digraph G {
+  rankdir="LR";
+  node [ shape="rect" ];
+  Revision -> "Commit Gate"
+  "Commit Gate" -> Test
+  "Commit Gate" -> Build
+}
+g_ci_flow_ex1
+-->
+
+
 ## Micro-services
 The micro-services are designed to use different *backends* where needed, for example
 the *CodeRepo* micro-service responsible for handling code revisions have
@@ -22,15 +36,30 @@ All *types* have some mandatory attributes, one of these is the attribute *tags*
 ## Flows
 A CI flow in Code Farm is represented by a number of *steps*. Each *step* is associated with a *baseline specification*
 and is triggered to run when a new *baseline* is generated from the *baseline specification*.
-![CI Flow Class Diagram](http://g.gravizo.com/source/cd_flow/https%3A%2F%2Fgithub.com%2FCombitech%2Fcodefarm%2Fblob%2Fmaster%2FREADME.md)
+![CI Flow Class Diagram](https://g.gravizo.com/source/svg/cd_flow?https%3A%2F%2Fraw.githubusercontent.com%2FCombitech%2Fcodefarm%2Fmaster%2FREADME.md)
 <!---
 cd_flow
 @startuml
-class Step
-class Specification
-class Flow
-Step -> Specification
-Step -> Flow
+hide empty methods
+hide empty fields
+hide circle
+class Step <<Type>>
+class Flow <<Type>>
+class Baseline <<Type>>
+class Specification <<Type>>
+class Collector {
+  name : String
+  collectType : String
+  criteria : String
+  limit : Number
+  latest : Boolean
+}
+
+Step -.-> Specification
+Step -.-> Flow
+Baseline . Specification
+
+Specification *-- Collector : collectors
 @enduml
 cd_flow
 -->
