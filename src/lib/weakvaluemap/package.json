@@ -16,7 +16,7 @@
   },
   "libraries": [],
   "dependencies": {
-    "weak-value-map": "https://github.com/christensson/weak-value-map"
+    "weak-value-map": "^0.2.0"
   },
   "devDependencies": {
     "babel-eslint": "^7.1.0",
