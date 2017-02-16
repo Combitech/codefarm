@@ -7,9 +7,9 @@ storing state in a MongoDB database.
 The unique feature of Code Farm is a **developer centric view** where it's possible to
 track how a *code revision* or *artifact* has performed in different tests and/or builds.
 
-![Example CI Flow](https://g.gravizo.com/source/svg/g_ci_flow_ex1?https%3A%2F%2Fraw.githubusercontent.com%2FCombitech%2Fcodefarm%2Fmaster%2FREADME.md)
+![Example CI Flow](https://g.gravizo.com/source/g_ci_flow_ex_1?https%3A%2F%2Fraw.githubusercontent.com%2FCombitech%2Fcodefarm%2Fmaster%2FREADME.md)
 <!---
-g_ci_flow_ex1
+g_ci_flow_ex_1
 digraph G {
   rankdir="LR";
   node [ shape="rect" ];
@@ -17,7 +17,7 @@ digraph G {
   Gate -> Test
   Gate -> Build
 }
-g_ci_flow_ex1
+g_ci_flow_ex_1
 --->
 
 
@@ -102,9 +102,9 @@ For example a *baseline specification* with a *criteria* equal to `"step:CG:succ
 
 When a *step* is finished all type instances included in the baseline content that triggered the step is taged with a tag of the format `step:STEP_NAME:STEP_STATUS` (e.g. `step:CG:success`, `step:Test:fail`, ...)
 
-![CI Flow Class Diagram](https://g.gravizo.com/source/cd_flow?https%3A%2F%2Fraw.githubusercontent.com%2FCombitech%2Fcodefarm%2Fmaster%2FREADME.md)
+![CI Flow Class Diagram](https://g.gravizo.com/source/cd_flow_1?https%3A%2F%2Fraw.githubusercontent.com%2FCombitech%2Fcodefarm%2Fmaster%2FREADME.md)
 <!---
-cd_flow
+cd_flow_1
 @startuml
 hide empty methods
 hide empty fields
@@ -135,12 +135,12 @@ Baseline .right. Specification
 Specification \*-down- Collector : collectors
 
 @enduml
-cd_flow
+cd_flow_1
 --->
 
 ### Example
 The following simplified *baseline specifications* and *steps* represents the flow below
-![Example CI Flow](https://g.gravizo.com/source/svg/g_ci_flow_ex1?https%3A%2F%2Fraw.githubusercontent.com%2FCombitech%2Fcodefarm%2Fmaster%2FREADME.md)
+![Example CI Flow](https://g.gravizo.com/source/g_ci_flow_ex_1?https%3A%2F%2Fraw.githubusercontent.com%2FCombitech%2Fcodefarm%2Fmaster%2FREADME.md)
 
 ```js
 specifications = [ {
