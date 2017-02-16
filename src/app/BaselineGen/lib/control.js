@@ -117,14 +117,12 @@ class Control {
 
             const baseline = new Baseline({
                 name: baselineName,
-                content: collectors.map((collector) => {
-                    return {
-                        _ref: true,
-                        name: collector.name,
-                        type: collector.collectType,
-                        id: collector.ids
-                    };
-                })
+                content: collectors.map((collector) => ({
+                    _ref: true,
+                    name: collector.name,
+                    type: collector.collectType,
+                    id: collector.ids
+                }))
             });
 
             await baseline.save();

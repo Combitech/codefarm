@@ -56,11 +56,11 @@ class Step extends Type {
             assertProp(data, "name", true);
             assertType(data.name, "data.name", "string");
             assertProp(data, "flow", true);
-            assertType(data.flow, "data.flow", "string");
+            assertType(data.flow, "data.flow", "ref");
             assertProp(data, "concurrency", true);
             assertType(data.concurrency, "data.concurrency", "number");
             assertProp(data, "baseline", true);
-            assertType(data.baseline, "data.baseline", "string");
+            assertType(data.baseline, "data.baseline", "ref");
             // assertType(data.script, "data.parentSteps", "array"); TODO: This does not work correctly
         }
     }
@@ -96,7 +96,7 @@ class Step extends Type {
                 try {
                     await this.requestBaseline();
                 } catch (error) {
-                    ServiceMgr.instance.log("error", `Step ${this.name} failed to request baseline ${this.baseline}`, error);
+                    ServiceMgr.instance.log("error", `Step ${this.name} failed to request baseline ${this.baseline.id}`, error);
                 }
             }
         } else {
@@ -107,9 +107,9 @@ class Step extends Type {
     async requestBaseline() {
         const baselineGen = await ServiceMgr.instance.use("baselinegen");
 
-        ServiceMgr.instance.log("verbose", `Step ${this.name} requesting baseline ${this.baseline}`);
+        ServiceMgr.instance.log("verbose", `Step ${this.name} requesting baseline ${this.baseline.id}`);
 
-        const result = await baselineGen.post(`/specification/${this.baseline}/request`);
+        const result = await baselineGen.post(`/specification/${this.baseline.id}/request`);
 
         if (result.result !== "success") {
             throw Error(`Failed to request new baseline: ${result.error}`);
@@ -190,7 +190,7 @@ class Step extends Type {
                 id: this._id,
                 name: this.name,
                 jobId: jobId,
-                flowId: this.flow,
+                flowId: this.flow.id,
                 baselineId: baseline._id,
                 content: {},
                 result: result

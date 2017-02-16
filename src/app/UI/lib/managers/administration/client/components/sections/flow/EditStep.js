@@ -56,7 +56,9 @@ class EditStep extends Component {
             "baseline": {
                 editable: true,
                 required: () => true,
-                defaultValue: ""
+                defaultValue: "",
+                serialize: (id) => tautils.serializeRef(id, "baselinegen.specification"),
+                deserialize: (ref) => tautils.deserializeRef(ref)
             },
             "visible": {
                 editable: true,
@@ -67,9 +69,9 @@ class EditStep extends Component {
 
         tautils.createStateProperties(this, this.itemProperties, this.props.item);
 
-        this.addTypeListStateVariable("steps", "flowctrl.step", (props) => {
-            flow: props.parentItems[props.parentItems.length - 1]._id
-        });
+        this.addTypeListStateVariable("steps", "flowctrl.step", (props) => ({
+            "flow.id": props.parentItems[props.parentItems.length - 1]._id
+        }));
         this.addTypeListStateVariable("baselines", "baselinegen.specification");
     }
 
@@ -86,17 +88,19 @@ class EditStep extends Component {
     }
 
     getBaselines() {
-        return this.state.baselines.map((baseline) => {
-            return {
-                value: baseline._id,
-                label: baseline._id
-            };
-        });
+        return this.state.baselines.map((baseline) => ({
+            value: baseline._id,
+            label: baseline._id
+        }));
     }
 
     async onConfirm() {
         const data = tautils.serialize(this, this.itemProperties, this.props.item);
-        data.flow = this.props.parentItems[this.props.parentItems.length - 1]._id;
+        data.flow = {
+            _ref: true,
+            id: this.props.parentItems[this.props.parentItems.length - 1]._id,
+            type: "flowctrl.flow"
+        };
 
         await this.props.onSave("flowctrl.step", data, {
             create: !this.props.item,

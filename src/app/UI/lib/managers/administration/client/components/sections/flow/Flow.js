@@ -41,36 +41,34 @@ class FlowComponent extends Component {
             return null;
         }
 
-        const steps = this.props.steps.map((step) => {
-            return {
-                id: step._id,
-                type: StepGeneric,
-                name: step.name,
-                disabled: (item) => {
-                    for (const parent of item.getAllParents()) {
-                        if (parent.active()) {
-                            return true;
-                        }
+        const steps = this.props.steps.map((step) => ({
+            id: step._id,
+            type: StepGeneric,
+            name: step.name,
+            disabled: (item) => {
+                for (const parent of item.getAllParents()) {
+                    if (parent.active()) {
+                        return true;
                     }
-
-                    for (const parent of item.getAllChildren()) {
-                        if (parent.active()) {
-                            return true;
-                        }
-                    }
-
-                    return false;
-                },
-                active: () => this.props.selected.value.includes(step._id),
-                secondary: !step.visible, // Use secondary look for steps not visible in developer view
-                parentIds: step.parentSteps.slice(0),
-                handlers: {
-                    onClick: () => this.onClick(step._id),
-                    onRemove: () => this.onRemove(step._id),
-                    onEdit: () => this.onEdit(step._id)
                 }
-            };
-        });
+
+                for (const parent of item.getAllChildren()) {
+                    if (parent.active()) {
+                        return true;
+                    }
+                }
+
+                return false;
+            },
+            active: () => this.props.selected.value.includes(step._id),
+            secondary: !step.visible, // Use secondary look for steps not visible in developer view
+            parentIds: step.parentSteps.slice(0),
+            handlers: {
+                onClick: () => this.onClick(step._id),
+                onRemove: () => this.onRemove(step._id),
+                onEdit: () => this.onEdit(step._id)
+            }
+        }));
 
         if (this.props.selected.value.length > 0) {
             steps.push({

@@ -8,12 +8,10 @@ class FlowComponent extends Component {
     constructor(props) {
         super(props, false);
 
-        this.addTypeListStateVariable("steps", "flowctrl.step", (props) => {
-            return {
-                flow: props.flow._id,
-                visible: true
-            };
-        }, false);
+        this.addTypeListStateVariable("steps", "flowctrl.step", (props) => ({
+            "flow.id": props.flow._id,
+            visible: true
+        }), false);
     }
 
     render() {
@@ -35,7 +33,7 @@ class FlowComponent extends Component {
         };
 
         const myBl = this.props.item.name;
-        let mySteps = this.state.steps.filter((item) => item.baseline === myBl);
+        let mySteps = this.state.steps.filter((item) => item.baseline.id === myBl);
         // Get all steps that are descendants to a step with baseline equal to myBl
         const getAllParents = (items, item) => {
             let parents = items.filter((i) => item.parentSteps.includes(i._id));
@@ -47,7 +45,7 @@ class FlowComponent extends Component {
             return parents;
         };
         const myBlChildSteps = this.state.steps.filter((step, index, self) =>
-            getAllParents(self, step).some((item) => item.baseline === myBl)
+            getAllParents(self, step).some((item) => item.baseline.id === myBl)
         );
         mySteps = mySteps.concat(myBlChildSteps);
 
@@ -57,7 +55,7 @@ class FlowComponent extends Component {
                 .filter((stepId) => mySteps.some((item) => item._id === stepId));
 
             // Insert first step as parent
-            if (step.baseline === this.props.item.name) {
+            if (step.baseline.id === myBl) {
                 parentIds.push(firstStep.id);
             }
 

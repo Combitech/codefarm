@@ -28,9 +28,17 @@ module.exports = async (argv) => {
     ) => {
         return {
             name: name,
-            flow: argv.id,
+            flow: {
+                _ref: true,
+                id: argv.id,
+                type: "flowctrl.flow"
+            },
             concurrency: 1,
-            baseline: name, // Use baseline with same name as step
+            baseline: {
+                _ref: true,
+                id: name, // Use baseline with same name as step
+                type: "baselinegen.specification"
+            },
             criteria: slaveCriteria,
             script: script,
             tagScript: tagScript,

@@ -1,6 +1,5 @@
 
 import React from "react";
-import { StringUtil } from "misc";
 import Component from "ui-lib/component";
 import Input from "react-toolbox/lib/input";
 import Dropdown from "react-toolbox/lib/dropdown";
@@ -40,9 +39,9 @@ class Edit extends Component {
     }
 
     getBackends() {
-        return this.state.backends.map((backend) => {
-            return { value: backend._id, label: backend._id };
-        });
+        return this.state.backends.map((backend) => ({
+            value: backend._id, label: backend._id
+        }));
     }
 
     async onConfirm() {

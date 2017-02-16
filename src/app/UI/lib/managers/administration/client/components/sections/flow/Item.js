@@ -16,9 +16,9 @@ class Item extends Component {
 
         this.addStateVariable("selected", this.props.context.value.parentSteps || []);
 
-        this.addTypeListStateVariable("steps", "flowctrl.step", {
-            flow: this.props.item._id
-        }, true);
+        this.addTypeListStateVariable("steps", "flowctrl.step", (props) => ({
+            "flow.id": props.item._id
+        }), true);
     }
 
     render() {

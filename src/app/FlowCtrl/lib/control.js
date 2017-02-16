@@ -1,6 +1,6 @@
 "use strict";
 
-const { serviceMgr } = require("service");
+const { ServiceMgr } = require("service");
 const { notification } = require("typelib");
 const Step = require("./types/step");
 
@@ -19,18 +19,18 @@ class Control {
     }
 
     async start() {
-        const mb = serviceMgr.msgBus;
+        const mb = ServiceMgr.instance.msgBus;
 
         mb.on("data", async (data) => {
             if (data.type === "baselinegen.baseline" &&
                 data.event === "created") {
-                const steps = await Step.findMany({ baseline: data.newdata.name });
+                const steps = await Step.findMany({ "baseline.id": data.newdata.name });
 
                 for (const step of steps) {
                     try {
                         await step.triggerJob(data.newdata);
                     } catch (error) {
-                        console.error(JSON.stringify(error, null, 2));
+                        ServiceMgr.instance.log("error", `Trigger job failed for step ${step._id}`, JSON.stringify(error, null, 2));
                         throw error;
                     }
                 }
@@ -40,7 +40,11 @@ class Control {
                 const steps = await Step.findMany({ "jobs.jobId": data.newdata._id });
 
                 for (const step of steps) {
-                    await step.finishJob(data.newdata._id, data.newdata.status);
+                    try {
+                        await step.finishJob(data.newdata._id, data.newdata.status);
+                    } catch (error) {
+                        ServiceMgr.instance.log("error", `Finish job failed for step ${step._id}`, JSON.stringify(error, null, 2));
+                    }
                 }
             }
         });

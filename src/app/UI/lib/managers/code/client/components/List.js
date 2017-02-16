@@ -120,26 +120,20 @@ class List extends Component {
     constructor(props) {
         super(props);
 
-        this.addTypeListStateVariable("submitted", () => "coderepo.revision", (props) => {
-            return {
-                repository: props.item._id,
-                status: "submitted"
-            };
-        }, true);
+        this.addTypeListStateVariable("submitted", () => "coderepo.revision", (props) => ({
+            repository: props.item._id,
+            status: "submitted"
+        }), true);
 
-        this.addTypeListStateVariable("merged", () => "coderepo.revision", (props) => {
-            return {
-                repository: props.item._id,
-                status: "merged"
-            };
-        }, true);
+        this.addTypeListStateVariable("merged", () => "coderepo.revision", (props) => ({
+            repository: props.item._id,
+            status: "merged"
+        }), true);
 
-        this.addTypeListStateVariable("steps", "flowctrl.step", (/* props */) => {
-            return {
-                flow: "Flow1", // TODO
-                visible: true
-            };
-        }, false);
+        this.addTypeListStateVariable("steps", "flowctrl.step", (/* props */) => ({
+            "flow.id": "Flow1", // TODO
+            visible: true
+        }), false);
     }
 
     onSelect(item) {

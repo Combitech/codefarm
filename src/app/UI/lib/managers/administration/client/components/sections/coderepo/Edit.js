@@ -39,9 +39,9 @@ class Edit extends Component {
     }
 
     getBackends() {
-        return this.state.backends.map((backend) => {
-            return { value: backend._id, label: backend._id };
-        });
+        return this.state.backends.map((backend) => ({
+            value: backend._id, label: backend._id
+        }));
     }
 
     async onConfirm() {

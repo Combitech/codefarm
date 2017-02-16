@@ -104,7 +104,7 @@
         "padded-blocks": [ "error", "never" ],
         "semi-spacing": "error",
         "spaced-comment": "error",
-        "arrow-body-style": [ "error", "as-needed", { "requireReturnForObjectLiteral": true } ],
+        "arrow-body-style": [ "error", "as-needed", { "requireReturnForObjectLiteral": false } ],
         "arrow-parens": "error",
         "arrow-spacing": "error",
         "constructor-super": "error",

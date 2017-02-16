@@ -3,7 +3,7 @@
 const { ServiceMgr } = require("service");
 const Koa = require("koa2");
 const bodyParser = require("koa-bodyparser");
-const { assertProp, assertType, ensureArray, synchronize } = require("misc");
+const { synchronize } = require("misc");
 const { AsyncEventEmitter } = require("emitter");
 
 class GithubEventEmitter extends AsyncEventEmitter {

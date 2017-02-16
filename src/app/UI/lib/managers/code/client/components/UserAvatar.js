@@ -7,11 +7,9 @@ import FontIcon from "react-toolbox/lib/font_icon";
 class UserAvatar extends Component {
     constructor(props) {
         super(props);
-        this.addTypeListStateVariable("user", "userrepo.user", (props) => {
-            return {
-                "email": props.email
-            };
-        }, false);
+        this.addTypeListStateVariable("user", "userrepo.user", (props) => ({
+            "email": props.email
+        }), false);
     }
 
     render() {

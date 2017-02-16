@@ -8,12 +8,10 @@ class FlowComponent extends Component {
     constructor(props) {
         super(props);
 
-        this.addTypeListStateVariable("steps", "flowctrl.step", (props) => {
-            return {
-                flow: props.flow._id,
-                visible: true
-            };
-        }, false);
+        this.addTypeListStateVariable("steps", "flowctrl.step", (props) => ({
+            "flow.id": props.flow._id,
+            visible: true
+        }), false);
     }
 
     render() {

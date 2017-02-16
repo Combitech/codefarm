@@ -48,7 +48,7 @@ const purpleA200 = "rgb(224,64,251)";
 const purpleA400 = "rgb(213,0,249)";
 const purpleA700 = "rgb(170,0,255)";
 
-//Deep purple
+// Deep purple
 const deepPurple50 = "rgb(237,231,246)";
 const deepPurple100 = "rgb(209,196,233)";
 const deepPurple200 = "rgb(179,157,219)";

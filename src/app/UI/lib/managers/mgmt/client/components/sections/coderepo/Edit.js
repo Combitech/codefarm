@@ -4,7 +4,7 @@ import Component from "ui-lib/component";
 import Input from "react-toolbox/lib/input";
 import Dropdown from "react-toolbox/lib/dropdown";
 import Autocomplete from "react-toolbox/lib/autocomplete";
-import Checkbox from "react-toolbox/lib/checkbox"
+import Checkbox from "react-toolbox/lib/checkbox";
 import {
     Form as TAForm,
     Section as TASection,

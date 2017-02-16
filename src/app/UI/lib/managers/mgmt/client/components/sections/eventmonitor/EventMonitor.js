@@ -60,14 +60,12 @@ class EventTable extends React.Component {
             return objectFilter(filter, item, [ "time", "event", "type" ]);
         };
 
-        const tableData = events.filter(itemFilter).map((e) => {
-            return {
-                time: e.time,
-                event: e.event,
-                type: e.type,
-                data: <EventData event={e} theme={this.props.theme} />
-            };
-        });
+        const tableData = events.filter(itemFilter).map((e) => ({
+            time: e.time,
+            event: e.event,
+            type: e.type,
+            data: <EventData event={e} theme={this.props.theme} />
+        }));
 
         return (
             <Table

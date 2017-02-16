@@ -5,13 +5,11 @@ const { assertType, assertProp } = require("misc");
 
 let instance;
 
-const typeToRef = (item) => {
-    return {
-        _ref: true,
-        id: item._id,
-        type: item.type
-    };
-};
+const typeToRef = (item) => ({
+    _ref: true,
+    id: item._id,
+    type: item.type
+});
 
 class BaselineFlowsResolver {
     constructor() {
@@ -90,13 +88,13 @@ class BaselineFlowsResolver {
         let refs = [];
         if (!oldData || updatedRef) {
             const steps = await this._list("flowctrl.step", {
-                baseline: opts.baselineName
+                "baseline.id": opts.baselineName
             });
             let flowIds = null;
             if (steps) {
                 // Take flowId from all steps and remove duplicates
                 flowIds = steps
-                    .map((step) => step.flow)
+                    .map((step) => step.flow.id)
                     .filter((flowId, index, self) => self.indexOf(flowId) === index);
 
                 // Steps may update, we need to watch these

@@ -55,9 +55,9 @@ class Edit extends Component {
             return [];
         }
 
-        return backend.versionSchemes.map((item) => {
-            return { value: item, label: StringUtil.toUpperCaseLetter(item) };
-        });
+        return backend.versionSchemes.map((item) => ({
+            value: item, label: StringUtil.toUpperCaseLetter(item)
+        }));
     }
 
     getHashAlgorhitms(backend) {
@@ -65,15 +65,15 @@ class Edit extends Component {
             return [];
         }
 
-        return backend.hashAlgorithms.map((item) => {
-            return { value: item, label: StringUtil.toUpperCaseLetter(item) };
-        });
+        return backend.hashAlgorithms.map((item) => ({
+            value: item, label: StringUtil.toUpperCaseLetter(item)
+        }));
     }
 
     getBackends() {
-        return this.state.backends.map((backend) => {
-            return { value: backend._id, label: backend._id };
-        });
+        return this.state.backends.map((backend) => ({
+            value: backend._id, label: backend._id
+        }));
     }
 
     async onConfirm() {

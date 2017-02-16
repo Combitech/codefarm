@@ -3,7 +3,6 @@
 const { serviceMgr } = require("service");
 const path = require("path");
 const fs = require("fs-extra-promise");
-const send = require("koa-send");
 
 class FsBackend {
     constructor(name, params) {

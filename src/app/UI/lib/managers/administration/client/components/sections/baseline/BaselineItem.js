@@ -1,5 +1,4 @@
 
-import api from "api.io/api.io-client";
 import React from "react";
 import Component from "ui-lib/component";
 import Chip from "react-toolbox/lib/chip";
@@ -17,28 +16,24 @@ class BaselineItem extends Component {
 
         this.addStateVariable("step", "");
 
-        this.addTypeItemStateVariableWithCreate("itemExt", "dataresolve.data", (props) => {
-            return {
-                resolver: "RefResolve",
-                opts: {
-                    ref: props.item.content[0],
-                    spec: {
-                        paths: [
-                            "$[*].refs[*]"
-                        ]
-                    }
+        this.addTypeItemStateVariableWithCreate("itemExt", "dataresolve.data", (props) => ({
+            resolver: "RefResolve",
+            opts: {
+                ref: props.item.content[0],
+                spec: {
+                    paths: [
+                        "$[*].refs[*]"
+                    ]
                 }
-            };
-        }, true);
+            }
+        }), true);
 
-        this.addTypeItemStateVariableWithCreate("flows", "dataresolve.data", (props) => {
-            return {
-                resolver: "BaselineFlowsResolve",
-                opts: {
-                    baselineName: props.item.name
-                }
-            };
-        }, false);
+        this.addTypeItemStateVariableWithCreate("flows", "dataresolve.data", (props) => ({
+            resolver: "BaselineFlowsResolve",
+            opts: {
+                baselineName: props.item.name
+            }
+        }), false);
     }
 
     render() {

@@ -8,11 +8,9 @@ const ensureNonEmptyArray = (array, dummyItem = "__THIS_IS_AN_EMPTY_ARRAY__") =>
  * @param {Array} array Array to match field
  * @return {Object} Mongo-DB query
  */
-const anyOf = (field, array) => {
-    return {
-        [ field ]: { $in: ensureNonEmptyArray(array) }
-    };
-};
+const anyOf = (field, array) => ({
+    [ field ]: { $in: ensureNonEmptyArray(array) }
+});
 
 /** Build MongoDB query object matching all documents having field equal to
  * specified value
@@ -20,11 +18,9 @@ const anyOf = (field, array) => {
  * @param {Any} value Value to match against field
  * @return {Object} Mongo-DB query
  */
-const isValue = (field, value) => {
-    return {
-        [ field ]: value
-    };
-};
+const isValue = (field, value) => ({
+    [ field ]: value
+});
 
 export {
     anyOf,

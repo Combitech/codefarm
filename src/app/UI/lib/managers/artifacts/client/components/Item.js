@@ -23,22 +23,20 @@ class Item extends Component {
         this.addStateVariable("statusMessage", { msg: "", type: "accept" });
         this.addStateVariable("step", "");
 
-        this.addTypeItemStateVariableWithCreate("itemExt", "dataresolve.data", (props) => {
-            return {
-                resolver: "RefResolve",
-                opts: {
-                    ref: {
-                        id: props.item._id,
-                        type: props.item.type
-                    },
-                    spec: {
-                        paths: [
-                            "$.refs[*]"
-                        ]
-                    }
+        this.addTypeItemStateVariableWithCreate("itemExt", "dataresolve.data", (props) => ({
+            resolver: "RefResolve",
+            opts: {
+                ref: {
+                    id: props.item._id,
+                    type: props.item.type
+                },
+                spec: {
+                    paths: [
+                        "$.refs[*]"
+                    ]
                 }
-            };
-        }, true);
+            }
+        }), true);
 
         this.addTypeListStateVariable("flows", "flowctrl.flow", (props) => {
             const flows = props.item.tags
