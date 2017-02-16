@@ -55,8 +55,8 @@ class Collector {
   latest : Boolean
 }
 
-Step -.> Specification
-Step -.> Flow
+Step ..> Specification
+Step ..> Flow
 Baseline . Specification
 
 Specification *-- Collector : collectors
