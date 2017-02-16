@@ -7,7 +7,7 @@ storing state in a MongoDB database.
 The unique feature of Code Farm is a **developer centric view** where it's possible to
 track how a *code revision* or *artifact* has performed in different tests and/or builds.
 
-![Example CI Flow](https://g.gravizo.com/source/svg/g_ci_flow_ex_a?https%3A%2F%2Fraw.githubusercontent.com%2FCombitech%2Fcodefarm%2Fmaster%2FREADME.md)
+![Example CI Flow](https://g.gravizo.com/source/g_ci_flow_ex_a?https%3A%2F%2Fraw.githubusercontent.com%2FCombitech%2Fcodefarm%2Fmaster%2FREADME.md)
 <!---
 g_ci_flow_ex_a
 digraph G {
@@ -140,7 +140,7 @@ cd_flow_a
 
 ### Example
 The following simplified *baseline specifications* and *steps* represents the flow below
-![Example CI Flow](https://g.gravizo.com/source/svg/g_ci_flow_ex_a?https%3A%2F%2Fraw.githubusercontent.com%2FCombitech%2Fcodefarm%2Fmaster%2FREADME.md)
+![Example CI Flow](https://g.gravizo.com/source/g_ci_flow_ex_a?https%3A%2F%2Fraw.githubusercontent.com%2FCombitech%2Fcodefarm%2Fmaster%2FREADME.md)
 
 ```js
 specifications = [ {
