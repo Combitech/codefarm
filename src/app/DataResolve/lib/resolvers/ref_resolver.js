@@ -1,6 +1,6 @@
 "use strict";
 
-const { ServiceMgr } = require("service");
+const { ServiceComBus } = require("servicecom");
 const { assertType, assertProp } = require("misc");
 const jsonPath = require("jsonpath-plus");
 const clone = require("clone");
@@ -43,17 +43,12 @@ class RefResolver {
         }
 
         const [ serviceId, typeName ] = ref.type.split(".");
-
-        if (!ServiceMgr.instance.has(serviceId)) {
-            throw new Error(`No such service, ${serviceId}`);
-        }
-
-        const restClient = await ServiceMgr.instance.use(serviceId);
+        const client = ServiceComBus.instance.getClient(serviceId);
 
         if (ref.id.constructor === Array) {
             let result = [];
             if (ref.id.length > 0) {
-                result = await restClient.get(`/${typeName}`, {
+                result = await client.list(typeName, {
                     _id: {
                         $in: ref.id
                     }
@@ -63,7 +58,7 @@ class RefResolver {
             return result;
         }
 
-        return await restClient.get(`/${typeName}/${ref.id}`, {});
+        return await client.get(typeName, ref.id);
     }
 
     async _resolvePath(path, root, updatedRef, sourceId) {

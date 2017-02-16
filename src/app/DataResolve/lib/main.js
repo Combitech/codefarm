@@ -3,7 +3,6 @@
 const os = require("os");
 const Database = require("database");
 const Web = require("web");
-const RestClient = require("restclient");
 const Datas = require("./controllers/datas");
 const { Service } = require("service");
 const { ServiceComBus } = require("servicecom");
@@ -25,14 +24,6 @@ class Main extends Service {
     }
 
     async onOnline() {
-        // Add dependencies to all services without restart when they go offline
-        const secondaryRestNeeds = [
-            "mgmt", "exec", "baselinegen", "flowctrl", "coderepo", "userrepo", "artifactrepo", "logrepo", "eventrepo"
-        ];
-        for (const serviceId of secondaryRestNeeds) {
-            await this.want(serviceId, serviceId, RestClient);
-        }
-
         const routes = [].concat(this.routes, Datas.instance.routes);
 
         await ServiceComBus.instance.start({

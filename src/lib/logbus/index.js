@@ -5,6 +5,7 @@ const MsgBus = require("msgbus");
 class LogBus extends MsgBus {
     constructor(config, serviceMgr) {
         const opts = {
+            noSynchronize: true,
             exchange: {
                 name: "log",
                 type: "topic",

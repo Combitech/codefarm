@@ -27,7 +27,6 @@
     "emitter",
     "typelib",
     "log",
-    "restclient",
     "misc",
     "msgbus",
     "service",

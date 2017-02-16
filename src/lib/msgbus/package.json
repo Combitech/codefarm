@@ -16,7 +16,8 @@
   },
   "libraries": [
     "providerclient",
-    "log"
+    "log",
+    "misc"
   ],
   "dependencies": {
     "amqplib": "^0.5.1",

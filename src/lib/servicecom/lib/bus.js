@@ -26,6 +26,7 @@ class ServiceComBus {
         const opts = {
             uri: config.uri,
             routingKey: config.name,
+            noSynchronize: true,
             exchange: {
                 name: "servicecom",
                 type: "topic",

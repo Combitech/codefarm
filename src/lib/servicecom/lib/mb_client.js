@@ -33,7 +33,7 @@ class MbClient {
                 const r = this._retreiveRequest(request.message._id);
 
                 if (r) {
-                    console.error("Request timed out ", JSON.stringify(request.message, null, 2));
+                    console.error(`Request to ${this.serviceName} timed out `, JSON.stringify(request.message, null, 2));
                     request.deferred.reject("Request timed out");
                 }
             }, request.timeout);
@@ -43,11 +43,11 @@ class MbClient {
     _retreiveRequest(id) {
         const index = this.requests.findIndex((request) => request.message._id === id);
 
-        if (index == -1) {
+        if (index === -1) {
             return false;
         }
 
-        const request =  this.requests.splice(index, 1)[0];
+        const request = this.requests.splice(index, 1)[0];
 
         if (request.timer) {
             clearTimeout(request.timer);

@@ -61,7 +61,7 @@ class Controller {
                 hostname: os.hostname(),
                 service: this.msgbus.getRoutingKey()
             }
-        }
+        };
 
         await this.msgbus.publishRaw(response, message.source.service);
     }
@@ -77,6 +77,7 @@ class Controller {
             if (!method) {
                 this._throw("No such method", 400);
             }
+
 
             const result = await method(...message.data.params);
 

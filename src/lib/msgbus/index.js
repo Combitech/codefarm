@@ -6,6 +6,7 @@ const moment = require("moment");
 const { v4: uuid } = require("uuid");
 const log = require("log");
 const ProviderClient = require("providerclient");
+const { synchronize } = require("misc");
 
 /**
  * Class implementing a message bus on top of RabbitMQ.
@@ -22,6 +23,10 @@ class MsgBus extends ProviderClient {
         this.connection = null;
         this.channel = null;
         this.exchange = null;
+
+        if (!this.config.noSynchronize) {
+            synchronize(this, "_handleMessage");
+        }
     }
 
     static get typeName() {
@@ -62,20 +67,11 @@ class MsgBus extends ProviderClient {
 
                     queue = await this.channel.bindQueue(queue.queue, this.config.exchange.name, this.getRoutingKey());
 
-                    // Use previousConsumed promise to serialize execution of
-                    // message consumption...
-                    let previousConsumed = Promise.resolve();
                     this.channel.consume(queue.queue, (msg) => {
-                        previousConsumed = previousConsumed.then(async () => {
-                            let content = msg.content;
-
-                            if (msg.properties.contentType === "application/json") {
-                                content = JSON.parse(content.toString());
-                            }
-
-                            await this.emit("data", content, msg);
-
-                            this.channel.ack(msg);
+                        this._handleMessage(msg)
+                        .catch((error) => {
+                            console.error("Message handler encountered an error while processing", error);
+                            // TODO: Should we die?
                         });
                     });
                 }
@@ -83,6 +79,18 @@ class MsgBus extends ProviderClient {
         }
 
         await this.emit("connect");
+    }
+
+    async _handleMessage(msg) {
+        let content = msg.content;
+
+        if (msg.properties.contentType === "application/json") {
+            content = JSON.parse(content.toString());
+        }
+
+        await this.emit("data", content, msg);
+
+        this.channel.ack(msg);
     }
 
     async publish(event) {

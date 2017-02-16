@@ -1,6 +1,6 @@
 "use strict";
 
-const { ServiceMgr } = require("service");
+const { ServiceComBus } = require("servicecom");
 const { assertType, assertProp } = require("misc");
 
 let instance;
@@ -44,17 +44,12 @@ class BaselineFlowsResolver {
         }
 
         const [ serviceId, typeName ] = ref.type.split(".");
-
-        if (!ServiceMgr.instance.has(serviceId)) {
-            throw new Error(`No such service, ${serviceId}`);
-        }
-
-        const restClient = await ServiceMgr.instance.use(serviceId);
+        const client = ServiceComBus.instance.getClient(serviceId);
 
         if (ref.id.constructor === Array) {
             let result = [];
             if (ref.id.length > 0) {
-                result = await restClient.get(`/${typeName}`, {
+                result = await client.list(typeName, {
                     _id: {
                         $in: ref.id
                     }
@@ -64,7 +59,7 @@ class BaselineFlowsResolver {
             return result;
         }
 
-        return await restClient.get(`/${typeName}/${ref.id}`, {});
+        return await client.get(typeName, ref.id);
     }
 
     async _list(type, query) {
@@ -73,24 +68,22 @@ class BaselineFlowsResolver {
         }
 
         const [ serviceId, typeName ] = type.split(".");
+        const client = ServiceComBus.instance.getClient(serviceId);
 
-        if (!ServiceMgr.instance.has(serviceId)) {
-            throw new Error(`No such service, ${serviceId}`);
-        }
-
-        const restClient = await ServiceMgr.instance.use(serviceId);
-
-        return await restClient.get(`/${typeName}`, query);
+        return await client.list(typeName, query);
     }
 
     async _resolve(opts, oldData, updatedRef = false) {
         let root = oldData;
         let refs = [];
+
         if (!oldData || updatedRef) {
             const steps = await this._list("flowctrl.step", {
                 "baseline.id": opts.baselineName
             });
+
             let flowIds = null;
+
             if (steps) {
                 // Take flowId from all steps and remove duplicates
                 flowIds = steps
@@ -102,6 +95,7 @@ class BaselineFlowsResolver {
             }
 
             let flows = [];
+
             if (flowIds && flowIds.length > 0) {
                 flows = await this._list("flowctrl.flow", {
                     _id: { $in: flowIds }
