@@ -69,10 +69,10 @@ class Step extends Type {
         if (evaluateJobs) {
             if (this.jobs.length > 0) {
                 const jobIds = this.jobs.map((job) => job.jobId);
-                const exec = await ServiceMgr.instance.use("exec");
+                const client = ServiceComBus.instance.getClient("exec");
 
                 try {
-                    const finishedJobs = await exec.get("/job", {
+                    const finishedJobs = await client.list("job", {
                         _id: {
                             $in: jobIds
                         },
@@ -105,15 +105,11 @@ class Step extends Type {
     }
 
     async requestBaseline() {
-        const baselineGen = await ServiceMgr.instance.use("baselinegen");
+        const client = ServiceComBus.instance.getClient("baselinegen");
 
         ServiceMgr.instance.log("verbose", `Step ${this.name} requesting baseline ${this.baseline.id}`);
 
-        const result = await baselineGen.post(`/specification/${this.baseline.id}/request`);
-
-        if (result.result !== "success") {
-            throw Error(`Failed to request new baseline: ${result.error}`);
-        }
+        await client.request("specification", this.baseline.id);
     }
 
     async triggerJob(baseline) {
@@ -125,20 +121,16 @@ class Step extends Type {
 
         ServiceMgr.instance.log("verbose", `Step ${this.name} creating exec.job`);
 
-        const exec = await ServiceMgr.instance.use("exec");
+        const client = ServiceComBus.instance.getClient("exec");
 
-        const result = await exec.post("/job", {
+        const data = await client.create("job", {
             name: this.name,
             criteria: this.criteria,
             script: this.script,
             baseline: baseline
         });
 
-        if (result.result !== "success") {
-            throw Error(`Failed to spawn job log: ${result.error}`);
-        }
-
-        this.jobs.push({ jobId: result.data._id, baseline: baseline });
+        this.jobs.push({ jobId: data._id, baseline: baseline });
         await this.save();
 
         for (const ref of baseline.content) {
@@ -149,8 +141,8 @@ class Step extends Type {
                 await client.addref(typeName, id, {
                     ref: {
                         _ref: true,
-                        id: result.data._id,
-                        type: result.data.type,
+                        id: data._id,
+                        type: data.type,
                         name: this.name
                     }
                 });
