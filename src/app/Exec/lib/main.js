@@ -24,6 +24,7 @@ class Main extends Service {
         await this.need("db", "mgmt", Database, this.config.db);
         await this.need("lb", "mgmt", LogBus, this.config.logBus);
 
+        // Need HttpClient to upload files
         await this.need("logrepo", "logrepo", HttpClient, this.config.logRepo);
         await this.need("artifactrepo", "artifactrepo", HttpClient, this.config.artifactRepo);
     }
