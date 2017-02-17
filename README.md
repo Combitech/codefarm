@@ -6,20 +6,7 @@ storing state in a MongoDB database.
 
 The unique feature of Code Farm is a **developer centric view** where it's possible to
 track how a *code revision* or *artifact* has performed in different tests and/or builds.
-
-![Example CI Flow](https://g.gravizo.com/source/g_ci_flow_ex_a?https%3A%2F%2Fraw.githubusercontent.com%2FCombitech%2Fcodefarm%2Fmaster%2FREADME.md)
-<!---
-g_ci_flow_ex_a
-digraph G {
-  rankdir="LR";
-  node [ shape="rect" ];
-  Revision -> Gate
-  Gate -> Test
-  Gate -> Build
-}
-g_ci_flow_ex_a
---->
-
+![Example CI Flow](http://yuml.me/diagram/scruffy/class/[Revision]-->[Gate], [Gate]-->[Test], [Gate]-->[Build])
 
 ## Micro-services
 Code Farm consists of the following services:
@@ -92,7 +79,7 @@ Navigate your browser to [http://localhost:9898](http://localhost:9898)
 A CI flow in Code Farm is represented by a number of *steps*. Each *step* is associated with a *baseline specification*
 and is triggered to run when a new *baseline* is generated from the associated *baseline specification*. A *baseline* consists of collected references to type instances. The *step* may contain a *job* represented by a custom script.
 
-See [[Flows]] on wiki for more information.
+See [flows page](../../wiki/Flows) on wiki for more information.
 
 ## External dependencies
 * RabbitMQ
