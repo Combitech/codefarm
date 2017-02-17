@@ -11,8 +11,8 @@ class ServiceMonitor {
     constructor() {
         this.serviceInfo = {};
         this.listeners = [];
-        api.mgmtApi.on("stateEvent", this.notifyStateEvent.bind(this));
         this.deferredNotifyListeners = null;
+        this.notifyStateEventSubscription = null;
     }
 
     static get instance() {
@@ -21,6 +21,26 @@ class ServiceMonitor {
         }
 
         return instance;
+    }
+
+    _tryStartServerSubscriptions() {
+        if (!this.notifyStateEventSubscription) {
+            this.notifyStateEventSubscription = api.mgmtApi.on(
+                "stateEvent",
+                this.notifyStateEvent.bind(this)
+            );
+        }
+    }
+
+    _tryStopServerSubscriptions() {
+        if (this.notifyStateEventSubscription) {
+            api.mgmtApi.off(this.notifyStateEventSubscription);
+            this.notifyStateEventSubscription = null;
+
+            // Empty service cache since no one is listening
+            this._cancelNotifyListenersLater();
+            this._resetServices();
+        }
     }
 
     notifyStateEvent(event) {
@@ -70,6 +90,8 @@ class ServiceMonitor {
         // Make sure that listener have the latest data
         listener(this.services);
 
+        this._tryStartServerSubscriptions();
+
         return {
             dispose: this.removeServiceInfoListener.bind(this, listener)
         };
@@ -80,13 +102,23 @@ class ServiceMonitor {
         if (indexToRemove !== -1) {
             this.listeners.splice(indexToRemove, 1);
         }
+
+        // Stop subscription if no listeners
+        if (this.listeners.length === 0) {
+            this._tryStopServerSubscriptions();
+        }
+    }
+
+    _resetServices() {
+        for (const id of Object.keys(this.serviceInfo)) {
+            this.serviceInfo[id].dispose();
+            delete this.serviceInfo[id];
+        }
     }
 
     dispose() {
         this._cancelNotifyListenersLater();
-        for (const id of Object.keys(this.services)) {
-            this.serviceInfo[id].dispose();
-        }
+        this._resetServices();
     }
 }
 
