@@ -7,10 +7,11 @@ import {
     Section as TASection,
     List as TAList
 } from "ui-components/type_admin";
-import UserAvatar from "./UserAvatar";
+import CollaboratorAvatar from "ui-components/collaborator_avatar";
 import TeamListItem from "./TeamListItem";
 import * as pathBuilder from "ui-lib/path_builder";
 import * as queryBuilder from "ui-lib/query_builder";
+import theme from "./theme.scss";
 
 class Item extends Component {
     constructor(props) {
@@ -91,9 +92,10 @@ class Item extends Component {
                             </Col>
                             <Col xs={12} md={7} className={this.props.theme.panel}>
                                 <h6 className={this.props.theme.title}>Avatar</h6>
-                                <UserAvatar
-                                    userId={this.props.item._id}
-                                    meta={this.props.item.avatar.meta}
+                                <CollaboratorAvatar
+                                    id={this.props.item._id}
+                                    avatarType={"useravatar"}
+                                    className={theme.avatarLarge}
                                 />
                             </Col>
                         </Row>

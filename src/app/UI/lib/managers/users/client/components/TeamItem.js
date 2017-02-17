@@ -8,7 +8,9 @@ import {
     List as TAList
 } from "ui-components/type_admin";
 import UserListItem from "./UserListItem";
+import CollaboratorAvatar from "ui-components/collaborator_avatar";
 import * as pathBuilder from "ui-lib/path_builder";
+import theme from "./theme.scss";
 
 class Item extends Component {
     constructor(props) {
@@ -67,8 +69,6 @@ class Item extends Component {
                                         </tr>
                                     </tbody>
                                 </table>
-                            </Col>
-                            <Col xs={12} md={7} className={this.props.theme.panel}>
                                 <h6 className={this.props.theme.title}>Users</h6>
                                 <TAList
                                     type="userrepo.user"
@@ -79,6 +79,14 @@ class Item extends Component {
                                             pathname: pathBuilder.fromType("userrepo.user", item)
                                         });
                                     }}
+                                />
+                            </Col>
+                            <Col xs={12} md={7} className={this.props.theme.panel}>
+                                <h6 className={this.props.theme.title}>Avatar</h6>
+                                <CollaboratorAvatar
+                                    id={this.props.item._id}
+                                    avatarType={"teamavatar"}
+                                    className={theme.avatarLarge}
                                 />
                             </Col>
                         </Row>

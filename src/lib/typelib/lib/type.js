@@ -30,6 +30,19 @@ class Type {
         return `${this.serviceName}.${this.typeName}`;
     }
 
+    getRef(name) {
+        const ref = {
+            _ref: true,
+            id: this._id,
+            type: this.constructor.getType()
+        };
+        if (name) {
+            ref.name = name;
+        }
+
+        return ref;
+    }
+
     serialize() {
         return this._serializeForDb();
     }
@@ -139,6 +152,22 @@ class Type {
         }
 
         return this._instantiate(data);
+    }
+
+    static async findRef(ref, options) {
+        assertType(ref, "ref", "ref");
+        if (ref.type !== this.getType) {
+            throw new Error("ref.type doesn't match type");
+        }
+        if (ref.id.constructor === Array) {
+            return this.findMany({
+                _id: {
+                    $in: ref.id
+                }
+            }, options);
+        }
+
+        return this.findOne({ _id: ref.id }, options);
     }
 
     async _saveHook() {

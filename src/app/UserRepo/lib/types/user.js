@@ -1,11 +1,10 @@
 "use strict";
 
-const { serviceMgr } = require("service");
-const { assertType, assertProp, StreamConverter } = require("misc");
+const { ServiceMgr } = require("service");
+const { assertType, assertProp } = require("misc");
 const { Type } = require("typelib");
 const BackendProxy = require("../backend_proxy");
 const Team = require("./team");
-const { encodeBinary, decodeBinary } = require("database");
 
 class User extends Type {
     constructor(data) {
@@ -17,7 +16,6 @@ class User extends Type {
         this.telephone = false;
         this.keys = [];
         this.teams = [];
-        this.avatar = {};
 
         if (data) {
             this.set(data);
@@ -25,7 +23,7 @@ class User extends Type {
     }
 
     static get serviceName() {
-        return serviceMgr.serviceName;
+        return ServiceMgr.instance.serviceName;
     }
 
     static get typeName() {
@@ -33,11 +31,11 @@ class User extends Type {
     }
 
     static async _getDb() {
-        return await serviceMgr.use("db");
+        return await ServiceMgr.instance.use("db");
     }
 
     static async _getMb() {
-        return serviceMgr.msgBus;
+        return ServiceMgr.instance.msgBus;
     }
 
     serialize() {
@@ -46,9 +44,6 @@ class User extends Type {
 
         // We don't want to expose the keys
         delete data.keys;
-
-        // We don't want to send the avatar on each request
-        delete data.avatar.data;
 
         return data;
     }
@@ -126,34 +121,6 @@ class User extends Type {
         this.keys.push(key);
 
         await this.save();
-    }
-
-    async setAvatar(fileStream) {
-        const fileBuf = await new StreamConverter(fileStream).toBuffer();
-        const binData = encodeBinary(fileBuf);
-
-        this.avatar = {
-            data: binData,
-            meta: {
-                size: fileStream.bytesRead,
-                mimeType: fileStream.mimeType,
-                path: fileStream.path,
-                filename: fileStream.filename,
-                fieldname: fileStream.fieldname
-            }
-        };
-
-        await this.save();
-    }
-
-    async getAvatar() {
-        if (!this.avatar.data) {
-            const error = new Error("No avatar uploaded");
-            error.status = 404;
-            throw error;
-        }
-
-        return decodeBinary(this.avatar.data);
     }
 }
 

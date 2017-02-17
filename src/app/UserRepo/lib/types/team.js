@@ -1,6 +1,6 @@
 "use strict";
 
-const { serviceMgr } = require("service");
+const { ServiceMgr } = require("service");
 const { assertType, assertProp } = require("misc");
 const { Type } = require("typelib");
 const BackendProxy = require("../backend_proxy");
@@ -20,7 +20,7 @@ class Team extends Type {
     }
 
     static get serviceName() {
-        return serviceMgr.serviceName;
+        return ServiceMgr.instance.serviceName;
     }
 
     static get typeName() {
@@ -28,11 +28,11 @@ class Team extends Type {
     }
 
     static async _getDb() {
-        return await serviceMgr.use("db");
+        return await ServiceMgr.instance.use("db");
     }
 
     static async _getMb() {
-        return serviceMgr.msgBus;
+        return ServiceMgr.instance.msgBus;
     }
 
     async _saveHook(olddata) {

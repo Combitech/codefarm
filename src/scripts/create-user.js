@@ -30,6 +30,11 @@ const argv = yargs
     requiresArg: true,
     default: "Dummy"
 })
+.option("email", {
+    describe: "User email",
+    type: "string",
+    requiresArg: true
+})
 .option("k", {
     alias: "key",
     describe: "Public key",
@@ -71,6 +76,7 @@ const run = async () => {
                 _id: argv.id,
                 name: argv.name,
                 teams: argv.teams,
+                email: argv.email,
                 backend: argv.backend
             },
             json: true
@@ -92,19 +98,30 @@ const run = async () => {
     }
 
     if (argv.avatar) {
-        console.log(`Adding avatar to user ${argv.id}`);
-        // const fileType = "png";
+        console.log(`Creating avatar for user ${argv.id}`);
+        try {
+            result = await rp.post({
+                url: `http://localhost:${configUserRepo.web.port}/useravatar`,
+                body: {
+                    _id: argv.id
+                },
+                json: true
+            });
+        } catch (error) {
+            if (error.error.error !== `Object with id ${argv.id} already exist`) {
+                console.error("Error occured when creating avatar", error);
+            }
+        }
+        console.log(`Uploading avatar for user ${argv.id}`);
         result = await rp.post({
-            url: `http://localhost:${configUserRepo.web.port}/user/${argv.id}/setavatar`,
-            /* headers: {
-                "Content-Type": `image/${fileType}`
-            }, */
+            url: `http://localhost:${configUserRepo.web.port}/useravatar/${argv.id}/upload`,
             formData: {
                 file: fs.createReadStream(argv.avatar)
             }
         });
-
-        console.dir(JSON.parse(result), { colors: true, depth: null });
+        if (!result) {
+            console.error("Error uploading avatar");
+        }
     }
 };
 

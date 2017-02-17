@@ -1,7 +1,7 @@
 
 import React from "react";
 import Component from "ui-lib/component";
-import UsersUserAvatar from "ui-mgr/users/client/components/UserAvatar";
+import CollaboratorAvatar from "ui-components/collaborator_avatar";
 import FontIcon from "react-toolbox/lib/font_icon";
 
 class UserAvatar extends Component {
@@ -14,16 +14,18 @@ class UserAvatar extends Component {
 
     render() {
         let avatar = null;
+        const noAvatarElement = <FontIcon value={this.props.noAvatarIconName} />;
 
         if (this.state.user) {
             if (this.state.user.length === 1) {
                 const user = this.state.user[0];
                 if (user) {
                     avatar = (
-                        <UsersUserAvatar
-                            userId={user._id}
-                            meta={user.avatar.meta}
+                        <CollaboratorAvatar
+                            id={user._id}
+                            avatarType={"useravatar"}
                             className={this.props.className}
+                            failureElement={noAvatarElement}
                         />
                     );
                 }
@@ -34,7 +36,7 @@ class UserAvatar extends Component {
 
         // Use default icon if no icon is specified or if avatar is loading
         if (!avatar) {
-            avatar = <FontIcon value={this.props.noAvatarIconName} />;
+            avatar = noAvatarElement;
         }
 
         return avatar;
