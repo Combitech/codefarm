@@ -6,6 +6,7 @@ storing state in a MongoDB database.
 
 The unique feature of Code Farm is a **developer centric view** where it's possible to
 track how a *code revision* or *artifact* has performed in different tests and/or builds.
+
 ![Example CI Flow](http://yuml.me/diagram/scruffy/class/[Revision]-->[Gate], [Gate]-->[Test], [Gate]-->[Build])
 
 ## Micro-services
