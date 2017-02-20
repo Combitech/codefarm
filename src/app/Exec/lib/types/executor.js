@@ -85,7 +85,7 @@ class Executor extends Type {
 
     async allocateLog(nameTag = "", tags = []) {
         await this._logln("Allocating log file");
-        const obj = await this.createType("logrepo.log", { // TODO: parentIds
+        const obj = await this.createType("logrepo.log", {
             name: `${this.jobName}-${nameTag}`,
             tags: tags
         });
