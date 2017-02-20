@@ -130,12 +130,12 @@ describe("LogRepo", () => {
         assertLogData(result.data, data.name, data.repository);
 
         if (repoPath) {
+            // TODO uncomment this assert and correct code
             // Check that log file is not created
-            const logRelPathParts = result.data._id.split("-");
-            const logPath = path.join(repoPath, ...logRelPathParts);
-            const exist = await fs.existsAsync(logPath);
-// TODO uncomment this assert and correct code
-//            assert(!exist, "Log already exist");
+            // const logRelPathParts = result.data._id.split("-");
+            // const logPath = path.join(repoPath, ...logRelPathParts);
+            // const exist = await fs.existsAsync(logPath);
+            // assert(!exist, "Log already exist");
         }
 
         return result.data;

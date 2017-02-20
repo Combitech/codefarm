@@ -1,6 +1,6 @@
 "use strict";
 
-/* global describe it before after */
+/* global describe it before */
 
 const { assert } = require("chai");
 const Database = require("./lib/database");
@@ -81,7 +81,7 @@ const testcases = (env) => {
 
         it("should get error with invalid action", async () => {
             try {
-                await env.client.stuff("thing", "1", { 1: 0});
+                await env.client.stuff("thing", "1", { 1: 0 });
 
                 assert(false, "Should have thrown");
             } catch (error) {
