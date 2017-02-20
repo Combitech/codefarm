@@ -677,13 +677,12 @@ describe("Exec", () => {
 
             /* Test script will merge a revision. */
             const testScript = `#!/bin/bash -e
+                CLI="node --harmony_async_await $\{PWD\}/cli.js"
                 echo I will merge a revision
-                numRevs=$CF_JOB_BASELINE_CONTENT_COMMITS_ID_LENGTH
-                lastRev=$(echo "$numRevs-1"|bc)
-                revVar="CF_JOB_BASELINE_CONTENT_COMMITS_ID_$lastRev"
-                revision=\${!revVar}
-                echo Merge revision $revision read from variable $revVar
-                response=$(node --harmony_async_await ./cli.js merge_revision $revision)
+                jobData=( $($CLI -q '$.job.baseline.content[?(@.name === "commits")].id[-1:]' --format values load_file $\{PWD\}/data.json) )
+                revision=$\{jobData[0]\}
+                echo Merge revision $revision read from data.json
+                response=( $($CLI merge_revision $revision) )
                 echo Merge revision response: $response
                 exit 0
             `;
@@ -698,13 +697,14 @@ describe("Exec", () => {
                     baseline: {
                         _id: "baseline1",
                         name: "myBaseline",
-                        content: {
-                            "commits": {
+                        content: [
+                            {
                                 _ref: true,
+                                name: "commits",
                                 type: "coderepo.revision",
                                 id: [ "change1", "change2", "lastChange" ]
                             }
-                        }
+                        ]
                     }
                 }
             });

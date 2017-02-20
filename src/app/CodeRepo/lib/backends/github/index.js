@@ -85,7 +85,7 @@ class GithubBackend extends AsyncEventEmitter {
             name: event.pull_request.user.login,
             submitted: moment(event.pull_request.created_at).utc().format(),
             comment: event.pull_request.title,
-            pullreqnr: event.pull_request.number,
+            pullreqnr: event.pull_request.number.toString(),
             change: {
                 oldrev: event.pull_request.base.sha,
                 newrev: overrideSha ? overrideSha : event.pull_request.head.sha,
@@ -214,6 +214,7 @@ class GithubBackend extends AsyncEventEmitter {
                         name: commit.author.name,
                         submitted: commit.timestamp,
                         comment: commit.message,
+                        pullreqnr: "-1",
                         change: {
                             oldrev: null, // TODO: set this
                             newrev: commit.id,
@@ -349,7 +350,7 @@ class GithubBackend extends AsyncEventEmitter {
     }
 
     async getUri(backend, repository) {
-        return `${GITHUB_BASE}/${this.backend.target}/${repository._id}`;
+        return `${GITHUB_BASE}/${this.backend.target}/${repository._id}.git`;
     }
 
 
