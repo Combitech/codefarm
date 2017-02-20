@@ -92,11 +92,11 @@ class ServiceComBus extends AsyncEventEmitter {
 
         if (pending.timeout) {
             pending.timer = setTimeout(() => {
-                const r = this._retreiveRequest(pending.request._id);
+                const r = this._retreivePendingRequest(pending.request._id);
 
                 if (r) {
                     console.error(`Request to ${pending.targetService} timed out `, JSON.stringify(pending.request, null, 2));
-                    request.deferred.reject("Request timed out");
+                    pending.deferred.reject("Request timed out");
                 }
             }, pending.timeout);
         }
