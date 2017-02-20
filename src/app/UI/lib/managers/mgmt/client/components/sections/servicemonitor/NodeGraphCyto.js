@@ -1,19 +1,32 @@
+import moment from "moment";
 import React from "react";
 import { Row, Col } from "react-flexbox-grid";
 import { Card, CardText } from "react-toolbox/lib/card";
 import Switch from "react-toolbox/lib/switch";
+import Input from "react-toolbox/lib/input";
 import Cytoscape from "./Cytoscape";
 import Component from "ui-lib/component";
 import NodeInfoCard from "./NodeInfoCard";
 import STATE from "../../../../lib/types/service_state";
 
-const buildGraph = (services) => {
+const LINK_STATE = {
+    INACTIVE: "INACTIVE",
+    UNSTABLE: "UNSTABLE",
+    INITIATED: "INITIATED",
+    ALIVE: "ALIVE"
+};
+
+const HIDE_INTERACTION_IN_SECONDS = 120;
+const LINK_OPACITY_MIN = 0.4;
+
+const buildGraph = (services, maxAge = 0) => {
     const g = {
         nodes: [],
         links: []
     };
 
     if (services) {
+        const oldestShown = (maxAge && maxAge > 0) ? moment().subtract(maxAge, "s") : false;
         for (const service of services) {
             const node = {
                 id: service.id,
@@ -22,19 +35,80 @@ const buildGraph = (services) => {
                 service: service
             };
             g.nodes.push(node);
+
+            // Add explicit dependencies
             for (const useKey of Object.keys(service.uses)) {
                 const use = service.uses[useKey];
                 // Add link if it doesn't already exist.
                 const existingLinks = g.links.filter(
-                    (l) => l.source === node && l.target === use.name && l.state === use.state
+                    (l) => l.source === node && l.target === use.name
                 );
                 if (existingLinks.length === 0) {
                     g.links.push({
                         source: node,
                         target: use.name,
-                        state: use.state,
-                        isStrong: use.dependencyType === "need"
+                        isExplicit: true,
+                        isStrong: use.dependencyType === "need",
+                        linkState: LINK_STATE.INACTIVE
                     });
+                }
+            }
+
+            // Implicit dependencies (communication interactions)
+            if (service.status) {
+                for (const serviceKey of Object.keys(service.status)) {
+                    const serviceStatus = service.status[serviceKey];
+                    let linkState = LINK_STATE.INACTIVE;
+                    let linkLastEvent;
+                    const considerProp = (propName) =>
+                        serviceStatus[propName] &&
+                        serviceStatus[propName] > 0 &&
+                        (!oldestShown || oldestShown.isSameOrAfter(serviceStatus[`${propName}.modified`]));
+                    if (considerProp("requestsSent")) {
+                        linkState = LINK_STATE.INITIATED;
+                        linkLastEvent = serviceStatus["requestsSent.modified"];
+                    }
+                    let lastOkResponse;
+                    if (considerProp("responsesOk")) {
+                        linkState = LINK_STATE.ALIVE;
+                        linkLastEvent = serviceStatus["responsesOk.modified"];
+                        lastOkResponse = linkLastEvent;
+                    }
+                    // Do not set unstable if successfull response after
+                    // set unstable
+                    if (considerProp("timeouts")) {
+                        const lastErrorTime = serviceStatus["timeouts.modified"];
+                        if (!lastOkResponse || moment(lastErrorTime).isAfter(lastOkResponse)) {
+                            linkState = LINK_STATE.UNSTABLE;
+                            linkLastEvent = lastErrorTime;
+                        }
+                    }
+                    if (considerProp("responsesNotOk")) {
+                        const lastErrorTime = serviceStatus["responsesNotOk.modified"];
+                        if (!lastOkResponse || moment(lastErrorTime).isAfter(lastOkResponse)) {
+                            linkState = LINK_STATE.UNSTABLE;
+                            linkLastEvent = lastErrorTime;
+                        }
+                    }
+
+                    const existingLinks = g.links.filter(
+                        (l) => l.source === node && l.target === serviceKey
+                    );
+                    if (existingLinks.length === 0) {
+                        g.links.push({
+                            source: node,
+                            target: serviceKey,
+                            linkState: linkState,
+                            isRecent: true,
+                            isExplicit: false,
+                            linkLastEvent: linkLastEvent
+                        });
+                    } else {
+                        existingLinks.forEach((l) => {
+                            l.linkState = linkState;
+                            l.linkLastEvent = linkLastEvent;
+                        });
+                    }
                 }
             }
         }
@@ -62,7 +136,8 @@ class NodeGraphCyto extends Component {
     constructor(props) {
         super(props);
         this.addStateVariable("serviceInfo", []);
-        this.addStateVariable("showWeakDeps", false);
+        this.addStateVariable("showExplicitDeps", false);
+        this.addStateVariable("maxAge", "");
     }
 
     showServiceInfo(service) {
@@ -109,7 +184,7 @@ class NodeGraphCyto extends Component {
 
     render() {
         const stateColor = this.props.stateColors;
-        const graph = buildGraph(this.props.services);
+        const graph = buildGraph(this.props.services, this.state.maxAge.value);
 
         const elements = [];
         for (const node of graph.nodes) {
@@ -126,21 +201,42 @@ class NodeGraphCyto extends Component {
             });
         }
 
-        for (const link of graph.links) {
-            if (link.isStrong || this.state.showWeakDeps.value) {
-                elements.push({
-                    group: "edges",
-                    data: {
-                        id: `${link.source.id}->${link.target.id}`,
-                        source: link.source.id,
-                        target: link.target.id,
-                        classes: "bezier",
-                        color: stateColor[link.state],
-                        lineStyle: link.isStrong ? "solid" : "dashed",
-                        width: link.isStrong ? 4 : 2
-                    }
-                });
+        const showExplicitDepsOnly = this.state.showExplicitDeps.value;
+        const links = graph.links.filter((l) => {
+            if (showExplicitDepsOnly) {
+                return l.isExplicit;
             }
+
+            return l.linkState !== LINK_STATE.INACTIVE;
+        });
+        for (const link of links) {
+            let lineStyle = "solid";
+            let lineOpacity = 1.0;
+            let lineWidth = 4;
+            let lineColor = stateColor[LINK_STATE.INACTIVE];
+
+            if (showExplicitDepsOnly) {
+                lineStyle = link.isStrong ? "solid" : "dashed";
+                lineWidth = link.isStrong ? 4 : 2;
+            } else {
+                lineColor = stateColor[link.linkState];
+                const eventAge = moment().diff(link.linkLastEvent, "seconds");
+                lineOpacity = 1.0 - (eventAge / HIDE_INTERACTION_IN_SECONDS);
+                lineOpacity = Math.max(lineOpacity, LINK_OPACITY_MIN);
+            }
+            elements.push({
+                group: "edges",
+                data: {
+                    id: `${link.source.id}->${link.target.id}`,
+                    source: link.source.id,
+                    target: link.target.id,
+                    classes: "bezier",
+                    color: lineColor,
+                    lineStyle: lineStyle,
+                    width: lineWidth,
+                    opacity: lineOpacity
+                }
+            });
         }
 
         const graphColWidths = {
@@ -162,12 +258,23 @@ class NodeGraphCyto extends Component {
                         <Card>
                             <CardText>
                                 <Row>
-                                    <Col xs={12}>
+                                    <Col md={6}>
                                         <Switch
-                                            label="Show weak dependencies"
-                                            checked={this.state.showWeakDeps.value}
-                                            onChange={this.state.showWeakDeps.toggle}
+                                            label="Show explicit dependencies"
+                                            checked={this.state.showExplicitDeps.value}
+                                            onChange={this.state.showExplicitDeps.toggle}
                                         />
+                                    </Col>
+                                    <Col md={6}>
+                                        {!this.state.showExplicitDeps.value &&
+                                            <Input
+                                                type="number"
+                                                label="Hide interactions older than"
+                                                hint="Seconds"
+                                                value={this.state.maxAge.value}
+                                                onChange={this.state.maxAge.set}
+                                            />
+                                        }
                                     </Col>
                                 </Row>
                                 <Row>

@@ -48,7 +48,7 @@ class Cytoscape extends React.Component {
                     "line-color": "data(color)",
                     "target-arrow-color": "data(color)",
                     "target-arrow-shape": "triangle",
-                    "opacity": 0.8,
+                    "opacity": "data(opacity)",
                     "line-style": "data(lineStyle)"
                 })
         };

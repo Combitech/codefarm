@@ -16,6 +16,7 @@ class ServiceComBus extends AsyncEventEmitter {
         this.clients = {};
         this.msgbus = false;
         this.requests = [];
+        this.serviceStatistics = {};
     }
 
     async start(config) {
@@ -57,6 +58,21 @@ class ServiceComBus extends AsyncEventEmitter {
         await this.msgbus.start();
     }
 
+    _incServiceStatistic(targetService, stats) {
+        if (!(targetService in this.serviceStatistics)) {
+            this.serviceStatistics[targetService] = {};
+        }
+        const serviceStats = this.serviceStatistics[targetService];
+        for (const [ statKey, statInc ] of Object.entries(stats)) {
+            if (!(statKey in serviceStats)) {
+                serviceStats[statKey] = 0;
+            }
+
+            serviceStats[statKey] = serviceStats[statKey] + statInc;
+            serviceStats[`${statKey}.modified`] = moment().utc().format();
+        }
+    }
+
     async _onData(message) {
         if (message.type === "response") {
             const pending = this._retreivePendingRequest(message._id);
@@ -69,8 +85,10 @@ class ServiceComBus extends AsyncEventEmitter {
                 const error = new Error(message.data);
                 error.status = message.status;
 
+                this._incServiceStatistic(pending.targetService, { "responsesNotOk": 1 });
                 pending.deferred.reject(error);
             } else {
+                this._incServiceStatistic(pending.targetService, { "responsesOk": 1 });
                 pending.deferred.resolve(message.data);
             }
         } else if (message.type === "request") {
@@ -80,14 +98,16 @@ class ServiceComBus extends AsyncEventEmitter {
 
     _addPendingRequest(pending) {
         this.requests.push(pending);
+        this._incServiceStatistic(pending.targetService, { "requestsSent": 1 });
 
         if (pending.timeout) {
             pending.timer = setTimeout(() => {
                 const r = this._retreivePendingRequest(pending.request._id);
 
                 if (r) {
-                    console.error(`Request to ${pending.targetService} timed out `, JSON.stringify(pending.request, null, 2));
-                    pending.deferred.reject("Request timed out");
+                    console.error(`Request to ${r.targetService} timed out `, JSON.stringify(pending.request, null, 2));
+                    this._incServiceStatistic(r.targetService, { "timeouts": 1 });
+                    r.deferred.reject("Request timed out");
                 }
             }, pending.timeout);
         }
@@ -100,14 +120,14 @@ class ServiceComBus extends AsyncEventEmitter {
             return false;
         }
 
-        const pedning = this.requests.splice(index, 1)[0];
+        const pending = this.requests.splice(index, 1)[0];
 
-        if (pedning.timer) {
-            clearTimeout(pedning.timer);
-            pedning.timer = null;
+        if (pending.timer) {
+            clearTimeout(pending.timer);
+            pending.timer = null;
         }
 
-        return pedning;
+        return pending;
     }
 
     async request(targetService, data, timeout) {
@@ -160,6 +180,34 @@ class ServiceComBus extends AsyncEventEmitter {
         for (const controller of controllers) {
             controller.setMb(this);
         }
+    }
+
+    get status() {
+        const status = {};
+        for (const req of this.requests) {
+            if (!(req.targetService in status)) {
+                status[req.targetService] = {
+                    numPending: 0,
+                    oldestPending: false
+                };
+            }
+            const serviceStatus = status[req.targetService];
+            serviceStatus.numPending++;
+            if (!serviceStatus.oldestPending ||
+                moment(req.request.time).isBefore(moment(serviceStatus.oldestPending))) {
+                serviceStatus.oldestPending = req.request.time;
+            }
+        }
+
+        // Statistics
+        for (const [ service, stats ] of Object.entries(this.serviceStatistics)) {
+            if (!(service in status)) {
+                status[service] = {};
+            }
+            Object.assign(status[service], stats);
+        }
+
+        return status;
     }
 
     async dispose() {

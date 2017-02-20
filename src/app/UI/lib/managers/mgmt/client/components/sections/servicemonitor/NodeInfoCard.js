@@ -60,6 +60,17 @@ class NodeInfoCard extends Component {
         const needList = useList.filter((use) => use.dependencyType === "need");
         const wantList = useList.filter((use) => use.dependencyType === "want");
 
+        const serviceStatus = [];
+        if (service && service.status) {
+            for (const serviceKey of Object.keys(service.status)) {
+                serviceStatus.push(Object.assign(
+                    { serviceName: serviceKey },
+                    service.status[serviceKey]
+                ));
+            }
+        }
+        const warnings = serviceStatus.filter((item) => item.timeouts > 0 || item.responsesNotOk > 0);
+
         return (
             <div>
                 <ExpandableCard expanded={this.state.expanded}>
@@ -67,38 +78,87 @@ class NodeInfoCard extends Component {
                         title={title}
                         subtitle={subtitle}
                     />
+                    {warnings.length > 0 &&
+                        <List>
+                            <ListSubHeader
+                                caption={"Warnings"}
+                            />
+                            {warnings.map((item) => (
+                                <div key={item.serviceName}>
+                                    {item.timeouts && item.timeouts > 0 &&
+                                        <ListItem
+                                            caption={`${item.timeouts} timeouts`}
+                                            legend={`when communicating with ${item.serviceName}`}
+                                        />
+                                    }
+                                    {item.responsesNotOk && item.responsesNotOk > 0 &&
+                                        <ListItem
+                                            caption={`${item.responsesNotOk} failed responses`}
+                                            legend={`when communicating with ${item.serviceName}`}
+                                        />
+                                    }
+                                </div>
+                            ))}
+                        </List>
+                    }
                     {this.state.expanded.value && service &&
-                        <div>
-                            <List>
-                                <ListSubHeader
-                                    caption={"Provides"}
-                                />
-                                {Object.keys(service.provides).map((provideKey) =>
-                                    <ListItem
-                                        key={provideKey}
-                                        caption={`${provideKey}`} />
-                                )}
-                                <ListDivider />
-                                <ListSubHeader
-                                    caption={"Needs"}
-                                />
-                                {needList.map((use, index) => (
-                                    <ListItem
-                                        key={index}
-                                        caption={`${use.type} service from ${use.name}`}
-                                        legend={`Observed state is ${use.state}`} />
-                                ))}
-                                <ListSubHeader
-                                    caption={"Wants"}
-                                />
-                                {wantList.map((use, index) => (
-                                    <ListItem
-                                        key={index}
-                                        caption={`${use.type} service from ${use.name}`}
-                                        legend={`Observed state is ${use.state}`} />
-                                ))}
-                            </List>
-                        </div>
+                        <List>
+                            <ListSubHeader
+                                caption={"Provides"}
+                            />
+                            {Object.keys(service.provides).map((provideKey) =>
+                                <ListItem
+                                    key={provideKey}
+                                    caption={`${provideKey}`} />
+                            )}
+                            <ListDivider />
+                            <ListSubHeader
+                                caption={"Needs"}
+                            />
+                            {needList.map((use, index) => (
+                                <ListItem
+                                    key={index}
+                                    caption={`${use.type} service from ${use.name}`}
+                                    legend={`Observed state is ${use.state}`} />
+                            ))}
+                            <ListSubHeader
+                                caption={"Wants"}
+                            />
+                            {wantList.map((use, index) => (
+                                <ListItem
+                                    key={index}
+                                    caption={`${use.type} service from ${use.name}`}
+                                    legend={`Observed state is ${use.state}`} />
+                            ))}
+                            <ListDivider />
+                            {serviceStatus.map((item) =>
+                                <div key={item.serviceName}>
+                                    <ListSubHeader
+                                        caption={`Statistics communicating with ${item.serviceName}`}
+                                    />
+                                    {item.requestsSent && item.requestsSent > 0 &&
+                                        <ListItem
+                                            caption={`${item.requestsSent || 0} requests sent`}
+                                        />
+                                    }
+                                    {item.responsesOk && item.responsesOk > 0 &&
+                                        <ListItem
+                                            caption={`${item.responsesOk || 0} successfull responses`}
+                                        />
+                                    }
+                                    {item.responsesNotOk && item.responsesNotOk > 0 &&
+                                        <ListItem
+                                            caption={`${item.responsesNotOk || 0} failed responses`}
+                                        />
+                                    }
+                                    {item.timeouts && item.timeouts > 0 &&
+                                        <ListItem
+                                            caption={`${item.timeouts || 0} timeouts`}
+                                        />
+                                    }
+                                </div>
+                            )}
+                        </List>
                     }
                     {isReady &&
                         <CardActions>

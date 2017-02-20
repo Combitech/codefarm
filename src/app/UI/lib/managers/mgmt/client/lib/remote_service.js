@@ -25,6 +25,7 @@ class RemoteService {
         this.state = data.state;
         this.uses = data.uses;
         this.provides = data.provides;
+        this.status = data.status;
         this.lastUpdateTs = moment().utc().format();
 
         this._tryStopUpdateTimeout();

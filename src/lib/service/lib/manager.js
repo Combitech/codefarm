@@ -6,7 +6,7 @@ const clone = require("clone");
 const log = require("log");
 const MsgBus = require("msgbus");
 const { Deferred, assertType, asyncWithTmo, delay } = require("misc");
-const { HttpClient } = require("servicecom");
+const { HttpClient, ServiceComBus } = require("servicecom");
 const ProviderClient = require("providerclient");
 const singleton = require("singleton");
 const STATE = require("./states");
@@ -706,7 +706,8 @@ class Manager {
             name: this.app.name,
             state: this.currentState,
             uses: this._getUsedServices(),
-            provides: this.providedServices
+            provides: this.providedServices,
+            status: ServiceComBus.instance.status
         };
 
         this.stateType.set(data);

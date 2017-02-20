@@ -22,6 +22,7 @@ class StateEvent {
         this.uses = mgmtBusEvent.newdata.uses;
         this.provides = mgmtBusEvent.newdata.provides;
         this.time = mgmtBusEvent.time;
+        this.status = mgmtBusEvent.newdata.status;
     }
 }
 
