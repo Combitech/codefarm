@@ -5,9 +5,8 @@ const moment = require("moment");
 const MsgBus = require("msgbus");
 const { AsyncEventEmitter } = require("emitter");
 const { Deferred } = require("misc");
+const singleton = require("singleton");
 const MbClient = require("./mb_client");
-
-let instance;
 
 class ServiceComBus extends AsyncEventEmitter {
     constructor() {
@@ -17,14 +16,6 @@ class ServiceComBus extends AsyncEventEmitter {
         this.clients = {};
         this.msgbus = false;
         this.requests = [];
-    }
-
-    static get instance() {
-        if (!instance) {
-            instance = new this();
-        }
-
-        return instance;
     }
 
     async start(config) {
@@ -184,4 +175,4 @@ class ServiceComBus extends AsyncEventEmitter {
     }
 }
 
-module.exports = ServiceComBus;
+module.exports = singleton(ServiceComBus);

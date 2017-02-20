@@ -1,13 +1,10 @@
 "use strict";
 
-const os = require("os");
-const moment = require("moment");
 const qs = require("qs");
 const { ensureArray } = require("misc");
+const singleton = require("singleton");
 
 const ROUTE_WILDCARD = "(.*)";
-
-const instances = {};
 
 class Controller {
     constructor(Type, support = [ "read", "create", "update", "remove", "tag", "ref", "comment" ]) {
@@ -33,14 +30,6 @@ class Controller {
 
         this._addAction(ROUTE_WILDCARD, this._invalid, "Invalid action catcher");
         this._addGetter(ROUTE_WILDCARD, this._invalid, "Invalid getter catcher");
-    }
-
-    static get instance() {
-        if (!instances[this]) {
-            instances[this] = new this();
-        }
-
-        return instances[this];
     }
 
     setMb(msgbus) {
@@ -380,4 +369,4 @@ class Controller {
     }
 }
 
-module.exports = Controller;
+module.exports = singleton(Controller);

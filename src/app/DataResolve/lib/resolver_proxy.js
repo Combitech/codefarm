@@ -1,5 +1,6 @@
 "use strict";
 
+const singleton = require("singleton");
 const RefResolver = require("./resolvers/ref_resolver");
 const BaselineFlowsResolver = require("./resolvers/baseline_flows_resolver");
 
@@ -8,18 +9,8 @@ const resolvers = {
     "BaselineFlowsResolve": BaselineFlowsResolver
 };
 
-let instance;
-
 class ResolverProxy {
     constructor() {
-    }
-
-    static get instance() {
-        if (!instance) {
-            instance = new this();
-        }
-
-        return instance;
     }
 
     getResolver(resolverId) {
@@ -43,4 +34,4 @@ class ResolverProxy {
     }
 }
 
-module.exports = ResolverProxy;
+module.exports = singleton(ResolverProxy);

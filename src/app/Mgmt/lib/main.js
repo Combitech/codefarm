@@ -43,10 +43,10 @@ class Main extends Service {
 
         const routes = [].concat(Configs.instance.routes, this.routes);
 
-        await ServiceComBus.instance.start({
+        await ServiceComBus.instance.start(Object.assign({
             name: this.name,
             uri: this.config.msgbus
-        });
+        }, this.config.servicecom));
         this.addDisposable(ServiceComBus.instance);
         ServiceComBus.instance.attachControllers([
             Configs.instance,

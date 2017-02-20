@@ -28,6 +28,9 @@ describe("BaselineGen", () => {
                     },
                     bus: {
                         testMode: true
+                    },
+                    servicecom: {
+                        testMode: true
                     }
                 }
             };

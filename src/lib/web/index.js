@@ -10,8 +10,7 @@ const etag = require("koa-etag");
 const serve = require("koa-static");
 const { AsyncEventEmitter } = require("emitter");
 const { ensureArray } = require("misc");
-
-let instance;
+const singleton = require("singleton");
 
 class Web extends AsyncEventEmitter {
     constructor() {
@@ -19,14 +18,6 @@ class Web extends AsyncEventEmitter {
 
         this.app = null;
         this.server = null;
-    }
-
-    static get instance() {
-        if (!instance) {
-            instance = new this();
-        }
-
-        return instance;
     }
 
     async start(params, routes, statusRouteName = "/status") {
@@ -159,4 +150,4 @@ class Web extends AsyncEventEmitter {
     }
 }
 
-module.exports = Web;
+module.exports = singleton(Web);

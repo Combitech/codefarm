@@ -31,7 +31,8 @@
     "web",
     "misc",
     "testsupport",
-    "servicecom"
+    "servicecom",
+    "singleton"
   ],
   "dependencies": {
     "yargs": "^6.0.0"

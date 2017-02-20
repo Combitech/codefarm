@@ -115,6 +115,9 @@ describe("UserRepo", () => {
                     types: {
                         "test_backend": TestBackend
                     }
+                },
+                servicecom: {
+                    testMode: true
                 }
             }
         };

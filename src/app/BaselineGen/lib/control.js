@@ -3,24 +3,15 @@
 const { synchronize } = require("misc");
 const { ServiceMgr } = require("service");
 const { notification } = require("typelib");
+const singleton = require("singleton");
 const Specification = require("./types/specification");
 const Collector = require("./types/collector");
 const Baseline = require("./types/baseline");
-
-let instance;
 
 class Control {
     constructor() {
         synchronize(this, "update");
         synchronize(this, "generate");
-    }
-
-    static get instance() {
-        if (!instance) {
-            instance = new this();
-        }
-
-        return instance;
     }
 
     // TODO: Maybe we need some sort of common lock around generate and update
@@ -137,4 +128,4 @@ class Control {
     }
 }
 
-module.exports = Control;
+module.exports = singleton(Control);

@@ -1,7 +1,7 @@
 {
-  "name": "servicecom",
+  "name": "singleton",
   "version": "0.0.0",
-  "description": "Service Inter-Communication Library",
+  "description": "Singleton Helper Library",
   "main": "index.js",
   "scripts": {
     "compile": "echo 'No compile needed'",
@@ -15,26 +15,13 @@
     "node": ">= 7.0.0"
   },
   "libraries": [
-    "providerclient",
-    "web",
-    "misc",
-    "typelib",
-    "database",
-    "msgbus",
-    "emitter",
-    "singleton"
   ],
   "dependencies": {
-    "moment": "^2.17.1",
-    "request": "^2.78.0",
-    "request-promise": "^4.1.1",
-    "uuid": "^3.0.1"
   },
   "devDependencies": {
     "babel-eslint": "^7.1.0",
     "chai": "^3.5.0",
     "eslint": "^3.7.0",
-    "get-port": "^2.1.0",
     "mocha": "^3.1.0"
   }
 }

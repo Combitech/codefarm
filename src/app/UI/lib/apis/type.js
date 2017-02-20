@@ -1,11 +1,11 @@
 "use strict";
 
+const moment = require("moment");
 const api = require("api.io");
 const { ServiceMgr } = require("service");
 const { ServiceComBus } = require("servicecom");
-const moment = require("moment");
+const singleton = require("singleton");
 
-let instance;
 const UPDATE_RATE_LIMIT_MS = 1000;
 
 const typeApiExports = api.register("type", {
@@ -36,14 +36,6 @@ class TypeApi {
         this.clients = [];
         this.cache = {};
         this.flushing = false;
-    }
-
-    static get instance() {
-        if (!instance) {
-            instance = new this();
-        }
-
-        return instance;
     }
 
     async start() {
@@ -127,4 +119,4 @@ class TypeApi {
     }
 }
 
-module.exports = TypeApi;
+module.exports = singleton(TypeApi);

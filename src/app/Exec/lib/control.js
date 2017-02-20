@@ -3,26 +3,17 @@
 const { notification } = require("typelib");
 const { ServiceComBus } = require("servicecom");
 const { TagCriteria, assertType, synchronize } = require("misc");
+const singleton = require("singleton");
 const Slave = require("./types/slave");
 const Job = require("./types/job");
 const Executor = require("./types/executor");
 const { ServiceMgr } = require("service");
-
-let instance;
 
 class Control {
     constructor() {
         this.executors = [];
 
         synchronize(this, "_allocateJob");
-    }
-
-    static get instance() {
-        if (!instance) {
-            instance = new this();
-        }
-
-        return instance;
     }
 
     async start() {
@@ -466,4 +457,4 @@ class Control {
     }
 }
 
-module.exports = Control;
+module.exports = singleton(Control);

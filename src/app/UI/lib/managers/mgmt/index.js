@@ -1,23 +1,14 @@
 "use strict";
 
+const singleton = require("singleton");
 const ServiceMonitor = require("./lib/service_monitor");
 const EventMonitor = require("./lib/event_monitor");
-
-let instance;
 
 class Mgmt {
     constructor() {
         this.subscriptions = [];
         this.serviceMonitor = new ServiceMonitor();
         this.eventMonitor = new EventMonitor();
-    }
-
-    static get instance() {
-        if (!instance) {
-            instance = new this();
-        }
-
-        return instance;
     }
 
     async start() {
@@ -39,4 +30,4 @@ class Mgmt {
     }
 }
 
-module.exports = Mgmt;
+module.exports = singleton(Mgmt);

@@ -1,21 +1,11 @@
 "use strict";
 
 const Database = require("database");
-const { ServiceError } = require("service");
-const { ServiceMgr } = require("service");
-
-let instance;
+const { ServiceError, ServiceMgr } = require("service");
+const singleton = require("singleton");
 
 class Db {
     constructor() {
-    }
-
-    static get instance() {
-        if (!instance) {
-            instance = new this();
-        }
-
-        return instance;
     }
 
     async connect(config) {
@@ -45,4 +35,4 @@ class Db {
     }
 }
 
-module.exports = Db;
+module.exports = singleton(Db);

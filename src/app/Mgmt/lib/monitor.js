@@ -1,12 +1,11 @@
 "use strict";
 
-const { serviceMgr, STATE } = require("service");
 const moment = require("moment");
+const { serviceMgr, STATE } = require("service");
+const singleton = require("singleton");
 
 const DEFAULT_PRINT_STATE_INTERVAL = 60000;
 const DEFAULT_UPDATE_TIMEOUT = 20000;
-
-let instance;
 
 class RemoteService {
     constructor(name) {
@@ -60,14 +59,6 @@ class Monitor {
         this.services = {};
     }
 
-    static get instance() {
-        if (!instance) {
-            instance = new this();
-        }
-
-        return instance;
-    }
-
     async start() {
         this.printStateHandle = setInterval(
             this._printState.bind(this),
@@ -112,4 +103,4 @@ class Monitor {
     }
 }
 
-module.exports = Monitor;
+module.exports = singleton(Monitor);

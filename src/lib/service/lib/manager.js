@@ -8,6 +8,7 @@ const MsgBus = require("msgbus");
 const { Deferred, assertType, asyncWithTmo, delay } = require("misc");
 const { HttpClient } = require("servicecom");
 const ProviderClient = require("providerclient");
+const singleton = require("singleton");
 const STATE = require("./states");
 const { DEFAULT_HEARTBEAT_INTERVAL, DEFAULT_HEARTBEAT_TIMEOUT, DEFAULT_DISPOSE_RUN_WAIT_TIMEOUT, DEFAULT_MIN_RUN_TIME } = require("./constants");
 const { ServiceError } = require("./errors");
@@ -20,18 +21,8 @@ const DEPENDENCY_TYPE = {
     "WANT": "want"
 };
 
-let instance;
-
 class Manager {
     constructor() {
-    }
-
-    static get instance() {
-        if (!instance) {
-            instance = new this();
-        }
-
-        return instance;
     }
 
     /** Initialize service
@@ -754,4 +745,4 @@ class Manager {
     }
 }
 
-module.exports = Manager;
+module.exports = singleton(Manager);

@@ -37,10 +37,10 @@ class Main extends Service {
             await this.want(serviceId, serviceId, HttpClient);
         }
 
-        await ServiceComBus.instance.start({
+        await ServiceComBus.instance.start(Object.assign({
             name: this.name,
             uri: this.config.msgbus
-        });
+        }, this.config.servicecom));
         this.addDisposable(ServiceComBus.instance);
         ServiceComBus.instance.attachControllers([
             this.statesControllerInstance

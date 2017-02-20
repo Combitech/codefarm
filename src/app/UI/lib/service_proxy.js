@@ -1,21 +1,12 @@
 "use strict";
 
-const { ServiceMgr } = require("service");
 const proxy = require("koa-proxies");
-
-let instance;
+const { ServiceMgr } = require("service");
+const singleton = require("singleton");
 
 class ServiceProxy {
     constructor() {
         this.routes = [];
-    }
-
-    static get instance() {
-        if (!instance) {
-            instance = new this();
-        }
-
-        return instance;
     }
 
     _addRoute(method, route, handler, description = "") {
@@ -66,4 +57,4 @@ class ServiceProxy {
     }
 }
 
-module.exports = ServiceProxy;
+module.exports = singleton(ServiceProxy);

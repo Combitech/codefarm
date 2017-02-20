@@ -28,7 +28,8 @@
     "web",
     "typelib",
     "database",
-    "servicecom"
+    "servicecom",
+    "singleton"
   ],
   "dependencies": {
     "deep-assign": "^2.0.0",

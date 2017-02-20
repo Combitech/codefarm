@@ -2,20 +2,11 @@
 
 const { ServiceMgr } = require("service");
 const { notification } = require("typelib");
+const singleton = require("singleton");
 const Step = require("./types/step");
-
-let instance;
 
 class Control {
     constructor() {
-    }
-
-    static get instance() {
-        if (!instance) {
-            instance = new this();
-        }
-
-        return instance;
     }
 
     async start() {
@@ -78,4 +69,4 @@ class Control {
     }
 }
 
-module.exports = Control;
+module.exports = singleton(Control);

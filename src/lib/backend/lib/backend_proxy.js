@@ -2,22 +2,13 @@
 
 const { notification } = require("typelib");
 const log = require("log");
-
-let instance;
+const singleton = require("singleton");
 
 class BackendProxy {
     constructor(BackendType) {
         this.BackendType = BackendType;
         this.backends = {};
         this.backendClasses = {};
-    }
-
-    static get instance() {
-        if (!instance) {
-            instance = new this();
-        }
-
-        return instance;
     }
 
     getBackend(name) {
@@ -128,4 +119,4 @@ class BackendProxy {
     }
 }
 
-module.exports = BackendProxy;
+module.exports = singleton(BackendProxy);

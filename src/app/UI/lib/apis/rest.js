@@ -2,8 +2,7 @@
 
 const api = require("api.io");
 const { ServiceComBus } = require("servicecom");
-
-let instance;
+const singleton = require("singleton");
 
 const restApiExports = api.register("rest", {
     list: api.export(async (session, type, query = {}) => {
@@ -49,14 +48,6 @@ class RestApi {
         this.exports = restApiExports;
     }
 
-    static get instance() {
-        if (!instance) {
-            instance = new this();
-        }
-
-        return instance;
-    }
-
     async start() {
     }
 
@@ -64,4 +55,4 @@ class RestApi {
     }
 }
 
-module.exports = RestApi;
+module.exports = singleton(RestApi);

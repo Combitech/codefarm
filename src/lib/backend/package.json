@@ -16,7 +16,8 @@
   },
   "libraries": [
     "typelib",
-    "log"
+    "log",
+    "singleton"
   ],
   "dependencies": {
   },

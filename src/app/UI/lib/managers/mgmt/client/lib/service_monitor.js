@@ -1,11 +1,10 @@
 "use strict";
 
 import api from "api.io/api.io-client";
+import singleton from "singleton";
 import RemoteService from "./remote_service";
 
 const DEFAULT_NOTIFY_LISTENERS_DELAY = 200;
-
-let instance;
 
 class ServiceMonitor {
     constructor() {
@@ -13,14 +12,6 @@ class ServiceMonitor {
         this.listeners = [];
         this.deferredNotifyListeners = null;
         this.notifyStateEventSubscription = null;
-    }
-
-    static get instance() {
-        if (!instance) {
-            instance = new this();
-        }
-
-        return instance;
     }
 
     _tryStartServerSubscriptions() {
@@ -122,4 +113,4 @@ class ServiceMonitor {
     }
 }
 
-export default ServiceMonitor;
+export default singleton(ServiceMonitor);

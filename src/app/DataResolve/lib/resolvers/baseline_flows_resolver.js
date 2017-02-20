@@ -2,8 +2,7 @@
 
 const { ServiceComBus } = require("servicecom");
 const { assertType, assertProp } = require("misc");
-
-let instance;
+const singleton = require("singleton");
 
 const typeToRef = (item) => ({
     _ref: true,
@@ -14,14 +13,6 @@ const typeToRef = (item) => ({
 class BaselineFlowsResolver {
     constructor() {
         this.config = {};
-    }
-
-    static get instance() {
-        if (!instance) {
-            instance = new this();
-        }
-
-        return instance;
     }
 
     async start(config = {}) {
@@ -112,4 +103,4 @@ class BaselineFlowsResolver {
     }
 }
 
-module.exports = BaselineFlowsResolver;
+module.exports = singleton(BaselineFlowsResolver);

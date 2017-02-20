@@ -1,10 +1,9 @@
 "use strict";
 
 import api from "api.io/api.io-client";
+import singleton from "singleton";
 
 const DEFAULT_NOTIFY_LISTENERS_DELAY = 200;
-
-let instance;
 
 class EventMonitor {
     constructor() {
@@ -12,14 +11,6 @@ class EventMonitor {
         this.listeners = [];
         this.started = false;
         this.deferredNotifyListeners = null;
-    }
-
-    static get instance() {
-        if (!instance) {
-            instance = new this();
-        }
-
-        return instance;
     }
 
     _tryStart() {
@@ -90,4 +81,4 @@ class EventMonitor {
     }
 }
 
-export default EventMonitor;
+export default singleton(EventMonitor);

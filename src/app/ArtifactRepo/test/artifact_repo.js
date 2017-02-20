@@ -41,6 +41,9 @@ describe("ArtifactRepo", () => {
                     testMode: true
                 },
                 backends: {
+                },
+                servicecom: {
+                    testMode: true
                 }
             },
             backend1: {

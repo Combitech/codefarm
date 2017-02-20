@@ -43,6 +43,9 @@ describe("LogRepo", () => {
                     testMode: true
                 },
                 backends: {
+                },
+                servicecom: {
+                    testMode: true
                 }
             },
             backend1: {

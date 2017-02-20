@@ -31,7 +31,8 @@
     "web",
     "msgbus",
     "misc",
-    "servicecom"
+    "servicecom",
+    "singleton"
   ],
   "dependencies": {
     "api.io": "^0.5.0",

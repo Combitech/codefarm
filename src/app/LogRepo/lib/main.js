@@ -29,10 +29,10 @@ class Main extends Service {
     async onOnline() {
         const routes = [].concat(Logs.instance.routes, Repositories.instance.routes, Backends.instance.routes, this.routes);
 
-        await ServiceComBus.instance.start({
+        await ServiceComBus.instance.start(Object.assign({
             name: this.name,
             uri: this.config.msgbus
-        });
+        }, this.config.servicecom));
         this.addDisposable(ServiceComBus.instance);
         ServiceComBus.instance.attachControllers([
             Logs.instance,

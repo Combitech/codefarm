@@ -22,7 +22,8 @@
     "testsupport",
     "providerclient",
     "typelib",
-    "servicecom"
+    "servicecom",
+    "singleton"
   ],
   "dependencies": {
     "clone": "^2.0.0",

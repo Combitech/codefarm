@@ -16,7 +16,8 @@
   },
   "libraries": [
     "emitter",
-    "misc"
+    "misc",
+    "singleton"
   ],
   "dependencies": {
     "koa": "^2.0.0",

@@ -85,6 +85,9 @@ describe("DataResolve", () => {
 
                             return clone(matches);
                         }
+                    },
+                    servicecom: {
+                        testMode: true
                     }
                 }
             };

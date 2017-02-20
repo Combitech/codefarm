@@ -2,14 +2,12 @@
 
 const { Type } = require("typelib");
 const { assertType } = require("misc");
+const singleton = require("singleton");
 
 /* Keep reference to ServiceMgr instance in order to get rid of
  * circular dependency that would happen if we were to
  * require manager in this file. */
 let serviceMgr;
-
-// There can be only one state per service...
-let instance;
 
 class State extends Type {
     constructor(data) {
@@ -18,14 +16,6 @@ class State extends Type {
         if (data) {
             this.set(data);
         }
-    }
-
-    static get instance() {
-        if (!instance) {
-            instance = new this();
-        }
-
-        return instance;
     }
 
     static async validate(event, data) {
@@ -84,4 +74,4 @@ class State extends Type {
     }
 }
 
-module.exports = State;
+module.exports = singleton(State);

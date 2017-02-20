@@ -44,6 +44,9 @@ describe("EventRepo", () => {
                     },
                     web: {
                         port: await getPort()
+                    },
+                    servicecom: {
+                        testMode: true
                     }
                 }
             };

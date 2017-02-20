@@ -33,7 +33,8 @@
     "ssh",
     "web",
     "testsupport",
-    "servicecom"
+    "servicecom",
+    "singleton"
   ],
   "dependencies": {
     "async-busboy": "^0.3.3",
