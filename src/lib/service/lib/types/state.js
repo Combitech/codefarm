@@ -45,7 +45,7 @@ class State extends Type {
      * @override
      */
     static async findMany() {
-        return [ instance ];
+        return [ State.instance ];
     }
 
     /** Implement read operations without database backend
@@ -53,7 +53,7 @@ class State extends Type {
      * @override
      */
     static async findOne() {
-        return instance;
+        return State.instance;
     }
 
     /** Restart service
