@@ -150,7 +150,8 @@ describe("A Service", () => {
                     state: "NOT_CREATED"
                 }
             },
-            provides: {}
+            provides: {},
+            status: {}
         },
         parentIds: [],
         source: {
