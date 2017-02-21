@@ -12,15 +12,6 @@ const createMongoMock = async (params) => {
     // Add methods not implemented by MongoClient
     db.close = async () => {};
 
-    // Add methods not implemented by Collection
-    const originalCollectionMethod = db.collection.bind(db);
-    db.collection = (...args) => {
-        const collection = originalCollectionMethod(...args);
-        collection.insertOne = collection.insert;
-
-        return collection;
-    };
-
     return db;
 };
 
