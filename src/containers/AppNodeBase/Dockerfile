@@ -29,8 +29,8 @@ RUN for i in $(ls -1 ${depTmpRoot}/src/lib/*/package.json); do \
   done && \
   rm -rf ${depTmpRoot}
 
-# Bundle app source
-ONBUILD COPY . ${appRoot}/src/app/me
+# 1. Add app dependency specification. This is done first to utilize docker caching.
+ONBUILD COPY package.json ${appRoot}/src/app/me
 
 ONBUILD USER root
 ONBUILD RUN chown $user --recursive ${appRoot}
@@ -40,6 +40,12 @@ ONBUILD ENV gitroot ${appRoot}
 ONBUILD RUN test -f package.json && \
   yarn --production || \
   echo "No package.json"
+
+# 2. Add app source
+ONBUILD COPY . ${appRoot}/src/app/me
+ONBUILD USER root
+ONBUILD RUN chown $user --recursive ${appRoot}
+ONBUILD USER $user
 
 ENV gitroot ${appRoot}
 CMD [ "yarn", "run", "start-rel" ]

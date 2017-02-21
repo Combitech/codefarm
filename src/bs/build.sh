@@ -7,11 +7,6 @@ mkdir -p $build_dir
 
 rm -rf $build_dir/image.tgz
 
-# Bundle deps
-pushd $gitroot/src
-tar -czf $build_dir/deps.tgz lib bs --exclude='*/node_modules'
-popd
-
 docker build -t $tag .
 
 # Extract image from local docker registry
