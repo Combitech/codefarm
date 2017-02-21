@@ -293,13 +293,14 @@ describe("Exec", () => {
                     baseline: {
                         _id: "baseline1",
                         name: "myBaseline",
-                        content: {
-                            "commits": {
+                        content: [
+                            {
                                 _ref: true,
+                                name: "commits",
                                 type: "coderepo.revision",
                                 id: [ "change1", "change2", "lastChange" ]
                             }
-                        }
+                        ]
                     }
                 }
             });
@@ -357,13 +358,14 @@ describe("Exec", () => {
                     baseline: {
                         _id: "baseline1",
                         name: "myBaseline",
-                        content: {
-                            "commits": {
+                        content: [
+                            {
                                 _ref: true,
+                                name: "commits",
                                 type: "coderepo.revision",
                                 id: [ "change1", "change2", "lastChange" ]
                             }
-                        }
+                        ]
                     }
                 }
             });
@@ -418,13 +420,14 @@ describe("Exec", () => {
                     baseline: {
                         _id: "baseline1",
                         name: "myBaseline",
-                        content: {
-                            "commits": {
+                        content: [
+                            {
                                 _ref: true,
+                                name: "commits",
                                 type: "coderepo.revision",
                                 id: [ "change1", "change2", "lastChange" ]
                             }
-                        }
+                        ]
                     }
                 }
             });
@@ -481,13 +484,14 @@ describe("Exec", () => {
                     baseline: {
                         _id: "baseline1",
                         name: "myBaseline",
-                        content: {
-                            "commits": {
+                        content: [
+                            {
                                 _ref: true,
+                                name: "commits",
                                 type: "coderepo.revision",
                                 id: [ "change1", "change2", "lastChange" ]
                             }
-                        }
+                        ]
                     }
                 }
             });
@@ -556,13 +560,14 @@ describe("Exec", () => {
                     baseline: {
                         _id: "baseline1",
                         name: "myBaseline",
-                        content: {
-                            "commits": {
+                        content: [
+                            {
                                 _ref: true,
+                                name: "commits",
                                 type: "coderepo.revision",
                                 id: [ "change1", "change2", "lastChange" ]
                             }
-                        }
+                        ]
                     }
                 }
             });
@@ -625,13 +630,14 @@ describe("Exec", () => {
                     baseline: {
                         _id: "baseline1",
                         name: "myBaseline",
-                        content: {
-                            "commits": {
+                        content: [
+                            {
                                 _ref: true,
+                                name: "commits",
                                 type: "coderepo.revision",
                                 id: [ "change1", "change2", "lastChange" ]
                             }
-                        }
+                        ]
                     }
                 }
             });
@@ -808,13 +814,13 @@ describe("Exec", () => {
              * 4. Writes results to result.txt and uploads that file
              */
             const testScript = `#!/bin/bash -e
-                echo Job name: $CF_JOB_NAME
-                echo "$CF_JOB_NAME" > result.txt
-                numRevs=$CF_JOB_BASELINE_CONTENT_COMMITS_ID_LENGTH
-                lastRev=$(echo "$numRevs-1"|bc)
-                revVar="CF_JOB_BASELINE_CONTENT_COMMITS_ID_$lastRev"
-                revision=\${!revVar}
-                echo "$revision" >> result.txt
+                CLI="node --harmony_async_await $\{PWD\}/cli.js"
+                jobData=( $($CLI -q '$.job.name' -q '$.job.baseline.content[?(@.name === "commits")].id[-1:]' --format values load_file $\{PWD\}/data.json) )
+                jobName=$\{jobData[0]\}
+                echo Job name: $jobName
+                echo $jobName > result.txt
+                revision=$\{jobData[1]\}
+                echo $revision >> result.txt
                 echo Job works on revision $revision
                 revisionObj=$(node --harmony_async_await ./cli.js read_type coderepo.revision $revision)
                 echo Revision object: $revisionObj
@@ -831,25 +837,26 @@ describe("Exec", () => {
                 url: `http://localhost:${testInfo.config.web.port}/job`,
                 json: true,
                 form: {
-                    name: "Test that reads types",
+                    name: "Test_that_reads_types",
                     criteria: "tag1 AND tag2",
                     script: new Buffer(testScript),
                     baseline: {
                         _id: "baseline1",
                         name: "myBaseline",
-                        content: {
-                            "commits": {
+                        content: [
+                            {
                                 _ref: true,
+                                name: "commits",
                                 type: "coderepo.revision",
                                 id: [ "change1", "change2", "lastChange" ]
                             }
-                        }
+                        ]
                     }
                 }
             });
 
             assert.equal(data.result, "success");
-            assert.equal(data.data.name, "Test that reads types");
+            assert.equal(data.data.name, "Test_that_reads_types");
             assert.oneOf(data.data.status, [ "queued", "ongoing" ]);
             assert.equal(data.data.finished, false);
             assert.equal(data.data.criteria, "tag1 AND tag2");
@@ -871,7 +878,7 @@ describe("Exec", () => {
             // Verify uploaded log content
             const uploadedLogLines = uploadedLogContent.split("\n");
             assert(uploadedLogLines.length > 3);
-            assert.strictEqual(uploadedLogLines[0], "Test that reads types");
+            assert.strictEqual(uploadedLogLines[0], "Test_that_reads_types");
             assert.strictEqual(uploadedLogLines[1], "lastChange");
             const revisionReadResponse = JSON.parse(uploadedLogLines[2]);
             assert.deepEqual(revisionReadResponse, {

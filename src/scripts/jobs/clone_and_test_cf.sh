@@ -7,7 +7,7 @@ echo Job name: ${jobData[0]}
 jobId=${jobData[1]}
 echo Job id: $jobId
 revision=${jobData[2]}
-echo I will clone revision $revision
+echo I will do my work on revision $revision
 
 res=( $($CLI -q '$.repository' -q '$.patches[-1:].change.newrev' -q '$.patches[-1:].change.refname' -q '$.patches[-1:].pullreqnr' --format values read_type coderepo.revision $revision) )
 repositoryId=${res[0]}
