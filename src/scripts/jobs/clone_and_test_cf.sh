@@ -50,7 +50,7 @@ echo "Job tags: ${tags[*]}"
 #################
 echo "Now I will test the components"
 
-components=(Exec LogRepo)
+components=(ArtifactRepo BaselineGen DataResolve EventRepo Exec LogRepo UserRepo)
 exitCode=0
 
 jobRunId=$($CLI -q '$.lastRunId' --format values read_type exec.job $jobId)
