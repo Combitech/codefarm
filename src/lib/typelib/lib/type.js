@@ -2,6 +2,7 @@
 
 const { v4: uuid } = require("uuid");
 const { assertProp, assertType, ensureArray, synchronize } = require("misc");
+const clone = require("clone");
 const WeakValueMap = require("weakvaluemap");
 const notification = require("./notification");
 
@@ -49,21 +50,21 @@ class Type {
 
     _serializeForDb() {
         /* Perform serialization in two steps:
-         * 1. Remove internal fields prefixed with __
+         * 1. Remove properties on first level (not in nested objects):
+         *   - internal fields prefixed with __
+         *   - functions
          * 2. Do clone
-         * One reason why we remove the internal fields first is because we
-         * clone using JSON.stringify which doesn't accept circular data.
-         * Since we remove the internal fields first, we are safe.
+         * We clone using clone which clones functions as well. Assume that
+         * types doesn't have any functions nested in objects.
          */
         const data = Object.assign({}, this);
         for (const key of Object.keys(data)) {
-            if (key.startsWith("__")) {
+            if (key.startsWith("__") || (typeof data[key] === "function")) {
                 delete data[key];
             }
         }
 
-        // TODO: Optimize clone below, cannot use clone directly since that copies functions as well...
-        return JSON.parse(JSON.stringify(data));
+        return clone(data);
     }
 
     static async validateBase(event, data) {
