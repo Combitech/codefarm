@@ -291,7 +291,9 @@ class GithubBackend extends AsyncEventEmitter {
             uri: uri,
             headers: {
                 "User-Agent": "Code Farm",
-                "Authorization": `Basic ${auth}`
+                "Authorization": `Basic ${auth}`,
+                // TODO remove this once merge_method is no longer experimental
+                "Accept": "application/vnd.github.polaris-preview"
             },
             body: body,
             json: true // Automatically stringifies the body to JSON
@@ -334,18 +336,19 @@ class GithubBackend extends AsyncEventEmitter {
     }
 
     async merge(repository, revision) {
-        ServiceMgr.instance.log("verbose", `GitHub merge pull request ${revision._id} in ${repository._id}`);
-        const ref = revision.patches[revision.patches.length - 1];
-        const uri = `${GITHUB_API_BASE}/repos/${this.backend.target}/${repository._id}/pulls/${revision._id}/merge`;
+        const pullreqnr = revision.patches[revision.patches.length - 1].pullreqnr;
+        ServiceMgr.instance.log("verbose", `GitHub merge pull request ${pullreqnr} in ${repository._id}`);
+        const patch = revision.patches[revision.patches.length - 1];
+        const uri = `${GITHUB_API_BASE}/repos/${this.backend.target}/${repository._id}/pulls/${pullreqnr}/merge`;
         const data = {
-            "sha": ref.change.newrev,
+            "sha": patch.change.newrev,
             "merge_method": "squash"
         };
 
         try {
             await this._sendRequest(uri, data, "PUT");
         } catch (err) {
-            ServiceMgr.instance.log("error", `Error merging in repository: ${repository._id} sha: ${ref.change.newrev}`);
+            ServiceMgr.instance.log("error", `Error merging in repository: ${repository._id} sha: ${patch.change.newrev} err: ${err}`);
         }
     }
 
