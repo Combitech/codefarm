@@ -346,7 +346,7 @@ class GithubBackend extends AsyncEventEmitter {
         try {
             await this._sendRequest(uri, data, "PUT");
         } catch (err) {
-            ServiceMgr.instance.log("error", `Error merging in repository: ${repository._id} sha: ${patch.change.newrev}`);
+            ServiceMgr.instance.log("error", `Error merging in repository: ${repository._id} sha: ${patch.change.newrev} err: ${err}`);
         }
     }
 
