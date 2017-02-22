@@ -291,7 +291,9 @@ class GithubBackend extends AsyncEventEmitter {
             uri: uri,
             headers: {
                 "User-Agent": "Code Farm",
-                "Authorization": `Basic ${auth}`
+                "Authorization": `Basic ${auth}`,
+                // TODO remove this once merge_method is no longer experimental
+                "Accept": "application/vnd.github.polaris-preview"
             },
             body: body,
             json: true // Automatically stringifies the body to JSON
@@ -364,7 +366,6 @@ class GithubBackend extends AsyncEventEmitter {
         try {
             await this._sendRequest(`${GITHUB_API_BASE}/repos/${this.backend.target}/${repository._id}`, {}, "DELETE");
         } catch (err) {
-
             ServiceMgr.instance.log("verbose", `Error deleting GitHub repo ${repository._id}: ${err.message}`);
         }
     }
