@@ -364,6 +364,7 @@ class GithubBackend extends AsyncEventEmitter {
         try {
             await this._sendRequest(`${GITHUB_API_BASE}/repos/${this.backend.target}/${repository._id}`, {}, "DELETE");
         } catch (err) {
+
             ServiceMgr.instance.log("verbose", `Error deleting GitHub repo ${repository._id}: ${err.message}`);
         }
     }
