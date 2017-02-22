@@ -11,6 +11,7 @@ revision=${jobData[2]}
 # Sanity check so we do not merge a non-pull request by accident
 echo "Now I will find out if change is pull request or push to master"
 res=( $($CLI -q '$.patches[-1:].pullreqnr' --format values read_type coderepo.revision $revision) )
+pullreqnr=${res[0]}
 
 if [[ "$pullreqnr" -gt "0" ]]; then
     echo "Verdict: Pull request"
