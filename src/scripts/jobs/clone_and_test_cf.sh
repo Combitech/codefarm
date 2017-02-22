@@ -70,7 +70,7 @@ for testId in ${components[@]}; do
     #Calculate test time and store in string as '{"timeMs":x}'
     stopTime=$(($(date +%s%N)/1000000))
     testDuration=`expr $stopTime - $startTime`
-    testDurationStr=\'{\"timeMs\":$testDuration}\'
+    testDurationStr={\"timeMs\":$testDuration}
 
     if [[ $testResult -ne 0 ]]; then
       echo "Test of $testId failed"
