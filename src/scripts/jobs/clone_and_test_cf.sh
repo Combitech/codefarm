@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -e
 
 echo "I'm running as user $USER in dir $PWD"
 CLI="node --harmony_async_await ${PWD}/cli.js"
@@ -60,16 +60,24 @@ for testId in ${components[@]}; do
     echo "Now I will create a subjob to test component $testId"
     pushd src/app/$testId
     subJobId=$($CLI -q '$._id' --format values create_subjob test "test_$testId" ongoing)
+
+    startTime=$(($(date +%s%N)/1000000))
     yarn
 
-    yarn test
+    testResult=0
+    yarn test || testResult=1
 
-    if [[ $? -ne 0 ]]; then
+    #Calculate test time and store in string as '{"timeMs":x}'
+    stopTime=$(($(date +%s%N)/1000000))
+    testDuration=`expr $stopTime - $startTime`
+    testDurationStr=\'{\"timeMs\":$testDuration}\'
+
+    if [[ $testResult -ne 0 ]]; then
       echo "Test of $testId failed"
-      $CLI update_subjob $subJobId -s fail --result '{"timeMs":1000}'
+      $CLI update_subjob $subJobId -s fail --result $testDurationStr
       exitCode=1
     else
-      $CLI update_subjob $subJobId -s success --result '{"timeMs":1000}'
+      $CLI update_subjob $subJobId -s success --result $testDurationStr
     fi
     popd
 done
