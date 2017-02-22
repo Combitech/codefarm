@@ -755,9 +755,10 @@ describe("Exec", () => {
                 test "$CF_JOB_NAME" || (echo "CF_JOB_NAME NOK" && exit 1)
                 test "$CF_JOB_BASELINE_ID" || (echo "CF_JOB_ID CF_JOB_BASELINE_ID" && exit 1)
                 test "$CF_JOB_BASELINE_NAME" || (echo "CF_JOB_BASELINE_NAME NOK" && exit 1)
-                test "$CF_JOB_BASELINE_CONTENT_COMMITS_TYPE" || (echo "CF_JOB_BASELINE_CONTENT_COMMITS_TYPE NOK" && exit 1)
-                test "$CF_JOB_BASELINE_CONTENT_COMMITS_ID_0" || (echo "CF_JOB_BASELINE_CONTENT_COMMITS_ID_0 NOK" && exit 1)
-                test "$CF_JOB_BASELINE_CONTENT_COMMITS_ID_LENGTH" || (echo "CF_JOB_BASELINE_CONTENT_COMMITS_ID_LENGTH NOK" && exit 1)
+                test "$CF_JOB_BASELINE_CONTENT_0_NAME" || (echo "CF_JOB_BASELINE_CONTENT_0_NAME NOK" && exit 1)
+                test "$CF_JOB_BASELINE_CONTENT_0_TYPE" || (echo "CF_JOB_BASELINE_CONTENT_0_TYPE NOK" && exit 1)
+                test "$CF_JOB_BASELINE_CONTENT_0_ID_0" || (echo "CF_JOB_BASELINE_CONTENT_0_ID_0 NOK" && exit 1)
+                test "$CF_JOB_BASELINE_CONTENT_0_ID_LENGTH" || (echo "CF_JOB_BASELINE_CONTENT_0_ID_LENGTH NOK" && exit 1)
                 echo "All variables OK"
                 exit 0
             `;
@@ -772,13 +773,14 @@ describe("Exec", () => {
                     baseline: {
                         _id: "baseline1",
                         name: "myBaseline",
-                        content: {
-                            "commits": {
+                        content: [
+                            {
                                 _ref: true,
+                                name: "commits",
                                 type: "coderepo.revision",
                                 id: [ "change1", "change2", "lastChange" ]
                             }
-                        }
+                        ]
                     }
                 }
             });
