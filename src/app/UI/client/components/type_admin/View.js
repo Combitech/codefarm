@@ -16,7 +16,8 @@ class View extends Component {
             this.addTypeItemStateVariable(
                 "item",
                 (props) => props.route.type,
-                (props) => props.params[props.route.path.substr(1)],
+                // parameterKey ends with first /
+                (props) => props.params[props.route.path.substr(1).split("/")[0]],
                 true
             );
         }

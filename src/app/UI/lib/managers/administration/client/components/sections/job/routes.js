@@ -1,6 +1,6 @@
 
 import React from "react";
-import { Route } from "react-router";
+import { Route, Redirect, IndexRedirect } from "react-router";
 import {
     View as TAView,
     Edit as TAEdit,
@@ -15,11 +15,27 @@ import Remove from "./Remove";
 const routes = (
     <Route
         path="jobs"
-        component={TAView}
-        List={List}
-        type="exec.job"
         label="Jobs"
     >
+        <IndexRedirect to="page/from/__HEAD__" />
+        <Route
+            path="page/from/:id"
+            component={TAView}
+            List={List}
+            type="exec.job"
+            label="Jobs"
+        >
+            <Redirect from=":_id" to="/admin/jobs/:_id" />
+        </Route>
+        <Route
+            path="page/to/:id"
+            component={TAView}
+            List={List}
+            type="exec.job"
+            label="Jobs"
+        >
+            <Redirect from=":_id" to="/admin/jobs/:_id" />
+        </Route>
         <Route
             path="create"
             component={TAEdit}

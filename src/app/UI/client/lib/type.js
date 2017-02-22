@@ -8,13 +8,14 @@ class Type {
         this.subscriptions = {};
     }
 
-    _createSubscription(item, type, query, dataFn) {
+    _createSubscription(item, type, query, dataFn, pagingOpts = false) {
         const subscription = {
             id: this.counter++,
             dead: false,
             item: item,
             type: type,
             query: query,
+            pagingOpts: pagingOpts,
             lastValue: null,
             lastError: null,
             dataFn: dataFn,
@@ -25,6 +26,16 @@ class Type {
 
                 try {
                     const data = await api.type.get(subscription.type, subscription.query);
+                    if (!subscription.item && subscription.pagingOpts && subscription.pagingOpts.pageSize) {
+                        const nextPageHasMoreData = data.length > subscription.pagingOpts.pageSize;
+                        if (nextPageHasMoreData) {
+                            // End not reached, truncate item
+                            data.length = subscription.pagingOpts.pageSize;
+                        }
+                        if (subscription.pagingOpts.hasMoreDataCb) {
+                            subscription.pagingOpts.hasMoreDataCb(nextPageHasMoreData);
+                        }
+                    }
                     subscription.setData(subscription.item ? data[0] : data);
                 } catch (error) {
                     subscription.setError(error);
@@ -193,21 +204,77 @@ class Type {
         return [ subscription.id, subscription.fetch() ];
     }
 
-    _subscribeToList(type, query, dataFn) {
-        const subscription = this._createSubscription(false, type, query, dataFn);
+    _subscribeToList(type, query, dataFn, pagingOpts = false) {
+        const subscription = this._createSubscription(false, type, query, dataFn, pagingOpts);
+        const isPaged = pagingOpts !== null && typeof pagingOpts === "object";
 
         subscription.logInfo(`Creating list subscription for query ${JSON.stringify(query)}`);
+
+        const strippedQuery = Object.assign({}, subscription.query);
+        Object.keys(strippedQuery)
+            .filter((key) => key.startsWith("__"))
+            .forEach((key) => delete strippedQuery[key]);
+
+        const sortListFunc = (a, b) => {
+            const aVal = a[pagingOpts.sortOn];
+            const bVal = b[pagingOpts.sortOn];
+            if (aVal < bVal) {
+                return pagingOpts.sortDesc ? 1 : -1;
+            } else if (aVal > bVal) {
+                return pagingOpts.sortDesc ? -1 : 1;
+            }
+
+            return 0;
+        };
+
+        const addItemToList = (list, itemToAdd) => {
+            if (isPaged && list.length > 0) {
+                // Assume list is sorted, find insertion index
+                const insertIdx = list.findIndex((item) => sortListFunc(item, itemToAdd) > 0);
+                if (insertIdx >= 0 && insertIdx < list.length) {
+                    list.splice(insertIdx, 0, itemToAdd);
+
+                    // Truncate list if page overflow
+                    if (list.length > pagingOpts.pageSize) {
+                        const removeIdx = pagingOpts.sortDesc ? list.length - 1 : 0;
+                        list.splice(removeIdx, 1);
+                    }
+                } else {
+                    // Item doesn't belong to current page
+                    return null;
+                }
+            } else {
+                list.push(itemToAdd);
+            }
+
+            return list;
+        };
+
+        const replaceItemInList = (list, item, index) => {
+            if (index === -1) {
+                return list;
+            }
+
+            list[index] = item;
+            if (isPaged) {
+                list.sort(sortListFunc);
+            }
+
+            return list;
+        };
 
         subscription.addEventHandler(`created.${type}`, (payload) => {
             if (subscription.dead) {
                 return;
             }
 
-            const list = subscription.lastValue ? subscription.lastValue.slice(0) : [];
+            let list = subscription.lastValue ? subscription.lastValue.slice(0) : [];
             const data = payload.newdata;
-            list.push(data);
-            subscription.setData(list);
-        }, subscription.id, { newdata: subscription.query });
+            list = addItemToList(list, data);
+            if (list) {
+                subscription.setData(list);
+            }
+        }, subscription.id, { newdata: strippedQuery });
 
         subscription.addEventHandler(`updated.${type}`, (payload) => {
             if (subscription.dead) {
@@ -218,20 +285,22 @@ class Type {
 
             // If data matches query we must handle it
             if (data) {
-                const list = subscription.lastValue ? subscription.lastValue.slice(0) : [];
+                let list = subscription.lastValue ? subscription.lastValue.slice(0) : [];
 
                 // If data already exists in our list replace it,
                 // if it does not exist add it
                 const index = subscription.lastValue.findIndex((item) => item._id === payload.newdata._id);
                 if (index !== -1) {
-                    list[index] = data;
+                    list = replaceItemInList(list, data, index);
                 } else {
-                    list.push(data);
+                    list = addItemToList(list, data);
                 }
 
-                subscription.setData(list);
+                if (list) {
+                    subscription.setData(list);
+                }
             }
-        }, subscription.id, { newdata: subscription.query });
+        }, subscription.id, { newdata: strippedQuery });
 
         subscription.addEventHandler(`updated.${type}`, (payload) => {
             if (subscription.dead) {
@@ -254,8 +323,8 @@ class Type {
                 subscription.setData(list);
             }
         }, `${subscription.id}-update-remove`, {
-            olddata: subscription.query,
-            $not: { newdata: subscription.query }
+            olddata: strippedQuery,
+            $not: { newdata: strippedQuery }
         });
 
         subscription.addEventHandler(`removed.${type}`, (payload) => {
@@ -278,7 +347,7 @@ class Type {
 
                 subscription.setData(list);
             }
-        }, subscription.id, { olddata: subscription.query });
+        }, subscription.id, { olddata: strippedQuery });
 
         subscription.logInfo("Subscription created", subscription);
 

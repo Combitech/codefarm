@@ -8,6 +8,7 @@ import View from "./View";
 import Edit from "./Edit";
 import Remove from "./Remove";
 import List from "./List";
+import PagedList from "./PagedList";
 import Form from "./Form";
 import LoadIndicator from "./LoadIndicator";
 import Section from "./Section";
@@ -18,6 +19,7 @@ const ThemedControlButton = themr(TYPE_ADMIN, theme)(ControlButton);
 const ThemedView = themr(TYPE_ADMIN, theme)(View);
 const ThemedEdit = themr(TYPE_ADMIN, theme)(Edit);
 const ThemedList = themr(TYPE_ADMIN, theme)(List);
+const ThemedPagedList = themr(TYPE_ADMIN, theme)(PagedList);
 const ThemedRemove = themr(TYPE_ADMIN, theme)(Remove);
 const ThemedForm = themr(TYPE_ADMIN, theme)(Form);
 const ThemedLoadIndicator = themr(TYPE_ADMIN, theme)(LoadIndicator);
@@ -30,6 +32,7 @@ export {
     ThemedView as View,
     ThemedEdit as Edit,
     ThemedList as List,
+    ThemedPagedList as PagedList,
     ThemedRemove as Remove,
     ThemedForm as Form,
     ThemedLoadIndicator as LoadIndicator,

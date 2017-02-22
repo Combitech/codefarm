@@ -63,14 +63,14 @@ class Controller {
         this._addRoute("get", `/${this.collectionName}`, async (ctx) => {
             // TODO: Limit query and read parameters from request
             /* Current idea is to let special commands like limit and such
-             * begin with __.
+             * be placed within __options.
              * Query parameters not beginning with __ is added to the mongo query.
              * For example http://localhost:8080?name=somename will result in
              * setting the mongodb query to { name: somename }
              */
-            const query = this._buildFindQuery(ctx);
+            const { query, options } = this._buildFindQuery(ctx);
 
-            const list = await handler(query);
+            const list = await handler(query, options);
 
             ctx.type = "json";
             ctx.body = JSON.stringify(list, null, 2);
@@ -188,9 +188,18 @@ class Controller {
         this.routes.sort((a, b) => a.priority - b.priority);
     }
 
+    /** Parses the url query string and returns MongoDB query and options
+     * The returned query will not conatin any props prefixed with __.
+     * The returned options will contain anything in the query string
+     * property __options.
+     * @param {Object} ctx Request context
+     * @return {Object} query MongoDB query
+     * @return {Object} options MondoDB options
+     */
     _buildFindQuery(ctx) {
         const decodedQuery = qs.parse(ctx.query);
         const query = {};
+        const options = {};
         const skipParseKeys = [ "_id" ];
 
         const parse = (value, parseAsJson = true) => {
@@ -215,8 +224,13 @@ class Controller {
             }
         }
 
-        // TODO: This parse is ugly and probably slow
-        return parse(query);
+        Object.assign(options, decodedQuery.__options);
+
+        // TODO: The parse is ugly and probably slow
+        return {
+            query: parse(query),
+            options: parse(options)
+        };
     }
 
     _throw(message, code) {
@@ -259,10 +273,36 @@ class Controller {
 
     // Basic operations
 
-    async _list(query) {
+    async _list(query, options = {}) {
         this._isAllowed("read");
 
-        const list = await this.Type.findMany(query);
+        if (query.hasOwnProperty("__options")) {
+            Object.assign(options, query.__options);
+        }
+
+        const strippedQuery = Object.assign({}, query);
+        Object.keys(strippedQuery)
+            .filter((key) => key.startsWith("__"))
+            .forEach((key) => delete strippedQuery[key]);
+
+        // Convert types since JSON formatting destroyed type info
+        if (query.hasOwnProperty("__types")) {
+            const converters = {
+                Date: (val) => new Date(val)
+            };
+            for (const [ path, type ] of Object.entries(query.__types)) {
+                const converter = converters[type];
+                if (converter) {
+                    const parts = path.split(".");
+                    const lastPropName = parts.pop();
+                    // Find object that contains lastPropName
+                    const parentObj = parts.reduce((acc, curr) => acc = acc[curr], strippedQuery);
+                    parentObj[lastPropName] = converter(parentObj[lastPropName]);
+                }
+            }
+        }
+
+        const list = await this.Type.findMany(strippedQuery, options);
 
         return list.map((obj) => obj.serialize());
     }

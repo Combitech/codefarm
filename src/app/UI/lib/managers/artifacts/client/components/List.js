@@ -4,7 +4,7 @@ import Component from "ui-lib/component";
 import Input from "react-toolbox/lib/input";
 import {
     Section as TASection,
-    List as TAList
+    PagedList as TAPagedList
 } from "ui-components/type_admin";
 import ArtifactListItem from "./ListItem";
 
@@ -37,11 +37,13 @@ class List extends Component {
                 controls={controls}
                 breadcrumbs={this.props.breadcrumbs}
             >
-                <TAList
+                <TAPagedList
                     type="artifactrepo.artifact"
                     query={{ repository: this.props.item._id }}
                     filter={this.state.filter.value}
+                    pageSize={8}
                     ListItemComponent={ArtifactListItem}
+                    pathname={this.props.pathname}
                     onSelect={(item) => {
                         this.context.router.push({
                             pathname: `${this.props.pathname}/${item._id}`

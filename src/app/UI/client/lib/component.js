@@ -3,6 +3,7 @@ import api from "api.io/api.io-client";
 import React from "react";
 import stateVar from "ui-lib/state_var";
 import type from "ui-lib/type";
+import { assertProp } from "misc";
 
 let instanceCounter = 0;
 
@@ -86,6 +87,55 @@ class Component extends React.PureComponent {
         });
     }
 
+    /** Add state variable containing a list of type instances
+     * List items will be of given type matching given query.
+     * @param {String} name State variable name
+     * @param {String} type Type or function (props) => type
+     * @param {Object} pagingOpts Paging options
+     * @param {Number} pagingOpts.sortOn Type key to sort on
+     * @param {Number} pagingOpts.sortOnType JS Type that sortOn specifies
+     * @param {Number} pagingOpts.relativeValue Value that current page is related to
+     * @param {Number} [pagingOpts.pageSize] Page size
+     * @param {Number} [pagingOpts.sortDesc] Sort descending, defaults to true
+     * @param {Number} [pagingOpts.hasMoreDataCb] Callback called to notify if next page has data
+     * @param {Object|Function} [query] Query or function (props) => query
+     * @param {Boolean} [subscribe] If state variable shall be updated when source updates
+     * @returns {undefined}
+     */
+    addTypePagedListStateVariable(name, type, pagingOpts, query = {}, subscribe = false) {
+        // pageSize = 10, sortOn = "created", sortOnValue = null, sortDesc = true, nextPageHasMoreDataCb = false,
+        if (pagingOpts === null || typeof pagingOpts !== "function") {
+            throw new Error("pagingOpts not specified");
+        }
+        this.log("addTypePagedListStateVariable", name, type, query, subscribe, JSON.stringify(pagingOpts));
+
+        this.state[name] = []; // eslint-disable-line react/no-direct-mutation-state
+
+        this.asyncVariables.push({
+            name,
+            type: typeof type === "function" ? type : () => type,
+            query: typeof query === "function" ? query : () => query,
+            pagingOpts: (props) => {
+                const opts = pagingOpts(props);
+                const setDefault = (obj, key, defaultValue) => {
+                    if (!obj.hasOwnProperty(key)) {
+                        obj[key] = defaultValue;
+                    }
+                };
+                setDefault(opts, "pageSize", 20);
+                setDefault(opts, "sortDesc", true);
+                setDefault(opts, "hasMoreDataCb", () => null);
+                assertProp(opts, "sortOn");
+                assertProp(opts, "sortOnType");
+                assertProp(opts, "relativeValue");
+
+                return opts;
+            },
+            subscribe: subscribe,
+            list: true
+        });
+    }
+
     /** Add state variable containing one type instance
      * Type matching type and id will be fetched
      * @param {String} name State variable name
@@ -144,13 +194,15 @@ class Component extends React.PureComponent {
         const idx = routes.indexOf(route);
         const list = routes.slice(0, idx + 1);
         const parts = list.map((route) => {
-            if (route.path.startsWith(":")) {
-                return params[route.path.substr(1)];
-            } else if (route.path === "/") {
+            if (route.path === "/") {
                 return "";
             }
 
-            return route.path;
+            // Find and resolve parameters in route, they begin with :
+            return route.path
+                .split("/")
+                .map((part) => part.startsWith(":") ? params[part.substr(1)] : part)
+                .join("/");
         });
 
         return parts.join("/");
@@ -220,20 +272,65 @@ class Component extends React.PureComponent {
 
     async _loadAsyncVarList(asyncVar, props) {
         this.log("_loadAsyncVarList", asyncVar);
+        const isPaged = typeof asyncVar.pagingOpts === "function";
 
         const newType = asyncVar.type(props);
         const newQuery = asyncVar.query(props);
+        let newPagingOpts;
+        let pagedParamsAlreadyLoaded = true;
+        if (isPaged) {
+            newPagingOpts = asyncVar.pagingOpts(props);
+            pagedParamsAlreadyLoaded = JSON.stringify(asyncVar._pagingOpts) === JSON.stringify(newPagingOpts);
+        }
 
-        if (asyncVar._type === newType && JSON.stringify(asyncVar._query) === JSON.stringify(newQuery)) {
+        if (asyncVar._type === newType &&
+            JSON.stringify(asyncVar._query) === JSON.stringify(newQuery) &&
+            pagedParamsAlreadyLoaded) {
             return; // Already loaded
         }
 
+        // Handle paged list
         if (asyncVar._type && asyncVar._query) {
             this.log("_loadAsyncVarList", "reload");
         }
 
         asyncVar._type = newType;
         asyncVar._query = newQuery;
+        if (isPaged) {
+            asyncVar._pagingOpts = newPagingOpts;
+            // Paging done using relative find followed by limit
+            // - Sort results depending on field "sortOn" depending on "sortDesc"
+            // - If "relativeValue" is given, find field "sortOn" values
+            //   less than "relativeValue" if "sortDesc", otherwise find values
+            //   greater than "relativeValue".
+            asyncVar._query.__options = Object.assign(
+                {},
+                asyncVar._query.__options,
+                {
+                    // Fetch one more than needed to determine if more data available on next page
+                    limit: newPagingOpts.pageSize + 1,
+                    sort: {
+                        [ newPagingOpts.sortOn ]: newPagingOpts.sortDesc ? -1 : 1
+                    }
+                }
+            );
+            if (newPagingOpts.relativeValue !== null) {
+                const cmpOp = newPagingOpts.sortDesc ? "$lt" : "$gt";
+                Object.assign(asyncVar._query, {
+                    [ newPagingOpts.sortOn ]: {
+                        [ cmpOp ]: newPagingOpts.relativeValue
+                    }
+                });
+                // We need to explicitly convert types due to JSON not carrying type info
+                asyncVar._query.__types = Object.assign(
+                    {},
+                    asyncVar._query.__types,
+                    {
+                        [ `${newPagingOpts.sortOn}.${cmpOp}` ]: newPagingOpts.sortOnType
+                    }
+                );
+            }
+        }
 
         type.unsubscribe(asyncVar.subId);
 
@@ -249,7 +346,18 @@ class Component extends React.PureComponent {
         }
 
         if (asyncVar.subscribe) {
-            asyncVar.subId = await type.subscribeToListAsync(asyncVar._type, asyncVar._query, set);
+            let pagingOpts = false;
+            if (isPaged) {
+                pagingOpts = {
+                    pageSize: asyncVar._pagingOpts.pageSize,
+                    sortOn: asyncVar._pagingOpts.sortOn,
+                    sortDesc: asyncVar._pagingOpts.sortDesc,
+                    hasMoreDataCb: asyncVar._pagingOpts.hasMoreDataCb
+                };
+            }
+            asyncVar.subId = await type.subscribeToListAsync(
+                asyncVar._type, asyncVar._query, set, pagingOpts
+            );
         } else {
             set(await type.fetchList(asyncVar._type, asyncVar._query));
         }

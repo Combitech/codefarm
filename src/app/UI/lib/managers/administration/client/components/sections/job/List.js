@@ -4,7 +4,7 @@ import Component from "ui-lib/component";
 import Input from "react-toolbox/lib/input";
 import {
     Section as TASection,
-    List as TAList
+    PagedList as TAPagedList
 } from "ui-components/type_admin";
 import JobListItem from "./ListItem";
 
@@ -37,10 +37,12 @@ class List extends Component {
                 controls={controls}
                 breadcrumbs={this.props.breadcrumbs}
             >
-                <TAList
+                <TAPagedList
                     type={this.props.type}
                     filter={this.state.filter.value}
+                    pageSize={5}
                     ListItemComponent={JobListItem}
+                    pathname={this.props.pathname}
                     onSelect={(item) => {
                         this.context.router.push({
                             pathname: `${this.props.pathname}/${item._id}`
