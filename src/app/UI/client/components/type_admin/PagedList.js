@@ -69,6 +69,25 @@ class PagedListComponent extends Component {
         });
     }
 
+    componentDidUpdate() {
+        // If we find that we have navigated to head or tail, change
+        // route so that we follow head or tail
+        const nextHasNoData = this.state.nextPageHasMoreData.value === false;
+        if (nextHasNoData && !isEndMarkPath(this.props.pathname)) {
+            if (this.props.pathname.includes("/page/from/")) {
+                // We are at end, follow tail
+                this.context.router.push({
+                    pathname: this.props.pathname.replace(/\/page\/from\/[^\/]*/, `/page/to/${END_MARK_TAIL}`)
+                });
+            } else if (this.props.pathname.includes("/page/to/")) {
+                // We are at start, follow head
+                this.context.router.push({
+                    pathname: this.props.pathname.replace(/\/page\/to\/[^\/]*/, `/page/from/${END_MARK_HEAD}`)
+                });
+            }
+        }
+    }
+
     render() {
         this.log("render", this.props, this.state);
 
