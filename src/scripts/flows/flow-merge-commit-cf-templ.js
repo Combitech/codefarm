@@ -86,6 +86,11 @@ module.exports = async (argv) => {
             collectors: [
                 defaultCollector(`${flowIdTag} AND merged`)
             ]
+        }, {
+            _id: "Deliver",
+            collectors: [
+                defaultCollector(`${flowIdTag} AND step:Build:success`)
+            ]
         }
     ];
 
@@ -113,7 +118,11 @@ module.exports = async (argv) => {
         ),
         slaveScriptBlSpec(
             "Build", buildScript, defaultSlaveCriteria, [ "Merge" ]
+        ),
+        slaveScriptBlSpec(
+            "Deliver", buildScript, defaultSlaveCriteria, [ "Build" ]
         )
+
     ];
 
     return {
