@@ -13,6 +13,13 @@ const isEndMarkPath = (path) => path.includes("/page/") && (
     (path.endsWith(END_MARK_HEAD) || path.endsWith(END_MARK_TAIL))
 );
 
+const TURN_PAGE_KIND = {
+    NEXT: "NEXT",
+    PREV: "PREV",
+    FIRST: "FIRST",
+    LAST: "LAST"
+};
+
 class PagedListComponent extends Component {
     constructor(props) {
         super(props);
@@ -45,10 +52,10 @@ class PagedListComponent extends Component {
 
     turnPage(turnKind) {
         const dirFromTurnKind = {
-            "next": "from",
-            "first": "from",
-            "prev": "to",
-            "last": "to"
+            [ TURN_PAGE_KIND.NEXT ]: "from",
+            [ TURN_PAGE_KIND.FIRST ]: "from",
+            [ TURN_PAGE_KIND.PREV ]: "to",
+            [ TURN_PAGE_KIND.LAST ]: "to"
         };
         const direction = dirFromTurnKind[turnKind];
         let basePath = this.props.pathname;
@@ -59,7 +66,7 @@ class PagedListComponent extends Component {
         const wasLastTurnPrev = this.props.pathname.includes("/page/to/");
         let itemIdx;
         let value;
-        if (turnKind === "next" || turnKind === "prev") {
+        if (turnKind === TURN_PAGE_KIND.NEXT || turnKind === TURN_PAGE_KIND.PREV) {
             if (direction === "from") {
                 itemIdx = wasLastTurnPrev ? 0 : this.state.list.length - 1;
             } else {
@@ -113,9 +120,9 @@ class PagedListComponent extends Component {
             );
         }
 
-        const nextHasNoData = this.state.nextPageHasMoreData.value === false;
-        if (nextHasNoData && !isEndMarkPath(this.props.pathname) &&
-            (this.props.pathname.includes("/page/from/") || this.props.pathname.includes("/page/to/"))) {
+        const nextPageHasNoData = this.props.pathname.includes("/page/from/") && this.state.nextPageHasMoreData.value === false;
+        const prevPageHasNoData = this.props.pathname.includes("/page/to/") && this.state.nextPageHasMoreData.value === false;
+        if ((nextPageHasNoData || prevPageHasNoData) && !isEndMarkPath(this.props.pathname)) {
             // Skip rendering since componentDidUpdate will trigger a re-render anyway
             return;
         }
@@ -148,26 +155,28 @@ class PagedListComponent extends Component {
                         <Button
                             icon="first_page"
                             disabled={this.props.pathname.includes(`/page/from/${END_MARK_HEAD}`)}
-                            onClick={() => this.turnPage("first")}
+                            onClick={() => this.turnPage(TURN_PAGE_KIND.FIRST)}
                         />
                         <Button
                             icon="navigate_before"
                             disabled={list.length === 0 ||
-                                this.props.pathname.includes(`/page/from/${END_MARK_HEAD}`)
+                                this.props.pathname.includes(`/page/from/${END_MARK_HEAD}`) ||
+                                prevPageHasNoData
                             }
-                            onClick={() => this.turnPage("prev")}
+                            onClick={() => this.turnPage(TURN_PAGE_KIND.PREV)}
                         />
                         <Button
                             icon="navigate_next"
                             disabled={list.length === 0 ||
-                                this.props.pathname.includes(`/to/${END_MARK_TAIL}`)
+                                this.props.pathname.includes(`/to/${END_MARK_TAIL}`) ||
+                                nextPageHasNoData
                             }
-                            onClick={() => this.turnPage("next")}
+                            onClick={() => this.turnPage(TURN_PAGE_KIND.NEXT)}
                         />
                         <Button
                             icon="last_page"
                             disabled={this.props.pathname.includes(`/to/${END_MARK_TAIL}`)}
-                            onClick={() => this.turnPage("last")}
+                            onClick={() => this.turnPage(TURN_PAGE_KIND.LAST)}
                         />
                     </div>
                 }
