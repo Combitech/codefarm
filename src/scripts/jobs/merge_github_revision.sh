@@ -21,7 +21,6 @@ else
     exit 1
 fi
 
-
 echo "I will merge revision $revision"
 $CLI -v --format jsonPretty merge_revision $revision
 
