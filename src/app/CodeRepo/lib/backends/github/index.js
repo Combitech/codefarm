@@ -224,7 +224,7 @@ class GithubBackend extends AsyncEventEmitter {
         }
 
         const repository = await this._getRepo(event.repository.name);
-        const revision = null;
+        let revision = null;
         for (const commit of event.commits) {
             const patch = {
                 index: 1,
