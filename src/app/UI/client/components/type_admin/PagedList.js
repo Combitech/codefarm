@@ -113,14 +113,17 @@ class PagedListComponent extends Component {
             );
         }
 
+        const nextHasNoData = this.state.nextPageHasMoreData.value === false;
+        if (nextHasNoData && !isEndMarkPath(this.props.pathname) &&
+            (this.props.pathname.includes("/page/from/") || this.props.pathname.includes("/page/to/"))) {
+            // Skip rendering since componentDidUpdate will trigger a re-render anyway
+            return;
+        }
 
         let list = this.state.list;
         if (list && this.props.pathname.includes("/page/to/")) {
             list = list.slice(0).reverse();
         }
-
-        const nextPageHasNoData = this.props.pathname.includes("/page/from/") && this.state.nextPageHasMoreData.value === false;
-        const prevPageHasNoData = this.props.pathname.includes("/page/to/") && this.state.nextPageHasMoreData.value === false;
 
         return (
             <List
@@ -150,16 +153,14 @@ class PagedListComponent extends Component {
                         <Button
                             icon="navigate_before"
                             disabled={list.length === 0 ||
-                                this.props.pathname.includes(`/page/from/${END_MARK_HEAD}`) ||
-                                prevPageHasNoData
+                                this.props.pathname.includes(`/page/from/${END_MARK_HEAD}`)
                             }
                             onClick={() => this.turnPage("prev")}
                         />
                         <Button
                             icon="navigate_next"
                             disabled={list.length === 0 ||
-                                this.props.pathname.includes(`/to/${END_MARK_TAIL}`) ||
-                                nextPageHasNoData
+                                this.props.pathname.includes(`/to/${END_MARK_TAIL}`)
                             }
                             onClick={() => this.turnPage("next")}
                         />
