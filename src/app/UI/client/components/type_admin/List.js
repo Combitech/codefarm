@@ -3,10 +3,11 @@ import React from "react";
 import Component from "ui-lib/component";
 import LoadIndicator from "./LoadIndicator";
 import ListComponentItem from "./ListItem";
-import { List, ListDivider } from "react-toolbox/lib/list";
+import ListComponent from "./ListComponent";
+import { ListDivider } from "react-toolbox/lib/list";
 import { filterFields as qbFilterFields } from "ui-lib/query_builder";
 
-class ListComponent extends Component {
+class List extends Component {
     constructor(props) {
         super(props);
 
@@ -43,43 +44,39 @@ class ListComponent extends Component {
         }
 
         return (
-            <List
-                className={this.props.theme.list}
-                ripple={true}
-            >
-                <ListDivider key="top_divider" />
-                <div className={this.props.theme.divider} />
-                {this.state.list && this.state.list.slice(0).reverse().map((item) => (
-                    <div key={item._id}>
-                        <this.props.ListItemComponent
-                            theme={this.props.theme}
-                            onClick={this.props.onSelect}
-                            item={item}
-                            itemContext={this.props.listItemContext}
-                        />
-                        <ListDivider />
-                    </div>
+            <this.props.ListComponent
+                theme={this.props.theme}
+                children={this.state.list && this.state.list.slice(0).reverse().map((item) => (
+                    <this.props.ListItemComponent
+                        key={item._id}
+                        theme={this.props.theme}
+                        onClick={this.props.onSelect}
+                        item={item}
+                        itemContext={this.props.listItemContext}
+                    />
                 ))}
-            </List>
+            />
         );
     }
 }
 
-ListComponent.defaultProps = {
+List.defaultProps = {
+    ListComponent: ListComponent,
     ListItemComponent: ListComponentItem,
     query: {},
     filterFields: []
 };
 
-ListComponent.propTypes = {
+List.propTypes = {
     theme: React.PropTypes.object,
     type: React.PropTypes.string.isRequired,
     filter: React.PropTypes.string,
     filterFields: React.PropTypes.array,
     query: React.PropTypes.object,
     onSelect: React.PropTypes.func,
+    ListComponent: React.PropTypes.func.isRequired,
     ListItemComponent: React.PropTypes.func.isRequired,
     listItemContext: React.PropTypes.any
 };
 
-export default ListComponent;
+export default List;

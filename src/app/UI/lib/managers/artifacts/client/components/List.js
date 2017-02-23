@@ -58,7 +58,7 @@ class List extends Component {
 
 List.propTypes = {
     theme: React.PropTypes.object,
-    item: React.PropTypes.object.isRequired,
+    item: React.PropTypes.object,
     pathname: React.PropTypes.string.isRequired,
     breadcrumbs: React.PropTypes.array.isRequired,
     controls: React.PropTypes.array.isRequired

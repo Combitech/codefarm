@@ -3,8 +3,9 @@ import React from "react";
 import Component from "ui-lib/component";
 import LoadIndicator from "./LoadIndicator";
 import ListComponentItem from "./ListItem";
-import { List, ListDivider } from "react-toolbox/lib/list";
+import ListComponent from "./ListComponent";
 import { Button } from "react-toolbox/lib/button";
+import { ListDivider } from "react-toolbox/lib/list";
 import { filterFields as qbFilterFields } from "ui-lib/query_builder";
 
 const END_MARK_HEAD = "__HEAD__";
@@ -22,7 +23,7 @@ const TURN_PAGE_KIND = {
 
 class PagedListComponent extends Component {
     constructor(props) {
-        super(props);
+        super(props, true);
 
         this.addStateVariable("nextPageHasMoreData", false);
 
@@ -133,59 +134,54 @@ class PagedListComponent extends Component {
         }
 
         return (
-            <List
-                className={this.props.theme.list}
-                ripple={true}
-            >
-                <ListDivider key="top_divider" />
-                <div className={this.props.theme.divider} />
-                {list &&
-                    <div>
-                        {list.map((item) => (
-                            <div key={item._id}>
-                                <this.props.ListItemComponent
-                                    theme={this.props.theme}
-                                    onClick={this.props.onSelect}
-                                    item={item}
-                                    itemContext={this.props.listItemContext}
-                                />
-                                <ListDivider />
-                            </div>
-                        ))}
-                        <Button
-                            icon="first_page"
-                            disabled={this.props.pathname.includes(`/page/from/${END_MARK_HEAD}`)}
-                            onClick={() => this.turnPage(TURN_PAGE_KIND.FIRST)}
+            <div>
+                <this.props.ListComponent
+                    theme={this.props.theme}
+                    children={list && list.map((item) => (
+                        <this.props.ListItemComponent
+                            key={item._id}
+                            theme={this.props.theme}
+                            onClick={this.props.onSelect}
+                            item={item}
+                            itemContext={this.props.listItemContext}
                         />
-                        <Button
-                            icon="navigate_before"
-                            disabled={list.length === 0 ||
-                                this.props.pathname.includes(`/page/from/${END_MARK_HEAD}`) ||
-                                prevPageHasNoData
-                            }
-                            onClick={() => this.turnPage(TURN_PAGE_KIND.PREV)}
-                        />
-                        <Button
-                            icon="navigate_next"
-                            disabled={list.length === 0 ||
-                                this.props.pathname.includes(`/to/${END_MARK_TAIL}`) ||
-                                nextPageHasNoData
-                            }
-                            onClick={() => this.turnPage(TURN_PAGE_KIND.NEXT)}
-                        />
-                        <Button
-                            icon="last_page"
-                            disabled={this.props.pathname.includes(`/to/${END_MARK_TAIL}`)}
-                            onClick={() => this.turnPage(TURN_PAGE_KIND.LAST)}
-                        />
-                    </div>
-                }
-            </List>
+                    ))}
+                />
+                <div>
+                    <Button
+                        icon="first_page"
+                        disabled={this.props.pathname.includes(`/page/from/${END_MARK_HEAD}`)}
+                        onClick={() => this.turnPage(TURN_PAGE_KIND.FIRST)}
+                    />
+                    <Button
+                        icon="navigate_before"
+                        disabled={list.length === 0 ||
+                            this.props.pathname.includes(`/page/from/${END_MARK_HEAD}`) ||
+                            prevPageHasNoData
+                        }
+                        onClick={() => this.turnPage(TURN_PAGE_KIND.PREV)}
+                    />
+                    <Button
+                        icon="navigate_next"
+                        disabled={list.length === 0 ||
+                            this.props.pathname.includes(`/to/${END_MARK_TAIL}`) ||
+                            nextPageHasNoData
+                        }
+                        onClick={() => this.turnPage(TURN_PAGE_KIND.NEXT)}
+                    />
+                    <Button
+                        icon="last_page"
+                        disabled={this.props.pathname.includes(`/to/${END_MARK_TAIL}`)}
+                        onClick={() => this.turnPage(TURN_PAGE_KIND.LAST)}
+                    />
+                </div>
+            </div>
         );
     }
 }
 
 PagedListComponent.defaultProps = {
+    ListComponent: ListComponent,
     ListItemComponent: ListComponentItem,
     query: {},
     pageSize: 5,
@@ -201,6 +197,7 @@ PagedListComponent.propTypes = {
     filterFields: React.PropTypes.array,
     query: React.PropTypes.object,
     onSelect: React.PropTypes.func,
+    ListComponent: React.PropTypes.func.isRequired,
     ListItemComponent: React.PropTypes.func.isRequired,
     listItemContext: React.PropTypes.any,
     pageSize: React.PropTypes.number,
