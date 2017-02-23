@@ -30,7 +30,21 @@ class PagedListComponent extends Component {
                 sortDesc: props.pathname.includes("/page/from/"),
                 hasMoreDataCb: (nextPageHasMoreData) => this.state.nextPageHasMoreData.set(nextPageHasMoreData)
             }),
-            (props) => Object.assign({}, props.query),
+            (props) => {
+                let filterQuery = {};
+                if (props.filterFields.length > 0 && props.filter.length > 0) {
+                    filterQuery = {
+                        $or: props.filterFields.map((field) => ({
+                            [ field ]: {
+                                $regex: `${props.filter}`,
+                                $options: "si"
+                            }
+                        }))
+                    };
+                }
+
+                return Object.assign({}, props.query, filterQuery);
+            },
             true
         );
     }
@@ -172,7 +186,8 @@ PagedListComponent.defaultProps = {
     query: {},
     pageSize: 5,
     sortOn: "created",
-    sortOnType: "Date"
+    sortOnType: "Date",
+    filterFields: []
 };
 
 PagedListComponent.propTypes = {
@@ -186,7 +201,8 @@ PagedListComponent.propTypes = {
     pageSize: React.PropTypes.number,
     sortOn: React.PropTypes.string,
     sortOnType: React.PropTypes.string,
-    pathname: React.PropTypes.string.isRequired
+    pathname: React.PropTypes.string.isRequired,
+    filterFields: React.PropTypes.array
 };
 
 PagedListComponent.contextTypes = {

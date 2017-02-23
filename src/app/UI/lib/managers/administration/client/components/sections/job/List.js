@@ -41,6 +41,7 @@ class List extends Component {
                     type={this.props.type}
                     filter={this.state.filter.value}
                     pageSize={5}
+                    filterFields={[ "name", "status", "criteria" ]}
                     ListItemComponent={JobListItem}
                     pathname={this.props.pathname}
                     onSelect={(item) => {
