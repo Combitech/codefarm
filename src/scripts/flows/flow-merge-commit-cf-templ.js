@@ -74,18 +74,30 @@ module.exports = async (argv) => {
         }, {
             _id: "CG",
             collectors: [
-                defaultCollector(`${flowIdTag} AND !step:CG:success`)
+                defaultCollector(`${flowIdTag} AND !step:CG:success AND !merged`)
             ]
         }, {
             _id: "Merge",
             collectors: [
-                defaultCollector(`${flowIdTag} AND step:CG:success AND !step:Merge:success`)
+                defaultCollector(`${flowIdTag} AND step:CG:success AND !merged AND !step:Merge:success`)
+            ]
+        }, {
+            _id: "Build",
+            collectors: [
+                defaultCollector(`${flowIdTag} AND merged`)
             ]
         }
     ];
 
     const cgScript = await fs.readFileAsync(path.join(__dirname, "..", "jobs", "clone_and_test_cf.sh"), { encoding: "utf8" });
     const mergeScript = await fs.readFileAsync(path.join(__dirname, "..", "jobs", "merge_github_revision.sh"), { encoding: "utf8" });
+    const buildScript = `
+        #!/bin/bash
+        delay=$(shuf -i3-10 -n 1)
+        echo "I will sleep $delay seconds"
+        sleep $delay
+        exit 0
+    `;
 
     const defaultSlaveCriteria = "slave1";
 
@@ -98,6 +110,9 @@ module.exports = async (argv) => {
         ),
         slaveScriptBlSpec(
             "Merge", mergeScript, defaultSlaveCriteria, [ "CG" ]
+        ),
+        slaveScriptBlSpec(
+            "Build", buildScript, defaultSlaveCriteria, [ "Merge" ]
         )
     ];
 
