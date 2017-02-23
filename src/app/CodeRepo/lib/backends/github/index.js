@@ -73,12 +73,30 @@ class GithubBackend extends AsyncEventEmitter {
         // TODO: Validate gerrit specific options
     }
 
-    async _onPing(event) {
-        ServiceMgr.instance.log("verbose", "ping event received");
-        ServiceMgr.instance.log("debug", JSON.stringify(event, null, 2));
+    async _getRepo(repositoryName) {
+        const repository = await this.Repository.findOne({ _id: repositoryName });
+        if (!repository) {
+            throw Error(`Unknown repository ${repositoryName}`);
+        }
+
+        return repository;
     }
 
-    _createPullReqRef(email, event, overrideSha = null) {
+    async _getRevision(revisionId) {
+        const repository = await this.Revision.findOne({ _id: revisionId });
+        if (!repository) {
+            throw Error(`Unknown revision ${revisionId}`);
+        }
+
+        return repository;
+    }
+
+    async _createPatch(event, repository, overrideSha = null) {
+        const changeSha = overrideSha ? overrideSha : event.pull_request.head.sha;
+        const email = await this._getCommitEmail(event.repository.name, changeSha);
+
+        ServiceMgr.instance.log("verbose", `Creating new patch for pull request ${event.pull_request.number} (${changeSha})`);
+
         return {
             index: 1,
             email: email,
@@ -88,26 +106,10 @@ class GithubBackend extends AsyncEventEmitter {
             pullreqnr: event.pull_request.number.toString(),
             change: {
                 oldrev: event.pull_request.base.sha,
-                newrev: overrideSha ? overrideSha : event.pull_request.head.sha,
+                newrev: changeSha,
                 refname: event.pull_request.head.ref
             }
         };
-    }
-
-    async _createPullReqRevision(event, overrideSha = null) {
-        const repositoryName = event.repository.name;
-        const repository = await this.Repository.findOne({ _id: repositoryName });
-        if (repository) {
-            const pullReqId = event.pull_request.id.toString();
-            const pullReqNr = event.pull_request.number.toString();
-            const changeSha = overrideSha ? overrideSha : event.pull_request.head.sha;
-            const email = await this._getCommitEmail(repositoryName, changeSha);
-            const ref = this._createPullReqRef(email, event, overrideSha);
-            ServiceMgr.instance.log("debug", `Created revision ref ${ref}`);
-            ServiceMgr.instance.log("verbose", `GitHub patch added for pull request ${pullReqNr}`);
-
-            return await this.Revision.allocate(repository._id, pullReqId, ref);
-        }
     }
 
     // TODO: Find a better way for this, resolving is dependant on user having pushed in last 30 events
@@ -163,11 +165,18 @@ class GithubBackend extends AsyncEventEmitter {
         }
     }
 
+    async _onPing(event) {
+        ServiceMgr.instance.log("verbose", "ping event received");
+        ServiceMgr.instance.log("debug", JSON.stringify(event, null, 2));
+    }
+
     async _onPullRequestOpen(event) {
         ServiceMgr.instance.log("verbose", "pull_request_open received");
         ServiceMgr.instance.log("debug", JSON.stringify(event, null, 2));
 
-        await this._createPullReqRevision(event);
+        const repository = await this._getRepo(event.repository.name);
+        const patch = await this._createPatch(event, repository._id);
+        return await this.Revision.allocate(repository._id, event.pull_request.id.toString(), patch);
     }
 
     async _onPullRequestUpdate(event) {
@@ -175,7 +184,9 @@ class GithubBackend extends AsyncEventEmitter {
         ServiceMgr.instance.log("debug", JSON.stringify(event, null, 2));
 
         // This will create a new patch on existing revision
-        await this._createPullReqRevision(event);
+        const repository = await this._getRepo(event.repository.name);
+        const patch = await this._createPatch(event, repository._id);
+        return await this.Revision.allocate(repository._id, event.pull_request.id.toString(), patch);
     }
 
     async _onPullRequestClose(event) {
@@ -183,10 +194,13 @@ class GithubBackend extends AsyncEventEmitter {
         ServiceMgr.instance.log("debug", JSON.stringify(event, null, 2));
 
         if (event.pull_request.merged === true) {
+            const repository = await this._getRepo(event.repository.name);
+            const revision = await this._getRevision(event.pull_request.id.toString());
             const mergeSha = await this._getPullRequestMergeSha(event.repository.name, event.pull_request.number);
+
             // Will create a new patch on existing revision, Override pull request SHA
-            const revision = await this._createPullReqRevision(event, mergeSha);
-            await revision.setMerged();
+            const patch = await this._createPatch(event, repository._id, mergeSha);
+            return await revision.setMerged(patch);
             ServiceMgr.instance.log("verbose", `GitHub pull request  ${event.pull_request.number} merged`);
         }
     }
@@ -203,31 +217,28 @@ class GithubBackend extends AsyncEventEmitter {
         }
 
         // TODO: List of special branches
-        if (event.ref === "refs/heads/master") {
-            const repositoryName = event.repository.name;
-            const repository = await this.Repository.findOne({ _id: repositoryName });
-            if (repository) {
-                for (const commit of event.commits) {
-                    const ref = {
-                        index: 1,
-                        email: commit.author.email,
-                        name: commit.author.name,
-                        submitted: commit.timestamp,
-                        comment: commit.message,
-                        pullreqnr: "-1",
-                        change: {
-                            oldrev: null, // TODO: set this
-                            newrev: commit.id,
-                            refname: commit.id // Use event.refName all the time instead?
-                        }
-                    };
-                    const revision = await this.Revision.allocate(repository._id, commit.id, ref);
-                    await revision.setMerged();
-                }
-                ServiceMgr.instance.log("verbose", `Push to master created ${event.commits.length} revisions as merged`);
-            }
-        } else {
+        if (event.ref !== "refs/heads/master") {
             ServiceMgr.instance.log("verbose", `Ignored push to personal branch ${event.ref}`);
+
+            return;
+        }
+
+        const repository = await this._getRepo(event.repository.name);
+        for (const commit of event.commits) {
+            const patch = {
+                index: 1,
+                email: commit.author.email,
+                name: commit.author.name,
+                submitted: commit.timestamp,
+                comment: commit.message,
+                pullreqnr: "-1",
+                change: {
+                    oldrev: null, // TODO: set this
+                    newrev: commit.id,
+                    refname: commit.id // Use event.refName all the time instead?
+                }
+            };
+            const revision = await this.Revision.allocate(repository._id, commit.id, patch);
         }
     }
 
@@ -236,23 +247,18 @@ class GithubBackend extends AsyncEventEmitter {
         ServiceMgr.instance.log("debug", JSON.stringify(event, null, 2));
         ServiceMgr.instance.log("verbose", `Review ${event.review.state} for ${event.pull_request.id}`);
 
-        const repository = await this.Repository.findOne({ _id: event.repository.name });
-        if (repository) {
-            const revision = await this.Revision.findOne({ _id: event.pull_request.id.toString() });
-            if (revision) {
-                const userEmail = await this._getUserEmail(event.review.user.login);
-                console.log("email:", userEmail);
-                const state = event.review.state;
-                if (state === "commented") {
-                    await revision.addReview(userEmail, this.Revision.ReviewState.NEUTRAL);
-                } else if (state === "changes_requested") {
-                    await revision.addReview(userEmail, this.Revision.ReviewState.REJECTED);
-                } else if (state === "approved") {
-                    await revision.addReview(userEmail, this.Revision.ReviewState.APPROVED);
-                } else {
-                    ServiceMgr.instance.log("verbose", `unknown review state ${state} on ${revision._id}`);
-                }
-            }
+        const repository = await this.this._getRepo(event.repository.name );
+        const revision = await this._getRevision(event.pull_request.id.toString());
+        const userEmail = await this._getUserEmail(event.review.user.login);
+        const state = event.review.state;
+        if (state === "commented") {
+            await revision.addReview(userEmail, this.Revision.ReviewState.NEUTRAL);
+        } else if (state === "changes_requested") {
+            await revision.addReview(userEmail, this.Revision.ReviewState.REJECTED);
+        } else if (state === "approved") {
+            await revision.addReview(userEmail, this.Revision.ReviewState.APPROVED);
+        } else {
+            ServiceMgr.instance.log("verbose", `unknown review state ${state} on ${revision._id}`);
         }
     }
 

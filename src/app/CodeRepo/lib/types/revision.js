@@ -82,7 +82,7 @@ class Revision extends Type {
         }
     }
 
-    async setMerged(ref = null) {
+    async setMerged(patch = null) {
         if (this.status === "merged") {
             throw new Error("Revision already merged");
         }
@@ -94,8 +94,8 @@ class Revision extends Type {
         this.status = "merged";
         this.tags.push("merged");
 
-        if (ref !== null) {
-            this.patches.push(ref);
+        if (patch) {
+            this.patches.push(patch);
         }
 
         await this.save();
