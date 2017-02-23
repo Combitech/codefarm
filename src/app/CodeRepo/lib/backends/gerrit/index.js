@@ -291,7 +291,7 @@ class GerritBackend extends AsyncEventEmitter {
             }
         }
 
-        return false;
+        return null;
     }
 
     async getUri(backend, repository) {

@@ -99,11 +99,12 @@ class GithubBackend extends AsyncEventEmitter {
         const repository = await this.Repository.findOne({ _id: repositoryName });
         if (repository) {
             const pullReqId = event.pull_request.id.toString();
+            const pullReqNr = event.pull_request.number.toString();
             const changeSha = overrideSha ? overrideSha : event.pull_request.head.sha;
             const email = await this._getCommitEmail(repositoryName, changeSha);
             const ref = this._createPullReqRef(email, event, overrideSha);
             ServiceMgr.instance.log("debug", `Created revision ref ${ref}`);
-            ServiceMgr.instance.log("verbose", `GitHub revision/patch added for pull request: ${pullReqId}`);
+            ServiceMgr.instance.log("verbose", `GitHub patch added for pull request ${pullReqNr}`);
 
             return await this.Revision.allocate(repository._id, pullReqId, ref);
         }
@@ -179,13 +180,14 @@ class GithubBackend extends AsyncEventEmitter {
 
     async _onPullRequestClose(event) {
         ServiceMgr.instance.log("verbose", "pull-request-closed received");
-        ServiceMgr.instance.log("debug", JSON.stringify(event, null, 2));
+        ServiceMgr.instance.log("verbose", JSON.stringify(event, null, 2));
 
         if (event.pull_request.merged === true) {
             const mergeSha = await this._getPullRequestMergeSha(event.repository.name, event.pull_request.number);
             // Will create a new patch on existing revision, Override pull request SHA
             const revision = await this._createPullReqRevision(event, mergeSha);
-            revision.setMerged();
+
+            await revision.setMerged();
             await this.emit("revision.merged", revision);
             ServiceMgr.instance.log("verbose", `GitHub event merged revision ${event.pull_request.id}`);
         }
@@ -223,9 +225,8 @@ class GithubBackend extends AsyncEventEmitter {
                     };
                     const revision = await this.Revision.allocate(repository._id, commit.id, ref);
                     await revision.setMerged();
-                    await this.emit("revision.merged", revision);
                 }
-                ServiceMgr.instance.log("verbose", `Push created ${event.commits.length} revisions as merged`);
+                ServiceMgr.instance.log("verbose", `Push to master created ${event.commits.length} revisions as merged`);
             }
         } else {
             ServiceMgr.instance.log("verbose", `Ignored push to personal branch ${event.ref}`);
@@ -349,7 +350,11 @@ class GithubBackend extends AsyncEventEmitter {
             await this._sendRequest(uri, data, "PUT");
         } catch (err) {
             ServiceMgr.instance.log("error", `Error merging in repository: ${repository._id} sha: ${patch.change.newrev} err: ${err}`);
+            throw Error(`GitHub merge failed with message: ${err.message}`);
         }
+
+        // We set merged ourselves, we do not want it to be set in
+        return null;
     }
 
     async getUri(backend, repository) {
