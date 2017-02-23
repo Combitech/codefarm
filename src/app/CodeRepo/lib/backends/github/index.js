@@ -189,7 +189,7 @@ class GithubBackend extends AsyncEventEmitter {
 
             await revision.setMerged();
             await this.emit("revision.merged", revision);
-            ServiceMgr.instance.log("verbose", `GitHub event merged revision ${event.pull_request.id}`);
+            ServiceMgr.instance.log("verbose", `GitHub pull request  ${event.pull_request.number} merged`);
         }
     }
 
