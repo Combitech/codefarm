@@ -224,6 +224,7 @@ class GithubBackend extends AsyncEventEmitter {
         }
 
         const repository = await this._getRepo(event.repository.name);
+        const revision = null;
         for (const commit of event.commits) {
             const patch = {
                 index: 1,
@@ -238,8 +239,9 @@ class GithubBackend extends AsyncEventEmitter {
                     refname: commit.id // Use event.refName all the time instead?
                 }
             };
-            const revision = await this.Revision.allocate(repository._id, commit.id, patch);
+            revision = await this.Revision.allocate(repository._id, commit.id, patch);
         }
+        revision.setMerged();
     }
 
     async _onPullRequestReview(event) {
