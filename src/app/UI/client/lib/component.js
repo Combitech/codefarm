@@ -142,10 +142,11 @@ class Component extends React.PureComponent {
      * @param {String} type Type or function (props) => type
      * @param {String|Function} id Id or function (props) => id
      * @param {Boolean} [subscribe] If state variable shall be updated when source updates
+     * @param {Boolean} [enabled] Type or function (props) => boolean set true if state variable is enabled
      * @returns {undefined}
      */
-    addTypeItemStateVariable(name, type, id, subscribe = false) {
-        this.log("addTypeItemStateVariable", name, type, id, subscribe);
+    addTypeItemStateVariable(name, type, id, subscribe = false, enabled = true) {
+        this.log("addTypeItemStateVariable", name, type, id, subscribe, enabled);
 
         this.state[name] = false; // eslint-disable-line react/no-direct-mutation-state
 
@@ -154,6 +155,7 @@ class Component extends React.PureComponent {
             type: typeof type === "function" ? type : () => type,
             id: typeof id === "function" ? id : () => id,
             subscribe: subscribe,
+            enabled: typeof enabled === "function" ? enabled : () => enabled,
             item: true
         });
     }
@@ -166,10 +168,11 @@ class Component extends React.PureComponent {
      * @param {String} type Type or function (props) => type
      * @param {Object|Function} createBody Create body or function (props) => create body
      * @param {Boolean} [subscribe] If state variable shall be updated when source updates
+     * @param {Boolean} [enabled] Type or function (props) => boolean set true if state variable is enabled
      * @returns {undefined}
      */
-    addTypeItemStateVariableWithCreate(name, type, createBody, subscribe = false) {
-        this.log("addTypeItemStateVariableWithCreate", name, type, createBody, subscribe);
+    addTypeItemStateVariableWithCreate(name, type, createBody, subscribe = false, enabled = true) {
+        this.log("addTypeItemStateVariableWithCreate", name, type, createBody, subscribe, enabled);
 
         this.state[name] = false; // eslint-disable-line react/no-direct-mutation-state
 
@@ -178,6 +181,7 @@ class Component extends React.PureComponent {
             type: typeof type === "function" ? type : () => type,
             createBody: typeof createBody === "function" ? createBody : () => createBody,
             subscribe: subscribe,
+            enabled: typeof enabled === "function" ? enabled : () => enabled,
             item: true
         });
     }
@@ -221,6 +225,7 @@ class Component extends React.PureComponent {
         this.log("_loadAsyncVarItem", asyncVar);
 
         const newType = asyncVar.type(props);
+        const newEnabled = asyncVar.enabled(props);
         if (asyncVar.createBody) {
             const newCreateBody = asyncVar.createBody(props);
             if (asyncVar._type === newType && JSON.stringify(asyncVar._createBody) === JSON.stringify(newCreateBody)) {
@@ -231,7 +236,8 @@ class Component extends React.PureComponent {
         } else {
             const newId = asyncVar.id(props);
 
-            if (asyncVar._type === newType && asyncVar._id === newId) {
+            if (asyncVar._type === newType && asyncVar._id === newId &&
+                asyncVar._enabled === newEnabled) {
                 return; // Already loaded
             }
 
@@ -239,8 +245,10 @@ class Component extends React.PureComponent {
         }
 
         asyncVar._type = newType;
+        asyncVar._enabled = newEnabled;
 
-        if (asyncVar._type && (asyncVar._id || asyncVar._createBody)) {
+        if (asyncVar._type && (typeof asyncVar._enabled === "boolean") &&
+            (asyncVar._id || asyncVar._createBody)) {
             this.log("_loadAsyncVarItem", "reload");
         }
 
@@ -257,16 +265,20 @@ class Component extends React.PureComponent {
             set(false);
         }
 
-        if (asyncVar._type && asyncVar._createBody) {
-            const data = await api.rest.post(asyncVar._type, asyncVar._createBody);
+        if (asyncVar._enabled) {
+            if (asyncVar._type && asyncVar._createBody) {
+                const data = await api.rest.post(asyncVar._type, asyncVar._createBody);
 
-            asyncVar._id = data._id;
-        }
+                asyncVar._id = data._id;
+            }
 
-        if (asyncVar.subscribe) {
-            asyncVar.subId = await type.subscribeToItemAsync(asyncVar._type, asyncVar._id, set);
+            if (asyncVar.subscribe) {
+                asyncVar.subId = await type.subscribeToItemAsync(asyncVar._type, asyncVar._id, set);
+            } else {
+                set(await type.fetchItem(asyncVar._type, asyncVar._id));
+            }
         } else {
-            set(await type.fetchItem(asyncVar._type, asyncVar._id));
+            set(null);
         }
     }
 

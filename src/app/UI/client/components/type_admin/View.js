@@ -12,15 +12,14 @@ class View extends Component {
 
         this.addStateVariable("context", {});
 
-        if (this.props.route.path.startsWith(":")) {
-            this.addTypeItemStateVariable(
-                "item",
-                (props) => props.route.type,
-                // parameterKey ends with first /
-                (props) => props.params[props.route.path.substr(1).split("/")[0]],
-                true
-            );
-        }
+        this.addTypeItemStateVariable(
+            "item",
+            (props) => props.route.type,
+            // parameterKey ends with first /
+            (props) => props.params[props.route.path.substr(1).split("/")[0]],
+            true,
+            (props) => props.route.path.startsWith(":")
+        );
     }
 
     render() {
