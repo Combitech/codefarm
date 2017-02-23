@@ -186,9 +186,7 @@ class GithubBackend extends AsyncEventEmitter {
             const mergeSha = await this._getPullRequestMergeSha(event.repository.name, event.pull_request.number);
             // Will create a new patch on existing revision, Override pull request SHA
             const revision = await this._createPullReqRevision(event, mergeSha);
-
             await revision.setMerged();
-            await this.emit("revision.merged", revision);
             ServiceMgr.instance.log("verbose", `GitHub pull request  ${event.pull_request.number} merged`);
         }
     }
