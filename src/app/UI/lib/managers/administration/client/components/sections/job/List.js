@@ -40,8 +40,8 @@ class List extends Component {
                 <TAPagedList
                     type={this.props.type}
                     filter={this.state.filter.value}
-                    pageSize={5}
                     filterFields={[ "name", "status", "criteria" ]}
+                    pageSize={5}
                     ListItemComponent={JobListItem}
                     pathname={this.props.pathname}
                     onSelect={(item) => {

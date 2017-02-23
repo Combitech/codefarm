@@ -41,6 +41,7 @@ class List extends Component {
                     type="artifactrepo.artifact"
                     query={{ repository: this.props.item._id }}
                     filter={this.state.filter.value}
+                    filterFields={[ "name", "version", "state", "repository" ]}
                     pageSize={8}
                     ListItemComponent={ArtifactListItem}
                     pathname={this.props.pathname}
