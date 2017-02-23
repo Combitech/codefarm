@@ -5,6 +5,7 @@ import LoadIndicator from "./LoadIndicator";
 import ListComponentItem from "./ListItem";
 import { List, ListDivider } from "react-toolbox/lib/list";
 import { Button } from "react-toolbox/lib/button";
+import { filterFields as qbFilterFields } from "ui-lib/query_builder";
 
 const END_MARK_HEAD = "__HEAD__";
 const END_MARK_TAIL = "__TAIL__";
@@ -33,14 +34,7 @@ class PagedListComponent extends Component {
             (props) => {
                 let filterQuery = {};
                 if (props.filterFields.length > 0 && props.filter.length > 0) {
-                    filterQuery = {
-                        $or: props.filterFields.map((field) => ({
-                            [ field ]: {
-                                $regex: `${props.filter}`,
-                                $options: "si"
-                            }
-                        }))
-                    };
+                    filterQuery = qbFilterFields(props.filterFields, props.filter, "si");
                 }
 
                 return Object.assign({}, props.query, filterQuery);

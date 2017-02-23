@@ -22,7 +22,26 @@ const isValue = (field, value) => ({
     [ field ]: value
 });
 
+/** Build MongoDB query object matching all documents having any (or all)
+ * of the fields matching the pattern.
+ * @param {Array} fields Fields to match
+ * @param {String|regex} pattern Mongodb $regex pattern
+ * @param {String} [options] Mongodb $regex $options
+ * @param {String} [matchAnyField] If true it's enough that the pattern matches
+ *   any of the fields. If false it must match all fields.
+ * @return {Object} Mongo-DB query
+ */
+const filterFields = (fields, pattern, options = "", matchAnyField = true) => ({
+    [ matchAnyField ? "$or" : "$and" ]: fields.map((field) => ({
+        [ field ]: {
+            $regex: pattern,
+            $options: options
+        }
+    }))
+});
+
 export {
     anyOf,
-    isValue
+    isValue,
+    filterFields
 };
