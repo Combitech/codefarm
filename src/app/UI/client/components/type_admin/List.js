@@ -4,6 +4,7 @@ import Component from "ui-lib/component";
 import LoadIndicator from "./LoadIndicator";
 import ListComponentItem from "./ListItem";
 import { List, ListDivider } from "react-toolbox/lib/list";
+import { filterFields as qbFilterFields } from "ui-lib/query_builder";
 
 class ListComponent extends Component {
     constructor(props) {
@@ -12,7 +13,14 @@ class ListComponent extends Component {
         this.addTypeListStateVariable(
             "list",
             (props) => props.type,
-            (props) => props.query,
+            (props) => {
+                let filterQuery = {};
+                if (props.filterFields.length > 0 && props.filter && props.filter.length > 0) {
+                    filterQuery = qbFilterFields(props.filterFields, props.filter, "si");
+                }
+
+                return Object.assign({}, props.query, filterQuery);
+            },
             true
         );
     }
@@ -59,13 +67,15 @@ class ListComponent extends Component {
 
 ListComponent.defaultProps = {
     ListItemComponent: ListComponentItem,
-    query: {}
+    query: {},
+    filterFields: []
 };
 
 ListComponent.propTypes = {
     theme: React.PropTypes.object,
     type: React.PropTypes.string.isRequired,
     filter: React.PropTypes.string,
+    filterFields: React.PropTypes.array,
     query: React.PropTypes.object,
     onSelect: React.PropTypes.func,
     ListItemComponent: React.PropTypes.func.isRequired,

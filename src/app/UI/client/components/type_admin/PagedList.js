@@ -33,7 +33,7 @@ class PagedListComponent extends Component {
             }),
             (props) => {
                 let filterQuery = {};
-                if (props.filterFields.length > 0 && props.filter.length > 0) {
+                if (props.filterFields.length > 0 && props.filter && props.filter.length > 0) {
                     filterQuery = qbFilterFields(props.filterFields, props.filter, "si");
                 }
 
@@ -188,6 +188,7 @@ PagedListComponent.propTypes = {
     theme: React.PropTypes.object,
     type: React.PropTypes.string.isRequired,
     filter: React.PropTypes.string,
+    filterFields: React.PropTypes.array,
     query: React.PropTypes.object,
     onSelect: React.PropTypes.func,
     ListItemComponent: React.PropTypes.func.isRequired,
@@ -195,8 +196,7 @@ PagedListComponent.propTypes = {
     pageSize: React.PropTypes.number,
     sortOn: React.PropTypes.string,
     sortOnType: React.PropTypes.string,
-    pathname: React.PropTypes.string.isRequired,
-    filterFields: React.PropTypes.array
+    pathname: React.PropTypes.string.isRequired
 };
 
 PagedListComponent.contextTypes = {

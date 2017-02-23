@@ -40,6 +40,7 @@ class List extends Component {
                 <TAList
                     type={this.props.type}
                     filter={this.state.filter.value}
+                    filterFields={[ "_id", "uri", "tags" ]}
                     ListItemComponent={SlaveListItem}
                     onSelect={(item) => {
                         this.context.router.push({
