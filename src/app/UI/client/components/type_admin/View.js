@@ -2,17 +2,15 @@
 import React from "react";
 import TypeItem from "ui-observables/type_item";
 import { States as ObservableDataStates } from "ui-lib/observable_data";
-import Component from "ui-lib/component";
+import LightComponent from "ui-lib/light_component";
 import LoadIndicator from "./LoadIndicator";
 import ControlButton from "./ControlButton";
 
-class View extends Component {
+class View extends LightComponent {
     constructor(props) {
         super(props, true);
 
         this.log("Constructor");
-
-        this.addStateVariable("context", {});
 
         this.item = new TypeItem({
             type: props.route.type,
@@ -20,23 +18,23 @@ class View extends Component {
             subscribe: props.route.path.startsWith(":")
         });
 
-        this.state.item = this.item.value.getValue();
+        this.state = {
+            context: {},
+            item: this.item.value.getValue(),
+            state: this.item.state.getValue()
+        };
     }
 
     componentDidMount() {
         this.addDisposable(this.item.start());
         this.addDisposable(this.item.value.subscribe((item) => this.setState({ item })));
         this.addDisposable(this.item.state.subscribe((state) => this.setState({ state })));
-
-        super.componentDidMount();
     }
 
     componentWillReceiveProps(nextProps) {
         this.item.setOpts({
             id: nextProps.params[nextProps.route.path.substr(1).split("/")[0]] || false
         });
-
-        super.componentWillReceiveProps(nextProps);
     }
 
     render() {
