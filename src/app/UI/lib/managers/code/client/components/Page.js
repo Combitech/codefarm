@@ -1,31 +1,35 @@
 
 import React from "react";
 import { AppMenu } from "ui-components/app_menu";
-import Component from "ui-lib/component";
+import LightComponent from "ui-lib/light_component";
 import {
     LoadIndicator as TALoadIndicator
 } from "ui-components/type_admin";
+import CodeRepositories from "ui-observables/code_repositories";
+import { States as ObservableDataStates } from "ui-lib/observable_data";
 
-const REPO_TYPE = "coderepo.repository";
-
-class Page extends Component {
+class Page extends LightComponent {
     constructor(props) {
         super(props);
 
-        this.addTypeListStateVariable("list", REPO_TYPE, {}, true);
+        this.repositoryList = new CodeRepositories();
+
+        this.state = {
+            list: this.repositoryList.value.getValue(),
+            state: this.repositoryList.state.getValue()
+        };
+    }
+
+    componentDidMount() {
+        this.addDisposable(this.repositoryList.value.subscribe((list) => this.setState({ list })));
+        this.addDisposable(this.repositoryList.state.subscribe((state) => this.setState({ state })));
     }
 
     render() {
         this.log("render", this.props, this.state);
 
-        if (this.state.errorAsync.value) {
-            return (
-                <div>{this.state.errorAsync.value}</div>
-            );
-        }
-
         let loadIndicator;
-        if (this.state.loadingAsync.value) {
+        if (this.state.state === ObservableDataStates.LOADING) {
             loadIndicator = (
                 <TALoadIndicator/>
             );
@@ -33,7 +37,7 @@ class Page extends Component {
 
         const pathname = this.getPathname();
 
-        const items = this.state.list.map((item) => {
+        const items = this.state.list.toJS().map((item) => {
             const pn = `${pathname}/${item._id}`;
             const active = this.context.router.location.pathname.startsWith(pn);
 

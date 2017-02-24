@@ -170,6 +170,7 @@ module.exports = function(options) {
             ],
             alias: {
                 "ui-lib": path.join(__dirname, "lib"),
+                "ui-observables": path.join(__dirname, "observables"),
                 "ui-styles": path.join(__dirname, "styles"),
                 "ui-components": path.join(__dirname, "components"),
                 "ui-mgr": path.join(__dirname, "..", "lib", "managers")

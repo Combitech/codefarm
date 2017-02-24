@@ -2,10 +2,9 @@
 import api from "api.io/api.io-client";
 import React from "react";
 import stateVar from "ui-lib/state_var";
+import LightComponent from "ui-lib/light_component";
 import type from "ui-lib/type";
 import { assertProp } from "misc";
-
-let instanceCounter = 0;
 
 const LifecycleState = {
     CONSTRUCTED: "CONSTRUCTED",
@@ -13,14 +12,11 @@ const LifecycleState = {
     NOT_MOUNTED: "NOT_MOUNTED"
 };
 
-class Component extends React.PureComponent {
+class Component extends LightComponent {
     constructor(props, debug = false) {
-        super(props);
+        super(props, debug);
 
         this.lifecycleState = LifecycleState.CONSTRUCTED;
-
-        this.debug = debug;
-        this.id = instanceCounter++;
 
         this.state = {};
         this.locationVariables = [];
@@ -188,38 +184,6 @@ class Component extends React.PureComponent {
             enabled: typeof enabled === "function" ? enabled : () => enabled,
             item: true
         });
-    }
-
-    getPathname() {
-        const routes = this.props.routes;
-        const route = this.props.route;
-        const params = this.props.params;
-
-        if (!routes || !route || !params) {
-            return false;
-        }
-
-        const idx = routes.indexOf(route);
-        const list = routes.slice(0, idx + 1);
-        const parts = list.map((route) => {
-            if (route.path === "/") {
-                return "";
-            }
-
-            // Find and resolve parameters in route, they begin with :
-            return route.path
-                .split("/")
-                .map((part) => part.startsWith(":") ? params[part.substr(1)] : part)
-                .join("/");
-        });
-
-        return parts.join("/");
-    }
-
-    log(...args) {
-        if (this.debug) {
-            console.log(`${this.constructor.name}[${this.id}]`, ...args);
-        }
     }
 
 
@@ -463,11 +427,5 @@ class Component extends React.PureComponent {
         });
     }
 }
-
-Component.propTypes = {
-    routes: React.PropTypes.array,
-    route: React.PropTypes.string,
-    params: React.PropTypes.object
-};
 
 export default Component;
