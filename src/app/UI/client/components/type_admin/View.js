@@ -1,37 +1,48 @@
 
 import React from "react";
+import TypeItem from "ui-observables/type_item";
+import { States as ObservableDataStates } from "ui-lib/observable_data";
 import Component from "ui-lib/component";
 import LoadIndicator from "./LoadIndicator";
 import ControlButton from "./ControlButton";
 
 class View extends Component {
     constructor(props) {
-        super(props);
+        super(props, true);
 
         this.log("Constructor");
 
         this.addStateVariable("context", {});
 
-        this.addTypeItemStateVariable(
-            "item",
-            (props) => props.route.type,
-            // parameterKey ends with first /
-            (props) => props.params[props.route.path.substr(1).split("/")[0]],
-            true,
-            (props) => props.route.path.startsWith(":")
-        );
+        this.item = new TypeItem({
+            type: props.route.type,
+            id: props.params[props.route.path.substr(1).split("/")[0]] || false,
+            subscribe: props.route.path.startsWith(":")
+        });
+
+        this.state.item = this.item.value.getValue();
+    }
+
+    componentDidMount() {
+        this.addDisposable(this.item.start());
+        this.addDisposable(this.item.value.subscribe((item) => this.setState({ item })));
+        this.addDisposable(this.item.state.subscribe((state) => this.setState({ state })));
+
+        super.componentDidMount();
+    }
+
+    componentWillReceiveProps(nextProps) {
+        this.item.setOpts({
+            id: nextProps.params[nextProps.route.path.substr(1).split("/")[0]] || false
+        });
+
+        super.componentWillReceiveProps(nextProps);
     }
 
     render() {
         this.log("render", this.props, JSON.stringify(this.state, null, 2));
 
-        if (this.state.errorAsync.value) {
-            return (
-                <div>{this.state.errorAsync.value}</div>
-            );
-        }
-
-        if (this.state.loadingAsync.value) {
+        if (this.state.state === ObservableDataStates.LOADING) {
             return (
                 <LoadIndicator
                     theme={this.props.theme}
@@ -48,7 +59,7 @@ class View extends Component {
         const props = {
             theme: this.props.theme,
             parentItems: parentItems,
-            item: this.state.item || null,
+            item: this.state.item.toJS()._id ? this.state.item.toJS() : null,
             breadcrumbs: this.props.breadcrumbs,
             controls: [],
             pathname: this.getPathname(),
@@ -77,7 +88,7 @@ class View extends Component {
         }
 
         const childRoutes = this.props.route.childRoutes;
-        if (this.state.item) {
+        if (props.item) {
             if (childRoutes) {
                 if (childRoutes.find((route) => route.path === "create")) {
                     props.controls.push((

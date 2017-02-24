@@ -28,7 +28,9 @@ class ObservableData {
         this._value = new Rx.BehaviorSubject(Immutable.fromJS(this._initialValue));
         this._state = new Rx.BehaviorSubject(States.NOT_LOADING);
         this._error = new Rx.BehaviorSubject(Immutable.fromJS(this._initialError));
+    }
 
+    start() {
         /*
          * Subscribe to changes to props, a change should trigger a reload.
          * Resets the error before load and sets it again if the load fails.
@@ -72,6 +74,8 @@ class ObservableData {
                 this._state.next(States.NOT_LOADING);
             });
         });
+
+        return this;
     }
 
     setOpts(opts) {

@@ -21,6 +21,7 @@ class Page extends LightComponent {
     }
 
     componentDidMount() {
+        this.addDisposable(this.repositoryList.start());
         this.addDisposable(this.repositoryList.value.subscribe((list) => this.setState({ list })));
         this.addDisposable(this.repositoryList.state.subscribe((state) => this.setState({ state })));
     }

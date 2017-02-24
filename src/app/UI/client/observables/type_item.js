@@ -9,8 +9,8 @@ class TypeItem extends ObservableData {
             throw new Error("type must be set to a string in the initial opts");
         }
 
-        if (typeof initialOpts.id !== "string") {
-            throw new Error("id must be set to a string in the initial opts");
+        if (typeof initialOpts.id !== "string" && initialOpts.id !== false) {
+            throw new Error("id must be set to a string or false in the initial opts");
         }
 
         if (typeof initialOpts.subscribe !== "undefined" && typeof initialOpts.subscribe !== "boolean") {
@@ -29,9 +29,10 @@ class TypeItem extends ObservableData {
     async _load(opts) {
         if (!opts.id) {
             this._disposeEventHandlers();
+
             return this._initialValue;
         }
-        
+
         const value = await api.type.get(opts.type, { _id: opts.id });
 
         this._setupEventHandlers(opts);
@@ -53,12 +54,12 @@ class TypeItem extends ObservableData {
         this._addEventHandler(`created.${opts.type}.${opts.id}`, (data) => {
             this._value.next(Immutable.fromJS(data.newdata));
         });
-        
+
         this._addEventHandler(`updated.${opts.type}.${opts.id}`, (data) => {
             this._value.next(Immutable.fromJS(data.newdata));
         });
-        
-        this._addEventHandler(`removed.${opts.type}.${opts.id}`, (data) => {
+
+        this._addEventHandler(`removed.${opts.type}.${opts.id}`, () => {
             this._value.next(Immutable.fromJS(this._initialValue));
         });
     }
