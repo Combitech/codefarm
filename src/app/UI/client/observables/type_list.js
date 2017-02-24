@@ -10,8 +10,11 @@ class TypeList extends ObservableData {
             throw new Error("type must be set to a string in the initial opts");
         }
 
-        if (typeof initialOpts.query !== "undefined" && typeof initialOpts.query !== "object") {
-            throw new Error("query must be an object");
+        // Allow query object or false to load no initial data
+        if (initialOpts.query !== false &&
+            typeof initialOpts.query !== "undefined" &&
+            typeof initialOpts.query !== "object") {
+            throw new Error("query must be an object or false");
         }
 
         if (typeof initialOpts.subscribe !== "undefined" && typeof initialOpts.subscribe !== "boolean") {
@@ -29,6 +32,12 @@ class TypeList extends ObservableData {
     }
 
     async _load(opts) {
+        if (!opts.query) {
+            this._disposeEventHandlers();
+
+            return this._initialValue;
+        }
+
         const value = await api.type.get(opts.type, opts.query);
 
         this._setupEventHandlers(opts);
