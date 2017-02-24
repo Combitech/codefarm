@@ -52,7 +52,9 @@ class View extends Component {
             breadcrumbs: this.props.breadcrumbs,
             controls: [],
             pathname: this.getPathname(),
-            context: this.props.context || this.state.context
+            context: this.props.context || this.state.context,
+            location: this.props.location,
+            route: this.props.route
         };
 
         if (!props.item) {
@@ -153,6 +155,7 @@ View.propTypes = {
     item: React.PropTypes.object,
     params: React.PropTypes.object.isRequired,
     route: React.PropTypes.object.isRequired,
+    location: React.PropTypes.object.isRequired,
     children: React.PropTypes.node,
     breadcrumbs: React.PropTypes.array,
     context: React.PropTypes.object

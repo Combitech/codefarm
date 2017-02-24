@@ -15,7 +15,7 @@ class List extends Component {
     }
 
     render() {
-        console.log("ListLocal-RENDER", this.props);
+        this.log("render", this.props, this.state);
 
         const controls = this.props.controls.slice(0);
 

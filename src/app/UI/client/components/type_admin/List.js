@@ -4,7 +4,6 @@ import Component from "ui-lib/component";
 import LoadIndicator from "./LoadIndicator";
 import ListComponentItem from "./ListItem";
 import ListComponent from "./ListComponent";
-import { ListDivider } from "react-toolbox/lib/list";
 import { filterFields as qbFilterFields } from "ui-lib/query_builder";
 
 class List extends Component {

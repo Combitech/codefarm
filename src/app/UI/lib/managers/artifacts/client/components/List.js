@@ -13,6 +13,7 @@ class List extends Component {
         super(props);
 
         this.addStateVariable("filter", "");
+        this.addStateVariable("relative", "__HEAD__", true);
     }
 
     render() {
@@ -42,14 +43,16 @@ class List extends Component {
                     query={{ repository: this.props.item._id }}
                     filter={this.state.filter.value}
                     filterFields={[ "name", "version", "state", "repository" ]}
-                    pageSize={8}
+                    pageSize={10}
                     ListItemComponent={ArtifactListItem}
-                    pathname={this.props.pathname}
                     onSelect={(item) => {
                         this.context.router.push({
                             pathname: `${this.props.pathname}/${item._id}`
                         });
                     }}
+                    location={this.props.location}
+                    route={this.props.route}
+                    relative={this.state.relative}
                 />
             </TASection>
         );
@@ -61,7 +64,9 @@ List.propTypes = {
     item: React.PropTypes.object,
     pathname: React.PropTypes.string.isRequired,
     breadcrumbs: React.PropTypes.array.isRequired,
-    controls: React.PropTypes.array.isRequired
+    controls: React.PropTypes.array.isRequired,
+    location: React.PropTypes.object.isRequired,
+    route: React.PropTypes.object.isRequired
 };
 
 List.contextTypes = {

@@ -5,14 +5,11 @@ import LoadIndicator from "./LoadIndicator";
 import ListComponentItem from "./ListItem";
 import ListComponent from "./ListComponent";
 import { Button } from "react-toolbox/lib/button";
-import { ListDivider } from "react-toolbox/lib/list";
 import { filterFields as qbFilterFields } from "ui-lib/query_builder";
 
 const END_MARK_HEAD = "__HEAD__";
 const END_MARK_TAIL = "__TAIL__";
-const isEndMarkPath = (path) => path.includes("/page/") && (
-    (path.endsWith(END_MARK_HEAD) || path.endsWith(END_MARK_TAIL))
-);
+const isEndMark = (value) => value === END_MARK_HEAD || value === END_MARK_TAIL;
 
 const TURN_PAGE_KIND = {
     NEXT: "NEXT",
@@ -21,9 +18,14 @@ const TURN_PAGE_KIND = {
     LAST: "LAST"
 };
 
+const isFromRelative = (relative) => relative === END_MARK_HEAD || relative.startsWith(">");
+const isToRelative = (relative) => relative === END_MARK_TAIL || relative.startsWith("<");
+const encodeRelative = (value, isFrom = null) =>
+    `${typeof isFrom !== "boolean" ? "" : (isFrom ? ">" : "<")}${value}`;
+
 class PagedListComponent extends Component {
     constructor(props) {
-        super(props, true);
+        super(props);
 
         this.addStateVariable("nextPageHasMoreData", false);
 
@@ -34,9 +36,9 @@ class PagedListComponent extends Component {
                 pageSize: props.pageSize,
                 sortOn: props.sortOn,
                 sortOnType: props.sortOnType,
-                relativeValue: (props.pathname.includes("/page/") && !isEndMarkPath(props.pathname))
-                    ? props.pathname.split("/").pop() : null,
-                sortDesc: props.pathname.includes("/page/from/"),
+                relativeValue: !isEndMark(props.relative.value)
+                    ? props.relative.value.substr(1) : null,
+                sortDesc: isFromRelative(props.relative.value),
                 hasMoreDataCb: (nextPageHasMoreData) => this.state.nextPageHasMoreData.set(nextPageHasMoreData)
             }),
             (props) => {
@@ -52,54 +54,33 @@ class PagedListComponent extends Component {
     }
 
     turnPage(turnKind) {
-        const dirFromTurnKind = {
-            [ TURN_PAGE_KIND.NEXT ]: "from",
-            [ TURN_PAGE_KIND.FIRST ]: "from",
-            [ TURN_PAGE_KIND.PREV ]: "to",
-            [ TURN_PAGE_KIND.LAST ]: "to"
-        };
-        const direction = dirFromTurnKind[turnKind];
-        let basePath = this.props.pathname;
-        const removeStart = basePath.indexOf("/page/");
-        if (removeStart !== -1) {
-            basePath = basePath.slice(0, removeStart);
-        }
-        const wasLastTurnPrev = this.props.pathname.includes("/page/to/");
+        const isFrom = turnKind === TURN_PAGE_KIND.NEXT || turnKind === TURN_PAGE_KIND.FIRST;
         let itemIdx;
-        let value;
+        let value = encodeRelative(isFrom ? END_MARK_HEAD : END_MARK_TAIL);
         if (turnKind === TURN_PAGE_KIND.NEXT || turnKind === TURN_PAGE_KIND.PREV) {
-            if (direction === "from") {
+            const wasLastTurnPrev = isToRelative(this.props.relative.value);
+            if (isFrom) {
                 itemIdx = wasLastTurnPrev ? 0 : this.state.list.length - 1;
             } else {
                 itemIdx = wasLastTurnPrev ? this.state.list.length - 1 : 0;
             }
             const relativeToItem = this.state.list[itemIdx];
-            value = relativeToItem[this.props.sortOn];
-        } else {
-            value = direction === "from" ? END_MARK_HEAD : END_MARK_TAIL;
+            value = encodeRelative(relativeToItem[this.props.sortOn], isFrom);
         }
-        const newPath = `${basePath}/page/${direction}/${value}`;
-        console.log(`TURN ${newPath} - ${turnKind} - ${direction}`);
-        this.context.router.push({
-            pathname: newPath
-        });
+        this.props.relative.set(value);
     }
 
     componentDidUpdate() {
         // If we find that we have navigated to head or tail, change
         // route so that we follow head or tail
         const nextHasNoData = this.state.nextPageHasMoreData.value === false;
-        if (nextHasNoData && !isEndMarkPath(this.props.pathname)) {
-            if (this.props.pathname.includes("/page/from/")) {
+        if (nextHasNoData && !isEndMark(this.props.relative.value)) {
+            if (isFromRelative(this.props.relative.value)) {
                 // We are at end, follow tail
-                this.context.router.push({
-                    pathname: this.props.pathname.replace(/\/page\/from\/[^\/]*/, `/page/to/${END_MARK_TAIL}`)
-                });
-            } else if (this.props.pathname.includes("/page/to/")) {
+                this.props.relative.set(encodeRelative(END_MARK_TAIL));
+            } else {
                 // We are at start, follow head
-                this.context.router.push({
-                    pathname: this.props.pathname.replace(/\/page\/to\/[^\/]*/, `/page/from/${END_MARK_HEAD}`)
-                });
+                this.props.relative.set(encodeRelative(END_MARK_HEAD));
             }
         }
     }
@@ -121,15 +102,22 @@ class PagedListComponent extends Component {
             );
         }
 
-        const nextPageHasNoData = this.props.pathname.includes("/page/from/") && this.state.nextPageHasMoreData.value === false;
-        const prevPageHasNoData = this.props.pathname.includes("/page/to/") && this.state.nextPageHasMoreData.value === false;
-        if ((nextPageHasNoData || prevPageHasNoData) && !isEndMarkPath(this.props.pathname)) {
+        const relative = this.props.relative.value;
+        const isRelativeFrom = isFromRelative(relative);
+        const noMoreData = this.state.nextPageHasMoreData.value === false;
+
+        const nextPageHasNoData = isRelativeFrom && noMoreData;
+        const prevPageHasNoData = !isRelativeFrom && noMoreData;
+        if ((nextPageHasNoData || prevPageHasNoData) && !isEndMark(relative)) {
             // Skip rendering since componentDidUpdate will trigger a re-render anyway
             return;
         }
 
+        const isFirstPage = isRelativeFrom && relative === END_MARK_HEAD;
+        const isLastPage = !isRelativeFrom && relative === END_MARK_TAIL;
+
         let list = this.state.list;
-        if (list && this.props.pathname.includes("/page/to/")) {
+        if (list && !isRelativeFrom) {
             list = list.slice(0).reverse();
         }
 
@@ -137,6 +125,7 @@ class PagedListComponent extends Component {
             <div>
                 <this.props.ListComponent
                     theme={this.props.theme}
+                    listContext={this.props.listContext}
                     children={list && list.map((item) => (
                         <this.props.ListItemComponent
                             key={item._id}
@@ -150,13 +139,13 @@ class PagedListComponent extends Component {
                 <div>
                     <Button
                         icon="first_page"
-                        disabled={this.props.pathname.includes(`/page/from/${END_MARK_HEAD}`)}
+                        disabled={isFirstPage}
                         onClick={() => this.turnPage(TURN_PAGE_KIND.FIRST)}
                     />
                     <Button
                         icon="navigate_before"
                         disabled={list.length === 0 ||
-                            this.props.pathname.includes(`/page/from/${END_MARK_HEAD}`) ||
+                            isFirstPage ||
                             prevPageHasNoData
                         }
                         onClick={() => this.turnPage(TURN_PAGE_KIND.PREV)}
@@ -164,14 +153,14 @@ class PagedListComponent extends Component {
                     <Button
                         icon="navigate_next"
                         disabled={list.length === 0 ||
-                            this.props.pathname.includes(`/to/${END_MARK_TAIL}`) ||
+                            isLastPage ||
                             nextPageHasNoData
                         }
                         onClick={() => this.turnPage(TURN_PAGE_KIND.NEXT)}
                     />
                     <Button
                         icon="last_page"
-                        disabled={this.props.pathname.includes(`/to/${END_MARK_TAIL}`)}
+                        disabled={isLastPage}
                         onClick={() => this.turnPage(TURN_PAGE_KIND.LAST)}
                     />
                 </div>
@@ -198,15 +187,21 @@ PagedListComponent.propTypes = {
     query: React.PropTypes.object,
     onSelect: React.PropTypes.func,
     ListComponent: React.PropTypes.func.isRequired,
+    listContext: React.PropTypes.any,
     ListItemComponent: React.PropTypes.func.isRequired,
     listItemContext: React.PropTypes.any,
     pageSize: React.PropTypes.number,
     sortOn: React.PropTypes.string,
     sortOnType: React.PropTypes.string,
-    pathname: React.PropTypes.string.isRequired
+    relative: React.PropTypes.object.isRequired,
+    // Required by state_var when linkToLocation is used
+    location: React.PropTypes.object.isRequired,
+    // Required by state_var when linkToLocation is used
+    route: React.PropTypes.object.isRequired
 };
 
 PagedListComponent.contextTypes = {
+    // Required by state_var when linkToLocation is used
     router: React.PropTypes.object.isRequired
 };
 

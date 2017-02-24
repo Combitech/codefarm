@@ -107,16 +107,16 @@ const stateVar = (inst, propName, initialValue) => {
         toggle: () => varInst.set(!inst.state[propName].value),
         linkToLocation: (replace = false) => {
             const newVarInst = varInst.set(inst.props.location.query[propName]);
-            newVarInst.router = inst.props.router;
+            newVarInst.router = inst.context.router;
             newVarInst.route = inst.props.route;
             newVarInst.replace = replace;
 
-            newVarInst.route.onChange = (prevState, nextState) => {
+            newVarInst.onRouteChange = (prevState, nextState) => {
                 const newState = {};
-
                 for (const key of Object.keys(inst.state)) {
                     if (typeof inst.state[key] === "object" && inst.state[key].router) {
-                        const newStateVar = inst.state[key].create(nextState.location.query[key]);
+                        const queryParamVal = nextState.location.query[key];
+                        const newStateVar = inst.state[key].create(queryParamVal);
 
                         if (newStateVar !== inst.state[key]) {
                             newState[key] = newStateVar;
@@ -128,9 +128,32 @@ const stateVar = (inst, propName, initialValue) => {
                     inst.setState(newState);
                 }
             };
+            /* React router route.onChange only allows for a single listener.
+             * Add property onChangeHandlers to route and install onChange listener
+             * that triggers all handlers on onChangeHandlers
+             */
+            newVarInst.route.onChangeHandlers = newVarInst.route.onChangeHandlers || [];
+            newVarInst.route.onChangeHandlers.push(newVarInst.onRouteChange);
+            newVarInst.route.onChange = (prevState, nextState) =>
+                newVarInst.route.onChangeHandlers.forEach((handler) => handler(prevState, nextState));
         },
         unlinkFromLocation: () => {
-            varInst.onChange = null;
+            if (varInst.onRouteChange) {
+                // Handler exists, remove from onChangeHandlers
+                if (varInst.route && varInst.route.onChangeHandlers) {
+                    const removeIdx = varInst.route.onChangeHandlers.indexOf(varInst.onRouteChange);
+                    if (removeIdx !== -1) {
+                        varInst.route.onChangeHandlers.splice(removeIdx, 1);
+                    }
+                }
+                varInst.onRouteChange = null;
+            }
+            if (varInst.route && varInst.route.onChangeHandlers) {
+                if (varInst.route.onChangeHandlers.length === 0) {
+                    varInst.route.onChangeHandlers = null;
+                    varInst.route.onChange = null;
+                }
+            }
             delete varInst.router;
             delete varInst.route;
         },
