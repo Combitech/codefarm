@@ -5,6 +5,7 @@
   "scripts": {
     "prebuild": "../../bs/bundle_deps.sh",
     "build": "../../bs/build.sh",
+    "extract": "../../bs/extract.sh",
     "load": "../../bs/load.sh",
     "unload": "../../bs/unload.sh"
   },

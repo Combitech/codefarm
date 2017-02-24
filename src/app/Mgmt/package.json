@@ -5,6 +5,7 @@
   "scripts": {
     "compile": "echo 'No compile needed'",
     "build": "../../bs/build.sh",
+    "extract": "../../bs/extract.sh",
     "load": "../../bs/load.sh",
     "unload": "../../bs/unload.sh",
     "shell": "../../bs/run_cmd.sh bash",

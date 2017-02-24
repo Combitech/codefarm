@@ -4,6 +4,7 @@
   "description": "Base image for Code Farm node applications",
   "scripts": {
     "build": "../../bs/build.sh",
+    "extract": "../../bs/extract.sh",
     "load": "../../bs/load.sh",
     "unload": "../../bs/unload.sh"
   },

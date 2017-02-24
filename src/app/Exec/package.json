@@ -6,6 +6,7 @@
   "scripts": {
     "compile": "node  --harmony_async_await ./node_modules/.bin/webpack --config ./slave/build.js",
     "build": "../../bs/build.sh",
+    "extract": "../../bs/extract.sh",
     "load": "../../bs/load.sh",
     "unload": "../../bs/unload.sh",
     "shell": "../../bs/run_cmd.sh bash",

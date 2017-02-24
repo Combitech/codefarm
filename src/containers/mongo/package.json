@@ -4,6 +4,7 @@
   "description": "MongoDB for Code Farm",
   "scripts": {
     "build": "../../bs/build.sh",
+    "extract": "../../bs/extract.sh",
     "load": "../../bs/load.sh",
     "unload": "../../bs/unload.sh",
     "shell": "../../bs/run_cmd.sh bash",

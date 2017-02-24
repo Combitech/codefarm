@@ -8,6 +8,7 @@
     "compile-client": "NODE_ENV=production webpack --config ./client/webpack.config.js",
     "compile-client-dev": "webpack --env.dev --config ./client/webpack.config.js",
     "build": "../../bs/build.sh",
+    "extract": "../../bs/extract.sh",
     "load": "../../bs/load.sh",
     "unload": "../../bs/unload.sh",
     "shell": "../../bs/run_cmd.sh bash",
