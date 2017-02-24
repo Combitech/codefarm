@@ -10,7 +10,7 @@ const REPO_TYPE = "artifactrepo.repository";
 
 class Page extends Component {
     constructor(props) {
-        super(props, true);
+        super(props);
 
         this.addTypeListStateVariable("list", REPO_TYPE, {}, true);
     }

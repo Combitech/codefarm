@@ -181,7 +181,6 @@ class RevisionList extends Component {
                         pathname: `${this.props.pathname}/${item._id}`
                     });
                 }}
-                location={this.props.location}
                 route={this.props.route}
                 relative={this.props.relative}
             />
@@ -194,9 +193,8 @@ RevisionList.propTypes = {
     query: React.PropTypes.object,
     filter: React.PropTypes.string,
     pathname: React.PropTypes.string.isRequired,
-    location: React.PropTypes.object.isRequired,
     route: React.PropTypes.object.isRequired,
-    relative: React.PropTypes.object.isRequired,
+    relative: React.PropTypes.object.isRequired
 };
 
 RevisionList.contextTypes = {
@@ -263,7 +261,6 @@ class RevisionTabs extends Component {
                                     }}
                                     filter={this.state.filter.value}
                                     pathname={this.props.pathname}
-                                    location={this.props.location}
                                     route={this.props.route}
                                     relative={this.state.submittedRel}
                                 />
@@ -277,7 +274,6 @@ class RevisionTabs extends Component {
                                     }}
                                     filter={this.state.filter.value}
                                     pathname={this.props.pathname}
-                                    location={this.props.location}
                                     route={this.props.route}
                                     relative={this.state.mergedRel}
                                 />
@@ -296,7 +292,6 @@ RevisionTabs.propTypes = {
     pathname: React.PropTypes.string.isRequired,
     breadcrumbs: React.PropTypes.array.isRequired,
     controls: React.PropTypes.array.isRequired,
-    location: React.PropTypes.object.isRequired,
     route: React.PropTypes.object.isRequired
 };
 

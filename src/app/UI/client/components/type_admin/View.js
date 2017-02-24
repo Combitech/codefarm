@@ -52,19 +52,17 @@ class View extends Component {
             breadcrumbs: this.props.breadcrumbs,
             controls: [],
             pathname: this.getPathname(),
-            context: this.props.context || this.state.context,
-            location: this.props.location,
-            route: this.props.route
+            context: this.props.context || this.state.context
         };
 
-        if (!props.item) {
+        if (props.item) {
             props.breadcrumbs = props.breadcrumbs.concat({
-                label: this.props.route.label,
+                label: props.item._id,
                 pathname: this.getPathname()
             });
         } else {
             props.breadcrumbs = props.breadcrumbs.concat({
-                label: props.item._id,
+                label: this.props.route.label,
                 pathname: this.getPathname()
             });
         }
@@ -117,7 +115,11 @@ class View extends Component {
 
             if (this.props.route.Item) {
                 return (
-                    <this.props.route.Item {...props} />
+                    <this.props.route.Item
+                        {...props}
+                        route={this.props.route}
+                        type={this.props.route.type}
+                    />
                 );
             }
         }
@@ -137,6 +139,7 @@ class View extends Component {
             <div className={this.props.theme.view}>
                 {this.props.route.List && <this.props.route.List
                     {...props}
+                    route={this.props.route}
                     type={this.props.route.type}
                 />}
             </div>

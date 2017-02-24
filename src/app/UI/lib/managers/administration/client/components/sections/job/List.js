@@ -49,7 +49,6 @@ class List extends Component {
                             pathname: `${this.props.pathname}/${item._id}`
                         });
                     }}
-                    location={this.props.location}
                     route={this.props.route}
                     relative={this.state.relative}
                 />
@@ -64,7 +63,6 @@ List.propTypes = {
     type: React.PropTypes.string.isRequired,
     breadcrumbs: React.PropTypes.array.isRequired,
     controls: React.PropTypes.array.isRequired,
-    location: React.PropTypes.object.isRequired,
     route: React.PropTypes.object.isRequired
 };
 

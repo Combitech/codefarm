@@ -106,8 +106,9 @@ const stateVar = (inst, propName, initialValue) => {
         },
         toggle: () => varInst.set(!inst.state[propName].value),
         linkToLocation: (replace = false) => {
-            const newVarInst = varInst.set(inst.props.location.query[propName]);
-            newVarInst.router = inst.context.router;
+            const router = inst.context.router;
+            const newVarInst = varInst.set(router.location.query[propName]);
+            newVarInst.router = router;
             newVarInst.route = inst.props.route;
             newVarInst.replace = replace;
 
@@ -134,8 +135,10 @@ const stateVar = (inst, propName, initialValue) => {
              */
             newVarInst.route.onChangeHandlers = newVarInst.route.onChangeHandlers || [];
             newVarInst.route.onChangeHandlers.push(newVarInst.onRouteChange);
-            newVarInst.route.onChange = (prevState, nextState) =>
-                newVarInst.route.onChangeHandlers.forEach((handler) => handler(prevState, nextState));
+            const onChangeHandler = (route, prevState, nextState) =>
+                route.onChangeHandlers &&
+                route.onChangeHandlers.forEach((handler) => handler(prevState, nextState));
+            newVarInst.route.onChange = onChangeHandler.bind(null, newVarInst.route);
         },
         unlinkFromLocation: () => {
             if (varInst.onRouteChange) {
@@ -146,11 +149,15 @@ const stateVar = (inst, propName, initialValue) => {
                         varInst.route.onChangeHandlers.splice(removeIdx, 1);
                     }
                 }
-                varInst.onRouteChange = null;
+                delete varInst.onRouteChange;
             }
-            if (varInst.route && varInst.route.onChangeHandlers) {
-                if (varInst.route.onChangeHandlers.length === 0) {
-                    varInst.route.onChangeHandlers = null;
+            if (varInst.route) {
+                if (varInst.route.onChangeHandlers) {
+                    if (varInst.route.onChangeHandlers.length === 0) {
+                        delete varInst.route.onChangeHandlers;
+                        varInst.route.onChange = null;
+                    }
+                } else {
                     varInst.route.onChange = null;
                 }
             }

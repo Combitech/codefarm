@@ -195,8 +195,6 @@ PagedListComponent.propTypes = {
     sortOnType: React.PropTypes.string,
     relative: React.PropTypes.object.isRequired,
     // Required by state_var when linkToLocation is used
-    location: React.PropTypes.object.isRequired,
-    // Required by state_var when linkToLocation is used
     route: React.PropTypes.object.isRequired
 };
 
