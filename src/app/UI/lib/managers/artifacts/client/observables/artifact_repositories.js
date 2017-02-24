@@ -1,7 +1,7 @@
 
 import TypeList from "ui-observables/type_list";
 
-class CodeRepositories extends TypeList {
+class ArtifactRepositories extends TypeList {
     constructor(initialOpts) {
         const defaultOpts = {
             type: "artifactrepo.repository"
@@ -11,4 +11,4 @@ class CodeRepositories extends TypeList {
     }
 }
 
-export default CodeRepositories;
+export default ArtifactRepositories;
