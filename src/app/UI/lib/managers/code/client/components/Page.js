@@ -5,7 +5,7 @@ import LightComponent from "ui-lib/light_component";
 import {
     LoadIndicator as TALoadIndicator
 } from "ui-components/type_admin";
-import CodeRepositories from "ui-observables/code_repositories";
+import CodeRepositories from "../observables/code_repositories";
 import { States as ObservableDataStates } from "ui-lib/observable_data";
 
 class Page extends LightComponent {
