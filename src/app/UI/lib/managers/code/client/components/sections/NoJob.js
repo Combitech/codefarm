@@ -1,9 +1,9 @@
 
 import React from "react";
-import Component from "ui-lib/component";
+import LightComponent from "ui-lib/light_component";
 import { StatusIcon } from "ui-components/status";
 
-class NoJob extends Component {
+class NoJob extends LightComponent {
     constructor(props) {
         super(props);
     }

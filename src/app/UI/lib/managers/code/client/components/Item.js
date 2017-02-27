@@ -3,6 +3,7 @@ import React from "react";
 import LightComponent from "ui-lib/light_component";
 import { States as ObservableDataStates } from "ui-lib/observable_data";
 import { Flows } from "ui-components/flow";
+import stateVar from "ui-lib/state_var";
 import Flow from "./Flow";
 import Section from "./Section";
 import {
@@ -26,7 +27,7 @@ class Item extends LightComponent {
         });
 
         this.state = {
-            step: "",
+            step: stateVar(this, "step", ""),
             itemExt: this.itemExt.value.getValue(),
             itemExtState: this.itemExt.state.getValue(),
             flows: this.flows.value.getValue(),

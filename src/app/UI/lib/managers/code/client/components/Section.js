@@ -1,11 +1,11 @@
 
 import React from "react";
-import Component from "ui-lib/component";
+import LightComponent from "ui-lib/light_component";
 import OverviewSection from "./sections/Overview";
 import JobSection from "./sections/Job";
 import NoJobSection from "./sections/NoJob";
 
-class Section extends Component {
+class Section extends LightComponent {
     constructor(props) {
         super(props);
     }
