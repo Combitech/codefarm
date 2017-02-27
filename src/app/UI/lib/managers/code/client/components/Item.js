@@ -1,8 +1,6 @@
 
 import React from "react";
 import LightComponent from "ui-lib/light_component";
-import DataResolve from "ui-observables/data_resolve";
-import TypeList from "ui-observables/type_list";
 import { States as ObservableDataStates } from "ui-lib/observable_data";
 import { Flows } from "ui-components/flow";
 import Flow from "./Flow";
@@ -11,20 +9,20 @@ import {
     Section as TASection,
     LoadIndicator as TALoadIndicator
 } from "ui-components/type_admin";
-import * as queryBuilder from "ui-lib/query_builder";
+import ExtendedItem from "../observables/extended_item";
+import FlowList from "../observables/flow_list";
 
 class Item extends LightComponent {
     constructor(props) {
         super(props, true);
 
-        this.itemExt = new DataResolve({
-            resolver: "RefResolve",
-            opts: this.getItemExtOpts(props.item)
+        this.itemExt = new ExtendedItem({
+            id: props.item._id,
+            type: props.item.type
         });
 
-        this.flows = new TypeList({
-            type: "flowctrl.flow",
-            query: this.getFlowsQuery(props.item)
+        this.flows = new FlowList({
+            tags: props.item.tags
         });
 
         this.state = {
@@ -34,26 +32,6 @@ class Item extends LightComponent {
             flows: this.flows.value.getValue(),
             flowsState: this.flows.state.getValue()
         };
-    }
-
-    getItemExtOpts(item) {
-        return {
-            ref: {
-                id: item._id,
-                type: item.type
-            },
-            spec: {
-                paths: [
-                    "$.refs[*]"
-                ]
-            }
-        };
-    }
-
-    getFlowsQuery(item) {
-        return queryBuilder.anyOf("_id", item.tags
-        .filter((tag) => tag.startsWith("step:flow:"))
-        .map((tag) => tag.replace("step:flow:", "")));
     }
 
     componentDidMount() {
@@ -68,11 +46,12 @@ class Item extends LightComponent {
 
     componentWillReceiveProps(nextProps) {
         this.itemExt.setOpts({
-            opts: this.getItemExtOpts(nextProps.item)
+            id: nextProps.item._id,
+            type: nextProps.item.type
         });
 
         this.flows.setOpts({
-            opts: this.getFlowsQuery(nextProps.item)
+            tags: nextProps.taga
         });
     }
 
