@@ -73,9 +73,9 @@ class TypeList extends ObservableData {
             const idx = this._value.getValue().findIndex((item) => item._id === data.newdata._id);
 
             if (idx !== -1) {
-                this._value.next(this._value.getValue().push(data.newdata));
-            } else {
                 this._value.next(this._value.getValue().set(idx, data.newdata));
+            } else {
+                this._value.next(this._value.getValue().push(data.newdata));
             }
         });
 
