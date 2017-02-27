@@ -2,6 +2,7 @@
 import React from "react";
 import TypeItem from "ui-observables/type_item";
 import { States as ObservableDataStates } from "ui-lib/observable_data";
+import stateVar from "ui-lib/state_var";
 import LightComponent from "ui-lib/light_component";
 import LoadIndicator from "./LoadIndicator";
 import ControlButton from "./ControlButton";
@@ -19,7 +20,7 @@ class View extends LightComponent {
         });
 
         this.state = {
-            context: {},
+            context: stateVar(this, "context", {}),
             item: this.item.value.getValue(),
             state: this.item.state.getValue()
         };
