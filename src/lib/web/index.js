@@ -2,6 +2,7 @@
 
 const Koa = require("koa");
 const send = require("koa-send");
+const auth = require("koa-basic-auth");
 const route = require("koa-route");
 const bodyParser = require("koa-bodyparser");
 const compress = require("koa-compress");
@@ -32,6 +33,10 @@ class Web extends AsyncEventEmitter {
             try {
                 await next();
             } catch (error) {
+                if (error.status === 401) {
+                    ctx.set("WWW-Authenticate", "Basic");
+                }
+
                 ctx.status = error.status || 500;
                 ctx.type = "json";
                 ctx.body = JSON.stringify({
@@ -41,6 +46,10 @@ class Web extends AsyncEventEmitter {
                 }, null, 2);
             }
         });
+
+        if (params.auth) {
+            this.app.use(auth(params.auth));
+        }
 
         const staticPaths = ensureArray(params.serveStatic);
 

@@ -21,6 +21,7 @@
   ],
   "dependencies": {
     "koa": "^2.0.0",
+    "koa-basic-auth": "^2.0.0",
     "koa-bodyparser": "^3.2.0",
     "koa-compress": "^2.0.0",
     "koa-conditional-get": "^2.0.0",
