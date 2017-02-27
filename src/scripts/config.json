@@ -1,52 +1,52 @@
 {
     "flowctrl": {
         "web": {
-            "port": "9191"
+            "port": "19191"
         }
     },
     "baselinegen": {
         "web": {
-            "port": "9797"
+            "port": "19797"
         }
     },
     "userrepo": {
         "web": {
-            "port": "9292"
+            "port": "19292"
         }
     },
     "eventrepo": {
         "web": {
-            "port": "9090"
+            "port": "19090"
         }
     },
     "logrepo": {
         "web": {
-            "port": 9696
+            "port": 19696
         }
     },
     "coderepo": {
         "web": {
-            "port": 9393
+            "port": 19393
         }
     },
     "artifactrepo": {
         "web": {
-            "port": 9999
+            "port": 19999
         }
     },
     "exec": {
         "web": {
-            "port": 9494
+            "port": 19494
         }
     },
     "ui": {
         "web": {
-            "port": 9898
+            "port": 19898
         }
     },
     "dataresolve": {
         "web": {
-            "port": 8989
+            "port": 18989
         }
     }
 }

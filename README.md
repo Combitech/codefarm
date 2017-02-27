@@ -74,7 +74,7 @@ yarn create-config
 ```
 
 ### Navigate to UI
-Navigate your browser to [http://localhost:9898](http://localhost:9898)
+Navigate your browser to [http://localhost:19898](http://localhost:19898)
 
 ## Flows
 A CI flow in Code Farm is represented by a number of *steps*. Each *step* is associated with a *baseline specification*

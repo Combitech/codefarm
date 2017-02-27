@@ -10,7 +10,7 @@
     "load": "../../bs/load.sh",
     "unload": "../../bs/unload.sh",
     "shell": "../../bs/run_cmd.sh bash",
-    "start": "../../bs/start.sh --expose 9696 -p 9696:9696 -d",
+    "start": "../../bs/start.sh --expose 19696 -p 19696:19696 -d",
     "start-dev": "node --harmony_async_await . --bus amqp://localhost/codefarm",
     "start-rel": "npm run start-dev",
     "stop": "../../bs/stop.sh",
