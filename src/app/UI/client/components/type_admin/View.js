@@ -8,7 +8,7 @@ import ControlButton from "./ControlButton";
 
 class View extends LightComponent {
     constructor(props) {
-        super(props, true);
+        super(props);
 
         this.log("Constructor");
 
