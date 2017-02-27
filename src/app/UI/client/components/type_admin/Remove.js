@@ -42,9 +42,13 @@ class Remove extends Component {
             onCancel: () => this.context.router.goBack()
         };
 
-        return (
-            <this.props.route.Remove {...props} />
-        );
+        if (this.props.item) {
+            return (
+                <this.props.route.Remove {...props} />
+            );
+        }
+
+        return null;
     }
 }
 
