@@ -1,11 +1,11 @@
 
 import React from "react";
 import api from "api.io/api.io-client";
-import Component from "ui-lib/component";
+import LightComponent from "ui-lib/light_component";
 
-class Edit extends Component {
+class Edit extends LightComponent {
     constructor(props) {
-        super(props);
+        super(props, true);
     }
 
     async onSave(type, data, options = {}) {
@@ -54,6 +54,7 @@ class Edit extends Component {
         } else {
             item = this.props.item;
         }
+
         const props = {
             theme: this.props.theme,
             parentItems: parentItems,
@@ -76,11 +77,13 @@ class Edit extends Component {
             return (
                 <this.props.route.Edit {...props} />
             );
+        } else if (this.props.route.Create) {
+            return (
+                <this.props.route.Create {...props} />
+            );
         }
 
-        return (
-            <this.props.route.Create {...props} />
-        );
+        return null;
     }
 }
 
