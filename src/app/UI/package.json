@@ -15,7 +15,7 @@
     "start": "../../bs/start.sh --expose 19898 -p 19898:19898 --net=\"host\" -d",
     "prestart-dev": "rm -f client/static/bundle.js",
     "start-dev": "node --harmony_async_await . --bus amqp://localhost/codefarm",
-    "start-rel": "NODE_ENV=production npm run start-dev",
+    "start-rel": "NODE_ENV=production node --harmony_async_await . --bus amqp://localhost/codefarm",
     "stop": "../../bs/stop.sh",
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "git ls-files \"*.js\" | xargs eslint",
