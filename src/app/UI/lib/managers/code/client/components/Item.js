@@ -10,7 +10,7 @@ import {
     Section as TASection,
     LoadIndicator as TALoadIndicator
 } from "ui-components/type_admin";
-import ExtendedItem from "../observables/extended_item";
+import ExtendedItem from "ui-observables/extended_item";
 import FlowList from "../observables/flow_list";
 
 class Item extends LightComponent {
