@@ -1,17 +1,42 @@
 
 import React from "react";
-import Component from "ui-lib/component";
-import { StatusIcon } from "ui-components/status";
+import LightComponent from "ui-lib/light_component";
+// import { StatusIcon } from "ui-components/status";
+import LogViewer from "ui-components/log_viewer";
+import { Tab, Tabs } from "react-toolbox/lib/tabs";
+import api from "api.io/api.io-client";
+import stateVar from "ui-lib/state_var";
 
-class Job extends Component {
+class Job extends LightComponent {
     constructor(props) {
-        super(props);
+        super(props, true);
 
-        this.addStateVariable("run", false);
+        this.state = {
+            tabIndex: stateVar(this, "tabIndex", 0)
+        };
     }
 
     render() {
         this.log("render", this.props, this.state);
+
+        const logRefs = this.props.jobItem.runs[this.props.jobItem.runs.length - 1].logs;
+
+        return (
+            <Tabs
+                index={parseInt(this.state.tabIndex.value, 10)}
+                onChange={(index) => this.state.tabIndex.set(`${index}`)}
+            >
+                {logRefs.map((ref) => (
+                    <Tab
+                        key={ref.id}
+                        label={ref.name}
+                    >
+                        <LogViewer log={ref} />
+                    </Tab>
+                ))}
+            </Tabs>
+        );
+/*
 
         const rows = [];
 
@@ -87,7 +112,7 @@ class Job extends Component {
                     </tbody>
                 </table>
             </div>
-        );
+        );*/
     }
 }
 

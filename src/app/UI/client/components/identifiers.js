@@ -11,6 +11,7 @@ export const BREADCRUMBS = "CFBreadcrumbs";
 export const FLOW = "CFFlow";
 export const JOB_FLOW = "CFJobFlow";
 export const FLOWS = "CFFlows";
+export const LOG_VIEWER = "CFLogViewer";
 export const STATUS = "CFStatus";
 export const TYPE_TABLE = "CFTypeTable";
 export const TYPE_ADMIN = "CFTypeAdmin";

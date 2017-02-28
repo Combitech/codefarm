@@ -37,27 +37,12 @@ class Item extends Component {
         this._showMessage("");
     }
 
-    async _getLogRepoRestUrl() {
-        const response = await api.type.get("logrepo.state", {});
-
-        if (response.length !== 1) {
-            console.error("_getLogRepoRestUrl: Couldn't get logrepo rest uri, response=", response);
-
-            return false;
-        }
-
-        return response[0].provides.REST.uri;
-    }
-
     async _downloadLog(item) {
-        const logRepoUrl = await this._getLogRepoRestUrl();
-        if (logRepoUrl) {
-            const url = `${logRepoUrl}/log/${item._id}/download`;
-            console.log(`Download from ${url}`);
+        const url = `/logrepo/log/${item._id}/download`;
+        console.log(`Download from ${url}`);
 
-            // Ugly way of downloading file from javascript...
-            window.location = url;
-        }
+        // Ugly way of downloading file from javascript...
+        window.location = url;
     }
 
     async onRerun() {

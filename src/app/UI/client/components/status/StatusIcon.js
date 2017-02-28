@@ -1,10 +1,9 @@
 
-
 import React from "react";
-import Component from "ui-lib/component";
+import LightComponent from "ui-lib/light_component";
 import statusIcons from "ui-lib/status_icons";
 
-class StatusIcon extends Component {
+class StatusIcon extends LightComponent {
     constructor(props) {
         super(props);
     }
