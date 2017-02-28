@@ -37,9 +37,16 @@ class TypeItem extends ObservableData {
             return this._initialValue;
         }
 
-        const value = await api.type.get(opts.type, { _id: opts.id });
-
+        // First start listening to updates, then fetch initial data
+        // TODO: Possible to miss updates in the following scenario:
+        // - Type fetch reads serverside data
+        // - Update happens
+        // - Update rushes ahead of type fetch and triggers client subscription
+        // - Client subscription updates this._value
+        // - Async _fetch returns data which in turn does this._value.next() in parent class
+        //   which overwrites data stored in this._value.
         this._setupEventHandlers(opts);
+        const value = await api.type.get(opts.type, { _id: opts.id });
 
         return value[0] || this._initialValue;
     }

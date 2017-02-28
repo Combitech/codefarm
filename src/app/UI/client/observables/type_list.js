@@ -126,14 +126,21 @@ class TypeList extends ObservableData {
         }
 
         const query = this._buildQuery(opts);
-        const value = await this._fetch(opts, query);
-
-        const strippedQuery = Object.assign({}, query);
-        Object.keys(strippedQuery)
+        const subscribeQuery = Object.assign({}, query);
+        Object.keys(subscribeQuery)
             .filter((key) => key.startsWith("__"))
-            .forEach((key) => delete strippedQuery[key]);
+            .forEach((key) => delete subscribeQuery[key]);
 
-        this._setupEventHandlers(opts, strippedQuery);
+        // First start listening to updates, then fetch initial data
+        // TODO: Possible to miss updates in the following scenario:
+        // - Type fetch reads serverside data
+        // - Update happens
+        // - Update rushes ahead of type fetch and triggers client subscription
+        // - Client subscription updates this._value
+        // - Async _fetch returns data which in turn does this._value.next() in parent class
+        //   which overwrites data stored in this._value.
+        this._setupEventHandlers(opts, subscribeQuery);
+        const value = await this._fetch(opts, query);
 
         return value;
     }
@@ -152,8 +159,6 @@ class TypeList extends ObservableData {
         if (this.state.getValue() === ObservableDataStates.DISPOSED || !opts.subscribe) {
             return;
         }
-
-        this._disposeEventHandlers();
 
         // We need to sort on updated and added items
         const sortListFunc = (a, b) => {
@@ -203,6 +208,8 @@ class TypeList extends ObservableData {
 
             return list;
         };
+
+        this._disposeEventHandlers();
 
         this._addEventHandler(`created.${opts.type}`, {
             newdata: query

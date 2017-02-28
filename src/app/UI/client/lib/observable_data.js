@@ -42,6 +42,10 @@ class ObservableData {
         }
     }
 
+    logError(...args) {
+        console.error(`${this.constructor.name}[${this.id}]`, ...args);
+    }
+
     addDisposable(disposable) {
         this.disposables.push(disposable);
     }
@@ -74,6 +78,7 @@ class ObservableData {
              * Call the load method, should be implemented by a subclass and
              * send in the options as a parameter.
              */
+            const oldValue = this._value.getValue();
             this._load(opts.toJS())
             .then((value) => {
                 if (this._state.getValue() === States.DISPOSED) {
@@ -81,13 +86,16 @@ class ObservableData {
                 }
 
                 if (typeof value !== "undefined") {
+                    if (oldValue !== this._value.getValue()) {
+                        this.logError("_value updated during _load");
+                    }
                     this._value.next(Immutable.fromJS(value));
                 }
 
                 this._state.next(States.NOT_LOADING);
             })
             .catch((error) => {
-                opts.toJS().logerror && console.error(error);
+                opts.toJS().logerror && this.logError(error);
                 this._error.next(Immutable.fromJS(error));
                 this._value.next(Immutable.fromJS(this._initialValue));
                 if (this._state.getValue() !== States.DISPOSED) {
