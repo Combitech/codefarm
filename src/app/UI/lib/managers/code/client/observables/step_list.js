@@ -7,12 +7,12 @@ class StepList extends TypeList {
             throw new Error("flowId must be set to a string or false in the initial opts");
         }
 
-        const createQuery = (flowId) => {
-            return {
+        const createQuery = (flowId) => (
+            {
                 "flow.id": flowId,
                 visible: true
-            };
-        };
+            }
+        );
 
         const defaultOpts = {
             type: "flowctrl.step",

@@ -11,8 +11,8 @@ class ExtendedItem extends DataResolve {
             throw new Error("id must be set to a string or false in the initial opts");
         }
 
-        const createResolveOpts = (id, type) => {
-            return {
+        const createResolveOpts = (id, type) => (
+            {
                 ref: {
                     id: id,
                     type: type
@@ -22,8 +22,8 @@ class ExtendedItem extends DataResolve {
                         "$.refs[*]"
                     ]
                 }
-            };
-        };
+            }
+        );
 
         const defaultOpts = {
             resolver: "RefResolve",

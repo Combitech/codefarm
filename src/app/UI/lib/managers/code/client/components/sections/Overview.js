@@ -1,6 +1,6 @@
 
 import React from "react";
-import Component from "ui-lib/component";
+import LightComponent from "ui-lib/light_component";
 import { Row, Col } from "react-flexbox-grid";
 import Chip from "react-toolbox/lib/chip";
 import Avatar from "react-toolbox/lib/avatar";
@@ -9,6 +9,8 @@ import { Button } from "react-toolbox/lib/button";
 import moment from "moment";
 import UserAvatar from "../UserAvatar";
 import api from "api.io/api.io-client";
+import stateVar from "ui-lib/state_var";
+import BaselineList from "../../observables/baseline_list";
 
 const icons = {
     unknown: "/Cheser/48x48/status/dialog-question.png",
@@ -26,17 +28,32 @@ const icons = {
     baseline: "/Cheser/48x48/apps/accessories-text-editor.png"
 };
 
-class Overview extends Component {
+class Overview extends LightComponent {
     constructor(props) {
         super(props);
 
-        // Subscribe to baselines that contain my id
-        this.addTypeListStateVariable("baselines", "baselinegen.baseline", (props) => ({
-            "content.type": props.item.type,
-            "content.id": props.item._id
-        }), true);
+        this.baselines = new BaselineList({
+            type: props.item.type,
+            id: props.item._id
+        });
 
-        this.addStateVariable("comment", "");
+        this.state = {
+            comment: stateVar(this, "comment", ""),
+            baselines: this.baselines.value.getValue()
+        };
+    }
+
+    componentDidMount() {
+        this.addDisposable(this.baselines.start());
+
+        this.addDisposable(this.baselines.value.subscribe((baselines) => this.setState({ baselines })));
+    }
+
+    componentWillReceiveProps(nextProps) {
+        this.baselines.setOpts({
+            id: nextProps.item._id,
+            type: nextProps.item.type
+        });
     }
 
     onComment() {
@@ -110,7 +127,7 @@ class Overview extends Component {
             });
         }
 
-        for (const baseline of this.state.baselines) {
+        for (const baseline of this.state.baselines.toJS()) {
             const time = moment(baseline.created);
 
             list.push({
