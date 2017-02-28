@@ -9,11 +9,11 @@ class UserItem extends TypeList {
             throw new Error("email must be set to a string or false in the initial opts");
         }
 
-        const createQuery = (email) => {
-            return {
+        const createQuery = (email) => (
+            {
                 email
-            };
-        };
+            }
+        );
 
         const defaultOpts = {
             type: "userrepo.user",
@@ -27,10 +27,10 @@ class UserItem extends TypeList {
     }
 
     start() {
-        this.wrappedSubscription = this._value.subscribe((list) => {
+        this.addDisposable(this._value.subscribe((list) => {
             const value = list.count() > 0 ? list.first() : {};
             this._wrappedValue.next(Immutable.fromJS(value));
-        });
+        }));
 
         super.start();
     }
@@ -47,12 +47,6 @@ class UserItem extends TypeList {
 
     get value() {
         return this._wrappedValue;
-    }
-
-    dispose() {
-        this.wrappedSubscription.unsubscribe();
-
-        super.dispose();
     }
 }
 
