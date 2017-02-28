@@ -32,6 +32,16 @@ const argv = yargs
     type: "boolean",
     default: false
 })
+.option("authname", {
+    describe: "UI Basic Auth username",
+    type: "string",
+    default: null
+})
+.option("authpass", {
+    describe: "UI Basic Auth password",
+    type: "string",
+    default: null
+})
 .argv;
 
 const createConfig = async (serviceName, serviceCfg) => {
@@ -62,6 +72,13 @@ const createConfig = async (serviceName, serviceCfg) => {
 const run = async () => {
     console.log(`Create config from file ${argv.config}`);
     const cfg = JSON.parse(await fs.readFileAsync(argv.config));
+
+    if (argv.authname !== null && argv.authpass !== null) {
+        if (cfg.ui.web.auth) {
+            throw Error("Auth configuration already in UI configuration");
+        }
+        cfg.ui.web.auth = { "name": `${argv.authname}`, "pass": `${argv.authpass}` };
+    }
 
     if (argv.service === "all") {
         for (const cfgKey of Object.keys(cfg)) {
