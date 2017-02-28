@@ -14,6 +14,7 @@ const flattenArray = require("./lib/flatten_array");
 const StringUtil = require("./lib/string_util");
 const ObjSerialize = require("./lib/obj_serialize");
 const synchronize = require("./lib/synchronize");
+const isNumeric = require("./lib/is_numeric");
 
 module.exports = {
     Deferred,
@@ -29,5 +30,6 @@ module.exports = {
     flattenArray,
     StringUtil,
     ObjSerialize,
-    synchronize
+    synchronize,
+    isNumeric
 };

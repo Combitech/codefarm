@@ -8,8 +8,14 @@ const States = {
     DISPOSED: "disposed"
 };
 
+let instanceCounter = 0;
+
 class ObservableData {
-    constructor(initialOpts = {}, initialValue = false) {
+    constructor(initialOpts = {}, initialValue = false, debug = false) {
+        this.debug = debug;
+        this.id = instanceCounter++;
+        this.disposables = [];
+
         const defaultOpts = {
             logerror: true
         };
@@ -30,6 +36,16 @@ class ObservableData {
         this._error = new Rx.BehaviorSubject(Immutable.fromJS(this._initialError));
     }
 
+    log(...args) {
+        if (this.debug) {
+            console.log(`${this.constructor.name}[${this.id}]`, ...args);
+        }
+    }
+
+    addDisposable(disposable) {
+        this.disposables.push(disposable);
+    }
+
     start() {
         /*
          * Subscribe to changes to props, a change should trigger a reload.
@@ -40,7 +56,10 @@ class ObservableData {
          * If a load completes and the states has become disposed during the load
          * ignore the result.
          */
-        this.subscription = this._opts.subscribe((opts) => {
+        this.addDisposable(this._opts.subscribe((opts) => {
+            if (this._state.getValue() === States.DISPOSED) {
+                return;
+            }
             this._state.next(States.LOADING);
 
             /*
@@ -71,9 +90,11 @@ class ObservableData {
                 opts.toJS().logerror && console.error(error);
                 this._error.next(Immutable.fromJS(error));
                 this._value.next(Immutable.fromJS(this._initialValue));
-                this._state.next(States.NOT_LOADING);
+                if (this._state.getValue() !== States.DISPOSED) {
+                    this._state.next(States.NOT_LOADING);
+                }
             });
-        });
+        }));
 
         return this;
     }
@@ -107,21 +128,13 @@ class ObservableData {
         throw new Error(`_load must be defined in the subclass, called with ${JSON.stringify(opts)}`);
     }
 
-    async _dispose() {
-    }
-
     dispose() {
-        this.subscription.unsubscribe();
-
-        this._dispose()
-        .then(() => {
-            this._state.next(States.DISPOSED);
-        })
-        .catch((error) => {
-            this._opts.getValue().toJS().logerror && console.error(error);
-            this._error.next(Immutable.fromJS(error));
-            this._state.next(States.DISPOSED);
-        });
+        this._state.next(States.DISPOSED);
+        for (const disposable of this.disposables) {
+            disposable.unsubscribe && disposable.unsubscribe();
+            disposable.dispose && disposable.dispose();
+        }
+        this.disposables = [];
     }
 }
 

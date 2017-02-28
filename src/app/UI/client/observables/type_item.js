@@ -1,6 +1,6 @@
 
 import Immutable from "immutable";
-import ObservableData from "ui-lib/observable_data";
+import ObservableData, { States as ObservableDataStates } from "ui-lib/observable_data";
 import api from "api.io/api.io-client";
 
 class TypeItem extends ObservableData {
@@ -27,7 +27,7 @@ class TypeItem extends ObservableData {
     }
 
     async _load(opts) {
-        if (!opts.id) {
+        if (this.state.getValue() === ObservableDataStates.DISPOSED || !opts.id) {
             this._disposeEventHandlers();
 
             return this._initialValue;
@@ -45,7 +45,7 @@ class TypeItem extends ObservableData {
     }
 
     _setupEventHandlers(opts) {
-        if (!opts.subscribe) {
+        if (this.state.getValue() === ObservableDataStates.DISPOSED || !opts.subscribe) {
             return;
         }
 
@@ -69,7 +69,8 @@ class TypeItem extends ObservableData {
         this._evtSubs = [];
     }
 
-    async _dispose() {
+    dispose() {
+        super.dispose();
         this._disposeEventHandlers();
     }
 }

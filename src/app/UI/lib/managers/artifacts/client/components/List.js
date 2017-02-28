@@ -1,23 +1,84 @@
 
 import React from "react";
-import Component from "ui-lib/component";
+import LightComponent from "ui-lib/light_component";
 import Input from "react-toolbox/lib/input";
 import {
     Section as TASection,
-    PagedList as TAPagedList
+    LoadIndicator as TALoadIndicator,
+    ListComponent as TAListComponent,
+    ListPager as TAListPager
 } from "ui-components/type_admin";
 import ArtifactListItem from "./ListItem";
+import Artifacts from "../observables/artifacts";
+import { States as ObservableDataStates } from "ui-lib/observable_data";
 
-class List extends Component {
+class List extends LightComponent {
     constructor(props) {
-        super(props);
+        super(props, true);
 
-        this.addStateVariable("filter", "");
-        this.addStateVariable("relative", "__HEAD__", true);
+        this.artifactList = new Artifacts({
+            repositoryId: props.item._id,
+            limit: 5
+        }, true);
+
+        this.state = {
+            list: this.artifactList.value.getValue(),
+            state: this.artifactList.state.getValue()
+        };
+    }
+
+    componentDidMount() {
+        this.log("componentDidMount");
+        this.addDisposable(this.artifactList.start());
+        this.addDisposable(this.artifactList.value.subscribe((list) => this.setState({ list })));
+        this.addDisposable(this.artifactList.state.subscribe((state) => this.setState({ state })));
+    }
+
+    componentWillReceiveProps(nextProps) {
+        this.log("componentWillReceiveProps");
+        let repositoryId;
+        if (nextProps.item && nextProps.item._id) {
+            if (this.props.item && this.props.item._id) {
+                if (nextProps.item._id !== this.props.item._id) {
+                    repositoryId = nextProps.item._id;
+                }
+            } else {
+                repositoryId = nextProps.item._id;
+            }
+        }
+
+        if (repositoryId) {
+            this.log("update repositoryId", repositoryId);
+            this.artifactList.setOpts({ repositoryId });
+        }
+    }
+
+    componentDidUpdate() {
+        this.log("componentDidUpdate");
+        /* If relative paging is used and current page has no next or previous
+         * page, then automatically navigate to last or first page.
+         */
+        const pagingInfo = this.artifactList.pagingInfo.getValue().toJS();
+        if (pagingInfo.isRelative) {
+            if (!pagingInfo.hasNextPage) {
+                this.log("setLastPage");
+                this.artifactList.setLastPage();
+            } else if (!pagingInfo.hasPrevPage) {
+                this.log("setFirstPage");
+                this.artifactList.setFirstPage();
+            }
+        }
     }
 
     render() {
-        this.log("render", this.props);
+        this.log("render", this.props, this.state);
+
+        let loadIndicator;
+        if (this.state.state === ObservableDataStates.LOADING) {
+            loadIndicator = (
+                <TALoadIndicator/>
+            );
+        }
 
         const controls = this.props.controls.slice(0);
 
@@ -28,8 +89,8 @@ class List extends Component {
                 type="text"
                 label="Filter list"
                 name="filter"
-                value={this.state.filter.value}
-                onChange={this.state.filter.set}
+                value={this.artifactList.opts.getValue().get("filter")}
+                onChange={(value) => this.artifactList.setOpts({ filter: value })}
             />
         ));
 
@@ -38,20 +99,24 @@ class List extends Component {
                 controls={controls}
                 breadcrumbs={this.props.breadcrumbs}
             >
-                <TAPagedList
-                    type="artifactrepo.artifact"
-                    query={{ repository: this.props.item._id }}
-                    filter={this.state.filter.value}
-                    filterFields={[ "name", "version", "state", "repository" ]}
-                    pageSize={10}
-                    ListItemComponent={ArtifactListItem}
-                    onSelect={(item) => {
-                        this.context.router.push({
-                            pathname: `${this.props.pathname}/${item._id}`
-                        });
-                    }}
-                    route={this.props.route}
-                    relative={this.state.relative}
+                {loadIndicator}
+                <TAListComponent>
+                    {this.state.list.toJS().map((item) => (
+                        <ArtifactListItem
+                            key={item._id}
+                            theme={this.props.theme}
+                            onClick={() => {
+                                this.context.router.push({
+                                    pathname: `${this.props.pathname}/${item._id}`
+                                });
+                            }}
+                            item={item}
+                        />
+                    ))}
+                </TAListComponent>
+                <TAListPager
+                    pagedList={this.artifactList}
+                    pagingInfo={this.artifactList.pagingInfo.getValue()}
                 />
             </TASection>
         );

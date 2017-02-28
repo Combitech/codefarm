@@ -14,6 +14,7 @@ import Form from "./Form";
 import LoadIndicator from "./LoadIndicator";
 import Section from "./Section";
 import ListItemIcon from "./ListItemIcon";
+import ListPager from "./ListPager";
 import utils from "./utils";
 
 const ThemedControlButton = themr(TYPE_ADMIN, theme)(ControlButton);
@@ -27,6 +28,7 @@ const ThemedForm = themr(TYPE_ADMIN, theme)(Form);
 const ThemedLoadIndicator = themr(TYPE_ADMIN, theme)(LoadIndicator);
 const ThemedSection = themr(TYPE_ADMIN, theme)(Section);
 const ThemedListItemIcon = themr(TYPE_ADMIN, theme)(ListItemIcon);
+const ThemedListPager = themr(TYPE_ADMIN, theme)(ListPager);
 
 export {
     utils,
@@ -40,5 +42,6 @@ export {
     ThemedForm as Form,
     ThemedLoadIndicator as LoadIndicator,
     ThemedSection as Section,
-    ThemedListItemIcon as ListItemIcon
+    ThemedListItemIcon as ListItemIcon,
+    ThemedListPager as ListPager
 };

@@ -60,6 +60,7 @@ class LightComponent extends React.PureComponent {
     }
 
     componentWillUnmount() {
+        this.log("componentWillUnmount");
         this.dispose();
     }
 }
