@@ -52,7 +52,7 @@ class Item extends LightComponent {
         });
 
         this.flows.setOpts({
-            tags: nextProps.taga
+            tags: nextProps.tags
         });
     }
 

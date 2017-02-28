@@ -103,9 +103,20 @@ class ObservableData {
         /*
          * opts may contain only a subset of the available options
          * only values supplied in opts will be changed in the Internal
-         * option state
+         * option state.
          */
-        this._opts.next(this._opts.getValue().merge(opts));
+        const nextOpts = {};
+        const currOpts = this._opts.getValue().toJS();
+
+        for (const key of Object.keys(opts)) {
+            if (JSON.stringify(currOpts[key]) !== JSON.stringify(opts[key])) {
+                nextOpts[key] = opts[key];
+            }
+        }
+
+        if (Object.keys(nextOpts).length > 0) {
+            this._opts.next(this._opts.getValue().merge(nextOpts));
+        }
     }
 
     get opts() {
