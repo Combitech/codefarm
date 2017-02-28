@@ -38,7 +38,7 @@ class Item extends Component {
     }
 
     async _getLogRepoRestUrl() {
-        const response = await api.type.get("logrepo.state");
+        const response = await api.type.get("logrepo.state", {});
 
         if (response.length !== 1) {
             console.error("_getLogRepoRestUrl: Couldn't get logrepo rest uri, response=", response);
