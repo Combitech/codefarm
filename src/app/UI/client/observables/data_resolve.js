@@ -3,7 +3,7 @@ import TypeItem from "ui-observables/type_item";
 import api from "api.io/api.io-client";
 
 class DataResolve extends TypeItem {
-    constructor(initialOpts) {
+    constructor(initialOpts, debug = false) {
         if (typeof initialOpts.resolver !== "string" && initialOpts.resolver !== false) {
             throw new Error("resolver must be set to a string or false in the initial opts");
         }
@@ -18,7 +18,7 @@ class DataResolve extends TypeItem {
             opts: {}
         };
 
-        super(Object.assign({}, defaultOpts, initialOpts));
+        super(Object.assign({}, defaultOpts, initialOpts), debug);
     }
 
     async _load(opts) {

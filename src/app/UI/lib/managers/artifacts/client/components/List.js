@@ -14,12 +14,12 @@ import { States as ObservableDataStates } from "ui-lib/observable_data";
 
 class List extends LightComponent {
     constructor(props) {
-        super(props, true);
+        super(props);
 
         this.artifactList = new Artifacts({
             repositoryId: props.item._id,
             limit: 5
-        }, true);
+        });
 
         this.state = {
             list: this.artifactList.value.getValue(),

@@ -60,6 +60,9 @@ class TypeList extends ObservableData {
         this._hasMoreData = new Rx.BehaviorSubject(false);
 
         this._evtSubs = [];
+        this.addDisposable({
+            dispose: () => this._disposeEventHandlers()
+        });
     }
 
     get hasMoreData() {
@@ -255,11 +258,6 @@ class TypeList extends ObservableData {
     _disposeEventHandlers() {
         this._evtSubs.forEach(api.type.off);
         this._evtSubs = [];
-    }
-
-    dispose() {
-        super.dispose();
-        this._disposeEventHandlers();
     }
 }
 

@@ -129,6 +129,7 @@ class ObservableData {
     }
 
     dispose() {
+        this.log(`dispose: disposables.length=${this.disposables.length}`);
         this._state.next(States.DISPOSED);
         for (const disposable of this.disposables) {
             disposable.unsubscribe && disposable.unsubscribe();

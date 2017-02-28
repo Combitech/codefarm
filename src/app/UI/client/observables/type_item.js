@@ -4,7 +4,7 @@ import ObservableData, { States as ObservableDataStates } from "ui-lib/observabl
 import api from "api.io/api.io-client";
 
 class TypeItem extends ObservableData {
-    constructor(initialOpts) {
+    constructor(initialOpts, debug = false) {
         if (typeof initialOpts.type !== "string") {
             throw new Error("type must be set to a string in the initial opts");
         }
@@ -21,9 +21,13 @@ class TypeItem extends ObservableData {
             subscribe: true
         };
 
-        super(Object.assign({}, defaultOpts, initialOpts), {});
+        super(Object.assign({}, defaultOpts, initialOpts), {}, debug);
 
         this._evtSubs = [];
+
+        this.addDisposable({
+            dispose: () => this._disposeEventHandlers()
+        });
     }
 
     async _load(opts) {
@@ -67,11 +71,6 @@ class TypeItem extends ObservableData {
     _disposeEventHandlers() {
         this._evtSubs.forEach(api.type.off);
         this._evtSubs = [];
-    }
-
-    dispose() {
-        super.dispose();
-        this._disposeEventHandlers();
     }
 }
 
