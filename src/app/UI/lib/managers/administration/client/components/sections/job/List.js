@@ -9,14 +9,14 @@ import {
     ListPager as TAListPager
 } from "ui-components/type_admin";
 import JobListItem from "./ListItem";
-import Jobs from "../../../observables/jobs";
+import JobListObservable from "../../../observables/job_list";
 import { States as ObservableDataStates } from "ui-lib/observable_data";
 
 class List extends LightComponent {
     constructor(props) {
         super(props);
 
-        this.jobList = new Jobs({
+        this.jobList = new JobListObservable({
             limit: 5
         });
 

@@ -9,14 +9,14 @@ import {
     ListPager as TAListPager
 } from "ui-components/type_admin";
 import ArtifactListItem from "./ListItem";
-import Artifacts from "../observables/artifacts";
+import ArtifactListObservable from "../observables/artifact_list";
 import { States as ObservableDataStates } from "ui-lib/observable_data";
 
 class List extends LightComponent {
     constructor(props) {
         super(props);
 
-        this.artifactList = new Artifacts({
+        this.artifactList = new ArtifactListObservable({
             repositoryId: props.item._id,
             limit: 5
         });

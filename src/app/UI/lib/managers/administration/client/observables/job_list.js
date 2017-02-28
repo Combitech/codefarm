@@ -1,7 +1,7 @@
 
 import PagedTypeList from "ui-observables/paged_type_list";
 
-class Jobs extends PagedTypeList {
+class JobList extends PagedTypeList {
     constructor(initialOpts, debug = false) {
         const defaultOpts = {
             type: "exec.job",
@@ -15,4 +15,4 @@ class Jobs extends PagedTypeList {
     }
 }
 
-export default Jobs;
+export default JobList;

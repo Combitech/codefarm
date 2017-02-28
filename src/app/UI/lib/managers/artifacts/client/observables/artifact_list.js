@@ -13,7 +13,7 @@ const convertOpts = (opts) => {
     return newOpts;
 };
 
-class Artifacts extends PagedTypeList {
+class ArtifactList extends PagedTypeList {
     constructor(initialOpts, debug = false) {
         const defaultOpts = {
             type: "artifactrepo.artifact",
@@ -32,4 +32,4 @@ class Artifacts extends PagedTypeList {
     }
 }
 
-export default Artifacts;
+export default ArtifactList;
