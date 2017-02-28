@@ -128,8 +128,7 @@ List.propTypes = {
     item: React.PropTypes.object,
     pathname: React.PropTypes.string.isRequired,
     breadcrumbs: React.PropTypes.array.isRequired,
-    controls: React.PropTypes.array.isRequired,
-    route: React.PropTypes.object.isRequired
+    controls: React.PropTypes.array.isRequired
 };
 
 List.contextTypes = {
