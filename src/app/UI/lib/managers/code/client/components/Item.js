@@ -15,7 +15,7 @@ import FlowList from "../observables/flow_list";
 
 class Item extends LightComponent {
     constructor(props) {
-        super(props, true);
+        super(props);
 
         this.itemExt = new ExtendedItem({
             id: props.item._id,

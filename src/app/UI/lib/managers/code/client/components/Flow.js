@@ -1,21 +1,52 @@
 
 import React from "react";
-import Component from "ui-lib/component";
+import LightComponent from "ui-lib/light_component";
 import { JobFlow, StepStatus } from "ui-components/flow";
+import { States as ObservableDataStates } from "ui-lib/observable_data";
 import { ensureArray } from "misc";
+import StepList from "../observables/step_list";
+import {
+    LoadIndicator as TALoadIndicator
+} from "ui-components/type_admin";
 
-class FlowComponent extends Component {
+class FlowComponent extends LightComponent {
     constructor(props) {
         super(props);
 
-        this.addTypeListStateVariable("steps", "flowctrl.step", (props) => ({
-            "flow.id": props.flow._id,
-            visible: true
-        }), false);
+        this.steps = new StepList({
+            flowId: props.flow._id,
+            subscribe: false
+        });
+
+        this.state = {
+            steps: this.steps.value.getValue(),
+            state: this.steps.state.getValue()
+        };
+    }
+
+    componentDidMount() {
+        this.addDisposable(this.steps.start());
+
+        this.addDisposable(this.steps.value.subscribe((steps) => this.setState({ steps })));
+        this.addDisposable(this.steps.state.subscribe((state) => this.setState({ state })));
+    }
+
+    componentWillReceiveProps(nextProps) {
+        this.steps.setOpts({
+            flowId: nextProps.flow._id
+        });
     }
 
     render() {
         this.log("render", this.props, JSON.stringify(this.state, null, 2));
+
+        if (this.state.state === ObservableDataStates.LOADING) {
+            return (
+                <TALoadIndicator
+                    theme={this.props.theme}
+                />
+            );
+        }
 
         const firstStep = {
             id: "First",
@@ -32,7 +63,7 @@ class FlowComponent extends Component {
             }
         };
 
-        const steps = this.state.steps.map((step) => {
+        const steps = this.state.steps.toJS().map((step) => {
             const parentIds = step.parentSteps.slice(0);
 
             if (parentIds.length === 0) {

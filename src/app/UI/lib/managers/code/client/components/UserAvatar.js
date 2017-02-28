@@ -1,45 +1,53 @@
 
 import React from "react";
-import Component from "ui-lib/component";
+import LightComponent from "ui-lib/light_component";
 import CollaboratorAvatar from "ui-components/collaborator_avatar";
 import FontIcon from "react-toolbox/lib/font_icon";
+import UserItem from "ui-observables/user_item";
 
-class UserAvatar extends Component {
+class UserAvatar extends LightComponent {
     constructor(props) {
         super(props);
-        this.addTypeListStateVariable("user", "userrepo.user", (props) => ({
-            "email": props.email
-        }), false);
+
+        this.user = new UserItem({
+            email: props.email
+        });
+
+        this.state = {
+            user: this.user.value.getValue()
+        };
+    }
+
+    componentDidMount() {
+        this.addDisposable(this.user.start());
+
+        this.addDisposable(this.user.value.subscribe((user) => this.setState({ user })));
+    }
+
+    componentWillReceiveProps(nextProps) {
+        this.user.setOpts({
+            email: nextProps.email
+        });
     }
 
     render() {
-        let avatar = null;
+        this.log("state", JSON.stringify(this.state, null, 2));
+
         const noAvatarElement = <FontIcon value={this.props.noAvatarIconName} />;
 
-        if (this.state.user) {
-            if (this.state.user.length === 1) {
-                const user = this.state.user[0];
-                if (user) {
-                    avatar = (
-                        <CollaboratorAvatar
-                            id={user._id}
-                            avatarType={"useravatar"}
-                            className={this.props.className}
-                            failureElement={noAvatarElement}
-                        />
-                    );
-                }
-            } else if (this.state.user.length > 1) {
-                console.log(`Found multiple users with email ${this.props.email}`, this.state.user);
-            }
+        if (this.state.user.toJS()._id) {
+            return (
+                <CollaboratorAvatar
+                    id={this.state.user.toJS()._id}
+                    avatarType={"useravatar"}
+                    className={this.props.className}
+                    failureElement={noAvatarElement}
+                />
+            );
         }
 
         // Use default icon if no icon is specified or if avatar is loading
-        if (!avatar) {
-            avatar = noAvatarElement;
-        }
-
-        return avatar;
+        return noAvatarElement;
     }
 }
 
