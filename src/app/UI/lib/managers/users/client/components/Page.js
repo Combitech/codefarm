@@ -1,13 +1,9 @@
 
 import React from "react";
 import { AppMenu } from "ui-components/app_menu";
-import Component from "ui-lib/component";
+import LightComponent from "ui-lib/light_component";
 
-class Page extends Component {
-    constructor(props) {
-        super(props, true);
-    }
-
+class Page extends LightComponent {
     render() {
         this.log("render", this.props, this.state);
 
