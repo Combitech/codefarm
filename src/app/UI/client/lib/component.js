@@ -1,6 +1,5 @@
 
 import api from "api.io/api.io-client";
-import React from "react";
 import stateVar from "ui-lib/state_var";
 import LightComponent from "ui-lib/light_component";
 import type from "ui-lib/type";

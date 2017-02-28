@@ -14,11 +14,11 @@ import { States as ObservableDataStates } from "ui-lib/observable_data";
 
 class List extends LightComponent {
     constructor(props) {
-        super(props, true);
+        super(props);
 
         this.jobList = new Jobs({
             limit: 5
-        }, true);
+        });
 
         this.state = {
             list: this.jobList.value.getValue(),

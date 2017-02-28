@@ -113,6 +113,8 @@ class TypeList extends ObservableData {
             }
         }
 
+        this.log(`Fetched type ${opts.type} query=${JSON.stringify(query)}, got ${list.length} items`);
+
         return list;
     }
 
@@ -143,6 +145,7 @@ class TypeList extends ObservableData {
         };
 
         this._evtSubs.push(api.type.on(eventName, handlerFn, eventQuery));
+        this.log(`Added handler for event ${eventName}`, eventQuery);
     }
 
     _setupEventHandlers(opts, query) {

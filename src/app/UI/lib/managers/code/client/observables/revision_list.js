@@ -9,18 +9,24 @@ const convertOpts = (opts) => {
         });
         delete newOpts.repositoryId;
     }
+    if (newOpts.hasOwnProperty("status") && newOpts.status !== null) {
+        newOpts.query = Object.assign(newOpts.query || {}, {
+            status: newOpts.status
+        });
+        delete newOpts.status;
+    }
 
     return newOpts;
 };
 
-class Artifacts extends PagedTypeList {
+class RevisionList extends PagedTypeList {
     constructor(initialOpts, debug = false) {
         const defaultOpts = {
-            type: "artifactrepo.artifact",
+            type: "coderepo.revision",
             query: false,
             repositoryId: null,
             filter: "",
-            filterFields: [ "name", "version", "state", "repository" ]
+            filterFields: [ "name", "tags", "_id", "patches.email", "patches.name", "patches.comment", "patches.change.newrev" ]
         };
 
         const opts = Object.assign({}, defaultOpts, initialOpts);
@@ -32,4 +38,4 @@ class Artifacts extends PagedTypeList {
     }
 }
 
-export default Artifacts;
+export default RevisionList;
