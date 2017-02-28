@@ -32,7 +32,7 @@ class UserItem extends TypeList {
             this._wrappedValue.next(Immutable.fromJS(value));
         }));
 
-        super.start();
+        return super.start();
     }
 
     setOpts(opts) {
