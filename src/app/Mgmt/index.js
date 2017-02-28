@@ -26,7 +26,7 @@ const argv = yargs
     alias: "port",
     describe: "Port for HTTP REST interface",
     type: "int",
-    default: 9595
+    default: 19595
 })
 .option("msgbus", {
     describe: "RabbitMQ message bus URI",

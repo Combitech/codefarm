@@ -25,7 +25,7 @@ const argv = yargs
 .option("mgmtCfgUri", {
     describe: "Mgmt config HTTP REST interface",
     type: "string",
-    default: "http://localhost:9595/config"
+    default: "http://localhost:19595/config"
 })
 .option("noActivate", {
     describe: "Do not activate created configs by default",
