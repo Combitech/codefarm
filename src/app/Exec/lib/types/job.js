@@ -21,7 +21,7 @@ const REVISION_STATE = {
 
 const values = (obj) => Object.keys(obj).map((key) => obj[key]);
 
-const notFinishedStatusList = [ STATUS.ONGOING, STATUS.QUEUED, STATUS.ALLOCATED ];
+const ongoingStatusList = [ STATUS.ONGOING, STATUS.QUEUED, STATUS.ALLOCATED ];
 
 class Job extends Type {
     constructor(data) {
@@ -64,7 +64,7 @@ class Job extends Type {
     }
 
     async _saveHook(olddata) {
-        if (notFinishedStatusList.indexOf(this.status) === -1) {
+        if (!ongoingStatusList.includes(this.status)) {
             // Finished
             if (olddata && !olddata.finished) {
                 // Update of not ongoing, not finished sub-job, set finished
@@ -199,7 +199,7 @@ class Job extends Type {
      * @return {undefined}
      */
     async setReset() {
-        if (notFinishedStatusList.indexOf(this.status) !== -1) {
+        if (ongoingStatusList.includes(this.status)) {
             this.slaveId = false;
             this.status = STATUS.QUEUED;
             await this.save();

@@ -76,7 +76,7 @@ class Step extends Type {
                         _id: {
                             $in: jobIds
                         },
-                        result: {
+                        finished: {
                             $ne: false
                         }
                     });
