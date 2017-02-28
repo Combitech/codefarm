@@ -72,6 +72,12 @@ module.exports = async (argv) => {
                 defaultCollector(`!${flowIdTag}`)
             ]
         }, {
+            // Detect pushes directly to master and (further down) set skip on previous steps
+            _id: "PushToMaster",
+            collectors: [
+                defaultCollector(`${flowIdTag} AND merged AND !step:CG:skip AND !step:Merge:skip AND !step:CG:success AND !step:Merge:success`)
+            ]
+        }, {
             _id: "CG",
             collectors: [
                 defaultCollector(`${flowIdTag} AND !step:CG:success AND !merged`)
@@ -109,6 +115,10 @@ module.exports = async (argv) => {
     const steps = [
         tagBlSpec(
             "Select", `tags.push("${flowIdTag}");`, [], false
+        ),
+        // Set CG and Merge steps as skipped (push to master detected)
+        tagBlSpec(
+            "PushToMaster", "tags.push(\"step:CG:skip\"); tags.push(\"step:Merge:skip\"", [], false
         ),
         slaveScriptBlSpec(
             "CG", cgScript, defaultSlaveCriteria
