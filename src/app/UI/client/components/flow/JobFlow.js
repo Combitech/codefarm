@@ -34,6 +34,7 @@ class JobFlow extends LightComponent {
                 for (const s of Object.keys(statusIcons)) {
                     if (tags.includes(`step:${step.name}:${s}`)) {
                         status = s;
+                        break;
                     }
                 }
             }
