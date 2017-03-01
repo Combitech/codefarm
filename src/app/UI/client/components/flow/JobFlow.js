@@ -1,6 +1,7 @@
 
 import React from "react";
 import LightComponent from "ui-lib/light_component";
+import statusIcons from "ui-lib/status_icons";
 import Flow from "./Flow";
 import moment from "moment";
 
@@ -26,13 +27,14 @@ class JobFlow extends LightComponent {
                     status = job.status;
                 }
             }
-            if (!status && (!step.meta.step.script && step.meta.step.tagScript)) {
-                // Step didn't have a job but a tag-script, check tags on revision instead
+            if (!status) {
+                // Step didn't have a job so check tag script
                 const tags = step.meta.item.tags;
-                if (tags.some((tag) => tag === `step:${step.name}:success`)) {
-                    status = "success";
-                } else if (tags.some((tag) => tag === `step:${step.name}:fail`)) {
-                    status = "fail";
+
+                for (const s of Object.keys(statusIcons)) {
+                    if (tags.includes(`step:${step.name}:${s}`)) {
+                        status = s;
+                    }
                 }
             }
 
