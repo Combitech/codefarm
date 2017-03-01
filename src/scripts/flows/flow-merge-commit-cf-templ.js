@@ -93,6 +93,11 @@ module.exports = async (argv) => {
                 defaultCollector(`${flowIdTag} AND merged`)
             ]
         }, {
+            _id: "Regression",
+            collectors: [
+                defaultCollector(`${flowIdTag} AND merged`)
+            ]
+        }, {
             _id: "Deliver",
             collectors: [
                 defaultCollector(`${flowIdTag} AND step:Build:success`)
@@ -101,6 +106,7 @@ module.exports = async (argv) => {
     ];
 
     const cgScript = await fs.readFileAsync(path.join(__dirname, "..", "jobs", "clone_and_test_cf.sh"), { encoding: "utf8" });
+    const regScript = await fs.readFileAsync(path.join(__dirname, "..", "jobs", "clone_and_test_cf.sh"), { encoding: "utf8" });
     const mergeScript = await fs.readFileAsync(path.join(__dirname, "..", "jobs", "merge_github_revision.sh"), { encoding: "utf8" });
     const buildScript = `
         #!/bin/bash
@@ -128,6 +134,9 @@ module.exports = async (argv) => {
         ),
         slaveScriptBlSpec(
             "Build", buildScript, defaultSlaveCriteria, [ "Merge" ]
+        ),
+        slaveScriptBlSpec(
+            "Regression", regScript, defaultSlaveCriteria, [ "Merge" ]
         ),
         slaveScriptBlSpec(
             "Deliver", buildScript, defaultSlaveCriteria, [ "Build" ]
