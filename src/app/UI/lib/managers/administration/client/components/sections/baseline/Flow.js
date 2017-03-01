@@ -1,6 +1,6 @@
 
 import React from "react";
-import LightComponent from "ui-lib/component";
+import LightComponent from "ui-lib/light_component";
 import { JobFlow, StepStatus } from "ui-components/flow";
 import { ensureArray } from "misc";
 import {
