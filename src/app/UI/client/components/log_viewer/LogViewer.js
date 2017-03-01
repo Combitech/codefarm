@@ -1,16 +1,15 @@
 
 import React from "react";
-import ReactDOM from "react-dom";
 import LightComponent from "ui-lib/light_component";
 
 class LogViewer extends LightComponent {
     componentDidMount() {
-        const ref = ReactDOM.findDOMNode(this);
+        this.ref.addEventListener("load", () => {
+            const body = this.ref.contentWindow.document.body;
 
-        ref.addEventListener("load", () => {
-            ref.contentWindow.document.body.style.margin = "0px";
-            ref.contentWindow.document.body.style.lineHeight = "1.1rem";
-            ref.style.height = `${ref.contentWindow.document.body.scrollHeight}px`;
+            body.style.margin = "0px";
+            body.style.lineHeight = "1.1rem";
+            this.ref.style.height = `${body.scrollHeight}px`;
         });
     }
 
@@ -19,6 +18,7 @@ class LogViewer extends LightComponent {
 
         return (
             <iframe
+                ref={(ref) => this.ref = ref}
                 className={this.props.theme.iframe}
                 src={`/logrepo/log/${this.props.log.id}/download`}
             />
