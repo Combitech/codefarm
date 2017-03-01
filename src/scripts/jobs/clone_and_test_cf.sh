@@ -57,6 +57,9 @@ exitCode=0
 jobRunId=$($CLI -q '$.lastRunId' --format values read_type exec.job $jobId)
 echo Job run id: $jobRunId
 
+echo "Now I will install dependencies for local libs"
+src/scripts/install_all_libs.sh
+
 for testId in ${components[@]}; do
     echo "Now I will create a subjob to test component $testId"
     pushd src/app/$testId
