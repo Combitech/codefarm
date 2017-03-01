@@ -1,6 +1,6 @@
 
 import React from "react";
-import Component from "ui-lib/component";
+import LightComponent from "ui-lib/light_component";
 import { ListItem } from "react-toolbox/lib/list";
 import { ListItemIcon } from "ui-components/type_admin";
 import theme from "../../theme.scss";
@@ -16,11 +16,7 @@ const jobStatusIcon = {
     "skip": "fast_forward"
 };
 
-class JobListItem extends Component {
-    constructor(props) {
-        super(props);
-    }
-
+class JobListItem extends LightComponent {
     render() {
         this.log("render", this.props, this.state);
 

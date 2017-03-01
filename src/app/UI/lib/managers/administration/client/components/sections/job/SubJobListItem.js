@@ -1,6 +1,6 @@
 
 import React from "react";
-import Component from "ui-lib/component";
+import LightComponent from "ui-lib/light_component";
 import JobListItem from "./ListItem";
 
 const jobKindIcon = {
@@ -8,11 +8,7 @@ const jobKindIcon = {
     "test": "assignment"
 };
 
-class SubJobListItem extends Component {
-    constructor(props) {
-        super(props);
-    }
-
+class SubJobListItem extends LightComponent {
     render() {
         this.log("render", this.props, this.state);
 

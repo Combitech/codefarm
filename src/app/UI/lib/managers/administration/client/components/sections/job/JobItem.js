@@ -3,7 +3,7 @@
 
 import React from "react";
 import Snackbar from "react-toolbox/lib/snackbar";
-import Component from "ui-lib/component";
+import LightComponent from "ui-lib/light_component";
 import Chip from "react-toolbox/lib/chip";
 import Link from "react-toolbox/lib/link";
 import { Tab, Tabs } from "react-toolbox/lib/tabs";
@@ -20,17 +20,20 @@ import {
 import * as pathBuilder from "ui-lib/path_builder";
 import * as queryBuilder from "ui-lib/query_builder";
 
-class Item extends Component {
+class Item extends LightComponent {
     constructor(props) {
         super(props);
-        this.addStateVariable("runId", false);
-        this.addStateVariable("runTabIndex", 0);
-        this.addStateVariable("baselineCollectorIndex", 0);
-        this.addStateVariable("statusMessage", { msg: "", type: "accept" });
+
+        this.state = {
+            runId: false,
+            runTabIndex: 0,
+            baselineCollectorIndex: 0,
+            statusMessage: { msg: "", type: "accept" }
+        };
     }
 
     _showMessage(msg, type = "accept") {
-        this.state.statusMessage.set({ msg: msg, type: type });
+        this.setState({ statusMessage: { msg: msg, type: type } });
     }
 
     _closeSnackbar() {
@@ -93,8 +96,8 @@ class Item extends Component {
                     </table>
 
                     <Tabs
-                        index={this.state.baselineCollectorIndex.value}
-                        onChange={this.state.baselineCollectorIndex.set}
+                        index={this.state.baselineCollectorIndex}
+                        onChange={(baselineCollectorIndex) => this.setState({ baselineCollectorIndex })}
                     >
                     {item.baseline.content.map((collector, index) => (
                         <Tab key={index} label={`${collector.name} (${collector.id.length})`}>
@@ -119,8 +122,8 @@ class Item extends Component {
             <div>
                 <h6 className={this.props.theme.title}>Runs</h6>
                 <Tabs
-                    index={this.state.runId.value === false ? lastRunId : this.state.runId.value}
-                    onChange={this.state.runId.set}
+                    index={this.state.runId === false ? lastRunId : this.state.runId}
+                    onChange={(runId) => this.setState({ runId })}
                 >
                     {item.runs.map((run, index) => (
                         <Tab key={index} label={`Run ${index}`}>
@@ -156,7 +159,10 @@ class Item extends Component {
                                     </Col>
                                 </Row>
                             </div>
-                            <Tabs index={this.state.runTabIndex.value} onChange={this.state.runTabIndex.set}>
+                            <Tabs
+                                index={this.state.runTabIndex}
+                                onChange={(runTabIndex) => this.setState({ runTabIndex })}
+                            >
                                 <Tab key={0} label={`Logs (${run.logs.length})`}>
                                     <TAList
                                         type="logrepo.log"
@@ -278,12 +284,12 @@ class Item extends Component {
                 </TASection>
                 <Snackbar
                     action="Dismiss"
-                    active={this.state.statusMessage.value.msg.length > 0}
-                    label={this.state.statusMessage.value.msg}
+                    active={this.state.statusMessage.msg.length > 0}
+                    label={this.state.statusMessage.msg}
                     timeout={3000}
                     onClick={this._closeSnackbar.bind(this)}
                     onTimeout={this._closeSnackbar.bind(this)}
-                    type={this.state.statusMessage.value.type}
+                    type={this.state.statusMessage.type}
                 />
             </div>
         );

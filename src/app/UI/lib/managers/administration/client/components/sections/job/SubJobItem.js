@@ -1,17 +1,13 @@
 
 import React from "react";
-import Component from "ui-lib/component";
+import LightComponent from "ui-lib/light_component";
 import Chip from "react-toolbox/lib/chip";
 import { Row, Col } from "react-flexbox-grid";
 import {
     Section as TASection
 } from "ui-components/type_admin";
 
-class SubJobItem extends Component {
-    constructor(props) {
-        super(props);
-    }
-
+class SubJobItem extends LightComponent {
     render() {
         this.log("render", this.props, this.state);
 

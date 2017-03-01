@@ -1,13 +1,9 @@
 
 import React from "react";
-import Component from "ui-lib/component";
+import LightComponent from "ui-lib/light_component";
 import { ListItem } from "react-toolbox/lib/list";
 
-class LogListItem extends Component {
-    constructor(props) {
-        super(props);
-    }
-
+class LogListItem extends LightComponent {
     render() {
         this.log("render", this.props, this.state);
 

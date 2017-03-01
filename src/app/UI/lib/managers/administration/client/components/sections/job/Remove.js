@@ -1,16 +1,12 @@
 
 import React from "react";
-import Component from "ui-lib/component";
+import LightComponent from "ui-lib/light_component";
 import {
     Form as TAForm,
     Section as TASection
 } from "ui-components/type_admin";
 
-class Remove extends Component {
-    constructor(props) {
-        super(props);
-    }
-
+class Remove extends LightComponent {
     render() {
         this.log("render", this.props, this.state);
 
