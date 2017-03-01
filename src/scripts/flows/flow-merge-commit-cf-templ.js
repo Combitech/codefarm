@@ -118,7 +118,7 @@ module.exports = async (argv) => {
         ),
         // Set CG and Merge steps as skipped (push to master detected)
         tagBlSpec(
-            "PushToMaster", "tags.push(\"step:CG:skip\"); tags.push(\"step:Merge:skip\"", [], false
+            "PushToMaster", "tags.push(\"step:CG:skip\"); tags.push(\"step:Merge:skip\");", [], false
         ),
         slaveScriptBlSpec(
             "CG", cgScript, defaultSlaveCriteria
