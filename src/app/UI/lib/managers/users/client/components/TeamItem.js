@@ -2,7 +2,7 @@
 import React from "react";
 import Chip from "react-toolbox/lib/chip";
 import { Row, Col } from "react-flexbox-grid";
-import Component from "ui-lib/component";
+import LightComponent from "ui-lib/light_component";
 import {
     Section as TASection,
     List as TAList
@@ -12,11 +12,7 @@ import CollaboratorAvatar from "ui-components/collaborator_avatar";
 import * as pathBuilder from "ui-lib/path_builder";
 import theme from "./theme.scss";
 
-class Item extends Component {
-    constructor(props) {
-        super(props);
-    }
-
+class Item extends LightComponent {
     render() {
         this.log("render", this.props);
 

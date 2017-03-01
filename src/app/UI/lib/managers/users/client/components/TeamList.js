@@ -1,25 +1,46 @@
 
 import React from "react";
-import Component from "ui-lib/component";
+import LightComponent from "ui-lib/light_component";
 import List from "./List";
 import TeamListItem from "./TeamListItem";
+import TeamListObservable from "../observables/team_list";
 
-class UserList extends Component {
+class TeamList extends LightComponent {
     constructor(props) {
         super(props);
+
+        this.teamList = new TeamListObservable({
+            sortOn: "name",
+            sortOnType: "String",
+            limit: 10
+        });
+
+        this.state = {
+            list: this.teamList.value.getValue(),
+            state: this.teamList.state.getValue()
+        };
+    }
+
+    componentDidMount() {
+        this.log("componentDidMount");
+        this.addDisposable(this.teamList.start());
+        this.addDisposable(this.teamList.value.subscribe((list) => this.setState({ list })));
+        this.addDisposable(this.teamList.state.subscribe((state) => this.setState({ state })));
     }
 
     render() {
         return (
             <List
                 ListItemComponent={TeamListItem}
+                items={this.state.list}
+                listObservable={this.teamList}
                 {...this.props}
             />
         );
     }
 }
 
-UserList.propTypes = {
+TeamList.propTypes = {
     theme: React.PropTypes.object,
     pathname: React.PropTypes.string.isRequired,
     type: React.PropTypes.string.isRequired,
@@ -27,8 +48,8 @@ UserList.propTypes = {
     controls: React.PropTypes.array.isRequired
 };
 
-UserList.contextTypes = {
+TeamList.contextTypes = {
     router: React.PropTypes.object.isRequired
 };
 
-export default UserList;
+export default TeamList;

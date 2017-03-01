@@ -1,14 +1,10 @@
 
 import React from "react";
 import Chip from "react-toolbox/lib/chip";
-import Component from "ui-lib/component";
+import LightComponent from "ui-lib/light_component";
 import { ListItem } from "react-toolbox/lib/list";
 
-class UserListItem extends Component {
-    constructor(props) {
-        super(props);
-    }
-
+class UserListItem extends LightComponent {
     render() {
         this.log("render", this.props, this.state);
 

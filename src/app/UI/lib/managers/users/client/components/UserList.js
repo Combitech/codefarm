@@ -1,18 +1,39 @@
 
 import React from "react";
-import Component from "ui-lib/component";
+import LightComponent from "ui-lib/light_component";
 import List from "./List";
 import UserListItem from "./UserListItem";
+import UserListObservable from "../observables/user_list";
 
-class UserList extends Component {
+class UserList extends LightComponent {
     constructor(props) {
         super(props);
+
+        this.userList = new UserListObservable({
+            sortOn: "name",
+            sortOnType: "String",
+            limit: 10
+        });
+
+        this.state = {
+            list: this.userList.value.getValue(),
+            state: this.userList.state.getValue()
+        };
+    }
+
+    componentDidMount() {
+        this.log("componentDidMount");
+        this.addDisposable(this.userList.start());
+        this.addDisposable(this.userList.value.subscribe((list) => this.setState({ list })));
+        this.addDisposable(this.userList.state.subscribe((state) => this.setState({ state })));
     }
 
     render() {
         return (
             <List
                 ListItemComponent={UserListItem}
+                items={this.state.list}
+                listObservable={this.userList}
                 {...this.props}
             />
         );

@@ -1,19 +1,15 @@
 
 import React from "react";
-import Component from "ui-lib/component";
+import ImmutablePropTypes from "react-immutable-proptypes";
+import LightComponent from "ui-lib/light_component";
 import Input from "react-toolbox/lib/input";
 import {
     Section as TASection,
-    List as TAList
+    ListComponent as TAListComponent,
+    ListPager as TAListPager
 } from "ui-components/type_admin";
 
-class List extends Component {
-    constructor(props) {
-        super(props);
-
-        this.addStateVariable("filter", "");
-    }
-
+class List extends LightComponent {
     render() {
         this.log("render", this.props);
 
@@ -26,31 +22,33 @@ class List extends Component {
                 type="text"
                 label="Filter list"
                 name="filter"
-                value={this.state.filter.value}
-                onChange={this.state.filter.set}
+                value={this.props.listObservable.opts.getValue().get("filter")}
+                onChange={(filter) => this.props.listObservable.setOpts({ filter })}
             />
         ));
-
-        const query = {};
-
-        if (false) {
-            query.team = false;
-        }
 
         return (
             <TASection
                 controls={controls}
                 breadcrumbs={this.props.breadcrumbs}
             >
-                <TAList
-                    type={this.props.type}
-                    filter={this.state.filter.value}
-                    ListItemComponent={this.props.ListItemComponent}
-                    onSelect={(item) => {
-                        this.context.router.push({
-                            pathname: `${this.props.pathname}/${item._id}`
-                        });
-                    }}
+                <TAListComponent>
+                    {this.props.items.toJS().map((item) => (
+                        <this.props.ListItemComponent
+                            key={item._id}
+                            theme={this.props.theme}
+                            onClick={() => {
+                                this.context.router.push({
+                                    pathname: `${this.props.pathname}/${item._id}`
+                                });
+                            }}
+                            item={item}
+                        />
+                    ))}
+                </TAListComponent>
+                <TAListPager
+                    pagedList={this.props.listObservable}
+                    pagingInfo={this.props.listObservable.pagingInfo.getValue()}
                 />
             </TASection>
         );
@@ -63,7 +61,8 @@ List.propTypes = {
     type: React.PropTypes.string.isRequired,
     breadcrumbs: React.PropTypes.array.isRequired,
     controls: React.PropTypes.array.isRequired,
-    ListItemComponent: React.PropTypes.func.isRequired
+    ListItemComponent: React.PropTypes.func.isRequired,
+    items: ImmutablePropTypes.list
 };
 
 List.contextTypes = {

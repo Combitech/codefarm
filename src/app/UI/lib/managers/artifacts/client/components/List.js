@@ -36,20 +36,10 @@ class List extends LightComponent {
 
     componentWillReceiveProps(nextProps) {
         this.log("componentWillReceiveProps");
-        let repositoryId;
-        if (nextProps.item && nextProps.item._id) {
-            if (this.props.item && this.props.item._id) {
-                if (nextProps.item._id !== this.props.item._id) {
-                    repositoryId = nextProps.item._id;
-                }
-            } else {
-                repositoryId = nextProps.item._id;
-            }
-        }
-
-        if (repositoryId) {
-            this.log("update repositoryId", repositoryId);
-            this.artifactList.setOpts({ repositoryId });
+        if (nextProps.item) {
+            this.typeList.setOpts({
+                repositoryId: nextProps.item._id
+            });
         }
     }
 
