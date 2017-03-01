@@ -1,13 +1,9 @@
 
 import React from "react";
 import Breadcrumbs from "ui-components/breadcrumbs";
-import Component from "ui-lib/component";
+import LightComponent from "ui-lib/light_component";
 
-class Section extends Component {
-    constructor(props) {
-        super(props);
-    }
-
+class Section extends LightComponent {
     render() {
         this.log("render", this.props);
 

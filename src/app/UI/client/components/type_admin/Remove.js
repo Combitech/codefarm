@@ -1,13 +1,9 @@
 
 import React from "react";
 import api from "api.io/api.io-client";
-import Component from "ui-lib/component";
+import LightComponent from "ui-lib/light_component";
 
-class Remove extends Component {
-    constructor(props) {
-        super(props);
-    }
-
+class Remove extends LightComponent {
     async onRemove(type, id, options = {}) {
         this.log("remove", type, id);
 

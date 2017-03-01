@@ -9,7 +9,7 @@ import { States as ObservableDataStates } from "ui-lib/observable_data";
 
 class List extends LightComponent {
     constructor(props) {
-        super(props, true);
+        super(props, false);
 
         this.typeList = new TypeList({
             type: props.type,
@@ -20,7 +20,8 @@ class List extends LightComponent {
 
         this.state = {
             list: this.typeList.value.getValue(),
-            state: this.typeList.state.getValue()
+            state: this.typeList.state.getValue(),
+            error: this.typeList.error.getValue()
         };
     }
 
@@ -39,10 +40,17 @@ class List extends LightComponent {
         this.addDisposable(this.typeList.start());
         this.addDisposable(this.typeList.value.subscribe((list) => this.setState({ list })));
         this.addDisposable(this.typeList.state.subscribe((state) => this.setState({ state })));
+        this.addDisposable(this.typeList.error.subscribe((error) => this.setState({ error })));
     }
 
     render() {
         this.log("render", this.props, this.state);
+
+        if (this.state.error) {
+            return (
+                <pre>{this.state.error.toJS()}</pre>
+            );
+        }
 
         if (this.state.state === ObservableDataStates.LOADING) {
             return (

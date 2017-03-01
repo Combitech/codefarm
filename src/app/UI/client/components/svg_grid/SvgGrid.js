@@ -1,18 +1,14 @@
 
 import React from "react";
 import { flattenArray } from "misc";
-import Component from "ui-lib/component";
+import LightComponent from "ui-lib/light_component";
 import SvgGridItem from "./SvgGridItem";
 import SvgGridPath from "./SvgGridPath";
 import SvgGridDefs from "./SvgGridDefs";
 import sizes from "./sizes";
 import ShadowFilter from "./filters/Shadow";
 
-class SvgGrid extends Component {
-    constructor(props) {
-        super(props);
-    }
-
+class SvgGrid extends LightComponent {
     buildPath(gridPath, fromItem, toItem) {
         const pathStyle = {};
 

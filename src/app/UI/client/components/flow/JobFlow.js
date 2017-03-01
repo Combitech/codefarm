@@ -1,14 +1,10 @@
 
 import React from "react";
-import Component from "ui-lib/component";
+import LightComponent from "ui-lib/light_component";
 import Flow from "./Flow";
 import moment from "moment";
 
-class JobFlow extends Component {
-    constructor(props) {
-        super(props, false);
-    }
-
+class JobFlow extends LightComponent {
     render() {
         this.log("render", this.props, JSON.stringify(this.state, null, 2));
 

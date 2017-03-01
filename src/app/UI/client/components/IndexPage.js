@@ -8,7 +8,7 @@ const ICON_SIZE = {
     height: 312
 };
 
-class IndexPage extends React.Component {
+class IndexPage extends React.PureComponent {
     render() {
         const iconStyle = {
             verticalAlign: "bottom"

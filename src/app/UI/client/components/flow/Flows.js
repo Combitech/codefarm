@@ -1,32 +1,19 @@
 
 import React from "react";
 import { Tab, Tabs } from "react-toolbox";
-import Component from "ui-lib/component";
-import {
-    LoadIndicator as TALoadIndicator
-} from "ui-components/type_admin";
+import LightComponent from "ui-lib/light_component";
 
-class Flows extends Component {
+class Flows extends LightComponent {
     constructor(props) {
         super(props);
 
-        this.addStateVariable("flow", 0);
+        this.state = {
+            flow: 0
+        };
     }
 
     render() {
         this.log("render", this.props, this.state);
-
-        if (this.state.errorAsync.value) {
-            return (
-                <div>{this.state.errorAsync.value}</div>
-            );
-        }
-
-        if (this.state.loadingAsync.value) {
-            return (
-                <TALoadIndicator/>
-            );
-        }
 
         let flowsContent;
         if (this.props.flows.length === 0) {
@@ -47,8 +34,8 @@ class Flows extends Component {
         } else {
             flowsContent = (
                 <Tabs
-                    index={this.state.flow.value}
-                    onChange={this.state.flow.set}
+                    index={this.state.flow}
+                    onChange={(flow) => this.setState({ flow })}
                     fixed={true}
                 >
                     {this.props.flows.map((flow) => (

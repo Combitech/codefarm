@@ -3,15 +3,11 @@ import React from "react";
 import AppBar from "react-toolbox/lib/app_bar";
 import { Button, IconButton } from "react-toolbox/lib/button";
 import { IconMenu, MenuItem } from "react-toolbox/lib/menu";
-import Component from "ui-lib/component";
+import LightComponent from "ui-lib/light_component";
 import { CodeFarmIcon } from "ui-components/app_icons";
 
 
-class AppTopBar extends Component {
-    constructor(props) {
-        super(props);
-    }
-
+class AppTopBar extends LightComponent {
     onClick(pathname) {
         this.context.router.push({ pathname });
     }

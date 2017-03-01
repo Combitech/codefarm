@@ -1,6 +1,6 @@
 
 import React from "react";
-import Component from "ui-lib/component";
+import LightComponent from "ui-lib/light_component";
 import {
     SvgGrid,
     SvgGridItem,
@@ -10,11 +10,7 @@ import {
 import SvgShadowFilter from "ui-components/svg_grid/filters/Shadow";
 import StepVirtual from "./steps/Virtual";
 
-class Flow extends Component {
-    constructor(props) {
-        super(props);
-    }
-
+class Flow extends LightComponent {
     getAllParents(items, item) {
         let parents = items.filter((i) => item.parentIds.includes(i.id));
 

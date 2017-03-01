@@ -1,13 +1,9 @@
 import React from "react";
 import { Card } from "react-toolbox/lib/card";
 import { IconButton } from "react-toolbox/lib/button";
-import Component from "ui-lib/component";
+import LightComponent from "ui-lib/light_component";
 
-class ExpandableCard extends Component {
-    constructor(props) {
-        super(props);
-    }
-
+class ExpandableCard extends LightComponent {
     render() {
         const expandIconName = this.props.expanded.value ? this.props.iconCollapse : this.props.iconExpand;
 

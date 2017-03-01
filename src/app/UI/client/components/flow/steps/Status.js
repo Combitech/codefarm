@@ -1,10 +1,10 @@
 
 import React from "react";
-import Component from "ui-lib/component";
+import LightComponent from "ui-lib/light_component";
 import { sizes } from "ui-components/svg_grid";
 import statusIcons from "ui-lib/status_icons";
 
-class Status extends Component {
+class Status extends LightComponent {
     constructor(props) {
         super(props);
 

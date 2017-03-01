@@ -3,7 +3,7 @@ import React from "react";
 import { Link } from "react-router";
 import AppHeader from "ui-components/app_header";
 
-class NotFoundPage extends React.Component {
+class NotFoundPage extends React.PureComponent {
     render() {
         return (
             <div>

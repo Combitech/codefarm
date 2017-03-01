@@ -1,13 +1,9 @@
 
 import React from "react";
 import { Tabs } from "react-toolbox/lib/tabs";
-import Component from "ui-lib/component";
+import LightComponent from "ui-lib/light_component";
 
-class AppTabs extends Component {
-    constructor(props) {
-        super(props);
-    }
-
+class AppTabs extends LightComponent {
     onChange(index) {
         const value = this.props.children[index].props.value;
         this.props.selected.set(value);
