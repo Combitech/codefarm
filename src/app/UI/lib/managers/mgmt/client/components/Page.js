@@ -1,14 +1,10 @@
 import React from "react";
 import { AppMenu } from "ui-components/app_menu";
-import Component from "ui-lib/component";
+import LightComponent from "ui-lib/light_component";
 
-class Page extends Component {
-    constructor(props) {
-        super(props);
-    }
-
+class Page extends LightComponent {
     render() {
-        console.log("ManagementPage-RENDER", this.props);
+        this.log("render", this.props);
 
         const pathname = this.getPathname();
 

@@ -3,23 +3,26 @@ import { CardTitle, CardText, CardActions } from "react-toolbox/lib/card";
 import { List, ListItem, ListDivider, ListSubHeader } from "react-toolbox/lib/list";
 import Button from "react-toolbox/lib/button";
 import Snackbar from "react-toolbox/lib/snackbar";
-import Component from "ui-lib/component";
+import LightComponent from "ui-lib/light_component";
 import ExpandableCard from "ui-components/expandable_card";
 import ConfigDialog from "./ConfigDialog";
+import stateVar from "ui-lib/state_var";
 import STATE from "../../../../lib/types/service_state";
 
-class NodeInfoCard extends Component {
+class NodeInfoCard extends LightComponent {
     constructor(props) {
         super(props);
 
-        this.addStateVariable("statusMessage", { msg: "", type: "accept" });
-        this.addStateVariable("configDialogOpen", false);
-        this.addStateVariable("currentConfig", {});
-        this.addStateVariable("expanded", false);
+        this.state = {
+            statusMessage: { msg: "", type: "accept" },
+            configDialogOpen: stateVar(this, "configDialogOpen", false),
+            currentConfig: {},
+            expanded: stateVar(this, "expanded", false)
+        };
     }
 
     showMessage(msg, type = "accept") {
-        this.state.statusMessage.set({ msg: msg, type: type });
+        this.setState({ statusMessage: { msg: msg, type: type } });
     }
 
     async restartService() {
@@ -35,7 +38,7 @@ class NodeInfoCard extends Component {
         const serviceId = this.props.service.id;
         console.log(`Show service config ${serviceId}`);
         const activeConfig = await this.props.service.getActiveConfig();
-        this.state.currentConfig.set(activeConfig);
+        this.setState({ currentConfig: activeConfig });
         console.log(`Active config for ${serviceId}`, activeConfig);
 
         if (activeConfig && activeConfig.length === 1) {
@@ -178,16 +181,16 @@ class NodeInfoCard extends Component {
                 <ConfigDialog
                     open={this.state.configDialogOpen}
                     titleText={"Active service config"}
-                    configData={this.state.currentConfig.value}
+                    configData={this.state.currentConfig}
                 />
                 <Snackbar
                     action="Dismiss"
-                    active={this.state.statusMessage.value.msg.length > 0}
-                    label={this.state.statusMessage.value.msg}
+                    active={this.state.statusMessage.msg.length > 0}
+                    label={this.state.statusMessage.msg}
                     timeout={3000}
                     onClick={this.closeSnackbar.bind(this)}
                     onTimeout={this.closeSnackbar.bind(this)}
-                    type={this.state.statusMessage.value.type}
+                    type={this.state.statusMessage.type}
                 />
             </div>
         );

@@ -1,17 +1,19 @@
 
 import React from "react";
-import Component from "ui-lib/component";
+import LightComponent from "ui-lib/light_component";
 import Input from "react-toolbox/lib/input";
 import {
     Section as TASection,
     List as TAList
 } from "ui-components/type_admin";
 
-class List extends Component {
+class List extends LightComponent {
     constructor(props) {
         super(props);
 
-        this.addStateVariable("filter", "");
+        this.state = {
+            filter: ""
+        };
     }
 
     render() {
@@ -26,8 +28,8 @@ class List extends Component {
                 type="text"
                 label="Filter list"
                 name="filter"
-                value={this.state.filter.value}
-                onChange={this.state.filter.set}
+                value={this.state.filter}
+                onChange={(filter) => this.setState({ filter })}
             />
         ));
 
@@ -38,7 +40,7 @@ class List extends Component {
             >
                 <TAList
                     type={this.props.type}
-                    filter={this.state.filter.value}
+                    filter={this.state.filter}
                     onSelect={(item) => {
                         this.context.router.push({
                             pathname: `${this.props.pathname}/${item._id}`

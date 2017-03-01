@@ -5,7 +5,7 @@ import { Card, CardText } from "react-toolbox/lib/card";
 import Switch from "react-toolbox/lib/switch";
 import Input from "react-toolbox/lib/input";
 import Cytoscape from "./Cytoscape";
-import Component from "ui-lib/component";
+import LightComponent from "ui-lib/light_component";
 import NodeInfoCard from "./NodeInfoCard";
 import STATE from "../../../../lib/types/service_state";
 
@@ -132,29 +132,42 @@ const buildGraph = (services, maxAge = 0) => {
     return g;
 };
 
-class NodeGraphCyto extends Component {
+class NodeGraphCyto extends LightComponent {
     constructor(props) {
         super(props);
-        this.addStateVariable("serviceInfo", []);
-        this.addStateVariable("showExplicitDeps", false);
-        this.addStateVariable("maxAge", "");
+
+        this.state = {
+            serviceInfo: [],
+            showExplicitDeps: false,
+            maxAge: ""
+        };
     }
 
     showServiceInfo(service) {
-        const services = this.state.serviceInfo.value;
-        if (services.indexOf(service) === -1) {
-            services.push(service);
-            this.state.serviceInfo.set(services.slice(0));
-        }
+        this.setState((prevState) => {
+            const services = prevState.serviceInfo;
+            if (services.indexOf(service) === -1) {
+                services.push(service);
+
+                return { serviceInfo: services.slice(0) };
+            }
+
+            return {};
+        });
     }
 
     hideServiceInfo(service) {
-        const services = this.state.serviceInfo.value;
-        const index = services.indexOf(service);
-        if (index !== -1) {
-            services.splice(index, 1);
-            this.state.serviceInfo.set(services.slice(0));
-        }
+        this.setState((prevState) => {
+            const services = prevState.serviceInfo;
+            const index = services.indexOf(service);
+            if (index !== -1) {
+                services.splice(index, 1);
+
+                return { serviceInfo: services.slice(0) };
+            }
+
+            return {};
+        });
     }
 
     unselectServiceNode(service) {
@@ -171,11 +184,11 @@ class NodeGraphCyto extends Component {
         if (service) {
             serviceHandler(service);
         } else {
-            console.error(`nodeEventHandler: Service ${nodeId} not found`, event);
+            this.error(`nodeEventHandler: Service ${nodeId} not found`, event);
         }
     }
 
-    async componentDidMountAsync() {
+    componentDidMount() {
         this.cyGraph.getCy().on("select", "node",
             this.nodeEventHandler.bind(this, this.showServiceInfo.bind(this)));
         this.cyGraph.getCy().on("unselect", "node",
@@ -184,7 +197,7 @@ class NodeGraphCyto extends Component {
 
     render() {
         const stateColor = this.props.stateColors;
-        const graph = buildGraph(this.props.services, this.state.maxAge.value);
+        const graph = buildGraph(this.props.services, this.state.maxAge);
 
         const elements = [];
         for (const node of graph.nodes) {
@@ -201,7 +214,7 @@ class NodeGraphCyto extends Component {
             });
         }
 
-        const showExplicitDepsOnly = this.state.showExplicitDeps.value;
+        const showExplicitDepsOnly = this.state.showExplicitDeps;
         const links = graph.links.filter((l) => {
             if (showExplicitDepsOnly) {
                 return l.isExplicit;
@@ -261,18 +274,18 @@ class NodeGraphCyto extends Component {
                                     <Col md={6}>
                                         <Switch
                                             label="Show explicit dependencies"
-                                            checked={this.state.showExplicitDeps.value}
-                                            onChange={this.state.showExplicitDeps.toggle}
+                                            checked={this.state.showExplicitDeps}
+                                            onChange={(showExplicitDeps) => this.setState({ showExplicitDeps })}
                                         />
                                     </Col>
                                     <Col md={6}>
-                                        {!this.state.showExplicitDeps.value &&
+                                        {!this.state.showExplicitDeps &&
                                             <Input
                                                 type="number"
                                                 label="Hide interactions older than"
                                                 hint="Seconds"
-                                                value={this.state.maxAge.value}
-                                                onChange={this.state.maxAge.set}
+                                                value={this.state.maxAge}
+                                                onChange={(maxAge) => this.setState({ maxAge })}
                                             />
                                         }
                                     </Col>
@@ -292,7 +305,7 @@ class NodeGraphCyto extends Component {
                     </Col>
                     <Col xs={infoColWidths.xs} sm={infoColWidths.sm} md={infoColWidths.md} lg={infoColWidths.lg}>
                         <Row>
-                        {this.state.serviceInfo.value.map((service) => (
+                        {this.state.serviceInfo.map((service) => (
                             <Col key={service.id} xs={12} sm={12} md={12} lg={6}>
                                 <div key={service.id} className={this.props.theme.cellContainer}>
                                     <NodeInfoCard

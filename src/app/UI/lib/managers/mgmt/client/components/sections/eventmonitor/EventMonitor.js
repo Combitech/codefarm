@@ -1,11 +1,11 @@
 import React from "react";
 import Table from "react-toolbox/lib/table";
 import Switch from "react-toolbox/lib/switch";
-import Component from "ui-lib/component";
+import LightComponent from "ui-lib/light_component";
 import EvMonitor from "../../../lib/event_monitor";
 import { objectFilter } from "ui-lib/filter";
 
-class EventData extends React.Component {
+class EventData extends LightComponent {
     constructor() {
         super();
         this.state = {
@@ -44,9 +44,9 @@ EventData.propTypes = {
     theme: React.PropTypes.object
 };
 
-class EventTable extends React.Component {
+class EventTable extends LightComponent {
     render() {
-        const events = this.props.events.value.reverse(); // Newest first...
+        const events = this.props.events.reverse(); // Newest first...
         const EventModel = {
             time: { type: Date },
             event: { type: String },
@@ -55,7 +55,7 @@ class EventTable extends React.Component {
         };
 
         const itemFilter = (item) => {
-            const filter = this.props.filter ? this.props.filter.value : false;
+            const filter = this.props.filter.length > 0 ? this.props.filter : false;
 
             return objectFilter(filter, item, [ "time", "event", "type" ]);
         };
@@ -78,29 +78,32 @@ class EventTable extends React.Component {
 }
 
 EventTable.propTypes = {
-    events: React.PropTypes.object.isRequired,
-    filter: React.PropTypes.object,
+    events: React.PropTypes.array.isRequired,
+    filter: React.PropTypes.string.isRequired,
     theme: React.PropTypes.object
 };
 
 
-class EventMonitor extends Component {
+class EventMonitor extends LightComponent {
     constructor(props) {
         super(props);
-        this.addStateVariable("events", []);
+        this.state = {
+            events: []
+        };
     }
 
     eventListener(newEvents) {
-        // Add events to end
-        const events = this.state.events.value.concat(newEvents);
-        const eventHistoryLength = this.props.eventHistoryLength.value;
+        this.setState((prevState, props) => {
+            // Add events to end
+            const events = prevState.events.concat(newEvents);
 
-        // Limit number of events stored
-        if (events.length > eventHistoryLength) {
-            events.splice(0, events.length - eventHistoryLength);
-        }
+            // Limit number of events stored
+            if (events.length > props.eventHistoryLength) {
+                events.splice(0, events.length - props.eventHistoryLength);
+            }
 
-        this.state.events.set(events);
+            return { events };
+        });
     }
 
     subscribeEvents() {
@@ -122,11 +125,12 @@ class EventMonitor extends Component {
 
     componentWillUnmount() {
         this.unsubscribeEvents();
+        super.componentWillUnmount();
     }
 
     componentWillReceiveProps(nextProps) {
-        if (this.props.running.value !== nextProps.running.value) {
-            if (nextProps.running.value) {
+        if (this.props.running !== nextProps.running) {
+            if (nextProps.running) {
                 this.subscribeEvents();
             } else {
                 this.unsubscribeEvents();
@@ -135,13 +139,13 @@ class EventMonitor extends Component {
     }
 
     reset() {
-        this.state.events.set([]);
+        this.setState({ events: [] });
     }
 
     render() {
         return (
             <div className={this.props.theme.eventMonitor}>
-                <p>{this.state.events.value.length} events</p>
+                <p>{this.state.events.length} events</p>
                 <EventTable
                     events={this.state.events}
                     filter={this.props.filter}
@@ -153,9 +157,9 @@ class EventMonitor extends Component {
 }
 
 EventMonitor.propTypes = {
-    filter: React.PropTypes.object.isRequired,
-    running: React.PropTypes.object.isRequired,
-    eventHistoryLength: React.PropTypes.object.isRequired,
+    filter: React.PropTypes.string.isRequired,
+    running: React.PropTypes.bool.isRequired,
+    eventHistoryLength: React.PropTypes.number.isRequired,
     theme: React.PropTypes.object
 };
 

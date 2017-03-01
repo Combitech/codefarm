@@ -1,14 +1,11 @@
 
 import React from "react";
+import LightComponent from "ui-lib/light_component";
 import {
     Section as TASection
 } from "ui-components/type_admin";
 
-class Item extends React.Component {
-    constructor(props) {
-        super(props);
-    }
-
+class Item extends LightComponent {
     render() {
         console.log("ItemLocal-RENDER", this.props);
 

@@ -6,8 +6,6 @@ class Entry extends React.Component {
     }
 
     render() {
-        console.log("Entry-RENDER", this.props);
-
         const breadcrumbs = [
             {
                 label: this.props.label,

@@ -1,15 +1,11 @@
 
 import React from "react";
-import Component from "ui-lib/component";
+import LightComponent from "ui-lib/light_component";
 import { Section } from "ui-components/type_admin";
 import Dropdown from "react-toolbox/lib/dropdown";
 import { StringUtil } from "misc";
 
-class MonitorPage extends Component {
-    constructor(props) {
-        super(props);
-    }
-
+class MonitorPage extends LightComponent {
     selectView(currentView, value) {
         const pathname = this.props.pathname;
         if (value !== currentView) {
@@ -19,7 +15,7 @@ class MonitorPage extends Component {
     }
 
     render() {
-        console.log("Create-RENDER", this.props);
+        this.log("render", this.props);
 
         const pathname = this.getPathname();
         const view = pathname.split("/").slice(-1)[0];

@@ -1,17 +1,13 @@
 
 import React from "react";
-import Component from "ui-lib/component";
+import LightComponent from "ui-lib/light_component";
 import Entry from "./Entry";
 import ServiceMonitor from "./ServiceMonitor";
 import MonitorPage from "./MonitorPage";
 
-class Index extends Component {
-    constructor(props) {
-        super(props);
-    }
-
+class Index extends LightComponent {
     render() {
-        console.log("indexLocal-RENDER", this.props);
+        this.log("indexLocal-RENDER", this.props);
 
         return (
             <Entry

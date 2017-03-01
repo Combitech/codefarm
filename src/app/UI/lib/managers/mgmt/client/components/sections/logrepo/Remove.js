@@ -4,12 +4,9 @@ import {
     Form as TAForm,
     Section as TASection
 } from "ui-components/type_admin";
+import LightComponent from "ui-lib/light_component";
 
-class Remove extends React.Component {
-    constructor(props) {
-        super(props);
-    }
-
+class Remove extends LightComponent {
     render() {
         console.log("RemoveLocal-RENDER", this.props);
 

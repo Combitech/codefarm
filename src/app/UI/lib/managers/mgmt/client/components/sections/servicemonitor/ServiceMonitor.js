@@ -1,7 +1,7 @@
 import React from "react";
 import ServiceMonitorTable from "./ServiceMonitorTable";
 import NodeGraphCyto from "./NodeGraphCyto";
-import Component from "ui-lib/component";
+import LightComponent from "ui-lib/light_component";
 import stateColors from "./state_colors";
 import ServiceMonitorLib from "../../../lib/service_monitor";
 
@@ -11,33 +11,35 @@ const VIEW_TYPE = {
 };
 
 
-class ServiceMonitor extends Component {
+class ServiceMonitor extends LightComponent {
     constructor(props) {
         super(props);
-        this.addStateVariable("serviceInfo", []);
-        this.addStateVariable("view", VIEW_TYPE.NODE_GRAPH);
+        this.state = {
+            serviceInfo: []
+        };
     }
 
-    serviceInfoListener(info) {
-        this.state.serviceInfo.set(info);
+    serviceInfoListener(serviceInfo) {
+        this.setState({ serviceInfo });
     }
 
-    async componentDidMountAsync() {
+    componentDidMount() {
         this.serviceSubscription = ServiceMonitorLib.instance.addServiceInfoListener(
             this.serviceInfoListener.bind(this)
         );
     }
 
-    async componentWillUnmountAsync() {
+    componentWillUnmount() {
         if (this.serviceSubscription) {
             this.serviceSubscription.dispose();
             this.serviceSubscription = null;
         }
+        super.componentWillUnmount();
     }
 
     render() {
-        console.log("ServiceMonitor-RENDER");
-        const services = this.state.serviceInfo.value;
+        this.log("render", this.props);
+        const services = this.state.serviceInfo;
 
         return (
             <div>

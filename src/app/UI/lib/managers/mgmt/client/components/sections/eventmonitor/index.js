@@ -2,22 +2,25 @@
 import React from "react";
 import { Button } from "react-toolbox/lib/button";
 import Input from "react-toolbox/lib/input";
-import Component from "ui-lib/component";
+import LightComponent from "ui-lib/light_component";
 import { Section } from "ui-components/type_admin";
 import EventMonitor from "./EventMonitor";
 
 const EVENT_HISTORY_LENGTH = 100;
 
-class Index extends Component {
+class Index extends LightComponent {
     constructor(props) {
         super(props);
-        this.addStateVariable("eventMonitorRunning", true);
-        this.addStateVariable("eventMonitorHistoryLength", EVENT_HISTORY_LENGTH);
-        this.addStateVariable("eventMonitorFilter", "");
+
+        this.state = {
+            eventMonitorRunning: true,
+            eventMonitorHistoryLength: EVENT_HISTORY_LENGTH,
+            eventMonitorFilter: ""
+        };
     }
 
     render() {
-        console.log("indexLocal-RENDER", this.props);
+        this.log("render", this.props, this.state);
 
         const breadcrumbs = [
             {
@@ -27,15 +30,15 @@ class Index extends Component {
         ];
 
         const controls = [];
-        const pauseResumeButtonIcon = this.state.eventMonitorRunning.value ? "pause" : "play_arrow";
-        const pauseResumeButtonLabel = this.state.eventMonitorRunning.value ? "Pause" : "Resume";
+        const pauseResumeButtonIcon = this.state.eventMonitorRunning ? "pause" : "play_arrow";
+        const pauseResumeButtonLabel = this.state.eventMonitorRunning ? "Pause" : "Resume";
         controls.push(
             <Button
                 key="eventMonitorPauseResumeButton"
                 className={this.props.theme.button}
                 icon={pauseResumeButtonIcon}
                 label={pauseResumeButtonLabel}
-                onClick={this.state.eventMonitorRunning.toggle}
+                onClick={() => this.setState((prevState) => ({ eventMonitorRunning: !prevState.eventMonitorRunning }))}
             />
         );
         controls.push(
@@ -57,8 +60,8 @@ class Index extends Component {
                 className={`${this.props.theme.topRightInput}`}
                 type="number"
                 label="History length"
-                value={this.state.eventMonitorHistoryLength.value}
-                onChange={this.state.eventMonitorHistoryLength.set}
+                value={this.state.eventMonitorHistoryLength}
+                onChange={(eventMonitorHistoryLength) => this.setState({ eventMonitorHistoryLength })}
             />
         );
         controls.push(
@@ -67,8 +70,8 @@ class Index extends Component {
                 className={this.props.theme.topRightInput}
                 type="text"
                 label="Filter"
-                value={this.state.eventMonitorFilter.value}
-                onChange={this.state.eventMonitorFilter.set}
+                value={this.state.eventMonitorFilter}
+                onChange={(eventMonitorFilter) => this.setState({ eventMonitorFilter })}
             />
         );
 
