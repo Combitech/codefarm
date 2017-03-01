@@ -208,7 +208,7 @@ class GithubBackend extends AsyncEventEmitter {
             return await revision.setMerged(patch);
         }
 
-        return await revision.setClosed();
+        return await revision.setAbandoned();
     }
 
     async _onPush(event) {
