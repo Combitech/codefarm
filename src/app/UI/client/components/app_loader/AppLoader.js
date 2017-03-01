@@ -1,18 +1,22 @@
 
 import React from "react";
 import ProgressBar from "react-toolbox/lib/progress_bar";
-import Component from "ui-lib/component";
+import LightComponent from "ui-lib/light_component";
 import loader from "ui-lib/loader";
 
-class AppLoader extends Component {
+class AppLoader extends LightComponent {
     constructor(props) {
         super(props);
 
-        loader.addChangeHandler(this.state.loadingAsync.set);
+        this.state = {
+            loading: false
+        };
+
+        loader.addChangeHandler((loading) => this.setState({ loading }));
     }
 
     render() {
-        if (this.state.loadingAsync.value) {
+        if (this.state.loading) {
             return (
                 <ProgressBar
                     className={this.props.theme.appLoader}
