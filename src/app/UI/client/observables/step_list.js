@@ -6,17 +6,22 @@ class StepList extends TypeList {
         if (typeof initialOpts.flowId !== "string" && initialOpts.flowId !== false) {
             throw new Error("flowId must be set to a string or false in the initial opts");
         }
+        if (initialOpts.hasOwnProperty("visible") && typeof initialOpts.visible !== "boolean") {
+            throw new Error("visible must be set to a boolean in the initial opts if existing");
+        }
 
-        const createQuery = (flowId) => (
-            {
+        const createQuery = (flowId, visible) => {
+            const query = {
                 "flow.id": flowId,
-                visible: true
-            }
-        );
+                visible: visible
+            };
+
+            return query;
+        };
 
         const defaultOpts = {
             type: "flowctrl.step",
-            query: createQuery(initialOpts.flowId)
+            query: createQuery(initialOpts.flowId, initialOpts.visible)
         };
 
         super(Object.assign({}, defaultOpts, initialOpts));
@@ -26,10 +31,12 @@ class StepList extends TypeList {
 
     setOpts(opts) {
         const nextOpts = Object.assign({}, opts);
+        const currOpts = this.opts.getValue().toJS();
 
-        if (opts.flowId) {
-            nextOpts.query = this._createQuery(opts.flowId);
-        }
+        const flowId = opts.hasOwnProperty("flowId") ? opts.flowId : currOpts.flowId;
+        const visible = opts.hasOwnProperty("visible") ? opts.visible : currOpts.visible;
+
+        nextOpts.query = this._createQuery(flowId, visible);
 
         super.setOpts(nextOpts);
     }

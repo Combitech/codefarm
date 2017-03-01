@@ -15,6 +15,7 @@ class FlowComponent extends LightComponent {
 
         this.steps = new StepListObservable({
             flowId: props.flow._id,
+            visible: true,
             subscribe: false
         });
 

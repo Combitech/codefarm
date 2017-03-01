@@ -1,38 +1,53 @@
 
 import React from "react";
-import Component from "ui-lib/component";
+import LightComponent from "ui-lib/light_component";
 import {
     Section as TASection,
     LoadIndicator as TALoadIndicator
 } from "ui-components/type_admin";
 import Chip from "react-toolbox/lib/chip";
 import { Row, Col } from "react-flexbox-grid";
+import stateVar from "ui-lib/state_var";
 import Flow from "./Flow";
+import StepListObservable from "ui-observables/step_list";
+import { States as ObservableDataStates } from "ui-lib/observable_data";
 import theme from "../../theme.scss";
 
-class Item extends Component {
+class Item extends LightComponent {
     constructor(props) {
         super(props);
 
-        this.addStateVariable("selected", this.props.context.value.parentSteps || []);
+        this.stepList = new StepListObservable({
+            flowId: props.item._id
+        });
 
-        this.addTypeListStateVariable("steps", "flowctrl.step", (props) => ({
-            "flow.id": props.item._id
-        }), true);
+        this.state = {
+            selected: stateVar(this, "selected", this.props.context.value.parentSteps || []),
+            stepList: this.stepList.value.getValue(),
+            stepListState: this.stepList.state.getValue()
+        };
+    }
+
+    componentDidMount() {
+        this.log("componentDidMount");
+        this.addDisposable(this.stepList.start());
+        this.addDisposable(this.stepList.value.subscribe((stepList) => this.setState({ stepList })));
+        this.addDisposable(this.stepList.state.subscribe((stepListState) => this.setState({ stepListState })));
+    }
+
+    componentWillReceiveProps(nextProps) {
+        this.log("componentWillReceiveProps");
+        if (nextProps.flow) {
+            this.stepList.setOpts({ flowId: nextProps.flow._id });
+        }
     }
 
     render() {
         this.log("render", this.props, this.state);
 
-        if (this.state.errorAsync.value) {
+        if (this.state.state === ObservableDataStates.LOADING) {
             return (
-                <div>{this.state.errorAsync.value}</div>
-            );
-        }
-
-        if (this.state.loadingAsync.value) {
-            return (
-                <TALoadIndicator/>
+                <TALoadIndicator />
             );
         }
 
@@ -60,7 +75,7 @@ class Item extends Component {
                     context={this.props.context}
                     item={this.props.item}
                     pathname={this.props.pathname}
-                    steps={this.state.steps}
+                    steps={this.state.stepList.toJS()}
                     selected={this.state.selected}
                 />
             </TASection>
