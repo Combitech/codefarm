@@ -1,51 +1,59 @@
 
 import React from "react";
-import Component from "ui-lib/component";
+import LightComponent from "ui-lib/light_component";
 import LoadIndicator from "./LoadIndicator";
 import ListComponentItem from "./ListItem";
 import ListComponent from "./ListComponent";
-import { filterFields as qbFilterFields } from "ui-lib/query_builder";
+import TypeList from "ui-observables/type_list";
+import { States as ObservableDataStates } from "ui-lib/observable_data";
 
-class List extends Component {
+class List extends LightComponent {
     constructor(props) {
-        super(props);
+        super(props, true);
 
-        this.addTypeListStateVariable(
-            "list",
-            (props) => props.type,
-            (props) => {
-                let filterQuery = {};
-                if (props.filterFields.length > 0 && props.filter && props.filter.length > 0) {
-                    filterQuery = qbFilterFields(props.filterFields, props.filter, "si");
-                }
+        this.typeList = new TypeList({
+            type: props.type,
+            query: props.query,
+            filter: props.filter,
+            filterFields: props.filterFields
+        });
 
-                return Object.assign({}, props.query, filterQuery);
-            },
-            true
-        );
+        this.state = {
+            list: this.typeList.value.getValue(),
+            state: this.typeList.state.getValue()
+        };
+    }
+
+    componentWillReceiveProps(nextProps) {
+        this.log("componentWillReceiveProps", nextProps);
+        this.typeList.setOpts({
+            type: nextProps.type,
+            query: nextProps.query,
+            filter: nextProps.filter,
+            filterFields: nextProps.filterFields
+        });
+    }
+
+    componentDidMount() {
+        this.log("componentDidMount");
+        this.addDisposable(this.typeList.start());
+        this.addDisposable(this.typeList.value.subscribe((list) => this.setState({ list })));
+        this.addDisposable(this.typeList.state.subscribe((state) => this.setState({ state })));
     }
 
     render() {
         this.log("render", this.props, this.state);
 
-        if (this.state.errorAsync.value) {
+        if (this.state.state === ObservableDataStates.LOADING) {
             return (
-                <div>{this.state.errorAsync.value}</div>
-            );
-        }
-
-        if (this.state.loadingAsync.value) {
-            return (
-                <LoadIndicator
-                    theme={this.props.theme}
-                />
+                <LoadIndicator theme={this.props.theme}/>
             );
         }
 
         return (
             <this.props.ListComponent
                 theme={this.props.theme}
-                children={this.state.list && this.state.list.slice(0).reverse().map((item) => (
+                children={this.state.list && this.state.list.toJS().map((item) => (
                     <this.props.ListItemComponent
                         key={item._id}
                         theme={this.props.theme}
@@ -63,6 +71,7 @@ List.defaultProps = {
     ListComponent: ListComponent,
     ListItemComponent: ListComponentItem,
     query: {},
+    filter: "",
     filterFields: []
 };
 
