@@ -176,6 +176,7 @@ class GithubBackend extends AsyncEventEmitter {
 
         const repository = await this._getRepo(event.repository.name);
         const patch = await this._createPatch(event, repository._id);
+
         return await this.Revision.allocate(repository._id, event.pull_request.id.toString(), patch);
     }
 
@@ -186,6 +187,7 @@ class GithubBackend extends AsyncEventEmitter {
         // This will create a new patch on existing revision
         const repository = await this._getRepo(event.repository.name);
         const patch = await this._createPatch(event, repository._id);
+
         return await this.Revision.allocate(repository._id, event.pull_request.id.toString(), patch);
     }
 
@@ -193,16 +195,20 @@ class GithubBackend extends AsyncEventEmitter {
         ServiceMgr.instance.log("verbose", "pull-request-closed received");
         ServiceMgr.instance.log("debug", JSON.stringify(event, null, 2));
 
+        const repository = await this._getRepo(event.repository.name);
+        const revision = await this._getRevision(event.pull_request.id.toString());
+
         if (event.pull_request.merged === true) {
-            const repository = await this._getRepo(event.repository.name);
-            const revision = await this._getRevision(event.pull_request.id.toString());
             const mergeSha = await this._getPullRequestMergeSha(event.repository.name, event.pull_request.number);
 
             // Will create a new patch on existing revision, Override pull request SHA
             const patch = await this._createPatch(event, repository._id, mergeSha);
-            return await revision.setMerged(patch);
             ServiceMgr.instance.log("verbose", `GitHub pull request  ${event.pull_request.number} merged`);
+
+            return await revision.setMerged(patch);
         }
+
+        return await revision.setClosed();
     }
 
     async _onPush(event) {
@@ -250,7 +256,6 @@ class GithubBackend extends AsyncEventEmitter {
         ServiceMgr.instance.log("debug", JSON.stringify(event, null, 2));
         ServiceMgr.instance.log("verbose", `Review ${event.review.state} for ${event.pull_request.id}`);
 
-        const repository = await this.this._getRepo(event.repository.name );
         const revision = await this._getRevision(event.pull_request.id.toString());
         const userEmail = await this._getUserEmail(event.review.user.login);
         const state = event.review.state;
@@ -344,6 +349,10 @@ class GithubBackend extends AsyncEventEmitter {
     }
 
     async merge(repository, revision) {
+        if (revision.status === "closed") {
+            throw Error(`Will not merge closed revision ${revision._id}`);
+        }
+
         const pullreqnr = revision.patches[revision.patches.length - 1].pullreqnr;
         ServiceMgr.instance.log("verbose", `GitHub merge pull request ${pullreqnr} in ${repository._id}`);
         const patch = revision.patches[revision.patches.length - 1];

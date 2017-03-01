@@ -101,6 +101,16 @@ class Revision extends Type {
         await this.save();
     }
 
+    async setClosed() {
+        if (this.status === "closed") {
+            throw new Error("Revision already closed");
+        }
+
+        this.status = "closed";
+        this.tags.push("closed");
+        await this.save();
+    }
+
     async addReview(userEmail, state) {
         // Modify previous review for userEmail
         const review = this.reviews.find((r) => r.userEmail === userEmail);
