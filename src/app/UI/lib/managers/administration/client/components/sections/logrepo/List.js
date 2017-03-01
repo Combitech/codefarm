@@ -1,17 +1,19 @@
 
 import React from "react";
-import Component from "ui-lib/component";
+import LightComponent from "ui-lib/light_component";
 import Input from "react-toolbox/lib/input";
 import {
     Section as TASection,
     List as TAList
 } from "ui-components/type_admin";
 
-class List extends Component {
+class List extends LightComponent {
     constructor(props) {
         super(props);
 
-        this.addStateVariable("filter", "");
+        this.state = {
+            filter: ""
+        };
     }
 
     render() {
