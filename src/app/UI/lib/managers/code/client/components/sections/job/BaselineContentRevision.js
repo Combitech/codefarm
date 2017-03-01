@@ -3,6 +3,7 @@ import React from "react";
 import { Card, CardTitle, CardText } from "react-toolbox/lib/card";
 import UserAvatar from "../../UserAvatar";
 import Avatar from "react-toolbox/lib/avatar";
+import DateTime from "ui-components/datetime";
 
 class BaselineContentRevision extends React.PureComponent {
     render() {
@@ -20,7 +21,9 @@ class BaselineContentRevision extends React.PureComponent {
                         </Avatar>
                     )}
                     title={`${patch.name} <${patch.email}>`}
-                    subtitle={patch.submitted}
+                    subtitle={(
+                        <DateTime value={patch.submitted} />
+                    )}
                 />
                 <CardText>
                     <span className={this.props.theme.patchComment}>

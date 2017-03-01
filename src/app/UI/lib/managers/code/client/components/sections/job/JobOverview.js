@@ -2,6 +2,7 @@
 import React from "react";
 import HiddenText from "ui-components/hidden_text";
 import Chip from "react-toolbox/lib/chip";
+import DateTime from "ui-components/datetime";
 
 class JobOverview extends React.PureComponent {
     render() {
@@ -36,11 +37,18 @@ class JobOverview extends React.PureComponent {
                     </tr>
                     <tr>
                         <td>Created</td>
-                        <td>{this.props.job.created}</td>
+                        <td>
+                            <DateTime value={this.props.job.created} />
+                        </td>
                     </tr>
                     <tr>
                         <td>Finished at</td>
-                        <td>{this.props.job.finished || "No finished yet"}</td>
+                        <td>
+                            <DateTime
+                                value={this.props.job.finished}
+                                defaultText="No finished yet"
+                            />
+                        </td>
                     </tr>
                     {this.props.job.slaveId && (
                         <tr>

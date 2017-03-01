@@ -16,6 +16,7 @@ import { StatusIcon } from "ui-components/status";
 import theme from "./theme.scss";
 import RevisionListObservable from "../observables/revision_list";
 import StepListObservable from "ui-observables/step_list";
+import DateTime from "ui-components/datetime";
 import { States as ObservableDataStates } from "ui-lib/observable_data";
 
 class Header extends React.PureComponent {
@@ -86,7 +87,9 @@ class RevisionListItemComponent extends React.PureComponent {
                 <td className={this.props.theme.monospace}>
                     {latestPatch.change.newrev.substr(0, 7)}
                 </td>
-                <td>{latestPatch.submitted}</td>
+                <td>
+                    <DateTime value={latestPatch.submitted} />
+                </td>
                 <td>
                     <Avatar className={this.props.theme.avatar}>
                         <UserAvatar
