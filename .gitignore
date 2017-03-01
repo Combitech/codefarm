@@ -2,6 +2,5 @@ node_modules
 build
 babel_cache
 npm-debug.log
-yarn.lock
 # Ignore emacs temp files
 *~
