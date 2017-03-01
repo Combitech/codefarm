@@ -1,18 +1,20 @@
 
 import React from "react";
-import Component from "ui-lib/component";
+import LightComponent from "ui-lib/light_component";
 import Input from "react-toolbox/lib/input";
 import {
     Section as TASection,
-    List as TAList
+    PagedList as TAPagedList
 } from "ui-components/type_admin";
 import BaselineListItem from "./ListItem";
 
-class List extends Component {
+class List extends LightComponent {
     constructor(props) {
         super(props);
 
-        this.addStateVariable("filter", "");
+        this.state = {
+            filter: ""
+        };
     }
 
     render() {
@@ -27,8 +29,8 @@ class List extends Component {
                 type="text"
                 label="Filter list"
                 name="filter"
-                value={this.state.filter.value}
-                onChange={this.state.filter.set}
+                value={this.state.filter}
+                onChange={(filter) => this.setState({ filter })}
             />
         ));
 
@@ -37,9 +39,10 @@ class List extends Component {
                 controls={controls}
                 breadcrumbs={this.props.breadcrumbs}
             >
-                <TAList
+                <TAPagedList
                     type={this.props.type}
                     filter={this.state.filter.value}
+                    limit={10}
                     ListItemComponent={BaselineListItem}
                     onSelect={(item) => {
                         this.context.router.push({

@@ -4,7 +4,7 @@ import LightComponent from "ui-lib/light_component";
 import { JobFlow, StepStatus } from "ui-components/flow";
 import { States as ObservableDataStates } from "ui-lib/observable_data";
 import { ensureArray } from "misc";
-import StepList from "../observables/step_list";
+import StepListObservable from "ui-observables/step_list";
 import {
     LoadIndicator as TALoadIndicator
 } from "ui-components/type_admin";
@@ -13,7 +13,7 @@ class FlowComponent extends LightComponent {
     constructor(props) {
         super(props);
 
-        this.steps = new StepList({
+        this.steps = new StepListObservable({
             flowId: props.flow._id,
             subscribe: false
         });

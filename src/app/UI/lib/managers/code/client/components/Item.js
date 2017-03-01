@@ -70,7 +70,7 @@ class Item extends LightComponent {
         }
 
         const flows = this.state.flows.toJS();
-        const itemExt = this.state.itemExt.toJS()._id ? this.state.itemExt.toJS() : false;
+        const itemExt = this.state.itemExt.get("_id") ? this.state.itemExt.toJS() : false;
 
         return (
             <div>

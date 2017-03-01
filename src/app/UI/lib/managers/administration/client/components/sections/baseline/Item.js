@@ -1,20 +1,16 @@
 
 import React from "react";
 import api from "api.io/api.io-client";
-import Component from "ui-lib/component";
+import LightComponent from "ui-lib/light_component";
 import Chip from "react-toolbox/lib/chip";
 import { Row, Col } from "react-flexbox-grid";
 import {
     Section as TASection,
-    List as TAList,
+    PagedList as TAPagedList,
     ControlButton as TAControlButton
 } from "ui-components/type_admin";
 
-class Item extends Component {
-    constructor(props) {
-        super(props);
-    }
-
+class Item extends LightComponent {
     async onForceRequest() {
         const response = await api.type.action(
             "baselinegen.specification",
@@ -81,9 +77,10 @@ class Item extends Component {
                         </Col>
                         <Col xs={12} md={7} className={this.props.theme.panel}>
                             <h6 className={this.props.theme.title}>Generated baselines</h6>
-                            <TAList
+                            <TAPagedList
                                 type="baselinegen.baseline"
                                 query={{ name: this.props.item._id }}
+                                limit={10}
                                 onSelect={(item) => {
                                     this.context.router.push({
                                         pathname: `${this.props.pathname}/${item._id}`

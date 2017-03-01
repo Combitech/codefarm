@@ -15,7 +15,7 @@ import UserAvatar from "./UserAvatar";
 import { StatusIcon } from "ui-components/status";
 import theme from "./theme.scss";
 import RevisionListObservable from "../observables/revision_list";
-import StepListObservable from "../observables/step_list";
+import StepListObservable from "ui-observables/step_list";
 import { States as ObservableDataStates } from "ui-lib/observable_data";
 
 class Header extends React.PureComponent {
@@ -192,8 +192,7 @@ class RevisionList extends LightComponent {
 
     componentWillReceiveProps(nextProps) {
         this.log("componentWillReceiveProps");
-        if (nextProps.filter !== this.props.filter) {
-            this.log("update filter", nextProps.filter);
+        if (nextProps.filter) {
             this.revList.setOpts({ filter: nextProps.filter });
         }
     }

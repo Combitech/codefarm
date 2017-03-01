@@ -1,21 +1,52 @@
 
 import React from "react";
-import Component from "ui-lib/component";
+import LightComponent from "ui-lib/component";
 import { JobFlow, StepStatus } from "ui-components/flow";
 import { ensureArray } from "misc";
+import {
+    LoadIndicator as TALoadIndicator
+} from "ui-components/type_admin";
+import StepListObservable from "ui-observables/step_list";
+import { States as ObservableDataStates } from "ui-lib/observable_data";
 
-class FlowComponent extends Component {
+class FlowComponent extends LightComponent {
     constructor(props) {
-        super(props, false);
+        super(props);
 
-        this.addTypeListStateVariable("steps", "flowctrl.step", (props) => ({
-            "flow.id": props.flow._id,
-            visible: true
-        }), false);
+        this.stepList = new StepListObservable({
+            flowId: props.flow._id,
+            subscribe: false
+        });
+
+        this.state = {
+            stepList: this.stepList.value.getValue(),
+            stepListState: this.stepList.state.getValue()
+        };
+    }
+
+    componentDidMount() {
+        this.log("componentDidMount");
+        this.addDisposable(this.stepList.start());
+        this.addDisposable(this.stepList.value.subscribe((stepList) => this.setState({ stepList })));
+        this.addDisposable(this.stepList.state.subscribe((stepListState) => this.setState({ stepListState })));
+    }
+
+    componentWillReceiveProps(nextProps) {
+        this.log("componentWillReceiveProps");
+        if (nextProps.flow) {
+            this.stepList.setOpts({ flowId: nextProps.flow._id });
+        }
     }
 
     render() {
         this.log("render", this.props, JSON.stringify(this.state, null, 2));
+
+        let loadIndicator;
+        if (this.state.state === ObservableDataStates.LOADING) {
+            loadIndicator = (
+                <TALoadIndicator />
+            );
+        }
 
         const firstStep = {
             id: `FirstStep_${this.props.item._id}`,
@@ -33,7 +64,7 @@ class FlowComponent extends Component {
         };
 
         const myBl = this.props.item.name;
-        let mySteps = this.state.steps.filter((item) => item.baseline.id === myBl);
+        let mySteps = this.state.stepList.toJS().filter((item) => item.baseline.id === myBl);
         // Get all steps that are descendants to a step with baseline equal to myBl
         const getAllParents = (items, item) => {
             let parents = items.filter((i) => item.parentSteps.includes(i._id));
@@ -44,7 +75,7 @@ class FlowComponent extends Component {
 
             return parents;
         };
-        const myBlChildSteps = this.state.steps.filter((step, index, self) =>
+        const myBlChildSteps = this.state.stepList.toJS().filter((step, index, self) =>
             getAllParents(self, step).some((item) => item.baseline.id === myBl)
         );
         mySteps = mySteps.concat(myBlChildSteps);
@@ -87,13 +118,16 @@ class FlowComponent extends Component {
         }
 
         return (
-            <JobFlow
-                theme={this.props.theme}
-                jobRefs={jobRefs}
-                firstStep={firstStep}
-                steps={steps}
-                columnSpan={8}
-            />
+            <div>
+                {loadIndicator}
+                <JobFlow
+                    theme={this.props.theme}
+                    jobRefs={jobRefs}
+                    firstStep={firstStep}
+                    steps={steps}
+                    columnSpan={8}
+                />
+            </div>
         );
     }
 }

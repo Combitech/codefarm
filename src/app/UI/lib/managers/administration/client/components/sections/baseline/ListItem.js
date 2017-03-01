@@ -1,13 +1,9 @@
 import React from "react";
-import Component from "ui-lib/component";
+import LightComponent from "ui-lib/light_component";
 import { ListItem } from "react-toolbox/lib/list";
 import { ListItemIcon } from "ui-components/type_admin";
 
-class BaselineListItem extends Component {
-    constructor(props) {
-        super(props);
-    }
-
+class BaselineListItem extends LightComponent {
     render() {
         this.log("render", this.props, this.state);
 

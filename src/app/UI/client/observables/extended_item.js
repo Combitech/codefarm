@@ -7,7 +7,8 @@ class ExtendedItem extends DataResolve {
             throw new Error("type must be set to a string in the initial opts");
         }
 
-        if (typeof initialOpts.id !== "string" && initialOpts.id !== false) {
+        if (!(typeof initialOpts.id === "string" || initialOpts.id.constructor === Array) &&
+            initialOpts.id !== false) {
             throw new Error("id must be set to a string or false in the initial opts");
         }
 
