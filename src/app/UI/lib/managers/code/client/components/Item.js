@@ -11,7 +11,7 @@ import {
     LoadIndicator as TALoadIndicator
 } from "ui-components/type_admin";
 import ExtendedItem from "ui-observables/extended_item";
-import FlowList from "../observables/flow_list";
+import FlowList from "ui-observables/flow_list";
 
 class Item extends LightComponent {
     constructor(props) {
@@ -52,13 +52,12 @@ class Item extends LightComponent {
         });
 
         this.flows.setOpts({
-            tags: nextProps.tags
+            tags: nextProps.item.tags
         });
     }
 
     render() {
         this.log("render", this.props, JSON.stringify(this.state, null, 2));
-
 
         let loadIndicator;
         if (this.state.itemExtState === ObservableDataStates.LOADING || this.state.flowsState === ObservableDataStates.LOADING) {

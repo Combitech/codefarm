@@ -2,13 +2,9 @@
 import React from "react";
 import { SvgGridExample } from "ui-components/svg_grid";
 import AppHeader from "ui-components/app_header";
-import Component from "ui-lib/component";
+import LightComponent from "ui-lib/light_component";
 
-class Page extends Component {
-    constructor(props) {
-        super(props);
-    }
-
+class Page extends LightComponent {
     render() {
         return (
             <div>

@@ -1,21 +1,52 @@
 
 import React from "react";
-import Component from "ui-lib/component";
+import LightComponent from "ui-lib/light_component";
 import { JobFlow, StepStatus } from "ui-components/flow";
 import { ensureArray } from "misc";
+import {
+    LoadIndicator as TALoadIndicator
+} from "ui-components/type_admin";
+import StepListObservable from "ui-observables/step_list";
+import { States as ObservableDataStates } from "ui-lib/observable_data";
 
-class FlowComponent extends Component {
+class FlowComponent extends LightComponent {
     constructor(props) {
         super(props);
 
-        this.addTypeListStateVariable("steps", "flowctrl.step", (props) => ({
-            "flow.id": props.flow._id,
-            visible: true
-        }), false);
+        this.stepList = new StepListObservable({
+            flowId: props.flow._id,
+            subscribe: false
+        });
+
+        this.state = {
+            stepList: this.stepList.value.getValue(),
+            stepListState: this.stepList.state.getValue()
+        };
+    }
+
+    componentDidMount() {
+        this.log("componentDidMount");
+        this.addDisposable(this.stepList.start());
+        this.addDisposable(this.stepList.value.subscribe((stepList) => this.setState({ stepList })));
+        this.addDisposable(this.stepList.state.subscribe((stepListState) => this.setState({ stepListState })));
+    }
+
+    componentWillReceiveProps(nextProps) {
+        this.log("componentWillReceiveProps");
+        if (nextProps.flow) {
+            this.stepList.setOpts({ flowId: nextProps.flow._id });
+        }
     }
 
     render() {
         this.log("render", this.props, JSON.stringify(this.state, null, 2));
+
+        let loadIndicator;
+        if (this.state.state === ObservableDataStates.LOADING) {
+            loadIndicator = (
+                <TALoadIndicator />
+            );
+        }
 
         const firstStep = {
             id: "First",
@@ -32,7 +63,7 @@ class FlowComponent extends Component {
             }
         };
 
-        const steps = this.state.steps.map((step) => {
+        const steps = this.state.stepList.toJS().map((step) => {
             const parentIds = step.parentSteps.slice(0);
 
             if (parentIds.length === 0) {
@@ -65,13 +96,16 @@ class FlowComponent extends Component {
         }
 
         return (
-            <JobFlow
-                theme={this.props.theme}
-                jobRefs={jobRefs}
-                firstStep={firstStep}
-                steps={steps}
-                columnSpan={8}
-            />
+            <div>
+                {loadIndicator}
+                <JobFlow
+                    theme={this.props.theme}
+                    jobRefs={jobRefs}
+                    firstStep={firstStep}
+                    steps={steps}
+                    columnSpan={8}
+                />
+            </div>
         );
     }
 }

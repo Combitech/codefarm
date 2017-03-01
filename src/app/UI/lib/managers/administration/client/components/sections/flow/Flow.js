@@ -1,13 +1,9 @@
 
 import React from "react";
-import Component from "ui-lib/component";
+import LightComponent from "ui-lib/light_component";
 import { Flow, StepGeneric, StepCreate } from "ui-components/flow";
 
-class FlowComponent extends Component {
-    constructor(props) {
-        super(props);
-    }
-
+class FlowComponent extends LightComponent {
     onCreate() {
         this.context.router.push({ pathname: `${this.props.pathname}/create` });
     }

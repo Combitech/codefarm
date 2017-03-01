@@ -19,7 +19,7 @@ class BaselineItem extends LightComponent {
         super(props);
 
         this.itemExt = new ExtendedItem({
-            id: props.item.content[0].id,
+            id: props.item.content[0].id[0],
             type: props.item.content[0].type
         });
 
@@ -105,6 +105,7 @@ class BaselineItem extends LightComponent {
                                         </div>
                                         <pre>
                                             {JSON.stringify(this.props.item, null, 2)}
+                                            {JSON.stringify(itemExt, null, 2)}
                                         </pre>
                                     </Col>
                                 </Row>
