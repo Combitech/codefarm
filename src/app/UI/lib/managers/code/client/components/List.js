@@ -144,6 +144,8 @@ class RevisionList extends LightComponent {
 
         this.stepList = new StepListObservable({
             flowId: "Flow1", // TODO
+            sortOn: "created",
+            sortDesc: false,
             subscribe: false
         });
 
