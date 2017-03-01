@@ -8,6 +8,24 @@
     margin-top: $standard-increment-desktop;
 }
 
+.patchComment {
+    font-size: $font-size-small;
+    color: $color-text-secondary;
+    white-space: pre;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+h5.sectionHeader {
+    margin-bottom: $layout-gutter-width-sm;
+    color: #bbb;
+    text-transform: uppercase;
+}
+
+.section {
+    margin-bottom: $layout-gutter-width * 2;
+}
+
 .revisionListItemContent {
     width: 100%;
     vertical-align: middle;
@@ -48,8 +66,30 @@
     }
 }
 
+.artifactList {
+    width: 100%;
+    font-size: $font-size-small;
+    border-spacing: 0;
+
+    tbody tr:nth-child(odd) {
+        background-color: $palette-grey-50;
+    }
+
+    th {
+        text-align: left;
+    }
+
+    tr {
+        border-spacing: 0;
+    }
+
+    td {
+        padding: $unit;
+    }
+}
+
 .information {
-    width: 95%;
+    width: 100%;
     font-size: $font-size-small;
     margin-bottom: $layout-gutter-width-sm;
     border-spacing: 0;
@@ -77,6 +117,15 @@
         .email {
             padding-left: $layout-gutter-width-sm / 2;
         }
+
+        .id {
+            float: right;
+            font-size: $font-size-small * 0.9;
+
+            span {
+                font-family: "Roboto Mono";
+            }
+        }
     }
 
     td:first-child {
@@ -86,10 +135,10 @@
     td:last-child {
         color: $color-text-secondary;
     }
+}
 
-    td.monospace {
-        font-family: "Roboto Mono";
-    }
+.monospace {
+    font-family: "Roboto Mono";
 }
 
 .revisionList {
@@ -218,6 +267,21 @@
         padding: $baseline-grid * 2;
         border-left: 4px solid $palette-grey-200;
         white-space: pre-line;
+    }
+
+    .commentTitle {
+        font-size: $font-size-big;
+        color: $color-text-secondary;
+        margin-bottom: $baseline-grid;
+
+        &Text {
+            padding-top: $baseline-grid;
+        }
+    }
+
+    .commentContainer {
+        padding-left: $baseline-grid * 2;
+        border-left: 4px solid $palette-grey-200;
     }
 
     .commentInput {

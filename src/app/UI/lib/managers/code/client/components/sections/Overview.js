@@ -208,7 +208,7 @@ class Overview extends LightComponent {
             <div>
                 <Row>
                     <Col xs={12} md={6}>
-                        <h4>Revision</h4>
+                        <h5 className={this.props.theme.sectionHeader}>Revision</h5>
                         <table className={this.props.theme.information}>
                             <tbody>
                                 <tr>
@@ -282,7 +282,7 @@ class Overview extends LightComponent {
                         </table>
                     </Col>
                     <Col xs={12} md={6}>
-                        <h4>Events</h4>
+                        <h5 className={this.props.theme.sectionHeader}>Events</h5>
                         <table className={this.props.theme.overviewTable}>
                             <tbody>
                                 <tr>
@@ -293,23 +293,26 @@ class Overview extends LightComponent {
                                         />
                                     </td>
                                     <td className={this.props.theme.dataCell}>
-                                        <div className={this.props.theme.description}>
+                                        <h5 className={this.props.theme.commentTitle}>
+                                            <Button
+                                                className={this.props.theme.commentButton}
+                                                label="Post comment"
+                                                primary={true}
+                                                onClick={() => this.onComment()}
+                                            />
+                                            <div className={this.props.theme.commentTitleText}>Leave a comment</div>
+                                            <div style={{ clear: "both" }}></div>
+                                        </h5>
+                                        <div className={this.props.theme.commentContainer}>
                                             <Input
                                                 className={this.props.theme.commentInput}
                                                 type="text"
-                                                placeholder="Please leave a comment..."
+                                                placeholder="Write comment here..."
                                                 name="comment"
                                                 multiline={true}
                                                 value={this.state.comment.value}
                                                 onChange={this.state.comment.set}
                                             />
-                                            <Button
-                                                className={this.props.theme.commentButton}
-                                                label="Comment"
-                                                primary={true}
-                                                onClick={() => this.onComment()}
-                                            />
-                                            <div style={{ clear: "both" }}></div>
                                         </div>
                                     </td>
                                 </tr>

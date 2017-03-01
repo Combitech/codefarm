@@ -27,7 +27,7 @@ class Item extends LightComponent {
         });
 
         this.state = {
-            step: stateVar(this, "step", ""),
+            step: stateVar(this, "step", ""), // TODO: Temporary
             itemExt: this.itemExt.value.getValue(),
             itemExtState: this.itemExt.state.getValue(),
             flows: this.flows.value.getValue(),

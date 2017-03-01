@@ -1,0 +1,17 @@
+
+@import "react-toolbox/components/colors";
+@import "react-toolbox/components/globals";
+@import "~ui-styles/colors";
+
+.container {
+    a.label {
+        color: $color-text-secondary;
+        cursor: pointer;
+        text-transform: uppercase;
+        font-weight: $font-weight-semi-bold;
+
+        &:hover {
+            color: $cf-color-selected;
+        }
+    }
+}

@@ -4,29 +4,72 @@ import LightComponent from "ui-lib/light_component";
 // import { StatusIcon } from "ui-components/status";
 import LogViewer from "ui-components/log_viewer";
 import { Tab, Tabs } from "react-toolbox/lib/tabs";
-import api from "api.io/api.io-client";
+import { Row, Col } from "react-flexbox-grid";
 import stateVar from "ui-lib/state_var";
+import JobOverview from "./job/JobOverview";
+import BaselineContentList from "./job/BaselineContentList";
+import ArtifactList from "./job/ArtifactList";
+import ItemComments from "./job/ItemComments";
 
 class Job extends LightComponent {
     constructor(props) {
         super(props);
 
         this.state = {
-            tabIndex: stateVar(this, "tabIndex", 0)
+            tabIndex: stateVar(this, "tabIndex", 0),
+            showJobId: stateVar(this, "showJobId", false)
         };
     }
 
     render() {
         this.log("render", this.props, this.state);
 
-        const logRefs = this.props.jobItem.runs[this.props.jobItem.runs.length - 1].logs;
+        const job = this.props.jobItem;
+        const run = job.runs[this.props.jobItem.lastRunId];
 
         return (
             <Tabs
                 index={parseInt(this.state.tabIndex.value, 10)}
                 onChange={(index) => this.state.tabIndex.set(`${index}`)}
             >
-                {logRefs.map((ref) => (
+                <Tab
+                    key="info"
+                    label="Overview"
+                >
+                    <Row>
+                        <Col xs={12} md={6}>
+                            <h5 className={this.props.theme.sectionHeader}>Properties</h5>
+                            <div className={this.props.theme.section}>
+                                <JobOverview
+                                    theme={this.props.theme}
+                                    job={job}
+                                />
+                            </div>
+
+                            <h5 className={this.props.theme.sectionHeader}>Comments</h5>
+                            <div className={this.props.theme.section}>
+                                <ItemComments
+                                    theme={this.props.theme}
+                                    item={job}
+                                />
+                            </div>
+                        </Col>
+                        <Col xs={12} md={6}>
+                            <h5 className={this.props.theme.sectionHeader}>In this run</h5>
+                            <div className={this.props.theme.section}>
+                                <BaselineContentList
+                                    theme={this.props.theme}
+                                    baselineRef={{
+                                        _ref: true,
+                                        id: job.baseline._id,
+                                        type: job.baseline.type
+                                    }}
+                                />
+                            </div>
+                        </Col>
+                    </Row>
+                </Tab>
+                {run.logs.map((ref) => (
                     <Tab
                         key={ref.id}
                         label={ref.name}
@@ -34,6 +77,17 @@ class Job extends LightComponent {
                         <LogViewer log={ref} />
                     </Tab>
                 ))}
+                {run.artifacts.length && (
+                    <Tab
+                        key="artifacts"
+                        label="Artifacts"
+                    >
+                        <ArtifactList
+                            theme={this.props.theme}
+                            artifactRefs={run.artifacts}
+                        />
+                    </Tab>
+                )}
             </Tabs>
         );
 /*

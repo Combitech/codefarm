@@ -5,7 +5,7 @@ const { Controller } = require("servicecom");
 
 class Jobs extends Controller {
     constructor() {
-        super(Job, [ "read", "create", "remove", "tag", "ref" ]);
+        super(Job, [ "read", "create", "remove", "tag", "ref", "comment" ]);
 
         this._addAction("rerun", this._rerun);
     }
