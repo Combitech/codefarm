@@ -1,6 +1,6 @@
 import React from "react";
 import Chip from "react-toolbox/lib/chip";
-import Component from "ui-lib/component";
+import LightComponent from "ui-lib/light_component";
 import { ListItem } from "react-toolbox/lib/list";
 import { ListItemIcon } from "ui-components/type_admin";
 import theme from "../../theme.scss";
@@ -16,7 +16,7 @@ const style = {
     }
 };
 
-class SlaveListItem extends Component {
+class SlaveListItem extends LightComponent {
     constructor(props) {
         super(props);
     }
