@@ -2,26 +2,29 @@
 import React from "react";
 import Chip from "react-toolbox/lib/chip";
 import Snackbar from "react-toolbox/lib/snackbar";
-import Component from "ui-lib/component";
+import LightComponent from "ui-lib/light_component";
 import { Row, Col } from "react-flexbox-grid";
 // Re-use job-list-item component from job section
 import JobListItem from "../job/ListItem";
 import {
     Section as TASection,
-    List as TAList,
-    ControlButton as TAControlButton
+    PagedList as TAPagedList,
+    ControlButton as TAControlButton,
 } from "ui-components/type_admin";
 import api from "api.io/api.io-client";
 import * as pathBuilder from "ui-lib/path_builder";
 
-class Item extends Component {
+class Item extends LightComponent {
     constructor(props) {
         super(props);
-        this.addStateVariable("statusMessage", { msg: "", type: "accept" });
+
+        this.state = {
+            statusMessage: { msg: "", type: "accept" }
+        };
     }
 
     _showMessage(msg, type = "accept") {
-        this.state.statusMessage.set({ msg: msg, type: type });
+        this.setState({ statusMessage: { msg: msg, type: type } });
     }
 
     _closeSnackbar() {
@@ -120,7 +123,7 @@ class Item extends Component {
                         </Col>
                         <Col xs={12} md={7} className={this.props.theme.panel}>
                             <h6 className={this.props.theme.title}>Allocated jobs</h6>
-                            <TAList
+                            <TAPagedList
                                 type="exec.job"
                                 query={{ slaveId: this.props.item._id, status: "allocated" }}
                                 onSelect={(item) => {
@@ -131,7 +134,7 @@ class Item extends Component {
                                 ListItemComponent={JobListItem}
                             />
                             <h6 className={this.props.theme.title}>Running jobs</h6>
-                            <TAList
+                            <TAPagedList
                                 type="exec.job"
                                 query={{ slaveId: this.props.item._id, status: "ongoing" }}
                                 onSelect={(item) => {
@@ -142,7 +145,7 @@ class Item extends Component {
                                 ListItemComponent={JobListItem}
                             />
                             <h6 className={this.props.theme.title}>Finished jobs</h6>
-                            <TAList
+                            <TAPagedList
                                 type="exec.job"
                                 query={{ slaveId: this.props.item._id, status: { $nin: [ "queued", "allocated", "ongoing" ] } }}
                                 onSelect={(item) => {
@@ -156,12 +159,12 @@ class Item extends Component {
                     </Row>
                     <Snackbar
                         action="Dismiss"
-                        active={this.state.statusMessage.value.msg.length > 0}
-                        label={this.state.statusMessage.value.msg}
+                        active={this.state.statusMessage.msg.length > 0}
+                        label={this.state.statusMessage.msg}
                         timeout={5000}
                         onClick={this._closeSnackbar.bind(this)}
                         onTimeout={this._closeSnackbar.bind(this)}
-                        type={this.state.statusMessage.value.type}
+                        type={this.state.statusMessage.type}
                     />
                 </div>
             </TASection>
