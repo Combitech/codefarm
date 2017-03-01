@@ -9,7 +9,7 @@ import stateVar from "ui-lib/state_var";
 
 class Job extends LightComponent {
     constructor(props) {
-        super(props, true);
+        super(props);
 
         this.state = {
             tabIndex: stateVar(this, "tabIndex", 0)

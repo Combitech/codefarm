@@ -1,18 +1,14 @@
 
 import React from "react";
-import Component from "ui-lib/component";
+import LightComponent from "ui-lib/light_component";
 import Chip from "react-toolbox/lib/chip";
 import { Row, Col } from "react-flexbox-grid";
 import {
     Section as TASection,
-    List as TAList
+    PagedList as TAPagedList
 } from "ui-components/type_admin";
 
-class Item extends Component {
-    constructor(props) {
-        super(props);
-    }
-
+class Item extends LightComponent {
     render() {
         this.log("render", this.props);
 
@@ -49,9 +45,10 @@ class Item extends Component {
                         </Col>
                         <Col xs={12} md={7} className={this.props.theme.panel}>
                             <h6 className={this.props.theme.title}>Artifacts</h6>
-                            <TAList
+                            <TAPagedList
                                 type="artifactrepo.artifact"
                                 query={{ repository: this.props.item._id }}
+                                limit={10}
                             />
                         </Col>
                     </Row>

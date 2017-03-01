@@ -4,20 +4,28 @@ import React from "react";
 let instanceCounter = 0;
 
 class LightComponent extends React.PureComponent {
-    constructor(props, debug = false) {
+    constructor(props) {
         super(props);
 
-        this.debug = debug;
+        this.debug = false;
         this.id = instanceCounter++;
         this.disposables = [];
 
         this.log("LightComponent Constructor");
     }
 
+    setDebug(debug = true) {
+        this.debug = debug;
+    }
+
     log(...args) {
         if (this.debug) {
             console.log(`${this.constructor.name}[${this.id}]`, ...args);
         }
+    }
+
+    logError(...args) {
+        console.error(`${this.constructor.name}[${this.id}]`, ...args);
     }
 
     addDisposable(disposable) {
