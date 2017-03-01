@@ -19,6 +19,13 @@ if [ "${NODE_ENV}" == "production" ]; then
     production=1
 fi
 
+# TODO: Do not force install by default
+forceInstallLibs=1
+if [ -n "${FORCE_INSTALL_LIBS}" ]; then
+    echo "$0: Force install of linked libraries"
+    forceInstallLibs=1
+fi
+
 libs=$(node -e "const p = require('./package.json'); console.log(p.libraries.join('\n'));")
 libdir=$(node -e "const p = require('path'); console.log(p.relative(process.cwd(), '$gitroot/src/lib'));")
 
@@ -43,10 +50,12 @@ while read -r lib; do
             ln -s "../$libdir/$lib" "./node_modules/"
         fi
 
-        if [ -L "./node_modules/$lib" ]; then
-            pushd "./node_modules/$lib"
-            $install
-            popd
+        if [[ $forceInstallLibs -eq 1 ]]; then
+            if [ -L "./node_modules/$lib" ]; then
+                pushd "./node_modules/$lib"
+                $install
+                popd
+            fi
         fi
     fi
 done <<< "$libs"
