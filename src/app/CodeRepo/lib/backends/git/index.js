@@ -171,10 +171,10 @@ class GitBackend {
 
         const repoPath = path.join(this.backend.path, repository._id);
         const tmpPath = await fs.mkdtempAsync("/tmp/CodeRepo-");
-        const ref = revision.patches[revision.patches.length - 1];
+        const patch = revision.patches[revision.patches.length - 1];
 
         await execAsync(`git clone ${repoPath} ${tmpPath}`);
-        await execAsync(`git fetch origin ${ref.change.refname}`, { cwd: tmpPath });
+        await execAsync(`git fetch origin ${patch.change.refname}`, { cwd: tmpPath });
         await execAsync("git checkout -b tomerge FETCH_HEAD", { cwd: tmpPath });
         await execAsync("git rebase master", { cwd: tmpPath });
         await execAsync("git checkout master", { cwd: tmpPath });
@@ -216,7 +216,7 @@ class GitBackend {
         const repoPath = path.join(this.backend.path, repository._id);
         const pipePath = `${repoPath}.pipe`;
         let changeId = false;
-        let refIndex = false;
+        let patchIndex = false;
 
         console.log("Running: ", app, repoPath);
 
@@ -229,7 +229,7 @@ class GitBackend {
                 const [ name, ...args ] = data.toString().replace(/\n$/, "").split(";");
 
                 if (args[0] === "result") {
-                    this._handleHook(repository, name, hookData[name], changeId, refIndex)
+                    this._handleHook(repository, name, hookData[name], changeId, patchIndex)
                     .then((code) => {
                         delete hookData[name];
 
@@ -336,13 +336,13 @@ class GitBackend {
                 });
 
                 if (needRefName) {
-                    if (refIndex === false) {
+                    if (patchIndex === false) {
                         const revision = await this.Revision.findOne({ _id: changeId });
 
-                        refIndex = revision ? revision.patches.length + 1 : 1;
+                        patchIndex = revision ? revision.patches.length + 1 : 1;
                     }
 
-                    line = line.replace(/(refs\/for\/master)/, `refs/changes/${changeId}/${refIndex}`);
+                    line = line.replace(/(refs\/for\/master)/, `refs/changes/${changeId}/${patchIndex}`);
                 }
 
                 console.log("clientToServer2", line);
@@ -414,26 +414,26 @@ class GitBackend {
         return { name, email, timestamp, comment };
     }
 
-    _handleHook(repository, name, args, changeId, refIndex) {
+    _handleHook(repository, name, args, changeId, patchIndex) {
         if (name === "pre-receive") {
-            return this._hookPrePush(repository, args, changeId, refIndex);
+            return this._hookPrePush(repository, args, changeId, patchIndex);
         } else if (name === "update") {
-            return this._hookUpdate(repository, ...args[0], changeId, refIndex);
+            return this._hookUpdate(repository, ...args[0], changeId, patchIndex);
         } else if (name === "post-receive") {
-            return this._hookPostPush(repository, args, changeId, refIndex);
+            return this._hookPostPush(repository, args, changeId, patchIndex);
         } else if (name === "post-update") {
-            return this._hookPostUpdate(repository, args[0], changeId, refIndex);
+            return this._hookPostUpdate(repository, args[0], changeId, patchIndex);
         }
 
         throw new Error(`Unknown hook ${name}`);
     }
 
-    async _hookPrePush(repository, list, changeId, refIndex) {
+    async _hookPrePush(repository, list, changeId, patchIndex) {
         // TODO: Do something useful
 
         console.log("_hookPrePush start");
         console.log("changeId", changeId);
-        console.log("refIndex", refIndex);
+        console.log("patchIndex", patchIndex);
         for (const data of list) {
             console.log("oldrev", data[0]);
             console.log("newrev", data[1]);
@@ -452,12 +452,12 @@ class GitBackend {
         return 0;
     }
 
-    async _hookUpdate(repository, oldrev, newrev, refname, changeId, refIndex) {
+    async _hookUpdate(repository, oldrev, newrev, refname, changeId, patchIndex) {
         // TODO: Do something useful
 
         console.log("_hookUpdate start");
         console.log("changeId", changeId);
-        console.log("refIndex", refIndex);
+        console.log("patchIndex", patchIndex);
         console.log("oldrev", oldrev);
         console.log("newrev", newrev);
         console.log("refname", refname);
@@ -466,13 +466,13 @@ class GitBackend {
         return 0;
     }
 
-    async _hookPostPush(repository, list, changeId, refIndex) {
+    async _hookPostPush(repository, list, changeId, patchIndex) {
         // We have in the pre push hook checked that there
         // is only one ref present, no need to check here.
         const [ oldrev, newrev, refname ] = list[0];
         const info = await this._getBasicInfo(repository, newrev);
-        const ref = {
-            index: refIndex,
+        const patch = {
+            index: patchIndex,
             email: info.email,
             name: info.name,
             submitted: moment.unix(info.timestamp).utc().format(),
@@ -484,7 +484,7 @@ class GitBackend {
             }
         };
 
-        await this.Revision.allocate(repository._id, changeId, ref);
+        await this.Revision.allocate(repository._id, changeId, patch);
 
         return 0;
     }

@@ -148,11 +148,11 @@ class GerritBackend extends AsyncEventEmitter {
         const repository = await this.Repository.findOne({ _id: repositoryId });
         if (repository) {
             const revision = await this.Revision.findOne({ _id: changeId });
-            const refIndex = revision ? revision.patches.length + 1 : 1;
+            const patchIndex = revision ? revision.patches.length + 1 : 1;
             // TODO: Shall we use email and name from uploader?
             // TODO: Handle draft changes
-            const ref = {
-                index: refIndex,
+            const patch = {
+                index: patchIndex,
                 email: event.uploader.email,
                 name: event.uploader.name,
                 submitted: moment.unix(event.patchSet.createdOn).utc().format(),
@@ -164,7 +164,7 @@ class GerritBackend extends AsyncEventEmitter {
                 }
             };
 
-            await this.Revision.allocate(repository._id, changeId, ref);
+            await this.Revision.allocate(repository._id, changeId, patch);
             log.info(`Gerrit event allocated revision ${changeId}`);
         }
     }
@@ -178,7 +178,7 @@ class GerritBackend extends AsyncEventEmitter {
             // And that we know about revision...
             const revision = await this.Revision.findOne({ _id: changeId });
             if (revision) {
-                const ref = {
+                const patch = {
                     index: revision.patches.length + 1,
                     email: event.patchSet.uploader.email,
                     name: event.patchSet.uploader.name,
@@ -190,7 +190,7 @@ class GerritBackend extends AsyncEventEmitter {
                         refname: event.refName
                     }
                 };
-                await revision.setMerged(ref);
+                await revision.setMerged(patch);
                 await this.emit("revision.merged", revision);
                 log.info(`Gerrit event merged revision ${changeId}`);
             }
@@ -264,9 +264,9 @@ class GerritBackend extends AsyncEventEmitter {
         });
 
         try {
-            const ref = revision.patches[revision.patches.length - 1];
+            const patch = revision.patches[revision.patches.length - 1];
             const { exitCode, errLines } = await this._execGerritCommandReadOutput(
-                `review ${ref.change.newrev} --submit`
+                `review ${patch.change.newrev} --submit`
             );
 
             if (exitCode !== 0) {
