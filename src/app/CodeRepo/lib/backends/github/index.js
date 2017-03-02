@@ -242,7 +242,7 @@ class GithubBackend extends AsyncEventEmitter {
                 change: {
                     oldrev: null, // TODO: set this
                     newrev: commit.id,
-                    refname: commit.id // Use event.refName all the time instead?
+                    refname: event.ref
                 }
             };
             revision = await this.Revision.allocate(repository._id, commit.id, patch);
