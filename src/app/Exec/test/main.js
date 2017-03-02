@@ -27,7 +27,7 @@ const waitJobFinished = async (id) =>
         typeNotification.on("job.updated", updatedListener);
     });
 
-const DEFAULT_JOB_TIMEOUT = 5 * 1000;
+const DEFAULT_JOB_TIMEOUT = 10 * 1000;
 
 describe("Exec", () => {
     let testInfo;
