@@ -11,13 +11,18 @@ const ReviewState = {
     NEUTRAL: "neutral"
 };
 
+const REVISION_STATUS = {
+    SUBMITTED: "submitted",
+    MERGED: "merged",
+    ABANDONED: "abandoned"
+};
 
 class Revision extends Type {
     constructor(data) {
         super();
 
         this.repository = false;
-        this.status = "submitted";
+        this.status = "REVISION_STATUS.SUBMITTED";
         this.patches = [];
         this.reviews = [];
 
@@ -64,7 +69,7 @@ class Revision extends Type {
     }
 
     async merge() {
-        if (this.status === "merged") {
+        if (this.status === REVISION_STATUS.MERGED) {
             throw new Error("Revision already merged");
         }
 
@@ -83,7 +88,7 @@ class Revision extends Type {
     }
 
     async setMerged(patch = null) {
-        if (this.status === "merged") {
+        if (this.status === REVISION_STATUS.MERGED) {
             throw new Error("Revision already merged");
         }
 
@@ -91,8 +96,8 @@ class Revision extends Type {
             throw new Error("No ref to merge for revision");
         }
 
-        this.status = "merged";
-        this.tags.push("merged");
+        this.status = REVISION_STATUS.MERGED;
+        this.tags.push(REVISION_STATUS.MERGED);
 
         if (patch) {
             this.patches.push(patch);
@@ -101,13 +106,13 @@ class Revision extends Type {
         await this.save();
     }
 
-    async setClosed() {
-        if (this.status === "closed") {
-            throw new Error("Revision already closed");
+    async setAbandoned() {
+        if (this.status === REVISION_STATUS.ABANDONED) {
+            throw new Error("Revision already abandoned");
         }
 
-        this.status = "closed";
-        this.tags.push("closed");
+        this.status = REVISION_STATUS.ABANDONED;
+        this.tags.push(REVISION_STATUS.ABANDONED);
         await this.save();
     }
 

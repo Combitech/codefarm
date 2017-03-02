@@ -322,11 +322,11 @@ class RevisionTabs extends LightComponent {
                                     pathname={this.props.pathname}
                                 />
                             </Tab>
-                            <Tab label="Closed">
+                            <Tab label="Abandoned">
                                 <RevisionList
                                     theme={theme}
                                     repositoryId={this.props.item._id}
-                                    revisionStatus="closed"
+                                    revisionStatus="abandoned"
                                     filter={this.state.filter}
                                     pathname={this.props.pathname}
                                 />
