@@ -1,0 +1,4 @@
+gitroot=$(git rev-parse --show-toplevel)
+libs=$(ls ${gitroot}/src/lib/ | tr '\n' ' ')
+components=$(ls ${gitroot}/src/app/ | tr '\n' ' ')
+
