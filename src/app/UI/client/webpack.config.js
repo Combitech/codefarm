@@ -2,6 +2,7 @@
 
 const path = require("path");
 const webpack = require("webpack");
+const ExtractTextPlugin = require("extract-text-webpack-plugin");
 
 module.exports = function(options) {
     const isProduction = !(options && options.dev);
@@ -9,14 +10,18 @@ module.exports = function(options) {
     const explicitModuleIncludes = [
         /node_modules\/api\.io/
     ];
+    const extractStyles = new ExtractTextPlugin("[name].css");
+
     const cfg = {
-        entry: [
-            "babel-polyfill",
-            path.join(__dirname, "lib", "client.js")
-        ],
+        entry: {
+            bundle: [
+                "babel-polyfill",
+                path.join(__dirname, "lib", "client.js")
+            ]
+        },
         output: {
             path: path.join(__dirname, "static"),
-            filename: "bundle.js"
+            filename: "[name].js"
         },
         module: {
             rules: [
@@ -58,50 +63,50 @@ module.exports = function(options) {
                 },
                 {
                     test: /\.css$/,
-                    use: [
-                        {
-                            loader: "style-loader"
-                        },
-                        {
-                            loader: "css-loader",
-                            options: {
-                                modules: true,
-                                includePaths: [ path.join(__dirname, "..", "node_modules") ]
+                    use: extractStyles.extract({
+                        fallback: "style-loader",
+                        use: [
+                            {
+                                loader: "css-loader",
+                                options: {
+                                    modules: true,
+                                    includePaths: [ path.join(__dirname, "..", "node_modules") ]
+                                }
                             }
-                        }
-                    ]
+                        ]
+                    })
                 },
                 {
                     test: /\.scss$/,
-                    use: [
-                        {
-                            loader: "style-loader"
-                        },
-                        {
-                            loader: "css-loader",
-                            options: {
-                                importLoaders: 2,
-                                modules: true,
-                                localIdentName: "[path]__[name]__[local]",
-                                includePaths: [
-                                    path.join(__dirname, "..", "node_modules"),
-                                    __dirname
-                                ]
+                    use: extractStyles.extract({
+                        fallback: "style-loader",
+                        use: [
+                            {
+                                loader: "css-loader",
+                                options: {
+                                    importLoaders: 2,
+                                    modules: true,
+                                    localIdentName: "[path]__[name]__[local]",
+                                    includePaths: [
+                                        path.join(__dirname, "..", "node_modules"),
+                                        __dirname
+                                    ]
+                                }
+                            },
+                            {
+                                loader: "sass-loader",
+                                options: {
+                                    outputStyle: "expanded",
+                                    sourceMap: !isProduction,
+                                    sourceMapContents: !isProduction,
+                                    includePaths: [
+                                        path.join(__dirname, "..", "node_modules"),
+                                        __dirname
+                                    ]
+                                }
                             }
-                        },
-                        {
-                            loader: "sass-loader",
-                            options: {
-                                outputStyle: "expanded",
-                                sourceMap: !isProduction,
-                                sourceMapContents: !isProduction,
-                                includePaths: [
-                                    path.join(__dirname, "..", "node_modules"),
-                                    __dirname
-                                ]
-                            }
-                        }
-                    ]
+                        ]
+                    })
                 },
                 {
                     test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/,
@@ -164,7 +169,7 @@ module.exports = function(options) {
                 }
             ]
         },
-        plugins: [],
+        plugins: [ extractStyles ],
         resolve: {
             modules: [
                 "node_modules",
