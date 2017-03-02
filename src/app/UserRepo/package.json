@@ -16,7 +16,8 @@
     "stop": "../../bs/stop.sh",
     "test": "mocha --harmony_async_await --recursive",
     "lint": "git ls-files \"*.js\" | xargs eslint",
-    "install": "if [ -n \"$gitroot\" ]; then $gitroot/src/bs/linklibs.sh; else ../../bs/linklibs.sh; fi"
+    "install": "if [ -n \"$gitroot\" ]; then $gitroot/src/bs/linklibs.sh; else ../../bs/linklibs.sh; fi",
+    "deepinstall": "if [ -n \"$gitroot\" ]; then FORCE_INSTALL_LIBS=1 $gitroot/src/bs/linklibs.sh; else FORCE_INSTALL_LIBS=1 ../../bs/linklibs.sh; fi"
   },
   "author": "Mattias Runge <mattias.runge@combitech.se>",
   "license": "MIT",
