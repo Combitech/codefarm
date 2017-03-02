@@ -19,6 +19,7 @@ if [ "${NODE_ENV}" == "production" ]; then
     production=1
 fi
 
+forceInstallLibs=0
 if [ -n "${FORCE_INSTALL_LIBS}" ]; then
     echo "$0: Force install of linked libraries"
     forceInstallLibs=1
