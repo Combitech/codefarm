@@ -93,8 +93,8 @@ module.exports = function(options) {
                             loader: "sass-loader",
                             options: {
                                 outputStyle: "expanded",
-                                sourceMap: true,
-                                sourceMapContents: true,
+                                sourceMap: !isProduction,
+                                sourceMapContents: !isProduction,
                                 includePaths: [
                                     path.join(__dirname, "..", "node_modules"),
                                     __dirname
@@ -190,33 +190,34 @@ module.exports = function(options) {
     if (isProduction) {
         console.log("webpack.config is production!");
 
-        cfg.plugins.concat([
+        cfg.plugins = cfg.plugins.concat([
             new webpack.DefinePlugin({
-                "process.env": {
-                    "NODE_ENV": "production"
-                }
+                "process.env.NODE_ENV": JSON.stringify("production")
             }),
-            new webpack.optimize.DedupePlugin(),
             new webpack.LoaderOptionsPlugin({
                 minimize: true,
                 debug: false
             }),
             new webpack.optimize.UglifyJsPlugin({
-                compress: { warnings: false },
+                compress: {
+                    warnings: false,
+                    // Enabling this feature triggers a removal of do {} while(false) with break statements inside...
+                    // See https://github.com/mishoo/UglifyJS2/issues/1532
+                    evaluate: false
+                },
+                // Safe to mangle as long as property mangling is disabled...
                 mangle: true,
-                sourceMap: true,
-                beautify: false,
-                dead_code: true // eslint-disable-line camelcase
+                sourceMap: false,
+                beautify: false
             })
         ]);
     } else {
         console.log("webpack.config is development!");
 
-        cfg.plugins.concat([
+        cfg.plugins = cfg.plugins.concat([
             new webpack.LoaderOptionsPlugin({
                 debug: true
             })
-
         ]);
 
         cfg.devtool = "cheap-module-source-map";
