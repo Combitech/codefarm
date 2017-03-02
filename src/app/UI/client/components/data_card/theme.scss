@@ -3,6 +3,10 @@
 @import "react-toolbox/components/globals";
 @import "~ui-styles/colors";
 
+.card {
+    margin-bottom: $layout-gutter-width-sm;
+}
+
 .comment {
     font-size: $font-size-small;
     font-family: "Roboto Mono";
@@ -10,6 +14,10 @@
     white-space: pre;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+.input {
+    padding: $unit * 1.6;
 }
 
 .monospace {
@@ -25,8 +33,17 @@
     }
 }
 
-.statusAvatar {
+.postButton {
+    position: absolute;
+    top: $layout-gutter-width-sm;
+    right: $layout-gutter-width-sm;
+    display: inline-block;
+}
+
+.avatar {
     margin-right: $unit * 1.3;
+    width: 40px;
+    height: 40px;
 }
 
 .table {
@@ -35,7 +52,7 @@
     border-spacing: 0;
 
     tbody tr:nth-child(odd) {
-        background-color: $palette-grey-100;
+        background-color: $palette-indigo-50;
     }
 
     tr {

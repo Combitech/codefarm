@@ -5,19 +5,22 @@ import Rx from "rxjs";
 
 class UserItem extends TypeList {
     constructor(initialOpts) {
-        if (typeof initialOpts.email !== "string" && initialOpts.email !== false) {
-            throw new Error("email must be set to a string or false in the initial opts");
+        if (typeof initialOpts.identifier !== "string" && initialOpts.identifier !== false) {
+            throw new Error("identifier must be set to a string or false in the initial opts");
         }
 
-        const createQuery = (email) => (
+        const createQuery = (identifier) => (
             {
-                email
+                $or: [
+                    { _id: identifier },
+                    { email: identifier }
+                ]
             }
         );
 
         const defaultOpts = {
             type: "userrepo.user",
-            query: createQuery(initialOpts.email)
+            query: createQuery(initialOpts.identifier)
         };
 
         super(Object.assign({}, defaultOpts, initialOpts));
@@ -38,8 +41,8 @@ class UserItem extends TypeList {
     setOpts(opts) {
         const nextOpts = Object.assign({}, opts);
 
-        if (opts.email) {
-            nextOpts.query = this._createQuery(opts.email);
+        if (opts.identifier) {
+            nextOpts.query = this._createQuery(opts.identifier);
         }
 
         super.setOpts(nextOpts);

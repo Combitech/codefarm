@@ -60,7 +60,7 @@ class BaselineContentList extends LightComponent {
                                     <RevisionCard
                                         key={item._id}
                                         theme={this.props.theme}
-                                        revision={item}
+                                        item={item}
                                     />
                                 );
                             }

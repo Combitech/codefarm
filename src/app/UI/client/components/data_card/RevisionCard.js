@@ -2,57 +2,46 @@
 import React from "react";
 import LightComponent from "ui-lib/light_component";
 import { CardTitle, CardText } from "react-toolbox/lib/card";
-import Avatar from "react-toolbox/lib/avatar";
+import UserAvatar from "ui-components/user_avatar";
 import DateTime from "ui-components/datetime";
 import Chip from "react-toolbox/lib/chip";
 import ExpandableCard from "ui-components/expandable_card";
 import stateVar from "ui-lib/state_var";
-import UserItem from "ui-observables/user_item";
 
 class RevisionCard extends LightComponent {
     constructor(props) {
         super(props);
 
-        this.user = new UserItem({
-            email: this.getLatestPatch(props).email
-        });
-
         this.state = {
-            expanded: stateVar(this, "expanded", this.props.expanded),
-            user: this.user.value.getValue()
+            expanded: stateVar(this, "expanded", this.props.expanded)
         };
     }
 
     getLatestPatch(props) {
-        return props.revision.patches[props.revision.patches.length - 1];
-    }
+        if (this.props.patchIndex < 0) {
+            return props.item.patches[props.item.patches.length + this.props.patchIndex];
+        }
 
-    componentDidMount() {
-        this.addDisposable(this.user.start());
-
-        this.addDisposable(this.user.value.subscribe((user) => this.setState({ user })));
-    }
-
-    componentWillReceiveProps(nextProps) {
-        this.user.setOpts({
-            email: this.getLatestPatch(nextProps).email
-        });
+        return props.item.patches[this.props.patchIndex];
     }
 
     render() {
         const patch = this.getLatestPatch(this.props);
-        const user = this.state.user.toJS()._id ? this.state.user.toJS() : null;
 
         return (
             <ExpandableCard
+                className={this.props.theme.card}
                 expanded={this.state.expanded}
                 expandable={this.props.expandable}
             >
                 <CardTitle
-                    avatar={user && (
-                        <Avatar image={`/userrepo/useravatar/${user._id}/avatar`} />
+                    avatar={(
+                        <UserAvatar
+                            className={this.props.theme.avatar}
+                            identifier={patch.email}
+                        />
                     )}
-                    title={`${user ? user.name : patch.name} <${user ? user.email : patch.email}>`}
+                    title={`${patch.name} <${patch.email}>`}
                     subtitle={(
                         <DateTime
                             value={patch.submitted}
@@ -71,19 +60,19 @@ class RevisionCard extends LightComponent {
                             <tr>
                                 <td>Status</td>
                                 <td>
-                                    {this.props.revision.status}
+                                    {this.props.item.status}
                                 </td>
                             </tr>
                             <tr>
                                 <td>Repository</td>
                                 <td>
-                                    {this.props.revision.repository}
+                                    {this.props.item.repository}
                                 </td>
                             </tr>
                             <tr>
                                 <td>Patches</td>
                                 <td>
-                                    {this.props.revision.patches.length}
+                                    {this.props.item.patches.length}
                                 </td>
                             </tr>
                             <tr>
@@ -107,7 +96,7 @@ class RevisionCard extends LightComponent {
                             <tr>
                                 <td>Tags</td>
                                 <td>
-                                    {this.props.revision.tags.map((tag) => (
+                                    {this.props.item.tags.map((tag) => (
                                         <Chip key={tag}>{tag}</Chip>
                                     ))}
                                 </td>
@@ -122,12 +111,14 @@ class RevisionCard extends LightComponent {
 
 RevisionCard.defaultProps = {
     expanded: false,
-    expandable: true
+    expandable: true,
+    patchIndex: -1
 };
 
 RevisionCard.propTypes = {
     theme: React.PropTypes.object,
-    revision: React.PropTypes.object.isRequired,
+    item: React.PropTypes.object.isRequired,
+    patchIndex: React.PropTypes.number,
     expanded: React.PropTypes.bool,
     expandable: React.PropTypes.bool
 };

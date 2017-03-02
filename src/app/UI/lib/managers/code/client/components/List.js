@@ -9,9 +9,8 @@ import {
     LoadIndicator as TALoadIndicator,
     ListPager as TAListPager
 } from "ui-components/type_admin";
-import Avatar from "react-toolbox/lib/avatar";
+import UserAvatar from "ui-components/user_avatar";
 import { Tab, Tabs } from "react-toolbox/lib/tabs";
-import UserAvatar from "./UserAvatar";
 import { StatusIcon } from "ui-components/status";
 import theme from "./theme.scss";
 import RevisionListObservable from "../observables/revision_list";
@@ -91,12 +90,10 @@ class RevisionListItemComponent extends React.PureComponent {
                     <DateTime value={latestPatch.submitted} />
                 </td>
                 <td>
-                    <Avatar className={this.props.theme.avatar}>
-                        <UserAvatar
-                            email={latestPatch.email}
-                            noAvatarIconName="person"
-                        />
-                    </Avatar>
+                    <UserAvatar
+                        className={this.props.theme.avatar}
+                        identifier={latestPatch.email}
+                    />
                     {latestPatch.name}
                 </td>
                 <td>{latestPatch.comment.split("\n", 1)[0]}</td>

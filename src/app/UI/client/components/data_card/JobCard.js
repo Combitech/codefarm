@@ -3,7 +3,6 @@ import React from "react";
 import LightComponent from "ui-lib/light_component";
 import { CardTitle } from "react-toolbox/lib/card";
 import HiddenText from "ui-components/hidden_text";
-import Avatar from "react-toolbox/lib/avatar";
 import DateTime from "ui-components/datetime";
 import Chip from "react-toolbox/lib/chip";
 import ExpandableCard from "ui-components/expandable_card";
@@ -22,19 +21,20 @@ class JobCard extends LightComponent {
     render() {
         return (
             <ExpandableCard
+                className={this.props.theme.card}
                 expanded={this.state.expanded}
                 expandable={this.props.expandable}
             >
                 <CardTitle
                     avatar={(
                         <StatusIcon
-                            className={this.props.theme.statusAvatar}
+                            className={this.props.theme.avatar}
                             size={40}
-                            status={this.props.job.status}
+                            status={this.props.item.status}
                         />
                     )}
-                    title={this.props.job.name}
-                    subtitle={this.props.job.status}
+                    title={this.props.item.name}
+                    subtitle={this.props.item.status}
                 />
                 {this.state.expanded.value && (
                     <table className={this.props.theme.table}>
@@ -43,12 +43,12 @@ class JobCard extends LightComponent {
                                 <td>Job name</td>
                                 <td>
                                     <span className={this.props.theme.monospace}>
-                                        {this.props.job.name}
+                                        {this.props.item.name}
                                     </span>
                                     <HiddenText
                                         className={this.props.theme.hiddenText}
                                         label="SHOW ID"
-                                        text={this.props.job._id}
+                                        text={this.props.item._id}
                                     />
                                 </td>
                             </tr>
@@ -56,12 +56,12 @@ class JobCard extends LightComponent {
                                 <td>Baseline name</td>
                                 <td>
                                     <span className={this.props.theme.monospace}>
-                                        {this.props.job.baseline.name}
+                                        {this.props.item.baseline.name}
                                     </span>
                                     <HiddenText
                                         className={this.props.theme.hiddenText}
                                         label="SHOW ID"
-                                        text={this.props.job.baseline._id}
+                                        text={this.props.item.baseline._id}
                                     />
                                 </td>
                             </tr>
@@ -69,7 +69,7 @@ class JobCard extends LightComponent {
                                 <td>Created</td>
                                 <td>
                                     <DateTime
-                                        value={this.props.job.created}
+                                        value={this.props.item.created}
                                         niceDate={true}
                                     />
                                 </td>
@@ -78,24 +78,24 @@ class JobCard extends LightComponent {
                                 <td>Finished at</td>
                                 <td>
                                     <DateTime
-                                        value={this.props.job.finished}
+                                        value={this.props.item.finished}
                                         niceDate={true}
                                         defaultText="No finished yet"
                                     />
                                 </td>
                             </tr>
-                            {this.props.job.slaveId && (
+                            {this.props.item.slaveId && (
                                 <tr>
                                     <td>Executed on slave</td>
                                     <td className={this.props.theme.monospace}>
-                                        {this.props.job.slaveId}
+                                        {this.props.item.slaveId}
                                     </td>
                                 </tr>
                             )}
                             <tr>
                                 <td>Tags</td>
                                 <td>
-                                    {this.props.job.tags.map((tag) => (
+                                    {this.props.item.tags.map((tag) => (
                                         <Chip key={tag}>{tag}</Chip>
                                     ))}
                                 </td>
@@ -115,7 +115,7 @@ JobCard.defaultProps = {
 
 JobCard.propTypes = {
     theme: React.PropTypes.object,
-    job: React.PropTypes.object.isRequired,
+    item: React.PropTypes.object.isRequired,
     expanded: React.PropTypes.bool,
     expandable: React.PropTypes.bool
 };

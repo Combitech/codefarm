@@ -34,14 +34,14 @@ class Job extends LightComponent {
             >
                 <Tab
                     key="info"
-                    label="Overview"
+                    label="Job"
                 >
                     <Row>
                         <Col xs={12} md={6}>
                             <h5 className={this.props.theme.sectionHeader}>Properties</h5>
                             <div className={this.props.theme.section}>
                                 <JobCard
-                                    job={job}
+                                    item={job}
                                     expanded={true}
                                     expandable={false}
                                 />
