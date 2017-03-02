@@ -99,17 +99,17 @@ class Overview extends LightComponent {
             });
         }
 
-        for (const patch of this.props.item.patches) {
+        this.props.item.patches.forEach((patch, patchIndex, patches) => {
             const time = moment(patch.submitted);
             let title = `${patch.name} submitted a new patch`;
 
-            if (patch.index === this.props.item.patches.length && this.props.item.status === "merged") {
+            if (patchIndex === (patches.length - 1) && this.props.item.status === "merged") {
                 title = `${patch.name} merged revision`;
             }
 
             list.push({
                 timestamp: time.unix(),
-                id: `patch-${patch.index}`,
+                id: `patch-${patchIndex}`,
                 avatar: (
                     <Avatar className={this.props.theme.avatar}>
                         <UserAvatar
@@ -125,7 +125,7 @@ class Overview extends LightComponent {
                     change: patch.change
                 }
             });
-        }
+        });
 
         for (const baseline of this.state.baselines.toJS()) {
             const time = moment(baseline.created);
