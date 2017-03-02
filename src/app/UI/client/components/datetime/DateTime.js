@@ -13,14 +13,21 @@ class DateTime extends React.PureComponent {
                 return props.value;
             }
 
-            const time = moment(props.value);
+            const timestamp = moment(props.value).local();
+            const niceDate = () => timestamp.format("dddd, MMMM Do YYYY");
+            const date = () => timestamp.format("YYYY-MM-DD");
+            const time = () => timestamp.format("hh:mm:ss");
 
             if (props.showDate && props.showTime) {
-                return time.local().format("YYYY-MM-DD hh:mm:ss");
+                if (props.niceDate) {
+                    return `${niceDate()} at ${time()}`;
+                }
+
+                return `${time()} ${date()}`;
             } else if (props.showDate) {
-                return time.local().format("YYYY-MM-DD");
+                return props.niceDate ? niceDate() : date();
             } else if (props.showTime) {
-                return time.local().format("hh:mm:ss");
+                return time();
             }
 
             return props.defaultText;
@@ -38,6 +45,7 @@ DateTime.defaultProps = {
     showRaw: false,
     showDate: true,
     showTime: true,
+    niceDate: false,
     defaultText: "No time"
 };
 
@@ -48,7 +56,8 @@ DateTime.propTypes = {
     defaultText: React.PropTypes.string,
     showRaw: React.PropTypes.bool,
     showDate: React.PropTypes.bool,
-    showTime: React.PropTypes.bool
+    showTime: React.PropTypes.bool,
+    niceDate: React.PropTypes.bool
 };
 
 export default DateTime;

@@ -2,7 +2,6 @@
 import React from "react";
 import LightComponent from "ui-lib/light_component";
 import { Row, Col } from "react-flexbox-grid";
-import Chip from "react-toolbox/lib/chip";
 import Avatar from "react-toolbox/lib/avatar";
 import Input from "react-toolbox/lib/input";
 import { Button } from "react-toolbox/lib/button";
@@ -11,6 +10,7 @@ import UserAvatar from "../UserAvatar";
 import api from "api.io/api.io-client";
 import stateVar from "ui-lib/state_var";
 import BaselineList from "../../observables/baseline_list";
+import { RevisionCard } from "ui-components/data_card";
 
 const icons = {
     unknown: "/Cheser/48x48/status/dialog-question.png",
@@ -79,7 +79,6 @@ class Overview extends LightComponent {
         this.log("render", this.props, this.state);
 
         const list = [];
-        const latestPatch = this.props.item.patches[this.props.item.patches.length - 1];
 
         for (const comment of this.props.item.comments) {
             const time = moment(comment.time);
@@ -209,77 +208,12 @@ class Overview extends LightComponent {
                 <Row>
                     <Col xs={12} md={6}>
                         <h5 className={this.props.theme.sectionHeader}>Revision</h5>
-                        <table className={this.props.theme.information}>
-                            <tbody>
-                                <tr>
-                                    <td>Author</td>
-                                    <td>
-                                        <Avatar className={this.props.theme.avatar}>
-                                            <UserAvatar
-                                                email={latestPatch.email}
-                                                noAvatarIconName="person"
-                                            />
-                                        </Avatar>
-                                        <span className={this.props.theme.name}>
-                                            {latestPatch.name}
-                                        </span>
-                                        <span className={this.props.theme.email}>
-                                            {`<${latestPatch.email}>`}
-                                        </span>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>Status</td>
-                                    <td>
-                                        {this.props.item.status}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>Repository</td>
-                                    <td>
-                                        {this.props.item.repository}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>Patches</td>
-                                    <td>
-                                        {this.props.item.patches.length}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>Comment</td>
-                                    <td className={this.props.theme.monospace}>
-                                        <pre>{latestPatch.change.comment}</pre>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>Refname</td>
-                                    <td className={this.props.theme.monospace}>
-                                        {latestPatch.change.refname}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>SHA1</td>
-                                    <td className={this.props.theme.monospace}>
-                                        {latestPatch.change.newrev}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>Previous SHA1</td>
-                                    <td className={this.props.theme.monospace}>
-                                        {latestPatch.change.oldrev}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>Tags</td>
-                                    <td>
-                                        {this.props.item.tags.map((tag) => (
-                                            <Chip key={tag}>{tag}</Chip>
-                                        ))}
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
+                        <RevisionCard
+                            theme={this.props.theme}
+                            revision={this.props.item}
+                            expanded={true}
+                            expandable={false}
+                        />
                     </Col>
                     <Col xs={12} md={6}>
                         <h5 className={this.props.theme.sectionHeader}>Events</h5>

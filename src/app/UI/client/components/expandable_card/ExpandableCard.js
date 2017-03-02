@@ -10,11 +10,13 @@ class ExpandableCard extends LightComponent {
         return (
             <Card className={this.props.theme.expandableCard}>
                 {this.props.children}
-                <IconButton
-                    icon={expandIconName}
-                    className={this.props.theme.expandButton}
-                    onClick={() => this.props.expanded.toggle()}
-                />
+                {this.props.expandable && (
+                    <IconButton
+                        icon={expandIconName}
+                        className={this.props.theme.expandButton}
+                        onClick={() => this.props.expanded.toggle()}
+                    />
+            )}
             </Card>
         );
     }
@@ -22,7 +24,8 @@ class ExpandableCard extends LightComponent {
 
 ExpandableCard.defaultProps = {
     iconExpand: "expand_more",
-    iconCollapse: "expand_less"
+    iconCollapse: "expand_less",
+    expandable: true
 };
 
 ExpandableCard.propTypes = {
@@ -36,6 +39,7 @@ ExpandableCard.propTypes = {
         React.PropTypes.string,
         React.PropTypes.element
     ]),
+    expandable: React.PropTypes.bool,
     expanded: React.PropTypes.object.isRequired
 };
 

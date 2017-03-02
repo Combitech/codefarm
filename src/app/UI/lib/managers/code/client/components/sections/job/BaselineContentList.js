@@ -5,7 +5,7 @@ import { States as ObservableDataStates } from "ui-lib/observable_data";
 import {
     LoadIndicator as TALoadIndicator
 } from "ui-components/type_admin";
-import BaselineContentRevision from "./BaselineContentRevision";
+import { RevisionCard } from "ui-components/data_card";
 import BaselineItem from "../../../observables/baseline_item";
 
 class BaselineContentList extends LightComponent {
@@ -57,7 +57,7 @@ class BaselineContentList extends LightComponent {
                         {content.data.map((item) => {
                             if (item.type === "coderepo.revision") {
                                 return (
-                                    <BaselineContentRevision
+                                    <RevisionCard
                                         key={item._id}
                                         theme={this.props.theme}
                                         revision={item}

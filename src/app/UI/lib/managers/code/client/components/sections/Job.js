@@ -6,10 +6,10 @@ import LogViewer from "ui-components/log_viewer";
 import { Tab, Tabs } from "react-toolbox/lib/tabs";
 import { Row, Col } from "react-flexbox-grid";
 import stateVar from "ui-lib/state_var";
-import JobOverview from "./job/JobOverview";
 import BaselineContentList from "./job/BaselineContentList";
 import ArtifactList from "./job/ArtifactList";
 import ItemComments from "./job/ItemComments";
+import { JobCard } from "ui-components/data_card";
 
 class Job extends LightComponent {
     constructor(props) {
@@ -40,9 +40,10 @@ class Job extends LightComponent {
                         <Col xs={12} md={6}>
                             <h5 className={this.props.theme.sectionHeader}>Properties</h5>
                             <div className={this.props.theme.section}>
-                                <JobOverview
-                                    theme={this.props.theme}
+                                <JobCard
                                     job={job}
+                                    expanded={true}
+                                    expandable={false}
                                 />
                             </div>
 

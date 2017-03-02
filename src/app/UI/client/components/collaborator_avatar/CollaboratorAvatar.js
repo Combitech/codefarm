@@ -2,9 +2,10 @@
 import React from "react";
 import theme from "./theme.scss";
 
-class CollaboratorAvatar extends React.Component {
+class CollaboratorAvatar extends React.PureComponent {
     constructor(props) {
         super(props);
+
         this.state = {
             avatarLoadError: false
         };
