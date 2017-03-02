@@ -38,14 +38,16 @@ module.exports = function(options) {
                             .filter((m) => m)
                             .length > 0;
 
+
                         return isNodeModule && !isExplicitInclude;
                     },
-                    query: {
+                    options: {
                         cacheDirectory: "babel_cache",
                         presets: [
-                            [ require.resolve("babel-preset-es2015"), { "modules": false } ],
+                            require.resolve("babel-preset-es2015"),
                             require.resolve("babel-preset-stage-1"),
-                            require.resolve("babel-preset-react") ],
+                            require.resolve("babel-preset-react")
+                        ],
                         plugins: [
                             [ require.resolve("babel-plugin-transform-async-to-module-method"), {
                                 "module": "bluebird",
@@ -145,7 +147,7 @@ module.exports = function(options) {
                     use: [
                         {
                             loader: "babel-loader",
-                            query: {
+                            options: {
                                 presets: [
                                     require.resolve("babel-preset-es2015"),
                                     require.resolve("babel-preset-react")
@@ -154,7 +156,7 @@ module.exports = function(options) {
                         },
                         {
                             loader: "react-svg-loader",
-                            query: {
+                            options: {
                                 jsx: true
                             }
                         }
