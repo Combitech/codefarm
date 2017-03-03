@@ -77,7 +77,7 @@ class AddCommentCard extends LightComponent {
                             identifier={user ? user._id : false}
                         />
                     )}
-                    title={`${user ? user.name : "Someone"} said...`}
+                    title="Say something..."
                 />
                     <Input
                         className={this.props.theme.input}

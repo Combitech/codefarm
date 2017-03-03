@@ -7,15 +7,36 @@ import DateTime from "ui-components/datetime";
 import Chip from "react-toolbox/lib/chip";
 import ExpandableCard from "ui-components/expandable_card";
 import stateVar from "ui-lib/state_var";
+import UserItem from "ui-observables/user_item";
 import { StringUtil } from "misc";
 
 class RevisionCard extends LightComponent {
     constructor(props) {
         super(props);
 
+        const patch = this.getLatestPatch(props);
+
+        this.user = new UserItem({
+            identifier: patch.userRef ? patch.userRef.id : patch.email
+        });
+
         this.state = {
-            expanded: stateVar(this, "expanded", this.props.expanded)
+            expanded: stateVar(this, "expanded", this.props.expanded),
+            user: this.user.value.getValue()
         };
+    }
+
+    componentDidMount() {
+        this.addDisposable(this.user.start());
+        this.addDisposable(this.user.value.subscribe((user) => this.setState({ user })));
+    }
+
+    componentWillReceiveProps(nextProps) {
+        const patch = this.getLatestPatch(nextProps);
+
+        this.user.setOpts({
+            identifier: patch.userRef ? patch.userRef.id : patch.email
+        });
     }
 
     getLatestPatch(props) {
@@ -28,6 +49,18 @@ class RevisionCard extends LightComponent {
 
     render() {
         const patch = this.getLatestPatch(this.props);
+        const name = this.state.user.get("name", patch.name);
+        const email = this.state.user.get("email", patch.email);
+
+        const title = () => {
+            if (this.props.patchIndex < 0) {
+                return `${name} <${email}>`;
+            } else if (this.props.patchIndex === this.props.item.patches.length - 1 && this.props.item.status === "merged") {
+                return `Merged by ${name} <${email}>`;
+            }
+
+            return `Submitted by ${name} <${email}>`;
+        };
 
         return (
             <ExpandableCard
@@ -39,10 +72,10 @@ class RevisionCard extends LightComponent {
                     avatar={(
                         <UserAvatar
                             className={this.props.theme.avatar}
-                            identifier={patch.userRef ? patch.userRef.id : patch.email}
+                            userId={patch.userRef.id}
                         />
                     )}
-                    title={`${patch.name} <${patch.email}>`}
+                    title={title()}
                     subtitle={(
                         <DateTime
                             value={patch.submitted}
@@ -70,12 +103,24 @@ class RevisionCard extends LightComponent {
                                     {this.props.item.repository}
                                 </td>
                             </tr>
-                            <tr>
-                                <td>Patches</td>
-                                <td>
-                                    {this.props.item.patches.length}
-                                </td>
-                            </tr>
+                            {this.props.patchIndex < 0 && (
+                                <tr>
+                                    <td>Patches</td>
+                                    <td>
+                                        {this.props.item.patches.length}
+                                    </td>
+                                </tr>
+                            )}
+                            {this.props.patchIndex >= 0 && (
+                                <tr>
+                                    <td>Patch</td>
+                                    <td>
+                                        {this.props.patchIndex + 1}
+                                        <span> of </span>
+                                        {this.props.item.patches.length}
+                                    </td>
+                                </tr>
+                            )}
                             <tr>
                                 <td>Refname</td>
                                 <td className={this.props.theme.monospace}>

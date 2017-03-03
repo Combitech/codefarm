@@ -92,7 +92,7 @@ class RevisionListItemComponent extends React.PureComponent {
                 <td>
                     <UserAvatar
                         className={this.props.theme.avatar}
-                        identifier={latestPatch.userRef ? latestPatch.userRef.id : latestPatch.email}
+                        userId={latestPatch.userRef ? latestPatch.userRef.id : false}
                     />
                     {latestPatch.name}
                 </td>

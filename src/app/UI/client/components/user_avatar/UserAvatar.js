@@ -4,7 +4,6 @@
 import React from "react";
 import LightComponent from "ui-lib/light_component";
 import Avatar from "react-toolbox/lib/avatar";
-import UserItem from "ui-observables/user_item";
 
 class UserAvatar extends LightComponent {
     constructor(props) {
@@ -13,48 +12,38 @@ class UserAvatar extends LightComponent {
         this.image = new Image();
 
         this.image.onload = () => {
-            this.setState({ url: this.image.src });
+            this.setState({
+                loaded: true
+            });
         };
 
-        this.user = new UserItem({
-            identifier: props.identifier
-        });
+        if (this.props.userId) {
+            this.image.src = `/userrepo/useravatar/${this.props.userId}/avatar`;
+        }
 
         this.state = {
-            user: this.user.value.getValue(),
-            url: false
+            loaded: false
         };
-    }
-
-    componentDidMount() {
-        this.addDisposable(this.user.start());
-
-        this.addDisposable(this.user.value.subscribe((user) => {
-            this.setState({
-                url: false,
-                user: user
-            });
-
-            if (user.toJS()._id) {
-                this.image.src = `/userrepo/useravatar/${user.toJS()._id}/avatar`;
-            }
-        }));
     }
 
     componentWillReceiveProps(nextProps) {
-        this.user.setOpts({
-            identifier: nextProps.identifier
+        if (nextProps.userId) {
+            this.image.src = `/userrepo/useravatar/${nextProps.userId}/avatar`;
+        }
+
+        this.setState({
+            loaded: false
         });
     }
 
     render() {
         this.log("state", JSON.stringify(this.state, null, 2));
 
-        if (this.state.url && this.state.user.toJS()._id) {
+        if (this.state.loaded) {
             return (
                 <Avatar
                     className={`${this.props.theme.avatar} ${this.props.className}`}
-                    image={this.state.url}
+                    image={this.image.src}
                 />
             );
         }
@@ -70,12 +59,12 @@ class UserAvatar extends LightComponent {
 
 UserAvatar.defaultProps = {
     defaultUrl: "/Cheser/48x48/status/avatar-default.png",
-    identifier: false
+    userId: false
 };
 
 UserAvatar.propTypes = {
     className: React.PropTypes.string,
-    identifier: React.PropTypes.any,
+    userId: React.PropTypes.any,
     defaultUrl: React.PropTypes.string
 };
 

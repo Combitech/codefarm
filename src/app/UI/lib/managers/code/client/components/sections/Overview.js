@@ -74,7 +74,6 @@ class Overview extends LightComponent {
                 item: review,
                 Card: ReviewCard,
                 props: {
-                    expanded: false
                 }
             });
         });
@@ -138,7 +137,7 @@ class Overview extends LightComponent {
                             <item.Card
                                 key={item.id}
                                 item={item.item}
-                                expanded={true}
+                                expanded={false}
                                 {...item.props}
                             />
                         ))}
