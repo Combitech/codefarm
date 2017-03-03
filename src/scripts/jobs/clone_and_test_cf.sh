@@ -64,6 +64,12 @@ function dowork() {
         startTime=$(($(date +%s%N)/1000000))
 
         $script $target || result=1
+
+        #Calculate test time and store in string as '{"timeMs":x}'
+        stopTime=$(($(date +%s%N)/1000000))
+        testDuration=`expr $stopTime - $startTime`
+        testDurationStr={\"timeMs\":$testDuration}
+
         if [[ $result -eq 1 ]]; then
           echo "${subjobname} failed"
           $CLI update_subjob $subJobId -s fail --result $testDurationStr
