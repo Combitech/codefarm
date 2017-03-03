@@ -148,11 +148,9 @@ class GerritBackend extends AsyncEventEmitter {
         const repository = await this.Repository.findOne({ _id: repositoryId });
         if (repository) {
             const revision = await this.Revision.findOne({ _id: changeId });
-            const patchIndex = revision ? revision.patches.length + 1 : 1;
             // TODO: Shall we use email and name from uploader?
             // TODO: Handle draft changes
             const patch = {
-                index: patchIndex,
                 email: event.uploader.email,
                 name: event.uploader.name,
                 submitted: moment.unix(event.patchSet.createdOn).utc().format(),
@@ -179,7 +177,6 @@ class GerritBackend extends AsyncEventEmitter {
             const revision = await this.Revision.findOne({ _id: changeId });
             if (revision) {
                 const patch = {
-                    index: revision.patches.length + 1,
                     email: event.patchSet.uploader.email,
                     name: event.patchSet.uploader.name,
                     submitted: moment.unix(event.patchSet.createdOn).utc().format(),

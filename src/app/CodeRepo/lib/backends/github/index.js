@@ -98,7 +98,6 @@ class GithubBackend extends AsyncEventEmitter {
         ServiceMgr.instance.log("verbose", `Creating new patch for pull request ${event.pull_request.number} (${changeSha})`);
 
         return {
-            index: 1,
             email: email,
             name: event.pull_request.user.login,
             submitted: moment(event.pull_request.created_at).utc().format(),
@@ -233,7 +232,6 @@ class GithubBackend extends AsyncEventEmitter {
         let revision = null;
         for (const commit of event.commits) {
             const patch = {
-                index: 1,
                 email: commit.author.email,
                 name: commit.author.name,
                 submitted: commit.timestamp,
