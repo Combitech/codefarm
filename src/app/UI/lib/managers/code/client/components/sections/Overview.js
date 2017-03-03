@@ -6,7 +6,7 @@ import moment from "moment";
 import api from "api.io/api.io-client";
 import stateVar from "ui-lib/state_var";
 import BaselineList from "../../observables/baseline_list";
-import { RevisionCard, AddCommentCard, CommentCard, JobCard } from "ui-components/data_card";
+import { RevisionCard, AddCommentCard, CommentCard, ReviewCard, JobCard } from "ui-components/data_card";
 
 class Overview extends LightComponent {
     constructor(props) {
@@ -63,6 +63,18 @@ class Overview extends LightComponent {
                 Card: RevisionCard,
                 props: {
                     patchIndex: patchIndex
+                }
+            });
+        });
+
+        this.props.item.reviews.forEach((review, reviewIndex) => {
+            list.push({
+                id: `review-${reviewIndex}`,
+                time: moment(review.updated).unix(),
+                item: review,
+                Card: ReviewCard,
+                props: {
+                    expanded: false
                 }
             });
         });
@@ -126,8 +138,8 @@ class Overview extends LightComponent {
                             <item.Card
                                 key={item.id}
                                 item={item.item}
-                                {...item.props}
                                 expanded={true}
+                                {...item.props}
                             />
                         ))}
                     </Col>

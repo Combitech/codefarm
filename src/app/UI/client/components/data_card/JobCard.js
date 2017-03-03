@@ -8,6 +8,7 @@ import Chip from "react-toolbox/lib/chip";
 import ExpandableCard from "ui-components/expandable_card";
 import { StatusIcon } from "ui-components/status";
 import stateVar from "ui-lib/state_var";
+import { StringUtil } from "misc";
 
 class JobCard extends LightComponent {
     constructor(props) {
@@ -34,7 +35,7 @@ class JobCard extends LightComponent {
                         />
                     )}
                     title={this.props.item.name}
-                    subtitle={this.props.item.status}
+                    subtitle={StringUtil.toUpperCaseLetter(this.props.item.status)}
                 />
                 {this.state.expanded.value && (
                     <table className={this.props.theme.table}>

@@ -1,6 +1,7 @@
 "use strict";
 
-const { serviceMgr } = require("service");
+const { ServiceMgr } = require("service");
+const { ServiceComBus } = require("servicecom");
 const { Type } = require("typelib");
 const BackendProxy = require("../backend_proxy");
 const Repository = require("./repository");
@@ -10,7 +11,6 @@ const ReviewState = {
     REJECTED: "rejected",
     NEUTRAL: "neutral"
 };
-
 
 class Revision extends Type {
     constructor(data) {
@@ -27,7 +27,7 @@ class Revision extends Type {
     }
 
     static get serviceName() {
-        return serviceMgr.serviceName;
+        return ServiceMgr.instance.serviceName;
     }
 
     static get typeName() {
@@ -35,11 +35,11 @@ class Revision extends Type {
     }
 
     static async _getDb() {
-        return await serviceMgr.use("db");
+        return await ServiceMgr.instance.use("db");
     }
 
     static async _getMb() {
-        return serviceMgr.msgBus;
+        return ServiceMgr.instance.msgBus;
     }
 
     static async allocate(repoId, id, patch) {
@@ -52,6 +52,7 @@ class Revision extends Type {
             });
         }
 
+        patch.userRef = await revision._getUserRef(patch.email);
         revision.patches.push(patch);
 
         // If we get a new patch we should restart the flow and thus need
@@ -95,6 +96,7 @@ class Revision extends Type {
         this.tags.push("merged");
 
         if (patch) {
+            patch.userRef = await this._getUserRef(patch.email);
             this.patches.push(patch);
         }
 
@@ -112,12 +114,23 @@ class Revision extends Type {
     }
 
     async addReview(userEmail, state) {
-        // Modify previous review for userEmail
-        const review = this.reviews.find((r) => r.userEmail === userEmail);
+        const userRef = await this._getUserRef(userEmail);
+        // Modify previous review for user
+        const review = this.reviews.find(
+            (r) => (userRef && r.userRef) ? r.userRef.id === userRef.id : r.userEmail === userEmail
+        );
+        const time = new Date();
         if (review) {
             review.state = state;
+            review.updated = time;
         } else {
-            this.reviews.push({ userEmail: userEmail, state: state });
+            this.reviews.push({
+                created: time,
+                updated: time,
+                userRef,
+                userEmail,
+                state
+            });
         }
 
         // Regenerate review tags
@@ -136,6 +149,42 @@ class Revision extends Type {
         });
 
         await this.save();
+    }
+
+    async _getUserRef(userEmail) {
+        let ref = false;
+
+        if (typeof userEmail !== "string" ||
+            (typeof userEmail === "string" && userEmail.length === 0)) {
+            ServiceMgr.instance.log("error", `Can't get user ref for user with illegal email ${JSON.stringify(userEmail)}`);
+
+            return ref;
+        }
+
+        try {
+            const client = ServiceComBus.instance.getClient("userrepo");
+            const users = await client.list("user", {
+                email: userEmail
+            });
+            if (!(users instanceof Array)) {
+                throw new Error(`Expected array result, got data: ${JSON.stringify(users)}`);
+            }
+            if (users.length === 1) {
+                ref = {
+                    id: users[0]._id,
+                    type: "userrepo.user",
+                    _ref: true
+                };
+            } else if (users.length === 0) {
+                ServiceMgr.instance.log("info", `Found no user with email ${userEmail}`);
+            } else {
+                ServiceMgr.instance.log("error", `Found ${users.length} users with email ${userEmail}`);
+            }
+        } catch (error) {
+            ServiceMgr.instance.log("error", `Can't get user ref for user with email ${userEmail}`, error);
+        }
+
+        return ref;
     }
 }
 

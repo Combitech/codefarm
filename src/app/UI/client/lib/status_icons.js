@@ -18,7 +18,9 @@ const statusIcons = {
     neutral: [ "/Cheser/extras/255x255/status/status-neutral.png" ],
     happy: [ "/Cheser/extras/255x255/status/status-happy.png" ],
     unhappy: [ "/Cheser/extras/255x255/status/status-unhappy.png" ],
-    shadow: [ "/Cheser/extras/255x255/status/status-shadow.png" ]
+    shadow: [ "/Cheser/extras/255x255/status/status-shadow.png" ],
+    approved: [ "/Cheser/extras/255x255/status/status-happy.png" ],
+    rejected: [ "/Cheser/extras/255x255/status/status-unhappy.png" ]
 };
 
 export default statusIcons;

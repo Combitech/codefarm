@@ -9,7 +9,7 @@ import JobListItem from "../job/ListItem";
 import {
     Section as TASection,
     PagedList as TAPagedList,
-    ControlButton as TAControlButton,
+    ControlButton as TAControlButton
 } from "ui-components/type_admin";
 import api from "api.io/api.io-client";
 import * as pathBuilder from "ui-lib/path_builder";

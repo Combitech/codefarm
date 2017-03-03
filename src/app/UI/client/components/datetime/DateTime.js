@@ -52,7 +52,7 @@ DateTime.defaultProps = {
 DateTime.propTypes = {
     theme: React.PropTypes.object,
     className: React.PropTypes.string,
-    value: React.PropTypes.any.isRequired,
+    value: React.PropTypes.any,
     defaultText: React.PropTypes.string,
     showRaw: React.PropTypes.bool,
     showDate: React.PropTypes.bool,
