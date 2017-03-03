@@ -45,49 +45,54 @@ echo "Now I will tag my job with extra tags"
 tags=( $($CLI tag_type -q '$.tags[*]' --format values exec.job -t "git_sha:${commit}" -t "repo:${repositoryId}" $jobId) )
 echo "Job tags: ${tags[*]}"
 
-#################
-# START OF TEST #
-#################
-echo "Now I will test the components"
+###################
+# LOCAL FUNCTIONS #
+###################
+function dowork() {
+    work=$1
+    name=$2
+    script=$3
+    targets=($4)
+    exitcode=0
 
-# TODO: Readd the other testcases
-components=(ArtifactRepo BaselineGen DataResolve EventRepo Exec LogRepo UserRepo)
-exitCode=0
+    echo "Now I will ${work} ${name}s"
+    for target in ${targets[@]}; do
+        result=0
+        subjobname=${name}_${work}_${target} #For ex lib_build_web
+        echo "Now I will ${work} ${name} ${target} (subjob ${subjobname})"
+        subJobId=$($CLI -q '$._id' --format values create_subjob ${subjodname} ongoing)
+        startTime=$(($(date +%s%N)/1000000))
 
-jobRunId=$($CLI -q '$.lastRunId' --format values read_type exec.job $jobId)
+        $script $target || result=1
+        if [[ $result -eq 1 ]]; then
+          echo "${subjobname} failed"
+          $CLI update_subjob $subJobId -s fail --result $testDurationStr
+          exitCode=1
+        else
+          echo "${subjobname} passed"
+          $CLI update_subjob $subJobId -s success --result $testDurationStr
+        fi
+    done
+
+    return $exitCode
+}
+
+#######################
+# START OF BUILD/TEST #
+#######################
+source ${gitroot}ci/common.source #to get components, componenttests, libs and libstests
+
+#jobRunId=$($CLI -q '$.lastRunId' --format values read_type exec.job $jobId)
 echo Job run id: $jobRunId
 
-echo "Now I will install dependencies for local libs"
-src/scripts/install_all_libs.sh
+targets="${libs[@]}"
+dowork "build" "lib" $gitroot/ci/libs-build-dev.sh "$targets"
 
-for testId in ${components[@]}; do
-    echo "Now I will create a subjob to test component $testId"
-    pushd src/app/$testId
-    subJobId=$($CLI -q '$._id' --format values create_subjob test "test_$testId" ongoing)
+targets="${libtests[@]}"
+dowork "test" "lib" $gitroot/ci/libs-test.sh "$targets" || echo "lib tests failed"
 
-    startTime=$(($(date +%s%N)/1000000))
-    yarn
+targets="${components[@]}"
+dowork "build" "component" $gitroot/ci/components-build-dev.sh "$targets"
 
-    testResult=0
-    yarn test || testResult=1
-
-    #Calculate test time and store in string as '{"timeMs":x}'
-    stopTime=$(($(date +%s%N)/1000000))
-    testDuration=`expr $stopTime - $startTime`
-    testDurationStr={\"timeMs\":$testDuration}
-
-    if [[ $testResult -ne 0 ]]; then
-      echo "Test of $testId failed"
-      $CLI update_subjob $subJobId -s fail --result $testDurationStr
-      exitCode=1
-    else
-      $CLI update_subjob $subJobId -s success --result $testDurationStr
-    fi
-    popd
-done
-
- echo "Now I will tag my job done"
-tags=( $($CLI tag_type -q '$.tags[*]' --format values exec.job -t done_${jobRunId} $jobId) )
-echo "Job tags: ${tags[*]}"
-
-exit $exitCode
+targets="${componenttests[@]}"
+dowork "test" "component" $gitroot/ci/components-test.sh "$targets"

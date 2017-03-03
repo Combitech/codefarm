@@ -15,19 +15,12 @@ targets=$1
 gitroot=$(git rev-parse --show-toplevel)
 source $gitroot/ci/common.source
 
-#TODO: once these have tests, remove this section
-#Remove components without test
-components=( "${components[@]/CodeRepo}" )
-components=( "${components[@]/FlowCtrl}" )
-components=( "${components[@]/Mgmt}" )
-components=( "${components[@]/UI}" )
-
 if [ "${targets}" == "all" ]; then
-  targets=${components[@]}
+  targets=${componenttests[@]}
 else
   for target in ${targets[@]}; do
-    if [[ " ${components[*]} " != *" ${target} "* ]]; then
-      echo "Error: Component must be one of ${components[*]}"
+    if [[ " ${componenttests[*]} " != *" ${target} "* ]]; then
+      echo "Error: Component must be one of ${componenttests[*]} or 'all'"
       printUsage
       exit 1
     fi

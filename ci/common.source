@@ -2,3 +2,18 @@ gitroot=$(git rev-parse --show-toplevel)
 libs=$(ls ${gitroot}/src/lib/ | tr '\n' ' ')
 components=$(ls ${gitroot}/src/app/ | tr '\n' ' ')
 
+#Include only libs that contain test dir
+libtests=()
+for lib in ${libs[@]}; do
+  if [ -d ${gitroot}/src/lib/${lib}/test ]; then
+    libtests+=(${lib})
+  fi
+done
+
+#Include only components that contain test dir
+componenttests=()
+for component in ${components[@]}; do
+  if [ -d ${gitroot}/src/app/${component}/test ]; then
+    componenttests+=(${component})
+  fi
+done
