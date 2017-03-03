@@ -37,7 +37,7 @@ class ReviewCard extends LightComponent {
     render() {
         const review = this.props.item;
         const name = this.state.user.get("name", "Someone");
-        const email = this.state.user.get("email");
+        const email = this.state.user.get("email", [])[0];
 
         const title = () => {
             if (review.state === "approved") {

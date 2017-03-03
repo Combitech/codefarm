@@ -50,7 +50,7 @@ class RevisionCard extends LightComponent {
     render() {
         const patch = this.getLatestPatch(this.props);
         const name = this.state.user.get("name", patch.name);
-        const email = this.state.user.get("email", patch.email);
+        const email = this.state.user.get("email", [])[0];
 
         const title = () => {
             if (this.props.patchIndex < 0) {
