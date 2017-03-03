@@ -60,7 +60,7 @@ function dowork() {
         result=0
         subjobname=${name}_${work}_${target} #For ex lib_build_web
         echo "Now I will ${work} ${name} ${target} (subjob ${subjobname})"
-        subJobId=$($CLI -q '$._id' --format values create_subjob ${work} "${subjodname}" ongoing)
+        subJobId=$($CLI -q '$._id' --format values create_subjob ${work} "${subjobname}" ongoing)
         startTime=$(($(date +%s%N)/1000000))
 
         $script $target || result=1
