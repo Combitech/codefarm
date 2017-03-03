@@ -8,6 +8,10 @@ import {
 import { RevisionCard } from "ui-components/data_card";
 import BaselineItem from "../../../observables/baseline_item";
 
+const cards = {
+    "coderepo.revision": RevisionCard
+};
+
 class BaselineContentList extends LightComponent {
     constructor(props) {
         super(props);
@@ -42,39 +46,37 @@ class BaselineContentList extends LightComponent {
             );
         }
 
-        const baseline = this.state.baseline.toJS().data;
+        const baselineData = this.state.baseline.toJS().data;
+        const contentList = baselineData ? baselineData.content : [];
+        const list = [];
 
-        if (!baseline) {
-            return (
-                <div>No data</div>
-            );
+        for (const content of contentList) {
+            for (const item of content.data) {
+                if (cards[item.type]) {
+                    list.push({
+                        id: item._id,
+                        time: 0,
+                        item: item,
+                        Card: cards[item.type],
+                        props: {}
+                    });
+                } else {
+                    console.error("Baseline contained data that we have no card for", item);
+                }
+            }
         }
+
+        list.sort((a, b) => b.time - a.time);
 
         return (
             <div>
-                {baseline.content.map((content) => (
-                    <div key={content.name}>
-                        {content.data.map((item) => {
-                            if (item.type === "coderepo.revision") {
-                                return (
-                                    <RevisionCard
-                                        key={item._id}
-                                        theme={this.props.theme}
-                                        item={item}
-                                    />
-                                );
-                            }
-
-                            return (
-                                <div key={item._id}>
-                                    Type is not supported.<br />
-                                    <pre>
-                                        {JSON.stringify(item, null, 2)}
-                                    </pre>
-                                </div>
-                            );
-                        })}
-                    </div>
+                {list.map((item) => (
+                    <item.Card
+                        key={item.id}
+                        item={item.item}
+                        {...item.props}
+                        expanded={false}
+                    />
                 ))}
             </div>
         );

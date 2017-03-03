@@ -5,6 +5,7 @@ import { States as ObservableDataStates } from "ui-lib/observable_data";
 import {
     LoadIndicator as TALoadIndicator
 } from "ui-components/type_admin";
+import { ArtifactCard } from "ui-components/data_card";
 import Artifacts from "../../../observables/artifact_list";
 
 class ArtifactList extends LightComponent {
@@ -33,6 +34,7 @@ class ArtifactList extends LightComponent {
             ids: nextProps.artifactRefs.map((ref) => ref.id)
         });
     }
+
     render() {
         if (this.state.state === ObservableDataStates.LOADING) {
             return (
@@ -40,39 +42,31 @@ class ArtifactList extends LightComponent {
             );
         }
 
-        return (
-            <table className={this.props.theme.artifactList}>
-                <thead>
-                    <tr>
-                        <th>Repository</th>
-                        <th>Name</th>
-                        <th>State</th>
-                        <th>Version</th>
-                        <th>Size</th>
-                        <th>MIME Type</th>
-                        <th>Checksums</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {this.state.artifacts.toJS().map((artifact) => {
-                        const hashList = Object.keys(artifact.fileMeta.hashes).map((key) => `${key}: ${artifact.fileMeta.hashes[key]}`);
+        const list = [];
 
-                        return (
-                            <tr key={artifact._id}>
-                                <td>{artifact.repository}</td>
-                                <td>{artifact.fileMeta.filename}</td>
-                                <td>{artifact.state}</td>
-                                <td>{artifact.version}</td>
-                                <td>{artifact.fileMeta.size}</td>
-                                <td>{artifact.fileMeta.mimeType}</td>
-                                <td>{hashList.map((hash) => (
-                                    <div key={hash}>{hash}</div>
-                                ))}</td>
-                            </tr>
-                        );
-                    })}
-                </tbody>
-            </table>
+        for (const artifact of this.state.artifacts.toJS()) {
+            list.push({
+                id: artifact._id,
+                time: 0,
+                item: artifact,
+                Card: ArtifactCard,
+                props: {}
+            });
+        }
+
+        list.sort((a, b) => b.time - a.time);
+
+        return (
+            <div>
+                {list.map((item) => (
+                    <item.Card
+                        key={item.id}
+                        item={item.item}
+                        {...item.props}
+                        expanded={false}
+                    />
+                ))}
+            </div>
         );
     }
 }

@@ -4,6 +4,7 @@ import LightComponent from "ui-lib/light_component";
 import OverviewSection from "./sections/Overview";
 import JobSection from "./sections/Job";
 import NoJobSection from "./sections/NoJob";
+import moment from "moment";
 
 class Section extends LightComponent {
     constructor(props) {
@@ -14,17 +15,23 @@ class Section extends LightComponent {
         this.log("render", this.props, this.state);
 
         if (this.props.step.value) {
-            const jobRef = this.props.itemExt.data.refs.find((ref) => ref.name === this.props.step.value);
+            const jobRefs = this.props.itemExt.data.refs.filter((ref) => ref.name === this.props.step.value && ref.type === "exec.job");
 
-            if (jobRef) {
-                return (
-                    <JobSection
-                        theme={this.props.theme}
-                        item={this.props.item}
-                        itemExt={this.props.itemExt}
-                        jobItem={jobRef.data}
-                    />
-                );
+            if (jobRefs.length > 0) {
+                jobRefs.sort((a, b) => moment(a.data.created).isBefore(b.data.created) ? 1 : -1);
+
+                const job = jobRefs[0] ? jobRefs[0].data : false;
+
+                if (job) {
+                    return (
+                        <JobSection
+                            theme={this.props.theme}
+                            item={this.props.item}
+                            itemExt={this.props.itemExt}
+                            jobItem={job}
+                        />
+                    );
+                }
             }
 
             return (

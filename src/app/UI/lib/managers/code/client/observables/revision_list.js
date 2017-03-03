@@ -1,40 +1,36 @@
 
-import PagedTypeList from "ui-observables/paged_type_list";
+import TypeList from "ui-observables/type_list";
 
-const convertOpts = (opts) => {
-    const newOpts = Object.assign({}, opts);
-    if (newOpts.hasOwnProperty("repositoryId") && newOpts.repositoryId !== null) {
-        newOpts.query = Object.assign(newOpts.query || {}, {
-            repository: newOpts.repositoryId
-        });
-        delete newOpts.repositoryId;
-    }
-    if (newOpts.hasOwnProperty("status") && newOpts.status !== null) {
-        newOpts.query = Object.assign(newOpts.query || {}, {
-            status: newOpts.status
-        });
-        delete newOpts.status;
-    }
+class RevisionList extends TypeList {
+    constructor(initialOpts) {
+        if (typeof initialOpts.ids !== "object" || initialOpts.ids.constructor !== Array) {
+            throw new Error("ids must be set to an array in the initial opts");
+        }
 
-    return newOpts;
-};
+        const createQuery = (ids) => (
+            {
+                _id: { $in: ids }
+            }
+        );
 
-class RevisionList extends PagedTypeList {
-    constructor(initialOpts, debug = false) {
         const defaultOpts = {
             type: "coderepo.revision",
-            query: false,
-            repositoryId: null,
-            filter: "",
-            filterFields: [ "name", "tags", "_id", "patches.email", "patches.name", "patches.comment", "patches.change.newrev" ]
+            query: createQuery(initialOpts.ids)
         };
 
-        const opts = Object.assign({}, defaultOpts, initialOpts);
-        super(convertOpts(opts), debug);
+        super(Object.assign({}, defaultOpts, initialOpts));
+
+        this._createQuery = createQuery;
     }
 
     setOpts(opts) {
-        super.setOpts(convertOpts(opts));
+        const nextOpts = Object.assign({}, opts);
+
+        if (opts.ids) {
+            nextOpts.query = this._createQuery(opts.ids);
+        }
+
+        super.setOpts(nextOpts);
     }
 }
 

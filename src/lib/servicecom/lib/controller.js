@@ -273,7 +273,7 @@ class Controller {
 
     // Basic operations
 
-    async _list(query, options = {}) {
+    async _list(query = {}, options = {}) {
         this._isAllowed("read");
 
         if (query.hasOwnProperty("__options")) {

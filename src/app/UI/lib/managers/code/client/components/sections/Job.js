@@ -4,12 +4,11 @@ import LightComponent from "ui-lib/light_component";
 // import { StatusIcon } from "ui-components/status";
 import LogViewer from "ui-components/log_viewer";
 import { Tab, Tabs } from "react-toolbox/lib/tabs";
-import { Row, Col } from "react-flexbox-grid";
 import stateVar from "ui-lib/state_var";
-import BaselineContentList from "./job/BaselineContentList";
-import ArtifactList from "./job/ArtifactList";
-import ItemComments from "./job/ItemComments";
-import { JobCard } from "ui-components/data_card";
+
+import OutputTab from "./job/OutputTab";
+import JobTab from "./job/JobTab";
+import SubJobTab from "./job/SubJobTab";
 
 class Job extends LightComponent {
     constructor(props) {
@@ -36,56 +35,39 @@ class Job extends LightComponent {
                     key="info"
                     label="Job"
                 >
-                    <Row>
-                        <Col xs={12} md={6}>
-                            <h5 className={this.props.theme.sectionHeader}>Properties</h5>
-                            <div className={this.props.theme.section}>
-                                <JobCard
-                                    item={job}
-                                    expanded={true}
-                                    expandable={false}
-                                />
-                            </div>
-
-                            <h5 className={this.props.theme.sectionHeader}>Comments</h5>
-                            <div className={this.props.theme.section}>
-                                <ItemComments
-                                    theme={this.props.theme}
-                                    item={job}
-                                />
-                            </div>
-                        </Col>
-                        <Col xs={12} md={6}>
-                            <h5 className={this.props.theme.sectionHeader}>In this run</h5>
-                            <div className={this.props.theme.section}>
-                                <BaselineContentList
-                                    theme={this.props.theme}
-                                    baselineRef={{
-                                        _ref: true,
-                                        id: job.baseline._id,
-                                        type: job.baseline.type
-                                    }}
-                                />
-                            </div>
-                        </Col>
-                    </Row>
+                    <JobTab
+                        theme={this.props.theme}
+                        job={job}
+                    />
                 </Tab>
                 {run.logs.map((ref) => (
                     <Tab
                         key={ref.id}
-                        label={ref.name}
+                        label={`${ref.name}`}
                     >
                         <LogViewer log={ref} />
                     </Tab>
                 ))}
-                {run.artifacts.length && (
+                {run.subJobs.length && (
                     <Tab
-                        key="artifacts"
-                        label="Artifacts"
+                        key="subjobs"
+                        label="Sub Jobs"
                     >
-                        <ArtifactList
+                        <SubJobTab
+                            theme={this.props.theme}
+                            subJobRefs={run.subJobs}
+                        />
+                    </Tab>
+                )}
+                {(run.artifacts.length || run.revisions.length) && (
+                    <Tab
+                        key="output"
+                        label="Output"
+                    >
+                        <OutputTab
                             theme={this.props.theme}
                             artifactRefs={run.artifacts}
+                            revisionRefs={run.revisions}
                         />
                     </Tab>
                 )}

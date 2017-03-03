@@ -13,7 +13,7 @@ import UserAvatar from "ui-components/user_avatar";
 import { Tab, Tabs } from "react-toolbox/lib/tabs";
 import { StatusIcon } from "ui-components/status";
 import theme from "./theme.scss";
-import RevisionListObservable from "../observables/revision_list";
+import RevisionListObservable from "../observables/paged_revision_list";
 import StepListObservable from "ui-observables/step_list";
 import DateTime from "ui-components/datetime";
 import { States as ObservableDataStates } from "ui-lib/observable_data";

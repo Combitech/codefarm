@@ -73,8 +73,7 @@ class Overview extends LightComponent {
                 time: moment(review.updated).unix(),
                 item: review,
                 Card: ReviewCard,
-                props: {
-                }
+                props: {}
             });
         });
 
