@@ -95,7 +95,7 @@ targets="${libs[@]}"
 dowork "build" "lib" $gitroot/ci/libs-build-dev.sh "$targets"
 
 targets="${libtests[@]}"
-dowork "test" "lib" $gitroot/ci/libs-test.sh "$targets" || echo "lib tests failed"
+dowork "test" "lib" $gitroot/ci/libs-test.sh "$targets"
 
 targets="${components[@]}"
 dowork "build" "component" $gitroot/ci/components-build-dev.sh "$targets"
