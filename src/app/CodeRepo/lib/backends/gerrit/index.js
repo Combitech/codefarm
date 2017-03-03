@@ -157,7 +157,8 @@ class GerritBackend extends AsyncEventEmitter {
                 change: {
                     oldrev: event.patchSet.parents[0],
                     newrev: event.patchSet.revision,
-                    refname: event.patchSet.ref // Use event.refName all the time instead?
+                    refname: event.patchSet.ref, // Use event.refName all the time instead?
+                    files: [] // TODO: Get files diff use github format
                 }
             };
 
@@ -178,12 +179,13 @@ class GerritBackend extends AsyncEventEmitter {
                 const patch = {
                     email: event.patchSet.uploader.email,
                     name: event.patchSet.uploader.name,
-                    submitted: moment.unix(event.patchSet.createdOn).utc().format(),
+                    submitted: moment.unix(event.eventCreatedOn).utc().format(),
                     comment: event.change.commitMessage,
                     change: {
                         oldrev: event.patchSet.parents[0],
                         newrev: event.newRev,
-                        refname: event.refName
+                        refname: event.refName,
+                        files: [] // TODO: Get files diff use github format
                     }
                 };
                 await revision.setMerged(patch);

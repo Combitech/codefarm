@@ -70,16 +70,16 @@ class Revision extends Type {
         }
 
         if (this.patches.length === 0) {
-            throw new Error("No ref to merge for revision");
+            throw new Error("No patch to merge for revision");
         }
 
         const repository = await Repository.findOne({ _id: this.repository });
         // TODO: Any asynchronous updates done by backend isn't updated in this
-        const ref = await BackendProxy.instance.merge(repository, this);
+        const patch = await BackendProxy.instance.merge(repository, this);
 
-        if (ref) {
+        if (patch) {
             // Some backends calls setMerged by them self...
-            await this.setMerged(ref);
+            await this.setMerged(patch);
         }
     }
 
@@ -89,7 +89,7 @@ class Revision extends Type {
         }
 
         if (this.patches.length === 0) {
-            throw new Error("No ref to merge for revision");
+            throw new Error("No patch to merge for revision");
         }
 
         this.status = "merged";

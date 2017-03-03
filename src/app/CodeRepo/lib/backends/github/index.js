@@ -93,20 +93,22 @@ class GithubBackend extends AsyncEventEmitter {
 
     async _createPatch(event, repository, overrideSha = null) {
         const changeSha = overrideSha ? overrideSha : event.pull_request.head.sha;
-        const email = await this._getCommitEmail(event.repository.name, changeSha);
+        const commit = await this._getCommit(event.repository.name, changeSha);
+        const name = commit ? commit.commit.author.name : event.pull_request.user.login;
 
         ServiceMgr.instance.log("verbose", `Creating new patch for pull request ${event.pull_request.number} (${changeSha})`);
 
         return {
-            email: email,
-            name: event.pull_request.user.login,
-            submitted: moment(event.pull_request.created_at).utc().format(),
+            email: commit ? commit.commit.author.email : false,
+            name: name,
+            submitted: moment(event.pull_request.merged_at).utc().format(),
             comment: event.pull_request.title,
             pullreqnr: event.pull_request.number.toString(),
             change: {
                 oldrev: event.pull_request.base.sha,
                 newrev: changeSha,
-                refname: event.pull_request.head.ref
+                refname: event.pull_request.head.ref,
+                files: commit ? commit.files : []
             }
         };
     }
@@ -135,14 +137,12 @@ class GithubBackend extends AsyncEventEmitter {
         return null;
     }
 
-    async _getCommitEmail(repositoryName, commitSha) {
+    async _getCommit(repositoryName, commitSha) {
         const url = `${GITHUB_API_BASE}/repos/${this.backend.target}/${repositoryName}/commits/${commitSha}`;
         try {
-            const result = await this._sendRequest(url, {}, "GET");
-
-            return result.commit.author.email;
+            return await this._sendRequest(url, {}, "GET");
         } catch (err) {
-            ServiceMgr.instance.log("info", `Unable to get email for ${repositoryName}:${commitSha}`);
+            ServiceMgr.instance.log("info", `Unable to get author for ${repositoryName}:${commitSha}`);
 
             return null;
         }
@@ -231,22 +231,26 @@ class GithubBackend extends AsyncEventEmitter {
         const repository = await this._getRepo(event.repository.name);
         let revision = null;
         for (const commit of event.commits) {
+            const info = await this._getCommit(event.repository.name, commit.id);
+
             const patch = {
                 email: commit.author.email,
                 name: commit.author.name,
-                submitted: commit.timestamp,
+                submitted: moment(commit.timestamp).utc().format(),
                 comment: commit.message,
                 pullreqnr: "-1",
                 change: {
                     oldrev: null, // TODO: set this
                     newrev: commit.id,
-                    refname: event.ref
+                    refname: event.ref,
+                    files: info ? info.files : []
                 }
             };
+
             revision = await this.Revision.allocate(repository._id, commit.id, patch);
+            revision.setMerged();
+            ServiceMgr.instance.log("verbose", `Merged ${revision.patches.length} commits to ${repository._id}`);
         }
-        revision.setMerged();
-        ServiceMgr.instance.log("verbose", `Merged ${revision.patches.length} commits to ${repository._id}`);
     }
 
     async _onPullRequestReview(event) {
