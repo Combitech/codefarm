@@ -12,25 +12,25 @@ class ArtifactList extends LightComponent {
         super(props);
 
         this.artifacts = new Artifacts({
-            id: props.artifactRefs.map((ref) => ref._id)
+            ids: props.artifactRefs.map((ref) => ref.id)
         });
 
         this.state = {
-            artifacts: this.baseline.value.getValue(),
-            state: this.baseline.state.getValue()
+            artifacts: this.artifacts.value.getValue(),
+            state: this.artifacts.state.getValue()
         };
     }
 
     componentDidMount() {
-        this.addDisposable(this.baseline.start());
+        this.addDisposable(this.artifacts.start());
 
-        this.addDisposable(this.baseline.value.subscribe((artifacts) => this.setState({ artifacts })));
-        this.addDisposable(this.baseline.state.subscribe((state) => this.setState({ state })));
+        this.addDisposable(this.artifacts.value.subscribe((artifacts) => this.setState({ artifacts })));
+        this.addDisposable(this.artifacts.state.subscribe((state) => this.setState({ state })));
     }
 
     componentWillReceiveProps(nextProps) {
-        this.baseline.setOpts({
-            id: nextProps.artifactRefs.map((ref) => ref._id)
+        this.artifacts.setOpts({
+            ids: nextProps.artifactRefs.map((ref) => ref.id)
         });
     }
     render() {
@@ -55,10 +55,10 @@ class ArtifactList extends LightComponent {
                 </thead>
                 <tbody>
                     {this.state.artifacts.toJS().map((artifact) => {
-                        const hashList = Object.keys(artifact.fileMeta.hashes).map((key) => `${key}:${artifact.fileMeta.hashes[key]}`);
+                        const hashList = Object.keys(artifact.fileMeta.hashes).map((key) => `${key}: ${artifact.fileMeta.hashes[key]}`);
 
                         return (
-                            <tr>
+                            <tr key={artifact._id}>
                                 <td>{artifact.repository}</td>
                                 <td>{artifact.fileMeta.filename}</td>
                                 <td>{artifact.state}</td>
