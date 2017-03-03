@@ -60,10 +60,16 @@ function dowork() {
         result=0
         subjobname=${name}_${work}_${target} #For ex lib_build_web
         echo "Now I will ${work} ${name} ${target} (subjob ${subjobname})"
-        subJobId=$($CLI -q '$._id' --format values create_subjob ${subjodname} ongoing)
+        subJobId=$($CLI -q '$._id' --format values create_subjob ${work} "${subjodname}" ongoing)
         startTime=$(($(date +%s%N)/1000000))
 
         $script $target || result=1
+
+        #Calculate test time and store in string as '{"timeMs":x}'
+        stopTime=$(($(date +%s%N)/1000000))
+        testDuration=`expr $stopTime - $startTime`
+        testDurationStr={\"timeMs\":$testDuration}
+
         if [[ $result -eq 1 ]]; then
           echo "${subjobname} failed"
           $CLI update_subjob $subJobId -s fail --result $testDurationStr
