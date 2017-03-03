@@ -147,7 +147,6 @@ class GerritBackend extends AsyncEventEmitter {
         const repositoryId = event.project;
         const repository = await this.Repository.findOne({ _id: repositoryId });
         if (repository) {
-            const revision = await this.Revision.findOne({ _id: changeId });
             // TODO: Shall we use email and name from uploader?
             // TODO: Handle draft changes
             const patch = {

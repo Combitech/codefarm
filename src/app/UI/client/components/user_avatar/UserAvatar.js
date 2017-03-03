@@ -43,7 +43,7 @@ class UserAvatar extends LightComponent {
 
     componentWillReceiveProps(nextProps) {
         this.user.setOpts({
-            email: nextProps.identifier
+            identifier: nextProps.identifier
         });
     }
 

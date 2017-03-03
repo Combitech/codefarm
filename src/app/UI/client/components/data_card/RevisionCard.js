@@ -7,6 +7,7 @@ import DateTime from "ui-components/datetime";
 import Chip from "react-toolbox/lib/chip";
 import ExpandableCard from "ui-components/expandable_card";
 import stateVar from "ui-lib/state_var";
+import { StringUtil } from "misc";
 
 class RevisionCard extends LightComponent {
     constructor(props) {
@@ -38,7 +39,7 @@ class RevisionCard extends LightComponent {
                     avatar={(
                         <UserAvatar
                             className={this.props.theme.avatar}
-                            identifier={patch.email}
+                            identifier={patch.userRef ? patch.userRef.id : patch.email}
                         />
                     )}
                     title={`${patch.name} <${patch.email}>`}
@@ -60,7 +61,7 @@ class RevisionCard extends LightComponent {
                             <tr>
                                 <td>Status</td>
                                 <td>
-                                    {this.props.item.status}
+                                    {StringUtil.toUpperCaseLetter(this.props.item.status)}
                                 </td>
                             </tr>
                             <tr>
