@@ -19,7 +19,14 @@ class TestBackend {
     async start() {
     }
 
-    async lookupUser(/* query */) {
+    constructUser(user) {
+        user.testBackendConstructTouch = true;
+    }
+
+    async validateUser(/* event, data */) {
+    }
+
+    async lookupUser(/* data */) {
         return false;
     }
 
@@ -77,6 +84,13 @@ describe("UserRepo", () => {
     const addUser = async (data) =>
         rp.post({
             url: `${baseUrl}/user`,
+            body: data,
+            json: true
+        });
+
+    const userAuth = async (id, data) =>
+        rp.post({
+            url: `${baseUrl}/user/${id}/auth`,
             body: data,
             json: true
         });
@@ -141,7 +155,8 @@ describe("UserRepo", () => {
 
     const user1 = {
         _id: "test1",
-        name: "test user"
+        name: "test user",
+        password: "12345678"
     };
 
     const user2 = {
@@ -167,6 +182,8 @@ describe("UserRepo", () => {
             assert.strictEqual(data.result, "success");
             assert.strictEqual(data.data._id, user1._id);
             assert.strictEqual(data.data.name, user1.name);
+            assert.notProperty(data.data, "password");
+            assert.notProperty(data.data, "passwordHash");
         });
 
         it("should list user", async () => {
@@ -174,6 +191,24 @@ describe("UserRepo", () => {
             assert.equal(data.length, 1);
             assert.strictEqual(data[0]._id, user1._id);
             assert.strictEqual(data[0].name, user1.name);
+        });
+
+        it("should authenticate user if correct password", async () => {
+            const data = await userAuth(user1._id, {
+                password: user1.password
+            });
+            assert.strictEqual(data.result, "success");
+            assert.strictEqual(data.action, "auth");
+            assert.strictEqual(data.data.authenticated, true);
+        });
+
+        it("should not authenticate user if incorrect password", async () => {
+            const data = await userAuth(user1._id, {
+                password: "wrong password"
+            });
+            assert.strictEqual(data.result, "success");
+            assert.strictEqual(data.action, "auth");
+            assert.strictEqual(data.data.authenticated, false);
         });
 
         it("should not add user to unknown backend", async () => {
@@ -187,9 +222,39 @@ describe("UserRepo", () => {
                 await addUser(testUser);
                 assert(false, "Unexpected user add");
             } catch (error) {
-                console.log(error);
-                assert.strictEqual(error.statusCode, 500);
+                assert.strictEqual(error.statusCode, 400);
                 assert.match(error.message, /Unknown backend name NonExistingBackend/);
+            }
+        });
+
+        it("should not add user without password for Dummy backend", async () => {
+            const testUser = {
+                _id: "failedTestUser",
+                name: "failed test user"
+            };
+
+            try {
+                await addUser(testUser);
+                assert(false, "Unexpected user add");
+            } catch (error) {
+                assert.strictEqual(error.statusCode, 400);
+                assert.match(error.message, /password must be of type string/);
+            }
+        });
+
+        it("should not add user with too short password for Dummy backend", async () => {
+            const testUser = {
+                _id: "failedTestUser",
+                name: "failed test user",
+                password: "1234567"
+            };
+
+            try {
+                await addUser(testUser);
+                assert(false, "Unexpected user add");
+            } catch (error) {
+                assert.strictEqual(error.statusCode, 400);
+                assert.match(error.message, /Password to short, minimum length is 8/);
             }
         });
 
@@ -229,7 +294,8 @@ describe("UserRepo", () => {
     const user3 = {
         _id: "test3",
         name: "test user 3",
-        teams: [ team1._id ]
+        teams: [ team1._id ],
+        password: "12345678"
     };
 
     describe("User with team", () => {
@@ -252,7 +318,6 @@ describe("UserRepo", () => {
                 await addUser(testUser);
                 assert(false, "Unexpected user add");
             } catch (error) {
-                console.log(error);
                 assert.strictEqual(error.statusCode, 400);
                 assert.match(error.message, /Team some_non_existing_team doesn't exist/);
             }

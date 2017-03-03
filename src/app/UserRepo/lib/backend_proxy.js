@@ -18,9 +18,21 @@ class BackendProxy extends BackendProxyBase {
         await super.start({ types: backendTypes });
     }
 
-    async lookupUser(query) {
+    constructUser(user) {
+        const instance = this.getBackend(user.backend);
+
+        return instance.constructUser(user);
+    }
+
+    async validateUser(backend, event, data) {
+        const instance = this.getBackend(backend);
+
+        return instance.validateUser(event, data);
+    }
+
+    async lookupUser(data) {
         for (const name of Object.keys(this.backends)) {
-            const user = await this.backends[name].lookupUser(query);
+            const user = await this.backends[name].lookupUser(data);
 
             if (user) {
                 user.backend = name;
@@ -32,19 +44,25 @@ class BackendProxy extends BackendProxyBase {
         return false;
     }
 
-    async createUser(repository) {
-        const instance = this.getBackend(repository.backend);
-        await instance.createUser(repository);
+    async createUser(user) {
+        const instance = this.getBackend(user.backend);
+        await instance.createUser(user);
     }
 
-    async removeUser(repository) {
-        const instance = this.getBackend(repository.backend);
-        await instance.removeUser(repository);
+    async removeUser(user) {
+        const instance = this.getBackend(user.backend);
+        await instance.removeUser(user);
     }
 
-    async updateUser(repository) {
-        const instance = this.getBackend(repository.backend);
-        await instance.updateUser(repository);
+    async updateUser(user) {
+        const instance = this.getBackend(user.backend);
+        await instance.updateUser(user);
+    }
+
+    async authenticateUser(user, password) {
+        const instance = this.getBackend(user.backend);
+
+        return instance.authenticateUser(user, password);
     }
 
     async lookupTeam(query) {
@@ -61,19 +79,19 @@ class BackendProxy extends BackendProxyBase {
         return false;
     }
 
-    async createTeam(repository) {
-        const instance = this.getBackend(repository.backend);
-        await instance.createTeam(repository);
+    async createTeam(team) {
+        const instance = this.getBackend(team.backend);
+        await instance.createTeam(team);
     }
 
-    async removeTeam(repository) {
-        const instance = this.getBackend(repository.backend);
-        await instance.removeTeam(repository);
+    async removeTeam(team) {
+        const instance = this.getBackend(team.backend);
+        await instance.removeTeam(team);
     }
 
-    async updateTeam(repository) {
-        const instance = this.getBackend(repository.backend);
-        await instance.updateTeam(repository);
+    async updateTeam(team) {
+        const instance = this.getBackend(team.backend);
+        await instance.updateTeam(team);
     }
 
     async dispose() {

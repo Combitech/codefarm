@@ -6,11 +6,13 @@ const { Type } = require("typelib");
 const BackendProxy = require("../backend_proxy");
 const Team = require("./team");
 
+const DEFAULT_BACKEND = "Dummy";
+
 class User extends Type {
     constructor(data) {
         super();
 
-        this.backend = "Dummy";
+        this.backend = DEFAULT_BACKEND;
         this.name = false;
         this.email = [];
         this.telephone = false;
@@ -20,6 +22,7 @@ class User extends Type {
         if (data) {
             this.set(data);
         }
+        BackendProxy.instance.constructUser(this);
     }
 
     static get serviceName() {
@@ -42,8 +45,11 @@ class User extends Type {
         const data = super.serialize();
         data.numKeys = data.keys.length;
 
-        // We don't want to expose the keys
+        // We don't want to expose any potential secrets...
         delete data.keys;
+
+        // TODO: Move to backend...
+        delete data.passwordHash;
 
         return data;
     }
@@ -60,21 +66,20 @@ class User extends Type {
         await BackendProxy.instance.removeUser(this);
     }
 
-    static async findOne(query, options) {
-        const db = await this._getDb();
-        const data = await db.findOne(this.typeName, query, options);
-
-        if (data) {
-            return this._instantiate(data);
+    static async factory(data) {
+        // User doesn't exist, checked in controller...
+        const lookupData = await BackendProxy.instance.lookupUser(data);
+        let user;
+        if (lookupData) {
+            user = this._instantiate(lookupData);
+        } else {
+            user = this._instantiate(data);
         }
 
-        const lookupData = await BackendProxy.instance.lookupUser(query);
-
-        if (!lookupData) {
-            return null;
+        if (!user) {
+            throw new Error("Cannot create user from data", data);
         }
 
-        const user = new User(lookupData);
         await user.save();
 
         return user;
@@ -105,6 +110,8 @@ class User extends Type {
                 }
             }
         }
+
+        await BackendProxy.instance.validateUser(data.backend || DEFAULT_BACKEND, event, data);
     }
 
     async addKey(key) {
@@ -121,6 +128,10 @@ class User extends Type {
         this.keys.push(key);
 
         await this.save();
+    }
+
+    async authenticate(password) {
+        return BackendProxy.instance.authenticateUser(this, password);
     }
 }
 

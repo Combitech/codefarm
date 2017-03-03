@@ -23,6 +23,11 @@ const argv = yargs
     requiresArg: true,
     default: process.env.USER
 })
+.option("p", {
+    alias: "password",
+    describe: "Password",
+    type: "string"
+})
 .option("b", {
     alias: "backend",
     describe: "Backend name",
@@ -77,11 +82,16 @@ const run = async () => {
                 name: argv.name,
                 teams: argv.teams,
                 email: argv.email,
-                backend: argv.backend
+                backend: argv.backend,
+                password: argv.password
             },
             json: true
         });
         console.dir(result, { colors: true, depth: null });
+        if (result.result !== "success") {
+            console.error("Failed to create user");
+            process.exit(1);
+        }
     }
 
     if (!argv.no_key) {
