@@ -12,7 +12,7 @@ class UserListItem extends LightComponent {
 
         let contactStr = "";
         if (item.email) {
-            contactStr = item.email;
+            contactStr = item.email.join(", ");
         }
 
         return (

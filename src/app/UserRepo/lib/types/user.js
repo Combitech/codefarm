@@ -12,7 +12,7 @@ class User extends Type {
 
         this.backend = "Dummy";
         this.name = false;
-        this.email = false;
+        this.email = [];
         this.telephone = false;
         this.keys = [];
         this.teams = [];

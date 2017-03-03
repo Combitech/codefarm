@@ -31,9 +31,9 @@ const argv = yargs
     default: "Dummy"
 })
 .option("email", {
-    describe: "User email",
-    type: "string",
-    requiresArg: true
+    describe: "User emails",
+    type: "array",
+    default: []
 })
 .option("k", {
     alias: "key",

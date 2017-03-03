@@ -49,8 +49,8 @@ class Item extends LightComponent {
                                             <td>{this.props.item.name}</td>
                                         </tr>
                                         <tr>
-                                            <td>Email</td>
-                                            <td>{this.props.item.email}</td>
+                                            <td>Emails</td>
+                                            <td>{this.props.item.email.join(", ")}</td>
                                         </tr>
                                         <tr>
                                             <td>Phone</td>
