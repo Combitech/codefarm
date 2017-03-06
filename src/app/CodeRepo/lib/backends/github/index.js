@@ -101,7 +101,7 @@ class GithubBackend extends AsyncEventEmitter {
         return {
             email: commit ? commit.commit.author.email : false,
             name: name,
-            submitted: moment(event.pull_request.merged_at).utc().format(),
+            submitted: moment.utc().format(),
             comment: event.pull_request.title,
             pullreqnr: event.pull_request.number.toString(),
             change: {
