@@ -33,6 +33,11 @@ if [ "${mode}" == "rel" ]; then
   installFlag="--production"
 fi
 
+pushd ${gitroot}/src/app/${target}
+  echo "Running install on ${target}"
+  yarn install ${installFlag}
+popd
+
 # Special case for UI in release mode: run compile-client
 if [[ "${target}" == "UI" && "${mode}" == "rel" ]]; then
   echo "Running UI compile-client"
@@ -40,8 +45,3 @@ if [[ "${target}" == "UI" && "${mode}" == "rel" ]]; then
     yarn compile-client --production
   popd
 fi
-
-pushd ${gitroot}/src/app/${target}
-  echo "Running install on ${target}"
-  yarn install ${installFlag}
-popd
