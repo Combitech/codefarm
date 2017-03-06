@@ -3,11 +3,6 @@ import React from "react";
 import Immutable from "immutable";
 import moment from "moment";
 import LightComponent from "ui-lib/light_component";
-import { Row, Col } from "react-flexbox-grid";
-import { States as ObservableDataStates } from "ui-lib/observable_data";
-import {
-    LoadIndicator as TALoadIndicator
-} from "ui-components/type_admin";
 import { CardList, SubJobCard } from "ui-components/data_card";
 import SubJobs from "../../../observables/subjob_list";
 
@@ -39,12 +34,6 @@ class SubJobTab extends LightComponent {
     }
 
     render() {
-        if (this.state.state === ObservableDataStates.LOADING) {
-            return (
-                <TALoadIndicator />
-            );
-        }
-
         const list = [];
 
         for (const subjob of this.state.subjobs.toJS()) {
