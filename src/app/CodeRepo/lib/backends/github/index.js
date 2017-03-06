@@ -249,8 +249,8 @@ class GithubBackend extends AsyncEventEmitter {
 
             revision = await this.Revision.allocate(repository._id, commit.id, patch);
             revision.setMerged();
-            ServiceMgr.instance.log("verbose", `Merged ${revision.patches.length} commits to ${repository._id}`);
         }
+        ServiceMgr.instance.log("verbose", `Merged ${events.commits.length} commits to ${repository._id}`);
     }
 
     async _onPullRequestReview(event) {
