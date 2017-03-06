@@ -17,6 +17,7 @@ import RevisionListObservable from "../observables/paged_revision_list";
 import StepListObservable from "ui-observables/step_list";
 import DateTime from "ui-components/datetime";
 import { States as ObservableDataStates } from "ui-lib/observable_data";
+import locationQuery from "ui-observables/location_query";
 
 class Header extends React.PureComponent {
     render() {
@@ -257,19 +258,13 @@ class RevisionTabs extends LightComponent {
         super(props);
 
         this.state = {
-            tabIndex: stateVar(this, "tabIndex", "0"),
+            params: locationQuery.params.getValue(),
             filter: ""
         };
     }
 
     componentDidMount() {
-        this.log("componentDidMount");
-        this.state.tabIndex.linkToLocation();
-    }
-
-    componentWillUnmount() {
-        this.state.tabIndex.die();
-        super.componentWillUnmount();
+        this.addDisposable(locationQuery.params.subscribe((params) => this.setState({ params })));
     }
 
     render() {
@@ -297,8 +292,8 @@ class RevisionTabs extends LightComponent {
                 <div className={this.props.theme.container}>
                     {this.props.item &&
                         <Tabs
-                            index={parseInt(this.state.tabIndex.value, 10)}
-                            onChange={(index) => this.state.tabIndex.set(`${index}`)}
+                            index={parseInt(this.state.params.toJS().tabIndex, 10)}
+                            onChange={(tabIndex) => locationQuery.setParams({ tabIndex })}
                             fixed={true}
                         >
                             <Tab label="Submitted">
@@ -311,6 +306,7 @@ class RevisionTabs extends LightComponent {
                                 />
                             </Tab>
                             <Tab label="Merged">
+
                                 <RevisionList
                                     theme={theme}
                                     repositoryId={this.props.item._id}
