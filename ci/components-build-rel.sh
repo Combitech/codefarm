@@ -1,13 +1,26 @@
 #!/bin/bash -e
 
 function printUsage() {
-  echo "Usage: $0 [components] or 'all'"
+  echo "Usage: $0 [-C <cli_path>] <componentss> or 'all'"
 }
 
 if [ $# -lt 1 ]; then
   echo "Error: Illegal number of arguments"
   printUsage
   exit 1
+fi
+
+# Extract optional CLI path
+while getopts ":C:" opt; do
+  case "$opt" in
+    C) CLI=$OPTARG ;;
+  esac
+done
+shift $(( OPTIND - 1 ))
+
+CLIARG=""
+if [ "${CLI}" != "" ]; then
+  CLIARG="-C ${CLI}"
 fi
 
 targets=$1
@@ -28,5 +41,5 @@ else
 fi
 
 for target in ${targets[@]}; do
-  ${gitroot}/ci/component-build.sh ${target} rel
+  ${gitroot}/ci/component-build.sh ${CLIARGS} ${target} rel
 done
