@@ -46,7 +46,7 @@ class Configs extends Controller {
             if (list.length > 0) {
                 for (const obj of list) {
                     if (obj._id !== config._id) {
-                        await obj.untag([], ACTIVE_TAG);
+                        await obj.untag(ACTIVE_TAG);
                         ServiceMgr.instance.log(
                             "verbose",
                             `Found other active config ${obj._id} with name ${obj.name}, untagged ${ACTIVE_TAG}`
