@@ -13,12 +13,6 @@ if [ -z "$gitroot" ]; then
 fi
 source $gitroot/src/bs/common.source
 
-production=0
-if [ "${NODE_ENV}" == "production" ]; then
-    echo "$0: Production mode, will copy linked deps"
-    production=1
-fi
-
 forceInstallLibs=0
 if [ -n "${FORCE_INSTALL_LIBS}" ]; then
     echo "$0: Force install of linked libraries"
@@ -42,20 +36,15 @@ fi
 
 if [ "${libs}" != "" ]; then
   while read -r lib; do
-      if [[ $production -eq 1 ]]; then
-          echo "Installing library dependency: $libdir/$lib"
-          gitroot=$gitroot $install_pkg $libdir/$lib
-      else
-          if [ ! -e "./node_modules/$lib" ]; then
-              ln -s "../$libdir/$lib" "./node_modules/"
-          fi
+      if [ ! -e "./node_modules/$lib" ]; then
+          ln -s "../$libdir/$lib" "./node_modules/"
+      fi
 
-          if [[ $forceInstallLibs -eq 1 ]]; then
-              if [ -L "./node_modules/$lib" ]; then
-                  pushd "./node_modules/$lib"
-                  $install
-                  popd
-              fi
+      if [[ $forceInstallLibs -eq 1 ]]; then
+          if [ -L "./node_modules/$lib" ]; then
+              pushd "./node_modules/$lib"
+              $install
+              popd
           fi
       fi
   done <<< "$libs"
