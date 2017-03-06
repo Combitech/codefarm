@@ -51,7 +51,7 @@ class Job extends LightComponent {
                 {run.subJobs.length && (
                     <Tab
                         key="subjobs"
-                        label="Sub Jobs"
+                        label="Sub-Jobs"
                     >
                         <SubJobTab
                             theme={this.props.theme}

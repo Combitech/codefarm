@@ -1,12 +1,13 @@
 
 import React from "react";
+import Immutable from "immutable";
 import LightComponent from "ui-lib/light_component";
 import { Row, Col } from "react-flexbox-grid";
 import moment from "moment";
 import api from "api.io/api.io-client";
 import stateVar from "ui-lib/state_var";
 import BaselineList from "../../observables/baseline_list";
-import { RevisionCard, AddCommentCard, CommentCard, ReviewCard, JobCard } from "ui-components/data_card";
+import { CardList, RevisionCard, AddCommentCard, CommentCard, ReviewCard, JobCard } from "ui-components/data_card";
 
 class Overview extends LightComponent {
     constructor(props) {
@@ -43,7 +44,16 @@ class Overview extends LightComponent {
     render() {
         this.log("render", this.props, this.state);
 
-        const list = [];
+        const list = [
+            {
+                id: "addcomment",
+                time: Number.MAX_SAFE_INTEGER,
+                Card: AddCommentCard,
+                props: {
+                    onComment: this.onComment.bind(this)
+                }
+            }
+        ];
 
         for (const comment of this.props.item.comments) {
             list.push({
@@ -105,15 +115,13 @@ class Overview extends LightComponent {
         for (const job of jobs) {
             list.push({
                 id: job._id,
-                time: moment(job.finished ? job.finished : job.created).unix(),
+                time: moment(job.finished ? job.finished : job.saved).unix(),
                 item: job,
                 Card: JobCard,
                 props: {
                 }
             });
         }
-
-        list.sort((a, b) => b.time - a.time);
 
         return (
             <div>
@@ -129,17 +137,7 @@ class Overview extends LightComponent {
                     </Col>
                     <Col xs={12} md={6}>
                         <h5 className={this.props.theme.sectionHeader}>Events</h5>
-                        <AddCommentCard
-                            onComment={this.onComment.bind(this)}
-                        />
-                        {list.map((item) => (
-                            <item.Card
-                                key={item.id}
-                                item={item.item}
-                                expanded={false}
-                                {...item.props}
-                            />
-                        ))}
+                        <CardList list={Immutable.fromJS(list)} />
                     </Col>
                 </Row>
             </div>

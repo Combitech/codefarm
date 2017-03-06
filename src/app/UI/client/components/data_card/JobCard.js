@@ -37,7 +37,7 @@ class JobCard extends LightComponent {
                     title={`${this.props.item.name} job ${statusText[this.props.item.status]}`}
                     subtitle={(
                         <DateTime
-                            value={this.props.item.finished ? this.props.item.finished : this.props.item.created}
+                            value={this.props.item.finished ? this.props.item.finished : this.props.item.saved}
                             niceDate={true}
                         />
                     )}

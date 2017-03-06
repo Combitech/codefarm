@@ -39,7 +39,7 @@ class ArtifactCard extends LightComponent {
                             src={icon()}
                         />
                     )}
-                    title={`${this.props.item.name} - v${this.props.item.version}`}
+                    title={`${this.props.item.name} - ${this.props.item.version}`}
                     subtitle={(
                         <DateTime
                             value={this.props.item.created}

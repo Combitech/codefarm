@@ -1,11 +1,13 @@
 
 import React from "react";
+import Immutable from "immutable";
+import moment from "moment";
 import LightComponent from "ui-lib/light_component";
 import { States as ObservableDataStates } from "ui-lib/observable_data";
 import {
     LoadIndicator as TALoadIndicator
 } from "ui-components/type_admin";
-import { ArtifactCard } from "ui-components/data_card";
+import { CardList, ArtifactCard } from "ui-components/data_card";
 import Artifacts from "../../../observables/artifact_list";
 
 class ArtifactList extends LightComponent {
@@ -47,26 +49,15 @@ class ArtifactList extends LightComponent {
         for (const artifact of this.state.artifacts.toJS()) {
             list.push({
                 id: artifact._id,
-                time: 0,
+                time: moment(artifact.created).unix(),
                 item: artifact,
                 Card: ArtifactCard,
                 props: {}
             });
         }
 
-        list.sort((a, b) => b.time - a.time);
-
         return (
-            <div>
-                {list.map((item) => (
-                    <item.Card
-                        key={item.id}
-                        item={item.item}
-                        {...item.props}
-                        expanded={false}
-                    />
-                ))}
-            </div>
+            <CardList list={Immutable.fromJS(list)} />
         );
     }
 }

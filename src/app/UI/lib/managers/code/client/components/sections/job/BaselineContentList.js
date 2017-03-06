@@ -1,11 +1,12 @@
 
 import React from "react";
+import Immutable from "immutable";
 import LightComponent from "ui-lib/light_component";
 import { States as ObservableDataStates } from "ui-lib/observable_data";
 import {
     LoadIndicator as TALoadIndicator
 } from "ui-components/type_admin";
-import { RevisionCard } from "ui-components/data_card";
+import { CardList, RevisionCard } from "ui-components/data_card";
 import BaselineItem from "../../../observables/baseline_item";
 
 const cards = {
@@ -66,19 +67,8 @@ class BaselineContentList extends LightComponent {
             }
         }
 
-        list.sort((a, b) => b.time - a.time);
-
         return (
-            <div>
-                {list.map((item) => (
-                    <item.Card
-                        key={item.id}
-                        item={item.item}
-                        {...item.props}
-                        expanded={false}
-                    />
-                ))}
-            </div>
+            <CardList list={Immutable.fromJS(list)} />
         );
     }
 }

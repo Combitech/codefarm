@@ -45,7 +45,7 @@ class JobFlow extends LightComponent {
             step.meta.job = job;
         }
 
-        console.log("STATUSES", statuses);
+        // console.log("STATUSES", statuses);
 
         if (statuses.has("fail") || statuses.has("aborted")) {
             this.props.firstStep.meta.status = "unhappy";
