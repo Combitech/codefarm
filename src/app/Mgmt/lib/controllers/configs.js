@@ -3,6 +3,7 @@
 const Config = require("../types/config");
 const { Controller } = require("servicecom");
 const { ServiceMgr } = require("service");
+const { ensureArray } = require("misc");
 
 const ACTIVE_TAG = "active";
 
@@ -28,10 +29,11 @@ class Configs extends Controller {
      * @return {undefined}
      */
     async onTagged(config, tag) {
-        if (tag === ACTIVE_TAG) {
+        const tags = ensureArray(tag);
+        if (tags.includes(ACTIVE_TAG)) {
             ServiceMgr.instance.log(
                 "verbose",
-                `Config ${config._id} with name ${config.name} tagged ${tag}`
+                `Config ${config._id} with name ${config.name} tagged ${ACTIVE_TAG}`
             );
 
             // Remove tag from all other configs with same name
@@ -44,10 +46,10 @@ class Configs extends Controller {
             if (list.length > 0) {
                 for (const obj of list) {
                     if (obj._id !== config._id) {
-                        await obj.untag([], tag);
+                        await obj.untag([], ACTIVE_TAG);
                         ServiceMgr.instance.log(
                             "verbose",
-                            `Found other active config ${obj._id} with name ${obj.name}, untagged ${tag}`
+                            `Found other active config ${obj._id} with name ${obj.name}, untagged ${ACTIVE_TAG}`
                         );
                     }
                 }
