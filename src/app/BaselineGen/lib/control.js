@@ -122,7 +122,7 @@ class Control {
 
     async dispose() {
         notification.removeAllListeners("specification.created");
-        notification.removeAllListeners("collector.complete");
+        notification.removeAllListeners("collector.updated");
         notification.removeAllListeners("collector.ready");
         notification.removeAllListeners("specification.request");
     }

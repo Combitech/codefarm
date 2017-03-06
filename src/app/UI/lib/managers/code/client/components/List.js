@@ -1,7 +1,6 @@
 
 import React from "react";
 import ImmutablePropTypes from "react-immutable-proptypes";
-import stateVar from "ui-lib/state_var";
 import LightComponent from "ui-lib/light_component";
 import Input from "react-toolbox/lib/input";
 import {

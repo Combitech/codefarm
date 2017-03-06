@@ -139,10 +139,6 @@ class Collector extends Type {
 
         await this.save();
 
-        if (this.completed) {
-            await notification.emit(`${this.constructor.typeName}.complete`, this);
-        }
-
         if (this.ready) {
             await notification.emit(`${this.constructor.typeName}.ready`, this);
         }
