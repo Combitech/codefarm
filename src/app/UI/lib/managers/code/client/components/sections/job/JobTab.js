@@ -11,8 +11,8 @@ class JobTab extends LightComponent {
         this.log("render", this.props, this.state);
 
         return (
-            <Row>
-                <Col xs={12} md={6}>
+            <Row className={this.props.theme.row}>
+                <Col xs={12} md={6} className={this.props.theme.col}>
                     <h5 className={this.props.theme.sectionHeader}>Properties</h5>
                     <div className={this.props.theme.section}>
                         <JobCard
@@ -30,7 +30,7 @@ class JobTab extends LightComponent {
                         />
                     </div>
                 </Col>
-                <Col xs={12} md={6}>
+                <Col xs={12} md={6} className={this.props.theme.col}>
                     <h5 className={this.props.theme.sectionHeader}>In this run</h5>
                     <div className={this.props.theme.section}>
                         <BaselineContentList

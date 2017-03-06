@@ -1,33 +1,73 @@
 
 import React from "react";
+import Immutable from "immutable";
+import moment from "moment";
 import LightComponent from "ui-lib/light_component";
-import { Row, Col } from "react-flexbox-grid";
-import ArtifactList from "./ArtifactList";
-import RevisionList from "./RevisionList";
+import { CardList, ArtifactCard, RevisionCard } from "ui-components/data_card";
+import Artifacts from "../../../observables/artifact_list";
+import Revisions from "../../../observables/revision_list";
 
 class OutputTab extends LightComponent {
+    constructor(props) {
+        super(props);
+
+        this.artifacts = new Artifacts({
+            ids: props.artifactRefs.map((ref) => ref.id)
+        });
+
+        this.revisions = new Revisions({
+            ids: props.revisionRefs.map((ref) => ref.id)
+        });
+
+        this.state = {
+            artifacts: this.artifacts.value.getValue(),
+            revisions: this.revisions.value.getValue()
+        };
+    }
+
+    componentDidMount() {
+        this.addDisposable(this.artifacts.start());
+        this.addDisposable(this.revisions.start());
+
+        this.addDisposable(this.artifacts.value.subscribe((artifacts) => this.setState({ artifacts })));
+        this.addDisposable(this.revisions.value.subscribe((revisions) => this.setState({ revisions })));
+    }
+
+    componentWillReceiveProps(nextProps) {
+        this.artifacts.setOpts({
+            ids: nextProps.artifactRefs.map((ref) => ref.id)
+        });
+
+        this.revisions.setOpts({
+            ids: nextProps.revisionRefs.map((ref) => ref.id)
+        });
+    }
+
     render() {
+        const list = [];
+
+        for (const artifact of this.state.artifacts.toJS()) {
+            list.push({
+                id: artifact._id,
+                time: moment(artifact.created).unix(),
+                item: artifact,
+                Card: ArtifactCard,
+                props: {}
+            });
+        }
+
+        for (const revision of this.state.revisions.toJS()) {
+            list.push({
+                id: revision._id,
+                time: 0,
+                item: revision,
+                Card: RevisionCard,
+                props: {}
+            });
+        }
+
         return (
-            <Row>
-                <Col xs={12} md={6}>
-                    <h5 className={this.props.theme.sectionHeader}>Artifacts</h5>
-                    <div className={this.props.theme.section}>
-                        <ArtifactList
-                            theme={this.props.theme}
-                            artifactRefs={this.props.artifactRefs}
-                        />
-                    </div>
-                </Col>
-                <Col xs={12} md={6}>
-                    <h5 className={this.props.theme.sectionHeader}>Revisions</h5>
-                    <div className={this.props.theme.section}>
-                        <RevisionList
-                            theme={this.props.theme}
-                            revisionRefs={this.props.revisionRefs}
-                        />
-                    </div>
-                </Col>
-            </Row>
+            <CardList list={Immutable.fromJS(list)} />
         );
     }
 }

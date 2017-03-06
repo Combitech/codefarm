@@ -47,11 +47,8 @@ class SubJobTab extends LightComponent {
         }
 
         return (
-            <div>
-                <h5 className={this.props.theme.sectionHeader}>Builds and Tests</h5>
-                <div className={this.props.theme.section}>
-                    <CardList list={Immutable.fromJS(list)} />
-                </div>
+            <div className={this.props.theme.section}>
+                <CardList list={Immutable.fromJS(list)} />
             </div>
         );
     }

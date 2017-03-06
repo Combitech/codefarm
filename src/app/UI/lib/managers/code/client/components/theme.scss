@@ -8,10 +8,22 @@
     margin-top: $standard-increment-desktop;
 }
 
-h5.sectionHeader {
+.sectionHeader {
     margin-bottom: $layout-gutter-width-sm;
-    color: #bbb;
+    color: #ddd;
     text-transform: uppercase;
+    font-weight: $font-weight-bold;
+    font-size: $font-size-big * 2;
+}
+
+.row {
+    margin-right: -$layout-gutter-width-sm;
+    margin-left: -$layout-gutter-width-sm;
+}
+
+.col {
+    padding-right: $layout-gutter-width-sm;
+    padding-left: $layout-gutter-width-sm;
 }
 
 .section {

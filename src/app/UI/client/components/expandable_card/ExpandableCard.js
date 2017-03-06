@@ -8,7 +8,10 @@ class ExpandableCard extends LightComponent {
         const expandIconName = this.props.expanded.value ? this.props.iconCollapse : this.props.iconExpand;
 
         return (
-            <Card className={`${this.props.theme.expandableCard} ${this.props.className}`}>
+            <Card
+                className={`${this.props.theme.expandableCard} ${this.props.className}`}
+                raised
+            >
                 {this.props.children}
                 {this.props.expandable && (
                     <IconButton

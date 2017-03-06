@@ -125,8 +125,8 @@ class Overview extends LightComponent {
 
         return (
             <div>
-                <Row>
-                    <Col xs={12} md={6}>
+                <Row className={this.props.theme.row}>
+                    <Col xs={12} md={6} className={this.props.theme.col}>
                         <h5 className={this.props.theme.sectionHeader}>Revision</h5>
                         <RevisionCard
                             theme={this.props.theme}
@@ -135,7 +135,7 @@ class Overview extends LightComponent {
                             expandable={false}
                         />
                     </Col>
-                    <Col xs={12} md={6}>
+                    <Col xs={12} md={6} className={this.props.theme.col}>
                         <h5 className={this.props.theme.sectionHeader}>Events</h5>
                         <CardList list={Immutable.fromJS(list)} />
                     </Col>
