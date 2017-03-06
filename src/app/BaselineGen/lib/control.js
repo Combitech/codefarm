@@ -40,7 +40,7 @@ class Control {
         // TODO: Handle specification update which adds new and remove
 
         notification.on("collector.updated", async (collector) => {
-            if (collector.completed) {
+            if (collector.completed && !collector.used) {
                 const specification = await Specification.findOne({ _id: collector.baseline });
 
                 if (specification) {
@@ -104,6 +104,7 @@ class Control {
         if (request || collectors[0].requested) {
             for (const collector of collectors) {
                 collector.completed = collector.completed || new Date();
+                await collector.save(); // Must save here before setting used
                 collector.used = new Date();
                 await collector.save();
             }
