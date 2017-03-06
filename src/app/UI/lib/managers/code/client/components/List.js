@@ -299,7 +299,7 @@ class RevisionTabs extends LightComponent {
                         <Tabs
                             index={parseInt(this.state.tabIndex.value, 10)}
                             onChange={(index) => this.state.tabIndex.set(`${index}`)}
-                            fixed={false}
+                            fixed={true}
                         >
                             <Tab label="Submitted">
                                 <RevisionList

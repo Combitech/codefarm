@@ -8,23 +8,27 @@ class ListPager extends React.PureComponent {
         const pagingInfo = this.props.pagingInfo.toJS();
 
         return (
-            <div>
+            <div className={this.props.theme.pager}>
                 <Button
+                    className={this.props.theme.pagerButton}
                     icon="first_page"
                     disabled={pagingInfo.isFirstPage}
                     onClick={() => this.props.pagedList.setFirstPage()}
                 />
                 <Button
+                    className={this.props.theme.pagerButton}
                     icon="navigate_before"
                     disabled={!pagingInfo.hasPrevPage}
                     onClick={() => this.props.pagedList.setPrevPage()}
                 />
                 <Button
+                    className={this.props.theme.pagerButton}
                     icon="navigate_next"
                     disabled={!pagingInfo.hasNextPage}
                     onClick={() => this.props.pagedList.setNextPage()}
                 />
                 <Button
+                    className={this.props.theme.pagerButton}
                     icon="last_page"
                     disabled={pagingInfo.isLastPage}
                     onClick={() => this.props.pagedList.setLastPage()}

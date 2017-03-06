@@ -4,7 +4,7 @@ import LightComponent from "ui-lib/light_component";
 import { CardTitle } from "react-toolbox/lib/card";
 import HiddenText from "ui-components/hidden_text";
 import DateTime from "ui-components/datetime";
-import Chip from "react-toolbox/lib/chip";
+import Tags from "ui-components/tags";
 import ExpandableCard from "ui-components/expandable_card";
 import stateVar from "ui-lib/state_var";
 
@@ -90,9 +90,7 @@ class ArtifactCard extends LightComponent {
                             <tr>
                                 <td>Tags</td>
                                 <td>
-                                    {this.props.item.tags.map((tag) => (
-                                        <Chip key={tag}>{tag}</Chip>
-                                    ))}
+                                    <Tags list={this.props.item.tags} />
                                 </td>
                             </tr>
                         </tbody>

@@ -4,7 +4,7 @@ import LightComponent from "ui-lib/light_component";
 import { CardTitle, CardText } from "react-toolbox/lib/card";
 import UserAvatar from "ui-components/user_avatar";
 import DateTime from "ui-components/datetime";
-import Chip from "react-toolbox/lib/chip";
+import Tags from "ui-components/tags";
 import ExpandableCard from "ui-components/expandable_card";
 import stateVar from "ui-lib/state_var";
 import UserItem from "ui-observables/user_item";
@@ -143,9 +143,7 @@ class RevisionCard extends LightComponent {
                             <tr>
                                 <td>Tags</td>
                                 <td>
-                                    {this.props.item.tags.map((tag) => (
-                                        <Chip key={tag}>{tag}</Chip>
-                                    ))}
+                                    <Tags list={this.props.item.tags} />
                                 </td>
                             </tr>
                         </tbody>
