@@ -21,6 +21,7 @@ export const TYPE_ADMIN = "CFTypeAdmin";
 export const SVG_GRID = "CFSvgGrid";
 export const TAGS = "CFTags";
 export const USER_AVATAR = "CFUserAvatar";
+export const PAGE_AUTH = "CFAuthPage";
 export const PAGE_CODE = "CFPageCode";
 export const PAGE_ADMINISTRATION = "CFPageAdministration";
 export const PAGE_MGMT = "CFMgmtPage";

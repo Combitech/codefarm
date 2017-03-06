@@ -3,6 +3,7 @@
 const Koa = require("koa");
 const send = require("koa-send");
 const auth = require("koa-basic-auth");
+const koaJwt = require("koa-jwt");
 const route = require("koa-route");
 const bodyParser = require("koa-bodyparser");
 const compress = require("koa-compress");
@@ -29,6 +30,10 @@ class Web extends AsyncEventEmitter {
         this.app.use(conditional());
         this.app.use(etag());
 
+        if (typeof params.setupMiddleware === "function") {
+            params.setupMiddleware(this.app);
+        }
+
         this.app.use(async (ctx, next) => {
             try {
                 await next();
@@ -48,7 +53,16 @@ class Web extends AsyncEventEmitter {
         });
 
         if (params.auth) {
-            this.app.use(auth(params.auth));
+            if (params.auth.name && params.auth.pass) {
+                this.app.use(auth(params.auth));
+            } else if (params.auth.jwtSecret) {
+                this.app.use(koaJwt({
+                    secret: params.auth.jwtSecret,
+                    cookie: params.auth.jwtCookieName,
+                    // Set ctx.state.user if authenticated
+                    passthrough: true
+                }));
+            }
         }
 
         const staticPaths = ensureArray(params.serveStatic);

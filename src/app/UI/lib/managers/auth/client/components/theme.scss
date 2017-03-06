@@ -1,0 +1,9 @@
+
+@import "react-toolbox/components/colors";
+@import "react-toolbox/components/globals";
+@import "react-toolbox/components/mixins";
+
+.content {
+    margin-left: $baseline-grid * 2;
+    margin-top: $standard-increment-desktop + $baseline-grid * 2;
+}

@@ -27,6 +27,7 @@
     "koa-compress": "^2.0.0",
     "koa-conditional-get": "^2.0.0",
     "koa-etag": "^3.0.0",
+    "koa-jwt": "^2.2.3",
     "koa-route": "^3.2.0",
     "koa-send": "^3.2.0",
     "koa-static": "^3.0.0"
