@@ -39,14 +39,16 @@ class Control {
 
         // TODO: Handle specification update which adds new and remove
 
-        notification.on("collector.complete", async (collector) => {
-            const specification = await Specification.findOne({ _id: collector.baseline });
+        notification.on("collector.updated", async (collector) => {
+            if (collector.completed) {
+                const specification = await Specification.findOne({ _id: collector.baseline });
 
-            if (specification) {
-                const data = specification.collectors.filter((data) => data.name === collector.name)[0];
+                if (specification) {
+                    const data = specification.collectors.filter((data) => data.name === collector.name)[0];
 
-                if (data) {
-                    await Collector.createFromSpecificationData(specification._id, data);
+                    if (data) {
+                        await Collector.createFromSpecificationData(specification._id, data);
+                    }
                 }
             }
         });
