@@ -1,5 +1,5 @@
 "use strict";
-
+ 
 const { name, version } = require("./package.json");
 const { join } = require("path");
 const yargs = require("yargs");
