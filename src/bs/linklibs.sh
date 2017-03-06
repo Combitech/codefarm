@@ -40,21 +40,23 @@ if command -v yarn ; then
     install="yarn ${installFlag}"
 fi
 
-while read -r lib; do
-    if [[ $production -eq 1 ]]; then
-        echo "Installing library dependency: $libdir/$lib"
-        gitroot=$gitroot $install_pkg $libdir/$lib
-    else
-        if [ ! -e "./node_modules/$lib" ]; then
-            ln -s "../$libdir/$lib" "./node_modules/"
-        fi
+if [[ "${libs}" -ne "" ]]; then
+  while read -r lib; do
+      if [[ $production -eq 1 ]]; then
+          echo "Installing library dependency: $libdir/$lib"
+          gitroot=$gitroot $install_pkg $libdir/$lib
+      else
+          if [ ! -e "./node_modules/$lib" ]; then
+              ln -s "../$libdir/$lib" "./node_modules/"
+          fi
 
-        if [[ $forceInstallLibs -eq 1 ]]; then
-            if [ -L "./node_modules/$lib" ]; then
-                pushd "./node_modules/$lib"
-                $install
-                popd
-            fi
-        fi
-    fi
-done <<< "$libs"
+          if [[ $forceInstallLibs -eq 1 ]]; then
+              if [ -L "./node_modules/$lib" ]; then
+                  pushd "./node_modules/$lib"
+                  $install
+                  popd
+              fi
+          fi
+      fi
+  done <<< "$libs"
+fi
