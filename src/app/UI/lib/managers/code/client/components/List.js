@@ -291,7 +291,7 @@ class RevisionTabs extends LightComponent {
                 <div className={this.props.theme.container}>
                     {this.props.item &&
                         <Tabs
-                            index={parseInt(this.state.params.toJS().tabIndex, 10)}
+                            index={parseInt(this.state.params.toJS().tabIndex || 0, 10)}
                             onChange={(tabIndex) => locationQuery.setParams({ tabIndex })}
                             fixed={true}
                         >
