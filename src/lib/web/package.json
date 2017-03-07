@@ -21,13 +21,15 @@
     "singleton"
   ],
   "dependencies": {
+    "cookie": "^0.3.1",
+    "jsonwebtoken": "^7.3.0",
     "koa": "^2.0.0",
     "koa-basic-auth": "^2.0.0",
-    "koa-bodyparser": "^3.2.0",
+    "koa-bodyparser": "^4.1.0",
     "koa-compress": "^2.0.0",
     "koa-conditional-get": "^2.0.0",
     "koa-etag": "^3.0.0",
-    "koa-jwt": "^2.2.3",
+    "koa-jwt": "^3.0.0",
     "koa-route": "^3.2.0",
     "koa-send": "^3.2.0",
     "koa-static": "^3.0.0"

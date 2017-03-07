@@ -30,7 +30,7 @@ class Page extends LightComponent {
         const response = await api.auth.login(this.state.email, this.state.password);
         this.log("Login response", response);
         if (response.success) {
-            this._showMessage(`Welcome ${response.username}!`);
+            this._showMessage(`Welcome ${response.data.username}!`);
 
             // Set cookie
             if (response.setCookies) {
@@ -44,6 +44,29 @@ class Page extends LightComponent {
         }
     }
 
+    async _logout() {
+        const response = await api.auth.logout();
+        this.log("Logout response", response);
+        if (response.success) {
+            this._showMessage(`Godbye ${response.data.username}!`);
+
+            // Set cookie
+            if (response.setCookies) {
+                for (const cookie of response.setCookies) {
+                    setCookie(cookie.name, cookie.value, cookie.opts);
+                }
+            }
+        } else {
+            const msg = response.message ? `Logout failed: ${response.message}` : "Logout failed";
+            this._showMessage(msg, "warning");
+        }
+    }
+
+    async _checkAuth() {
+        const response = await api.auth.checkAuth();
+        console.log("CheckAuth response", response);
+    }
+
     render() {
         this.log("render", this.props);
 
@@ -53,7 +76,7 @@ class Page extends LightComponent {
                     <Row>
                         <Col xs={12} mdOffset={3} md={6} lgOffset={4} lg={4}>
                             <Card>
-                                <CardTitle title="Codefarm Login"/>
+                                <CardTitle title="CodeFarm Login"/>
                                 <CardText>
                                     <Input
                                         type="email"
@@ -74,6 +97,14 @@ class Page extends LightComponent {
                                     <Button
                                         label="Login"
                                         onClick={() => this._login()}
+                                    />
+                                    <Button
+                                        label="Logout"
+                                        onClick={() => this._logout()}
+                                    />
+                                    <Button
+                                        label="Check"
+                                        onClick={() => this._checkAuth()}
                                     />
                                 </CardActions>
                             </Card>
