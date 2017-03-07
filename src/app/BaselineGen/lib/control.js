@@ -54,7 +54,9 @@ class Control {
                         await Collector.createFromSpecificationData(specification._id, data);
                     }
                 }
-            } else if (collector.state === Collector.STATES.READY || collector.state === Collector.STATES.COMPLETED) {
+            }
+
+            if (collector.state === Collector.STATES.READY || collector.state === Collector.STATES.COMPLETED) {
                 await this.generate(collector.baseline, false);
             }
         });
