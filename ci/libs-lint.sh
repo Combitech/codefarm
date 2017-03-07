@@ -50,8 +50,8 @@ for target in ${targets[@]}; do
 
   pushd ${gitroot}/src/lib/${target}
 
-  subJobName="${target}_test"
-  subJobId=$($CLI -q '$._id' --format values create_subjob build "${subJobName}" ongoing)
+  subJobName="${target}_lint"
+  subJobId=$($CLI -q '$._id' --format values create_subjob test "${subJobName}" ongoing)
 
   yarn lint || result=1
 
