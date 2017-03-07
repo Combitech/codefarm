@@ -41,6 +41,9 @@
     },
     "ui": {
         "web": {
+            "auth": {
+                "jwtCookieName": "codefarm/jwt/token"
+            },
             "port": 19898
         }
     },

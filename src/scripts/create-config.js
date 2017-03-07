@@ -42,6 +42,11 @@ const argv = yargs
     type: "string",
     default: null
 })
+.option("jwtsecret", {
+    describe: "JWT private key",
+    type: "string",
+    default: null
+})
 .argv;
 
 const createConfig = async (serviceName, serviceCfg) => {
@@ -74,10 +79,16 @@ const run = async () => {
     const cfg = JSON.parse(await fs.readFileAsync(argv.config));
 
     if (argv.authname !== null && argv.authpass !== null) {
-        if (cfg.ui.web.auth) {
-            throw Error("Auth configuration already in UI configuration");
-        }
-        cfg.ui.web.auth = { "name": `${argv.authname}`, "pass": `${argv.authpass}` };
+        cfg.ui.web.auth = Object.assign({}, cfg.ui.web.auth, {
+            name: `${argv.authname}`,
+            pass: `${argv.authpass}`
+        });
+    }
+
+    if (argv.jwtsecret !== null) {
+        cfg.ui.web.auth = Object.assign({}, cfg.ui.web.auth, {
+            jwtSecret: argv.jwtsecret
+        });
     }
 
     if (argv.service === "all") {

@@ -7,9 +7,11 @@ const Web = require("web");
 const { ServiceComBus, HttpClient } = require("servicecom");
 const { Service } = require("service");
 const MgmtMgr = require("./managers/mgmt");
+const AuthMgr = require("./managers/auth");
 const ServiceProxy = require("./service_proxy");
 
 const Apis = [
+    require("./apis/auth"),
     require("./apis/rest"),
     require("./apis/type")
 ];
@@ -53,6 +55,9 @@ class Main extends Service {
         const mb = this.msgBus;
         mb.addListener("data", MgmtMgr.instance.getEventMonitorBusListener());
 
+        await AuthMgr.instance.start(this.config.web.auth);
+        this.addDisposable(AuthMgr.instance);
+
         await ServiceProxy.instance.start();
         this.addDisposable(ServiceProxy.instance);
         ServiceProxy.instance.addProxyRoute("get", "userrepo", "useravatar", "avatar");
@@ -86,7 +91,7 @@ class Main extends Service {
 
         this.config.web.api = api;
 
-        const routes = [].concat(this.routes, ServiceProxy.instance.routes);
+        const routes = [].concat(this.routes, ServiceProxy.instance.routes, AuthMgr.instance.routes);
 
         await Web.instance.start(this.config.web, routes);
         this.addDisposable(Web.instance);

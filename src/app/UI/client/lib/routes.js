@@ -3,6 +3,7 @@ import { Route, IndexRoute, IndexRedirect } from "react-router";
 import Layout from "ui-components/app_layout";
 import IndexPage from "ui-components/IndexPage";
 import NotFoundPage from "ui-components/NotFoundPage";
+import AuthPage from "ui-mgr/auth/client/components";
 import CodePage from "ui-mgr/code/client/components";
 import ArtifactsPage from "ui-mgr/artifacts/client/components";
 import UsersPage from "ui-mgr/users/client/components";
@@ -32,6 +33,7 @@ import mgmtPageLogrepoRoutes from "ui-mgr/mgmt/client/components/sections/logrep
 const routes = (
     <Route path="/" component={Layout}>
         <IndexRoute component={IndexPage} />
+        <Route path="login" component={AuthPage} />
         <Route path="admin" component={AdminPage}>
             <IndexRedirect to={adminPageCoderepoRoutes.props.path} />
 
