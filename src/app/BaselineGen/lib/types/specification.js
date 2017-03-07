@@ -31,6 +31,16 @@ class Specification extends Type {
         return serviceMgr.msgBus;
     }
 
+    static async getCollectorDefinition(baselineId, collectorName) {
+        const specification = await this.findOne({ _id: baselineId });
+
+        if (!specification) {
+            return false;
+        }
+
+        return specification.collectors.filter((data) => data.name === collectorName)[0] || false;
+    }
+
     static async validate(event, data) {
         if (event === "create") {
             assertProp(data, "_id", true);

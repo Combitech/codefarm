@@ -40,24 +40,19 @@ class Control {
         // TODO: Handle specification update which adds new and remove
 
         notification.on("collector.updated", async (collector) => {
-            if (collector.previousState === collector.state) {
-                return;
-            }
-
-            if (collector.state === Collector.STATES.USED || collector.state === Collector.STATES.COMPLETED) {
-                const specification = await Specification.findOne({ _id: collector.baseline });
-
-                if (specification) {
-                    const data = specification.collectors.filter((data) => data.name === collector.name)[0];
-
-                    if (data) {
-                        await Collector.createFromSpecificationData(specification._id, data);
-                    }
-                }
-            }
-
-            if (collector.state === Collector.STATES.READY || collector.state === Collector.STATES.COMPLETED) {
+            if (collector.previousState === Collector.STATES.NOT_READY &&
+                collector.state === Collector.STATES.READY) {
                 await this.generate(collector.baseline, false);
+            } else if (collector.previousState === Collector.STATES.NOT_READY &&
+                       collector.state === Collector.STATES.COMPLETED) {
+                await this.spawnNewCollector(collector);
+                await this.generate(collector.baseline, false);
+            } else if (collector.previousState === Collector.STATES.READY &&
+                       collector.state === Collector.STATES.USED) {
+                await this.spawnNewCollector(collector);
+            } else if (collector.previousState === Collector.STATES.COMPLETED &&
+                       collector.state === Collector.STATES.USED) {
+                // Do nothing
             }
         });
 
@@ -68,6 +63,14 @@ class Control {
         mb.on("data", async (event) => {
             await this.update(event);
         });
+    }
+
+    async spawnNewCollector(collector) {
+        const data = await Specification.getCollectorDefinition(collector.baseline, collector.name);
+
+        if (data) {
+            await Collector.createFromSpecificationData(collector.baseline, data);
+        }
     }
 
     async update(event) {
