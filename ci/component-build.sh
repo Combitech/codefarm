@@ -1,4 +1,4 @@
-#!/bin/bash -e -x
+#!/bin/bash -ex
 
 startTime=$(($(date +%s%N)/1000000))
 
