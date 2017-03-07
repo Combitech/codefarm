@@ -113,9 +113,10 @@ module.exports = async (argv) => {
     const testScript = `
         #!/bin/bash -e
         /home/farmer/codefarm/ci/cf-clone-checkout.sh
+        CLI=${PWD}/cli.js
         pushd codefarm
-        /home/farmer/codefarm/ci/cf-build.sh -C ../cli.js dev
-        /home/farmer/codefarm/ci/cf-test.sh -C ../cli.js
+        /home/farmer/codefarm/ci/cf-build.sh -C ${CLI}
+        /home/farmer/codefarm/ci/cf-test.sh -C ${CLI}
         popd
         exit 0
     `;
