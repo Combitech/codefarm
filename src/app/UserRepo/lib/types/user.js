@@ -8,6 +8,11 @@ const Team = require("./team");
 
 const DEFAULT_BACKEND = "Dummy";
 
+const USER_PRIVILEGE = {
+    ADMIN: "adm",
+    MGMT: "mgmt"
+};
+
 class User extends Type {
     constructor(data) {
         super();
@@ -18,6 +23,7 @@ class User extends Type {
         this.telephone = false;
         this.keys = [];
         this.teams = [];
+        this.privileges = [];
 
         if (data) {
             this.set(data);
@@ -96,6 +102,15 @@ class User extends Type {
         } else if (event === "update") {
             assertProp(data, "_id", false);
             assertProp(data, "backend", false);
+        }
+
+        if (data.privileges) {
+            assertType(data.privileges, "data.privileges", "array");
+            for (const privilege of data.privileges) {
+                if (!Object.values(USER_PRIVILEGE).includes(privilege)) {
+                    throw new Error(`Unknown privilege ${privilege}`);
+                }
+            }
         }
 
         // Email is optional

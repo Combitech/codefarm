@@ -4,6 +4,8 @@ const Koa = require("koa");
 const send = require("koa-send");
 const auth = require("koa-basic-auth");
 const koaJwt = require("koa-jwt");
+const jwt = require("jsonwebtoken");
+const cookie = require("cookie");
 const route = require("koa-route");
 const bodyParser = require("koa-bodyparser");
 const compress = require("koa-compress");
@@ -145,10 +147,50 @@ class Web extends AsyncEventEmitter {
 
         if (params.api) {
             this.api = params.api;
-            await this.api.start(this.server);
+            await this.api.start(this.server, {
+                authHandler: this._apiJwtAuthHandler.bind(this, params.auth)
+            });
         }
 
         await this.emit("start", { port: params.port });
+    }
+
+    /** Checks api.io request for cookie containing the JWT token and decodes
+     * and verifies the token if found. The decoded result is stored in
+     * session.user
+     * @param {Object} authParams Authorization parameters
+     * @param {Object} authParams.jwtCookieName Authorization parameters
+     * @param {Object} authParams.jwtSecret Authorization parameters
+     * @param {Object} request Sets request.session.user to decoded token
+     *   if token in jwtCookieName is decoded successfully.
+     * @return {Promise} Resolved when done
+     */
+    async _apiJwtAuthHandler(authParams, request) {
+        if (!authParams || !authParams.jwtSecret || !authParams.jwtCookieName) {
+            return false;
+        }
+        const decodedTokenSessionKey = "user";
+        const cookieName = authParams.jwtCookieName;
+        const secret = authParams.jwtSecret;
+        request.session[decodedTokenSessionKey] = {};
+        if (request.headers.cookie && request.headers.cookie.indexOf(cookieName) !== -1) {
+            let token;
+            try {
+                token = cookie.parse(request.headers.cookie)[cookieName];
+            } catch (e) {
+            }
+            if (token) {
+                const decodedToken = await new Promise(
+                    (resolve, reject) => jwt.verify(
+                        token,
+                        secret,
+                        {},
+                        (err, decoded) => err ? reject(err) : resolve(decoded)
+                    )
+                );
+                request.session[decodedTokenSessionKey] = decodedToken;
+            }
+        }
     }
 
     async dispose() {

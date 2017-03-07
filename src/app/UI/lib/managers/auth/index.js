@@ -21,14 +21,6 @@ class Auth {
             this._cookieName = config.jwtCookieName;
         }
         this._addRoute("post", "/login", this._login, "User login");
-        this._addRoute("get", "/checkAuth", async (ctx) => {
-            ctx.json = true;
-            ctx.body = JSON.stringify({
-                success: true,
-                // Set by koaJwt mw if authenticated
-                user: ctx.state && ctx.state.user
-            });
-        }, "Check authenticated");
     }
 
     async dispose() {
@@ -36,7 +28,7 @@ class Auth {
         this._privateKey = null;
     }
 
-    async login(email, password) {
+    async login(email, password, decodedTokenKey = null) {
         if (typeof email !== "string") {
             throw new Error("email required");
         }
@@ -67,21 +59,28 @@ class Auth {
         if (authenticated) {
             const user = users[0];
             const scope = user.scope || "default";
+            const priv = user.privileges || [];
             const tokenData = {
                 username: user.name,
                 scope: [ scope ],
-                id: user._id
+                id: user._id,
+                priv
             };
             const tokenOpts = {
                 expiresIn: TOKEN_EXPIRES_IN
             };
             result = {
                 success: true,
-                username: user.name,
-                scope: scope,
-                cookieName: this._cookieName
+                data: {
+                    username: user.name,
+                    scope: scope,
+                    priv
+                }
             };
             result.token = await this._createToken(tokenData, tokenOpts);
+            if (typeof decodedTokenKey === "string") {
+                result[decodedTokenKey] = tokenData;
+            }
         } else {
             result = {
                 success: false,

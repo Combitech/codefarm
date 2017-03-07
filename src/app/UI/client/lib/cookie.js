@@ -1,4 +1,6 @@
 
+import cookie from "cookie";
+
 /* global document */
 
 /** Set a cookie
@@ -7,14 +9,8 @@
  * @param {Object} [opts] Cookie options, path or similar...
  * @return {undefined}
  */
-const setCookie = (name, value, opts = false) => {
-    let optStr = "";
-    if (opts) {
-        optStr = Object.keys(opts).map((key) =>
-            `;${key}=${opts[key]}`
-        );
-    }
-    document.cookie = `${name}=${value}${optStr}`;
+const setCookie = (name, value, opts = {}) => {
+    document.cookie = cookie.serialize(name, value, opts);
 };
 
 export {

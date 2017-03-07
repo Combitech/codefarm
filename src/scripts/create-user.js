@@ -53,6 +53,12 @@ const argv = yargs
     type: "array",
     default: []
 })
+.option("p", {
+    alias: "privilege",
+    describe: "Privilege",
+    type: "array",
+    default: []
+})
 .option("no_key", {
     describe: "Do not upload key",
     type: "bool",
@@ -83,7 +89,8 @@ const run = async () => {
                 teams: argv.teams,
                 email: argv.email,
                 backend: argv.backend,
-                password: argv.password
+                password: argv.password,
+                privileges: argv.privilege
             },
             json: true
         });
