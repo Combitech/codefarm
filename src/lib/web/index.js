@@ -30,10 +30,6 @@ class Web extends AsyncEventEmitter {
         this.app.use(conditional());
         this.app.use(etag());
 
-        if (typeof params.setupMiddleware === "function") {
-            params.setupMiddleware(this.app);
-        }
-
         this.app.use(async (ctx, next) => {
             try {
                 await next();
