@@ -101,6 +101,8 @@ describe("BaselineGen", () => {
                 json: true
             });
 
+            console.error("ABC", JSON.stringify(result, null, 2));
+
             assert.equal(result.result, "success");
         });
 

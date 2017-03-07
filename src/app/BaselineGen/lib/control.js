@@ -40,7 +40,11 @@ class Control {
         // TODO: Handle specification update which adds new and remove
 
         notification.on("collector.updated", async (collector) => {
-            if (collector.completed && !collector.used) {
+            if (collector.previousState === collector.state) {
+                return;
+            }
+
+            if (collector.state === Collector.STATES.USED) {
                 const specification = await Specification.findOne({ _id: collector.baseline });
 
                 if (specification) {
@@ -50,11 +54,9 @@ class Control {
                         await Collector.createFromSpecificationData(specification._id, data);
                     }
                 }
+            } else if (collector.state === Collector.STATES.READY || collector.state === Collector.STATES.COMPLETED) {
+                await this.generate(collector.baseline, false);
             }
-        });
-
-        notification.on("collector.ready", async (collector) => {
-            await this.generate(collector.baseline, false);
         });
 
         notification.on("specification.request", async (specification) => {
@@ -84,7 +86,7 @@ class Control {
             return;
         }
 
-        const readyCollectors = collectors.filter((collector) => collector.ready);
+        const readyCollectors = collectors.filter((collector) => collector.state === Collector.STATES.READY || collector.state === Collector.STATES.COMPLETED);
 
         if (readyCollectors.length !== collectors.length) {
             // Baseline is not ready
@@ -103,10 +105,7 @@ class Control {
 
         if (request || collectors[0].requested) {
             for (const collector of collectors) {
-                collector.completed = collector.completed || new Date();
-                await collector.save(); // Must save here before setting used
-                collector.used = new Date();
-                await collector.save();
+                await collector.setState(Collector.STATES.USED);
             }
 
             const baseline = new Baseline({
@@ -126,7 +125,6 @@ class Control {
     async dispose() {
         notification.removeAllListeners("specification.created");
         notification.removeAllListeners("collector.updated");
-        notification.removeAllListeners("collector.ready");
         notification.removeAllListeners("specification.request");
     }
 }

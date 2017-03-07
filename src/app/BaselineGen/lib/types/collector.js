@@ -4,6 +4,23 @@ const { serviceMgr } = require("service");
 const { Type, notification } = require("typelib");
 const { TagCriteria } = require("misc");
 
+const STATES = {
+    // Collector does not have enough data to be included in a baseline
+    NOT_READY: "not_ready",
+
+    // Collector has all the data to be included in a generated baseline
+    READY: "ready",
+
+    // Collector has been filled and can not collect anything more
+    COMPLETED: "completed",
+
+    // Collector has been included in a generated baseline and is now dead, or should not be used again
+    USED: "used",
+
+    // Collector has been forcefully stopped
+    STOPPED: "stopped"
+};
+
 class Collector extends Type {
     constructor(data) {
         super();
@@ -14,11 +31,11 @@ class Collector extends Type {
         this.criteria = false; // Tag criteria to match to events
         this.limit = false; // Limit to how many things to collect
         this.latest = false; // If collector limit is reach and latest is true, treat as a FIFO stack
-        this.ready = false; // Set to time if collector has all the data to be included in a generated baseline
-        this.completed = false; // Set to time if collector has been filled and can not collect anything more
-        this.requested = false; // Set to time if the collector has been requested by FlowCtrl or some such
-        this.used = false; // Set if collector has been included in a generated baseline and is now dead, or should not be used again
         this.ids = []; // List of collected ids
+        this.requested = false; // Set to time if the collector has been requested by FlowCtrl or some such
+
+        this.previousState = STATES.NOT_READY;
+        this.state = STATES.NOT_READY;
 
         if (data) {
             this.set(data);
@@ -56,19 +73,35 @@ class Collector extends Type {
     }
 
     static async stopAllByBaselineName(baselineName) {
-        const collectors = await Collector.findMany({ baseline: baselineName, used: false });
+        const collectors = await Collector.findMany({
+            baseline: baselineName,
+            state: {
+                $in: [
+                    STATES.NOT_READY,
+                    STATES.READY,
+                    STATES.COMPLETED
+                ]
+            }
+        });
 
         for (const collector of collectors) {
-            collector.completed = collector.completed || new Date();
-            collector.used = new Date();
-            await collector.save();
+            await collector.setState(STATES.STOPPED);
         }
 
         return collectors.length > 0 ? collectors[0].requested : false;
     }
 
     static async findLatest(baselineName) {
-        const collectors = await Collector.findMany({ baseline: baselineName, used: false });
+        const collectors = await Collector.findMany({
+            baseline: baselineName,
+            state: {
+                $in: [
+                    STATES.NOT_READY,
+                    STATES.READY,
+                    STATES.COMPLETED
+                ]
+            }
+        });
         const group = {};
 
         for (const collector of collectors) {
@@ -82,16 +115,19 @@ class Collector extends Type {
     }
 
     static async findMatching(event) {
-        const collectors = await Collector.findMany({ completed: false });
+        const collectors = await Collector.findMany({
+            state: {
+                $in: [
+                    STATES.NOT_READY,
+                    STATES.READY
+                ]
+            }
+        });
 
         return collectors.filter((collector) => collector.match(event));
     }
 
     match(event) {
-        if (this.completed) {
-            return false;
-        }
-
         if (this.collectType !== event.type) {
             return false;
         }
@@ -111,6 +147,17 @@ class Collector extends Type {
         return true;
     }
 
+    async setState(state) {
+        if (state === this.state) {
+            return;
+        }
+
+        this.previousState = this.state;
+        this.state = state;
+
+        await this.save();
+    }
+
     async update(event) {
         this.ids.push(event.newdata._id);
 
@@ -124,25 +171,20 @@ class Collector extends Type {
                 this.ids.shift();
 
                 // If the collector limit has been reached it is ready
-                this.ready = new Date();
+                await this.setState(STATES.READY); // This does a save, to save change in ids also
             } else if (!this.latest && this.ids.length >= this.limit) {
                 // If we do not have the collect latest flag we should
                 // set the collector completed if we have reached the
                 // limit.
-                this.completed = new Date();
-                this.ready = new Date();
+                await this.setState(STATES.COMPLETED);
             }
         } else {
             // If we have no limit it is ready after the first update
-            this.ready = new Date();
-        }
-
-        await this.save();
-
-        if (this.ready) {
-            await notification.emit(`${this.constructor.typeName}.ready`, this);
+            await this.setState(STATES.READY);
         }
     }
 }
+
+Collector.STATES = STATES;
 
 module.exports = Collector;
