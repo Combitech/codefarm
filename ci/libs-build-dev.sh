@@ -35,7 +35,7 @@ if [ "${targets}" == "all" ]; then
 else
   for target in ${targets[@]}; do
     if [[ " ${libs[*]} " != *" ${target} "* ]]; then
-      echo "Error: Component must be any number of ${libs[*]} or 'all'"
+      echo "Error: Invalid lib '${target}'. Valid libs are ${libs[*]} or 'all'"
       printUsage
       exit 1
     fi
