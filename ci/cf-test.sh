@@ -19,6 +19,7 @@ if [ "${CLI}" != "" ]; then
 fi
 
 gitroot=$(git rev-parse --show-toplevel)
+echo "Git root is ${gitroot}"
 
 echo "Now I will build libs in dev mode"
 ${gitroot}/ci/libs-build-dev.sh ${CLIARG} all

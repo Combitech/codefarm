@@ -23,7 +23,7 @@ repoUri=$(echo "$repoUriTemplate"|sed "s/\$USER/$USER/")
 echo "Now I will clone repository using $repoUri"
 
 git clone $repoUri
-cd $repositoryId
+pushd $repositoryId
 echo "I am now inside repository $repositoryId"
 
 echo "Now I will find out if change is pull request or push to master"
@@ -44,3 +44,5 @@ ls
 echo "Now I will tag my job with extra tags"
 tags=( $($CLI tag_type -q '$.tags[*]' --format values exec.job -t "git_sha:${commit}" -t "repo:${repositoryId}" $jobId) )
 echo "Job tags: ${tags[*]}"
+
+popd #$repositoryId
