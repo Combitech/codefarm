@@ -23,6 +23,9 @@ fi
 gitroot=$(git rev-parse --show-toplevel)
 echo "Git root is ${gitroot}"
 
+echo "Now I will build libs and components"
+$gitroot/ci/cf-build.sh dev
+
 echo "Now I will lint libs"
 $gitroot/ci/libs-lint.sh ${CLIARG} all
 echo "Now I will lint components"
