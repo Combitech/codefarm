@@ -105,8 +105,16 @@ module.exports = async (argv) => {
         }
     ];
 
-    const cgScript = await fs.readFileAsync(path.join(__dirname, "..", "jobs", "clone_and_test_cf.sh"), { encoding: "utf8" });
-    const regScript = await fs.readFileAsync(path.join(__dirname, "..", "jobs", "clone_and_test_cf.sh"), { encoding: "utf8" });
+    const testScript = `
+        #!/bin/bash -e
+        /home/farmer/codefarm/ci/cf-clone-checkout.sh
+        pushd codefarm
+        /home/farmer/codefarm/ci/cf-build.sh -C ../cli.js dev
+        /home/farmer/codefarm/ci/cf-test.sh -C ../cli.js
+        popd
+        exit 0
+    `;
+
     const mergeScript = await fs.readFileAsync(path.join(__dirname, "..", "jobs", "merge_github_revision.sh"), { encoding: "utf8" });
     const buildScript = `
         #!/bin/bash
@@ -127,7 +135,7 @@ module.exports = async (argv) => {
             "PushToMaster", "tags.push(\"step:CG:skip\"); tags.push(\"step:Merge:skip\");", [], false
         ),
         slaveScriptBlSpec(
-            "CG", cgScript, defaultSlaveCriteria
+            "CG", testScript, defaultSlaveCriteria
         ),
         slaveScriptBlSpec(
             "Merge", mergeScript, defaultSlaveCriteria, [ "CG" ]
@@ -136,7 +144,7 @@ module.exports = async (argv) => {
             "Build", buildScript, defaultSlaveCriteria, [ "Merge" ]
         ),
         slaveScriptBlSpec(
-            "Regression", regScript, defaultSlaveCriteria, [ "Merge" ]
+            "Regression", testScript, defaultSlaveCriteria, [ "Merge" ]
         ),
         slaveScriptBlSpec(
             "Deliver", buildScript, defaultSlaveCriteria, [ "Build" ]

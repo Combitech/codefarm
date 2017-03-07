@@ -34,6 +34,7 @@ if [[ "${mode}" != "dev" && "${mode}" != "rel" ]]; then
 fi
 
 gitroot=$(git rev-parse --show-toplevel)
+echo "Git root is ${gitroot}"
 
 $gitroot/ci/libs-build-${mode}.sh ${CLIARG} all
 $gitroot/ci/components-build-${mode}.sh ${CLIARG} all
