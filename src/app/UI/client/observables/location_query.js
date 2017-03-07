@@ -4,6 +4,7 @@
 import Immutable from "immutable";
 import Rx from "rxjs";
 import Url from "domurl";
+import singleton from "singleton";
 
 const wrap = function(type) {
     const original = history[type].bind(history);
@@ -76,4 +77,4 @@ class LocationQuery {
     }
 }
 
-export default new LocationQuery();
+export default singleton(LocationQuery);
