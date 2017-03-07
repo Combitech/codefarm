@@ -23,7 +23,7 @@ if [ "${CLI}" != "" ]; then
   CLIARG="-C ${CLI}"
 fi
 
-targets=$1
+targets=$@
 
 gitroot=$(git rev-parse --show-toplevel)
 source $gitroot/ci/common.source
@@ -41,5 +41,5 @@ else
 fi
 
 for target in ${targets[@]}; do
-  ${gitroot}/ci/component-build.sh ${CLIARGS} ${target} rel
+  ${gitroot}/ci/component-build.sh -C ${CLIARG} ${target} rel
 done
