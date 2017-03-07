@@ -43,5 +43,6 @@ else
 fi
 
 for target in ${targets[@]}; do
-  ${gitroot}/ci/lib-build.sh -C ${CLIARG} ${target} dev
+  echo ${gitroot}/ci/lib-build.sh ${CLIARG} ${target} dev
+  ${gitroot}/ci/lib-build.sh ${CLIARG} ${target} dev
 done

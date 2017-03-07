@@ -41,5 +41,5 @@ else
 fi
 
 for target in ${targets[@]}; do
-  ${gitroot}/ci/component-build.sh -C ${CLIARG} ${target} rel
+  ${gitroot}/ci/component-build.sh ${CLIARG} ${target} rel
 done

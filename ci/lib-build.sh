@@ -34,7 +34,7 @@ gitroot=$(git rev-parse --show-toplevel)
 source $gitroot/ci/common.source
 
 if [[ " ${libs[*]} " != *" ${target} "* ]]; then
-  echo "Error: Lib must be one of ${libs[*]}"
+  echo "Error: Invalid lib '${target}'. Valid libs are ${libs[*]} or 'all'"
   printUsage
   exit 1
 fi

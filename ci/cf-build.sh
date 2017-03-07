@@ -37,6 +37,6 @@ gitroot=$(git rev-parse --show-toplevel)
 echo "Git root is ${gitroot}"
 
 echo "Now I will build libs"
-$gitroot/ci/libs-build-${mode}.sh -C ${CLIARG} all
+$gitroot/ci/libs-build-${mode}.sh ${CLIARG} all
 echo "Now I will build components"
-$gitroot/ci/components-build-${mode}.sh -C ${CLIARG} all
+$gitroot/ci/components-build-${mode}.sh ${CLIARG} all
