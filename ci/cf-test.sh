@@ -21,14 +21,7 @@ fi
 gitroot=$(git rev-parse --show-toplevel)
 echo "Git root is ${gitroot}"
 
-echo "Now I will build libs in dev mode"
-${gitroot}/ci/libs-build-dev.sh ${CLIARG} all
-
 echo "Now I will test libs"
 ${gitroot}/ci/libs-test.sh ${CLIARG} all
-
-echo "Now I will build components in dev mode"
-${gitroot}/ci/components-build-dev.sh ${CLIARG} all
-
 echo "Now I will test components"
 ${gitroot}/ci/components-test.sh ${CLIARG} all
