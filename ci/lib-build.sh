@@ -1,4 +1,4 @@
-#!/bin/bash -e
+#!/bin/bash -ex
 
 startTime=$(($(date +%s%N)/1000000))
 
@@ -34,7 +34,7 @@ gitroot=$(git rev-parse --show-toplevel)
 source $gitroot/ci/common.source
 
 if [[ " ${libs[*]} " != *" ${target} "* ]]; then
-  echo "Error: Lib must be one of ${libs[*]}"
+  echo "Error: Invalid lib '${target}'. Valid libs are ${libs[*]} or 'all'"
   printUsage
   exit 1
 fi
@@ -54,8 +54,8 @@ pushd ${gitroot}/src/lib/${target}
   echo "Running install on ${target}"
 
   result=0
-  subjobname="${target}_build_${mode}"
-  subjobId=$($CLI -q '$._id' --format values create_subjob build "${subjobname}" ongoing)
+  subJobName="${target}_build_${mode}"
+  subJobId=$($CLI -q '$._id' --format values create_subjob build "${subJobName}" ongoing)
 
   yarn install ${installFlag} || result=1
 

@@ -1,4 +1,4 @@
-#!/bin/bash -e
+#!/bin/bash -ex
 
 startTime=$(($(date +%s%N)/1000000))
 
@@ -56,8 +56,8 @@ pushd ${gitroot}/src/app/${target}
   echo "Running install on ${target}"
 
   result=0
-  subjobname="${target}_build_${mode}"
-  subjobId=$($CLI -q '$._id' --format values create_subjob build "${subjobname}" ongoing)
+  subJobName="${target}_build_${mode}"
+  subJobId=$($CLI -q '$._id' --format values create_subjob build "${subJobName}" ongoing)
 
   yarn install ${installFlag} || result=1
 
@@ -79,8 +79,8 @@ popd
 if [[ "${target}" == "UI" && "${mode}" == "rel" ]]; then
   echo "Running UI compile-client"
   pushd ${gitroot}/src/app/${target}
-    subjobname="${component}_compile_client_build_${mode}"
-    subjobId=$($CLI -q '$._id' --format values create_subjob build "${subjobname}" ongoing)
+    subJobName="${component}_compile_client_build_${mode}"
+    subJobId=$($CLI -q '$._id' --format values create_subjob build "${subJobName}" ongoing)
 
     yarn compile-client --production || result=1
 

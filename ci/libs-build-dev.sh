@@ -25,7 +25,7 @@ if [ "${CLI}" != "" ]; then
   CLIARG="-C ${CLI}"
 fi
 
-targets=$@
+targets=$1
 
 gitroot=$(git rev-parse --show-toplevel)
 source $gitroot/ci/common.source
@@ -35,7 +35,7 @@ if [ "${targets}" == "all" ]; then
 else
   for target in ${targets[@]}; do
     if [[ " ${libs[*]} " != *" ${target} "* ]]; then
-      echo "Error: Component must be any number of ${libs[*]} or 'all'"
+      echo "Error: Invalid lib '${target}'. Valid libs are ${libs[*]} or 'all'"
       printUsage
       exit 1
     fi
@@ -43,5 +43,6 @@ else
 fi
 
 for target in ${targets[@]}; do
-  ${gitroot}/ci/lib-build.sh -C ${CLIARG} ${target} dev
+  echo ${gitroot}/ci/lib-build.sh ${CLIARG} ${target} dev
+  ${gitroot}/ci/lib-build.sh ${CLIARG} ${target} dev
 done

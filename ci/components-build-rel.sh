@@ -33,7 +33,7 @@ if [ "${targets}" == "all" ]; then
 else
   for target in ${targets[@]}; do
     if [[ " ${components[*]} " != *" ${target} "* ]]; then
-      echo "Error: Component must be any number of ${components[*]} or 'all'"
+      echo "Error: Invalid component '${target}'. Valid components are ${components[*]} or 'all'"
       printUsage
       exit 1
     fi
@@ -41,5 +41,5 @@ else
 fi
 
 for target in ${targets[@]}; do
-  ${gitroot}/ci/component-build.sh ${CLIARGS} ${target} rel
+  ${gitroot}/ci/component-build.sh ${CLIARG} ${target} rel
 done

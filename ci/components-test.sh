@@ -27,7 +27,7 @@ else
   CLI="node --harmony_async_await ${CLI}"
 fi
 
-targets=$@
+targets=$1
 
 gitroot=$(git rev-parse --show-toplevel)
 source $gitroot/ci/common.source
@@ -50,8 +50,8 @@ for target in ${targets[@]}; do
 
   pushd ${gitroot}/src/app/${target}
 
-  subjobname="${target}_test"
-  subjobId=$($CLI -q '$._id' --format values create_subjob build "${subjobname}" ongoing)
+  subJobName="${target}_test"
+  subJobId=$($CLI -q '$._id' --format values create_subjob build "${subJobName}" ongoing)
 
   yarn test || result=1
 
