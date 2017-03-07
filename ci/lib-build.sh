@@ -54,8 +54,8 @@ pushd ${gitroot}/src/lib/${target}
   echo "Running install on ${target}"
 
   result=0
-  subjobname="${target}_build_${mode}"
-  subjobId=$($CLI -q '$._id' --format values create_subjob build "${subjobname}" ongoing)
+  subJobName="${target}_build_${mode}"
+  subJobId=$($CLI -q '$._id' --format values create_subjob build "${subJobName}" ongoing)
 
   yarn install ${installFlag} || result=1
 
