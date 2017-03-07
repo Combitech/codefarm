@@ -10,7 +10,7 @@ class NoJob extends LightComponent {
 
     render() {
         this.log("render", this.props, this.state);
-        const stepName = this.props.step.value;
+        const stepName = this.props.step;
 
         const myStepTags = this.props.item.tags
             .filter((tag) => tag.startsWith(`step:${stepName}:`))
@@ -41,7 +41,7 @@ NoJob.propTypes = {
     theme: React.PropTypes.object,
     item: React.PropTypes.object.isRequired,
     itemExt: React.PropTypes.object.isRequired,
-    step: React.PropTypes.object.isRequired
+    step: React.PropTypes.string.isRequired
 };
 
 export default NoJob;

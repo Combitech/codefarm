@@ -14,8 +14,8 @@ class Section extends LightComponent {
     render() {
         this.log("render", this.props, this.state);
 
-        if (this.props.step.value) {
-            const jobRefs = this.props.itemExt.data.refs.filter((ref) => ref.name === this.props.step.value && ref.type === "exec.job");
+        if (this.props.step !== "") {
+            const jobRefs = this.props.itemExt.data.refs.filter((ref) => ref.name === this.props.step && ref.type === "exec.job");
 
             if (jobRefs.length > 0) {
                 jobRefs.sort((a, b) => moment(a.data.created).isBefore(b.data.created) ? 1 : -1);
@@ -58,7 +58,7 @@ Section.propTypes = {
     theme: React.PropTypes.object,
     item: React.PropTypes.object.isRequired,
     itemExt: React.PropTypes.object.isRequired,
-    step: React.PropTypes.any.isRequired
+    step: React.PropTypes.string
 };
 
 export default Section;

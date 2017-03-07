@@ -3,7 +3,6 @@ import React from "react";
 import LightComponent from "ui-lib/light_component";
 import { States as ObservableDataStates } from "ui-lib/observable_data";
 import { Flows } from "ui-components/flow";
-import stateVar from "ui-lib/state_var";
 import Flow from "./Flow";
 import Section from "./Section";
 import {
@@ -12,6 +11,7 @@ import {
 } from "ui-components/type_admin";
 import ExtendedItem from "ui-observables/extended_item";
 import FlowList from "ui-observables/flow_list";
+import LocationQuery from "ui-observables/location_query";
 
 class Item extends LightComponent {
     constructor(props) {
@@ -27,7 +27,7 @@ class Item extends LightComponent {
         });
 
         this.state = {
-            step: stateVar(this, "step", ""), // TODO: Temporary
+            params: LocationQuery.instance.params.getValue(),
             itemExt: this.itemExt.value.getValue(),
             itemExtState: this.itemExt.state.getValue(),
             flows: this.flows.value.getValue(),
@@ -43,6 +43,7 @@ class Item extends LightComponent {
         this.addDisposable(this.itemExt.state.subscribe((itemExtState) => this.setState({ itemExtState })));
         this.addDisposable(this.flows.value.subscribe((flows) => this.setState({ flows })));
         this.addDisposable(this.flows.state.subscribe((flowsState) => this.setState({ flowsState })));
+        this.addDisposable(LocationQuery.instance.params.subscribe((params) => this.setState({ params })));
     }
 
     componentWillReceiveProps(nextProps) {
@@ -57,7 +58,7 @@ class Item extends LightComponent {
     }
 
     render() {
-        this.log("render", this.props, JSON.stringify(this.state, null, 2));
+        this.log("render", this.props, this.state);
 
         let loadIndicator;
         if (this.state.itemExtState === ObservableDataStates.LOADING || this.state.flowsState === ObservableDataStates.LOADING) {
@@ -85,7 +86,8 @@ class Item extends LightComponent {
                                 item={this.props.item}
                                 itemExt={itemExt}
                                 pathname={this.props.pathname}
-                                step={this.state.step}
+                                step={this.state.params.toJS().step || ""}
+                                onStepSelect={(step) => LocationQuery.instance.setParams({ step })}
                                 flows={flows}
                                 FlowComponent={Flow}
                             />
@@ -94,7 +96,7 @@ class Item extends LightComponent {
                                 item={this.props.item}
                                 itemExt={itemExt}
                                 pathname={this.props.pathname}
-                                step={this.state.step}
+                                step={this.state.params.toJS().step || ""}
                             />
                         </div>
                     }
