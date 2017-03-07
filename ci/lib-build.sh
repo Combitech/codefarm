@@ -23,6 +23,8 @@ shift $(( OPTIND - 1 ))
 # Define CLI as doing nothing if flag is not set
 if [[ "$CLI" == "" ]]; then
   CLI=`which true`
+else
+  CLI="node --harmony_async_await ${CLI}"
 fi
 
 target=$1

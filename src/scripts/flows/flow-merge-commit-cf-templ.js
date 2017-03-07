@@ -98,6 +98,11 @@ module.exports = async (argv) => {
                 defaultCollector(`${flowIdTag} AND merged`)
             ]
         }, {
+            _id: "Lint",
+            collectors: [
+                defaultCollector(`${flowIdTag} AND merged`)
+            ]
+        }, {
             _id: "Deliver",
             collectors: [
                 defaultCollector(`${flowIdTag} AND step:Build:success`)
@@ -108,15 +113,16 @@ module.exports = async (argv) => {
     const testScript = `
         #!/bin/bash -e
         /home/farmer/codefarm/ci/cf-clone-checkout.sh
+        CLI=${PWD}/cli.js
         pushd codefarm
-        /home/farmer/codefarm/ci/cf-build.sh -C ../cli.js dev
-        /home/farmer/codefarm/ci/cf-test.sh -C ../cli.js
+        /home/farmer/codefarm/ci/cf-build.sh -C ${CLI}
+        /home/farmer/codefarm/ci/cf-test.sh -C ${CLI}
         popd
         exit 0
     `;
 
     const mergeScript = await fs.readFileAsync(path.join(__dirname, "..", "jobs", "merge_github_revision.sh"), { encoding: "utf8" });
-    const buildScript = `
+    const dummyScript = `
         #!/bin/bash
         delay=$(shuf -i3-10 -n 1)
         echo "I will sleep $delay seconds"
@@ -141,13 +147,16 @@ module.exports = async (argv) => {
             "Merge", mergeScript, defaultSlaveCriteria, [ "CG" ]
         ),
         slaveScriptBlSpec(
-            "Build", buildScript, defaultSlaveCriteria, [ "Merge" ]
+            "Build", dummyScript, defaultSlaveCriteria, [ "Merge" ]
         ),
         slaveScriptBlSpec(
             "Regression", testScript, defaultSlaveCriteria, [ "Merge" ]
         ),
         slaveScriptBlSpec(
-            "Deliver", buildScript, defaultSlaveCriteria, [ "Build" ]
+            "Lint", dummyScript, defaultSlaveCriteria, [ "Merge" ]
+        ),
+        slaveScriptBlSpec(
+            "Deliver", dummyScript, defaultSlaveCriteria, [ "Build" ]
         )
 
     ];
