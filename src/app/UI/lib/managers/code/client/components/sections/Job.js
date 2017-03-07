@@ -40,7 +40,7 @@ class Job extends LightComponent {
                         job={job}
                     />
                 </Tab>
-                {run.logs.map((ref) => (
+                {run && run.logs.map((ref) => (
                     <Tab
                         key={ref.id}
                         label={`${ref.name}`}
@@ -48,7 +48,7 @@ class Job extends LightComponent {
                         <LogViewer log={ref} />
                     </Tab>
                 ))}
-                {run.subJobs.length && (
+                {(run && run.subJobs.length) && (
                     <Tab
                         key="subjobs"
                         label="Sub-Jobs"
@@ -59,7 +59,7 @@ class Job extends LightComponent {
                         />
                     </Tab>
                 )}
-                {(run.artifacts.length || run.revisions.length) && (
+                {(run && (run.artifacts.length || run.revisions.length)) && (
                     <Tab
                         key="output"
                         label="Output"
