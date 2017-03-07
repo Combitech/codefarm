@@ -51,7 +51,7 @@ for target in ${targets[@]}; do
   pushd ${gitroot}/src/app/${target}
 
   subJobName="${target}_test"
-  subJobId=$($CLI -q '$._id' --format values create_subjob build "${subJobName}" ongoing)
+  subJobId=$($CLI -q '$._id' --format values create_subjob test "${subJobName}" ongoing)
 
   yarn test || result=1
 
