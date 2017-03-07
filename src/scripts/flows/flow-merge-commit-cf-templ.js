@@ -109,7 +109,7 @@ module.exports = async (argv) => {
         #!/bin/bash -e
         /home/farmer/codefarm/ci/cf-clone-checkout.sh
         pushd codefarm
-        /home/farmer/codefarm/ci/cf-build.sh -C ../cli.js
+        /home/farmer/codefarm/ci/cf-build.sh -C ../cli.js dev
         /home/farmer/codefarm/ci/cf-test.sh -C ../cli.js
         popd
         exit 0
