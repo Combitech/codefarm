@@ -305,7 +305,6 @@ class RevisionTabs extends LightComponent {
                                 />
                             </Tab>
                             <Tab label="Merged">
-
                                 <RevisionList
                                     theme={theme}
                                     repositoryId={this.props.item._id}
