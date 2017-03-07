@@ -118,6 +118,12 @@ class Revision extends Type {
         await this.save();
     }
 
+    async skipReview() {
+        this.tags = this.tags.filter((tag) => !tag.startsWith("review:"));
+        this.tags.push(`review:skip`);
+        await this.save()
+    }
+
     async addReview(userEmail, state) {
         const userRef = await this._getUserRef(userEmail);
         // Modify previous review for user
