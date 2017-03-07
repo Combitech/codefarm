@@ -22,7 +22,7 @@ class Revision extends Type {
         super();
 
         this.repository = false;
-        this.status = "REVISION_STATUS.SUBMITTED";
+        this.status = REVISION_STATUS.SUBMITTED;
         this.patches = [];
         this.reviews = [];
 
