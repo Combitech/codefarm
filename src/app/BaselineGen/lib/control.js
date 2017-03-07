@@ -44,7 +44,7 @@ class Control {
                 return;
             }
 
-            if (collector.state === Collector.STATES.USED) {
+            if (collector.state === Collector.STATES.USED || collector.state === Collector.STATES.COMPLETED) {
                 const specification = await Specification.findOne({ _id: collector.baseline });
 
                 if (specification) {
