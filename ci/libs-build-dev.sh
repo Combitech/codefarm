@@ -3,7 +3,7 @@
 set +x
 
 function printUsage() {
-  echo "Usage: $0 [libs] or 'all'"
+  echo "Usage: $0 [-C <cli_path>] <libs> or 'all'"
 }
 
 if [ $# -lt 1 ]; then
@@ -12,7 +12,20 @@ if [ $# -lt 1 ]; then
   exit 1
 fi
 
-targets=$1
+# Extract optional CLI path
+while getopts ":C:" opt; do
+  case "$opt" in
+    C) CLI=$OPTARG ;;
+  esac
+done
+shift $(( OPTIND - 1 ))
+
+CLIARG=""
+if [ "${CLI}" != "" ]; then
+  CLIARG="-C ${CLI}"
+fi
+
+targets=$@
 
 gitroot=$(git rev-parse --show-toplevel)
 source $gitroot/ci/common.source
@@ -30,5 +43,5 @@ else
 fi
 
 for target in ${targets[@]}; do
-  ${gitroot}/ci/lib-build.sh ${target} dev
+  ${gitroot}/ci/lib-build.sh ${CLIARG} ${target} dev
 done
