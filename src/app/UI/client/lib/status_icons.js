@@ -6,11 +6,16 @@ const clock = [
     "/Cheser/extras/255x255/status/status-clock-face-center.png"
 ];
 
+const ongoing = [
+    "/Cheser/extras/255x255/status/ongoing_back.png",
+    "/Cheser/extras/255x255/status/ongoing_front.png"
+];
+
 const statusIcons = {
     unknown: [ "/Cheser/extras/255x255/status/status-unknown.png" ],
     queued: clock,
     allocated: clock,
-    ongoing: clock,
+    ongoing: ongoing,
     success: [ "/Cheser/extras/255x255/status/status-success.png" ],
     aborted: [ "/Cheser/extras/255x255/status/status-aborted.png" ],
     fail: [ "/Cheser/extras/255x255/status/status-fail.png" ],
