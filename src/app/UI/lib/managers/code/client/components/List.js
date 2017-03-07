@@ -117,6 +117,10 @@ class RevisionListItemComponent extends React.PureComponent {
                         <td
                             className={this.props.theme.runColumn}
                             key={step.name}
+                            onClick={(event) => {
+                                event.stopPropagation();
+                                this.props.onClick(revision, step.name);
+                            }}
                         >
                             <StatusIcon
                                 className={this.props.theme.statusIcon}
@@ -221,10 +225,15 @@ class RevisionList extends LightComponent {
                         <RevisionListItemComponent
                             key={item.get("_id")}
                             theme={this.props.theme}
-                            onClick={() => {
-                                this.context.router.push({
-                                    pathname: `${this.props.pathname}/${item.get("_id")}`
-                                });
+                            onClick={(revision, step) => {
+                                const pathname = `${this.props.pathname}/${revision._id}`;
+                                const query = {};
+
+                                if (step) {
+                                    query.step = step;
+                                }
+
+                                this.context.router.push({ pathname, query });
                             }}
                             item={item}
                             steps={this.state.stepList}
@@ -305,7 +314,6 @@ class RevisionTabs extends LightComponent {
                                 />
                             </Tab>
                             <Tab label="Merged">
-
                                 <RevisionList
                                     theme={theme}
                                     repositoryId={this.props.item._id}

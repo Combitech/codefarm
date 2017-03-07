@@ -29,6 +29,7 @@ class Flows extends LightComponent {
                     pathname={this.props.pathname}
                     flow={this.props.flows[0]}
                     step={this.props.step}
+                    onStepSelect={this.props.onStepSelect}
                 />
             );
         } else {
@@ -50,6 +51,7 @@ class Flows extends LightComponent {
                                 pathname={this.props.pathname}
                                 flow={flow}
                                 step={this.props.step}
+                                onStepSelect={this.props.onStepSelect}
                             />
                         </Tab>
                     ))}
@@ -70,7 +72,8 @@ Flows.propTypes = {
     item: React.PropTypes.object.isRequired,
     itemExt: React.PropTypes.object.isRequired,
     pathname: React.PropTypes.string.isRequired,
-    step: React.PropTypes.object.isRequired,
+    step: React.PropTypes.string,
+    onStepSelect: React.PropTypes.func,
     flows: React.PropTypes.array,
     FlowComponent: React.PropTypes.func.isRequired
 };
