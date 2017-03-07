@@ -121,6 +121,7 @@ module.exports = async (argv) => {
         exit 0
     `;
 
+
     const mergeScript = await fs.readFileAsync(path.join(__dirname, "..", "jobs", "merge_github_revision.sh"), { encoding: "utf8" });
     const dummyScript = `
         #!/bin/bash
