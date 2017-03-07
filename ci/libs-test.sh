@@ -27,7 +27,7 @@ else
   CLI="node --harmony_async_await ${CLI}"
 fi
 
-targets=$@
+targets=$1
 
 gitroot=$(git rev-parse --show-toplevel)
 source $gitroot/ci/common.source
