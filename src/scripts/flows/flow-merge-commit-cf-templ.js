@@ -121,6 +121,16 @@ module.exports = async (argv) => {
         exit 0
     `;
 
+    const lintScript = `
+        #!/bin/bash -e
+        /home/farmer/codefarm/ci/cf-clone-checkout.sh
+        CLI=${PWD}/cli.js
+        pushd codefarm
+        /home/farmer/codefarm/ci/cf-lint.sh -C ${CLI}
+        popd
+        exit 0
+    `;
+
     const mergeScript = await fs.readFileAsync(path.join(__dirname, "..", "jobs", "merge_github_revision.sh"), { encoding: "utf8" });
     const dummyScript = `
         #!/bin/bash
@@ -153,7 +163,7 @@ module.exports = async (argv) => {
             "Regression", testScript, defaultSlaveCriteria, [ "Merge" ]
         ),
         slaveScriptBlSpec(
-            "Lint", dummyScript, defaultSlaveCriteria, [ "Merge" ]
+            "Lint", lintScript, defaultSlaveCriteria, [ "Merge" ]
         ),
         slaveScriptBlSpec(
             "Deliver", dummyScript, defaultSlaveCriteria, [ "Build" ]
