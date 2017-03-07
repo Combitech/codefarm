@@ -176,18 +176,28 @@ class GithubBackend extends AsyncEventEmitter {
         const repository = await this._getRepo(event.repository.name);
         const patch = await this._createPatch(event, repository._id);
 
-        return await this.Revision.allocate(repository._id, event.pull_request.id.toString(), patch);
+        const revision = await this.Revision.allocate(repository._id, event.pull_request.id.toString(), patch);
+
+        //Check if title contains SKIP_REVIEW and if so set the review:skip tag
+        if (event.pull_request.body.indexOf("SKIP_REVIEW") !== -1) {
+            revision.skipReview();
+        }
     }
 
     async _onPullRequestUpdate(event) {
         ServiceMgr.instance.log("verbose", "pull_request_update received");
         ServiceMgr.instance.log("debug", JSON.stringify(event, null, 2));
 
-        // This will create a new patch on existing revision
         const repository = await this._getRepo(event.repository.name);
         const patch = await this._createPatch(event, repository._id);
 
-        return await this.Revision.allocate(repository._id, event.pull_request.id.toString(), patch);
+        // This will create a new patch on existing revision
+        const revision = await this.Revision.allocate(repository._id, event.pull_request.id.toString(), patch);
+
+        //Check if title contains SKIP_REVIEW and if so set the review:skip tag
+        if (event.pull_request.body.indexOf("SKIP_REVIEW") !== -1) {
+            revision.skipReview();
+        }
     }
 
     async _onPullRequestClose(event) {
