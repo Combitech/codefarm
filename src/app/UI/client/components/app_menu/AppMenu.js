@@ -6,6 +6,20 @@ import { Button } from "react-toolbox/lib/button";
 class AppMenu extends React.Component {
     constructor(props) {
         super(props);
+
+        this.checkActive(props);
+    }
+
+    componentWillReceiveProps(nextProps) {
+        this.checkActive(nextProps);
+    }
+
+    checkActive(props) {
+        if (props.items.length === 0 || props.items.some((item) => item.active)) {
+            return;
+        }
+
+        this.context.router.push({ pathname: props.items[0].pathname });
     }
 
     render() {
