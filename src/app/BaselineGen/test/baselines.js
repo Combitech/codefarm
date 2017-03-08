@@ -5,7 +5,7 @@
 const { assert } = require("chai");
 const rp = require("request-promise");
 const getPort = require("get-port");
-const { serviceMgr } = require("service");
+const { ServiceMgr } = require("service");
 const Main = require("../lib/main");
 
 describe("BaselineGen", () => {
@@ -19,7 +19,7 @@ describe("BaselineGen", () => {
                 version: "0.0.1",
                 config: {
                     autoUseMgmt: false,
-                    level: "debug",
+                    level: "info",
                     web: {
                         port: await getPort()
                     },
@@ -36,12 +36,12 @@ describe("BaselineGen", () => {
             };
 
             main = new Main(testInfo.name, testInfo.version);
-            serviceMgr.create(main, testInfo.config);
+            ServiceMgr.instance.create(main, testInfo.config);
             await main.awaitOnline();
         });
 
         after(async () => {
-            await serviceMgr.dispose();
+            await ServiceMgr.instance.dispose();
         });
 
         const assertBaseline = (collector) => {
@@ -84,7 +84,7 @@ describe("BaselineGen", () => {
         });
 
         it("shall inject a matching event", async () => {
-            const mb = serviceMgr.msgBus;
+            const mb = ServiceMgr.instance.msgBus;
 
             const message = await mb.emitEvent([], "created", "coderepo.revision", null, {
                 _id: "123",
@@ -100,8 +100,6 @@ describe("BaselineGen", () => {
                 url: `http://localhost:${testInfo.config.web.port}/specification/for-cg/request`,
                 json: true
             });
-
-            console.error("ABC", JSON.stringify(result, null, 2));
 
             assert.equal(result.result, "success");
         });

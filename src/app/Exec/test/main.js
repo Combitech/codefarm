@@ -8,7 +8,7 @@ const path = require("path");
 const rp = require("request-promise");
 const fs = require("fs");
 const getPort = require("get-port");
-const { serviceMgr } = require("service");
+const { ServiceMgr } = require("service");
 const { ServiceComBus } = require("servicecom");
 const { StreamConverter } = require("misc");
 const Main = require("../lib/main");
@@ -123,7 +123,7 @@ describe("Exec", () => {
         console.log("Test will use private key", privateKeyPath);
 
         main = new Main(testInfo.name, testInfo.version);
-        serviceMgr.create(main, testInfo.config);
+        ServiceMgr.instance.create(main, testInfo.config);
         await main.awaitOnline();
 
         ServiceComBus.instance.on("request", async (request) => {

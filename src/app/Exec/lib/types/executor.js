@@ -4,7 +4,7 @@ const url = require("url");
 const path = require("path");
 const moment = require("moment");
 const fs = require("fs-extra-promise");
-const { serviceMgr } = require("service");
+const { ServiceMgr } = require("service");
 const { ServiceComBus } = require("servicecom");
 const { Type, notification } = require("typelib");
 const { SshClient } = require("ssh");
@@ -49,7 +49,7 @@ class Executor extends Type {
     }
 
     static get serviceName() {
-        return serviceMgr.serviceName;
+        return ServiceMgr.instance.serviceName;
     }
 
     static get typeName() {
@@ -57,7 +57,7 @@ class Executor extends Type {
     }
 
     static async _getDb() {
-        return await serviceMgr.use("db");
+        return await ServiceMgr.instance.use("db");
     }
 
     async _logln(str, level = LEVEL.INFO, tag = "sys") {
@@ -67,7 +67,7 @@ class Executor extends Type {
 
     async _log(str, level = LEVEL.STDOUT, tag = "exe", time) {
         if (this.logId) {
-            const lb = await serviceMgr.use("lb");
+            const lb = await ServiceMgr.instance.use("lb");
             await lb.publish(this.logId, time, level, tag, str);
         }
 
@@ -76,7 +76,7 @@ class Executor extends Type {
         }
 
         const prefix = `${tag.toUpperCase()}:${level}`;
-        serviceMgr.log("info", `Executor[${this._id}]: Slave[${this.slaveId}]: Job[${this.jobId}]: [${prefix}] ${str}`);
+        ServiceMgr.instance.log("info", `Executor[${this._id}]: Slave[${this.slaveId}]: Job[${this.jobId}]: [${prefix}] ${str}`);
     }
 
     get _defaultTags() {

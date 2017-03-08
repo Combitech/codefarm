@@ -1,6 +1,6 @@
 "use strict";
 
-const { serviceMgr } = require("service");
+const { ServiceMgr } = require("service");
 const path = require("path");
 const fs = require("fs-extra-promise");
 
@@ -72,7 +72,7 @@ class FsBackend {
             await fs.appendFileAsync(this.makeFileName(repository, id), data);
             // TODO: Notify of update somewhere
         } catch (error) {
-            serviceMgr.log("error", `Error when appending to log id = ${id} data = ${data} error = (${error})`);
+            ServiceMgr.instance.log("error", `Error when appending to log id = ${id} data = ${data} error = (${error})`);
         }
     }
 

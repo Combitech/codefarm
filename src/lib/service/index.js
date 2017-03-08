@@ -7,7 +7,6 @@ const STATE = require("./lib/states");
 const { ServiceError } = require("./lib/errors");
 
 module.exports = {
-    serviceMgr: ServiceMgr.instance, // TODO: Remove usage of this in all apps
     ServiceMgr,
     Service,
     getCmdLineOpts,

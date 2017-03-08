@@ -7,7 +7,7 @@ const rp = require("request-promise");
 const getPort = require("get-port");
 const clone = require("clone");
 const sift = require("sift");
-const { serviceMgr } = require("service");
+const { ServiceMgr } = require("service");
 const Main = require("../lib/main");
 
 class MsgBusStub {
@@ -93,12 +93,12 @@ describe("DataResolve", () => {
             };
 
             main = new Main(testInfo.name, testInfo.version);
-            serviceMgr.create(main, testInfo.config);
+            ServiceMgr.instance.create(main, testInfo.config);
             await main.awaitOnline();
         });
 
         after(async () => {
-            await serviceMgr.dispose();
+            await ServiceMgr.instance.dispose();
         });
 
 

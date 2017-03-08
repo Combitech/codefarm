@@ -4,7 +4,7 @@ const { name, version } = require("./package.json");
 const { join } = require("path");
 const yargs = require("yargs");
 const Main = require("./lib/main");
-const { serviceMgr, getCmdLineOpts: getServiceOpts } = require("service");
+const { ServiceMgr, getCmdLineOpts: getServiceOpts } = require("service");
 
 const argv = yargs
 .usage("Usage: $0 -c [config]")
@@ -41,7 +41,7 @@ const promiseWarningHandler = (error, promise) => {
 };
 
 const shutdownHandler = async () => {
-    await serviceMgr.dispose();
+    await ServiceMgr.instance.dispose();
     process.exit(0);
 };
 
@@ -52,4 +52,4 @@ process
 .on("unhandledRejection", promiseWarningHandler);
 
 const main = new Main(name, version);
-serviceMgr.create(main, argv).catch(crashHandler);
+ServiceMgr.instance.create(main, argv).catch(crashHandler);

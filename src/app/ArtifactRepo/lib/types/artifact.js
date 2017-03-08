@@ -1,6 +1,6 @@
 "use strict";
 
-const { serviceMgr } = require("service");
+const { ServiceMgr } = require("service");
 const { chainStreams, assertType, assertProp } = require("misc");
 const { Type } = require("typelib");
 const version = require("version");
@@ -34,7 +34,7 @@ class Artifact extends Type {
     }
 
     static get serviceName() {
-        return serviceMgr.serviceName;
+        return ServiceMgr.instance.serviceName;
     }
 
     static get typeName() {
@@ -42,11 +42,11 @@ class Artifact extends Type {
     }
 
     static async _getDb() {
-        return await serviceMgr.use("db");
+        return await ServiceMgr.instance.use("db");
     }
 
     static async _getMb() {
-        return serviceMgr.msgBus;
+        return ServiceMgr.instance.msgBus;
     }
 
     async _saveHook() {

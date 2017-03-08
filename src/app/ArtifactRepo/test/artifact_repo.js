@@ -10,7 +10,7 @@ const digestStream = require("digest-stream");
 const { Readable } = require("stream");
 const { mochaPatch } = require("testsupport");
 const getPort = require("get-port");
-const { serviceMgr } = require("service");
+const { ServiceMgr } = require("service");
 const Main = require("../lib/main");
 
 mochaPatch();
@@ -61,7 +61,7 @@ describe("ArtifactRepo", () => {
         });
 
         main = new Main(testInfo.name, testInfo.version);
-        serviceMgr.create(main, testInfo.config);
+        ServiceMgr.instance.create(main, testInfo.config);
         await main.awaitOnline();
         await addBackend(testInfo.backend1);
     });

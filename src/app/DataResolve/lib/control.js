@@ -1,6 +1,6 @@
 "use strict";
 
-const { serviceMgr } = require("service");
+const { ServiceMgr } = require("service");
 const { notification } = require("typelib");
 const singleton = require("singleton");
 const Data = require("./types/data");
@@ -10,7 +10,7 @@ class Control {
     }
 
     async start() {
-        const mb = serviceMgr.msgBus;
+        const mb = ServiceMgr.instance.msgBus;
         const watchlist = await Data.findMany();
 
         notification.on("data.created", async (dataItem) => {
@@ -56,7 +56,7 @@ class Control {
             }
             if (updatedDataItems.length > 0) {
                 const elapsedMs = Date.now() - startTs;
-                serviceMgr.log("verbose", `Updated ${updatedDataItems.length} data items in ${elapsedMs}ms. Triggered by ${data.event}:${data.type}/${data.typeId}`);
+                ServiceMgr.instance.log("verbose", `Updated ${updatedDataItems.length} data items in ${elapsedMs}ms. Triggered by ${data.event}:${data.type}/${data.typeId}`);
             }
         });
     }

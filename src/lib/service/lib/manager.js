@@ -9,6 +9,7 @@ const { Deferred, assertType, asyncWithTmo, delay } = require("misc");
 const { HttpClient, ServiceComBus } = require("servicecom");
 const ProviderClient = require("providerclient");
 const singleton = require("singleton");
+const { Type } = require("typelib");
 const STATE = require("./states");
 const { DEFAULT_HEARTBEAT_INTERVAL, DEFAULT_HEARTBEAT_TIMEOUT, DEFAULT_DISPOSE_RUN_WAIT_TIMEOUT, DEFAULT_MIN_RUN_TIME } = require("./constants");
 const { ServiceError } = require("./errors");
@@ -106,6 +107,8 @@ class Manager {
                 new ServiceError("Timeout at dispose while waiting for _run")
             );
         }
+
+        Type.disposeTypeInstanceMaps();
     }
 
     async _run() {

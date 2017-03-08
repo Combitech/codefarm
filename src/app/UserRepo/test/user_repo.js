@@ -5,7 +5,7 @@
 const { assert } = require("chai");
 const rp = require("request-promise");
 const getPort = require("get-port");
-const { serviceMgr } = require("service");
+const { ServiceMgr } = require("service");
 const Main = require("../lib/main");
 
 "use strict";
@@ -152,13 +152,13 @@ describe("UserRepo", () => {
         baseUrl = `http://localhost:${testInfo.config.web.port}`;
 
         main = new Main(testInfo.name, testInfo.version);
-        serviceMgr.create(main, testInfo.config);
+        ServiceMgr.instance.create(main, testInfo.config);
         await main.awaitOnline();
         await addBackend(backend1);
     });
 
     after(async () => {
-        await serviceMgr.dispose();
+        await ServiceMgr.instance.dispose();
     });
 
     const backend2 = {

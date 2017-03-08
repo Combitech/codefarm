@@ -1,6 +1,6 @@
 "use strict";
 
-const { serviceMgr } = require("service");
+const { ServiceMgr } = require("service");
 const { Type } = require("typelib");
 
 class Baseline extends Type {
@@ -16,7 +16,7 @@ class Baseline extends Type {
     }
 
     static get serviceName() {
-        return serviceMgr.serviceName;
+        return ServiceMgr.instance.serviceName;
     }
 
     static get typeName() {
@@ -24,11 +24,11 @@ class Baseline extends Type {
     }
 
     static async _getDb() {
-        return await serviceMgr.use("db");
+        return await ServiceMgr.instance.use("db");
     }
 
     static async _getMb() {
-        return serviceMgr.msgBus;
+        return ServiceMgr.instance.msgBus;
     }
 }
 

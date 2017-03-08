@@ -1,6 +1,6 @@
 "use strict";
 
-const { serviceMgr } = require("service");
+const { ServiceMgr } = require("service");
 const { Type } = require("typelib");
 const { assertType, assertProp } = require("misc");
 const Db = require("../db");
@@ -21,7 +21,7 @@ class Config extends Type {
     }
 
     static get serviceName() {
-        return serviceMgr.serviceName;
+        return ServiceMgr.instance.serviceName;
     }
 
     static get typeName() {

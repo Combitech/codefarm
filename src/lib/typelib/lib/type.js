@@ -6,7 +6,7 @@ const clone = require("clone");
 const WeakValueMap = require("weakvaluemap");
 const notification = require("./notification");
 
-const typeInstanceMaps = {};
+let typeInstanceMaps = {};
 
 class Type {
     constructor() {
@@ -333,5 +333,9 @@ class Type {
         await notification.emit(`${this.constructor.typeName}.uncommented`, this, comment);
     }
 }
+
+Type.disposeTypeInstanceMaps = () => {
+    typeInstanceMaps = {};
+};
 
 module.exports = Type;

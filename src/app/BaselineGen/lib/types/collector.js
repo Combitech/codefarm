@@ -1,6 +1,6 @@
 "use strict";
 
-const { serviceMgr } = require("service");
+const { ServiceMgr } = require("service");
 const { Type, notification } = require("typelib");
 const { TagCriteria } = require("misc");
 
@@ -43,7 +43,7 @@ class Collector extends Type {
     }
 
     static get serviceName() {
-        return serviceMgr.serviceName;
+        return ServiceMgr.instance.serviceName;
     }
 
     static get typeName() {
@@ -51,11 +51,11 @@ class Collector extends Type {
     }
 
     static async _getDb() {
-        return await serviceMgr.use("db");
+        return await ServiceMgr.instance.use("db");
     }
 
     static async _getMb() {
-        return serviceMgr.msgBus;
+        return ServiceMgr.instance.msgBus;
     }
 
     static async createFromSpecificationData(baselineName, data, requested = false) {
@@ -159,7 +159,7 @@ class Collector extends Type {
     }
 
     async update(event) {
-        this.ids.push(event.newdata._id);
+        this.ids.push(event.typeId);
 
         // limit === 0 means collect any number
         // latest === true will replace the oldest

@@ -8,7 +8,7 @@ const fs = require("fs-extra-promise");
 const rp = require("request-promise");
 const { mochaPatch } = require("testsupport");
 const getPort = require("get-port");
-const { serviceMgr } = require("service");
+const { ServiceMgr } = require("service");
 const Main = require("../lib/main");
 
 mochaPatch();
@@ -63,7 +63,7 @@ describe("LogRepo", () => {
         });
 
         main = new Main(testInfo.name, testInfo.version);
-        serviceMgr.create(main, testInfo.config);
+        ServiceMgr.instance.create(main, testInfo.config);
         await main.awaitOnline();
         await addBackend(testInfo.backend1);
     });

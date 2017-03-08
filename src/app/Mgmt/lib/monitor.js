@@ -1,7 +1,7 @@
 "use strict";
 
 const moment = require("moment");
-const { serviceMgr, STATE } = require("service");
+const { ServiceMgr, STATE } = require("service");
 const singleton = require("singleton");
 
 const DEFAULT_PRINT_STATE_INTERVAL = 60000;
@@ -90,7 +90,7 @@ class Monitor {
     }
 
     _printState() {
-        serviceMgr.log("verbose", "Monitor state:", JSON.stringify(this.getServiceStatus(), null, 2));
+        ServiceMgr.instance.log("verbose", "Monitor state:", JSON.stringify(this.getServiceStatus(), null, 2));
     }
 
     async dispose() {
