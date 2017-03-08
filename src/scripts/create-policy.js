@@ -36,9 +36,9 @@ const argv = yargs
 })
 .argv;
 
-const allTypes = [
-    // $ cd src/app
-    // $ git ls-files */lib/types/*|sed 's+/lib/types/+\.+'|sed 's/\.js//'|sed 's/\(.*\)/    \"\1\",/'|tr '[:upper:]' '[:lower:]'
+// $ cd src/app
+// $ git ls-files */lib/types/*|sed 's+/lib/types/+\.+'|sed 's/\.js//'|sed 's/\(.*\)/    \"\1\",/'|tr '[:upper:]' '[:lower:]'
+/*
     "artifactrepo.artifact",
     "artifactrepo.backend",
     "artifactrepo.repository",
@@ -65,15 +65,13 @@ const allTypes = [
     "userrepo.team_avatar",
     "userrepo.user",
     "userrepo.user_avatar"
-
-    // TODO: Add :state
-];
+*/
 
 const templates = {
-    super: allTypes.map((t) => `rw:${t}`),
-    adm: allTypes.map((t) => `rw:${t}`),
-    mgmt: allTypes.map((t) => `rw:${t}`), // TODO
-    usr: allTypes.map((t) => `r:${t}`)
+    super: [ "rwda:*" ],
+    adm: [ "rwda:*" ],
+    mgmt: [ "rwa:*" ],
+    usr: [ "r:*" ]
 };
 
 const run = async () => {

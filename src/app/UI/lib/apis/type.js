@@ -25,6 +25,7 @@ const typeApiExports = api.register("type", {
         return client[getter](typeName, id);
     }),
     action: api.export(async (session, type, id, action, data = {}) => {
+        checkAuthorized(session, type, "a");
         const [ serviceId, typeName ] = type.split(".");
         const client = ServiceComBus.instance.getClient(serviceId);
 

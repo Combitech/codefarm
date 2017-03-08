@@ -28,13 +28,14 @@ const restApiExports = api.register("rest", {
         return client.update(typeName, id, data);
     }),
     remove: api.export(async (session, type, id) => {
-        checkAuthorized(session, type, "w");
+        checkAuthorized(session, type, "d");
         const [ serviceId, typeName ] = type.split(".");
         const client = ServiceComBus.instance.getClient(serviceId);
 
         return client.remove(typeName, id);
     }),
     action: api.export(async (session, type, id, action, data) => {
+        checkAuthorized(session, type, "a");
         const [ serviceId, typeName ] = type.split(".");
         const client = ServiceComBus.instance.getClient(serviceId);
 
