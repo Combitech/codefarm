@@ -37,6 +37,12 @@ class TestBackend {
     async updateUser(/* user */) {
     }
 
+    async authenticateUser(/* user, password */) {
+    }
+
+    async setPasswordUser(/* user, newPassword, oldPassword */) {
+    }
+
     async removeUser(/* user */) {
     }
 
@@ -91,6 +97,13 @@ describe("UserRepo", () => {
     const userAuth = async (id, data) =>
         rp.post({
             url: `${baseUrl}/user/${id}/auth`,
+            body: data,
+            json: true
+        });
+
+    const userSetPassword = async (id, data) =>
+        rp.post({
+            url: `${baseUrl}/user/${id}/setpassword`,
             body: data,
             json: true
         });
@@ -209,6 +222,28 @@ describe("UserRepo", () => {
             assert.strictEqual(data.result, "success");
             assert.strictEqual(data.action, "auth");
             assert.strictEqual(data.data.authenticated, false);
+        });
+
+        it("should update password if old password correct", async () => {
+            const data = await userSetPassword(user1._id, {
+                password: "abcdefghijk",
+                oldPassword: user1.password
+            });
+            assert.strictEqual(data.result, "success");
+            assert.strictEqual(data.action, "setpassword");
+        });
+
+        it("should not update password if old password incorrect", async () => {
+            try {
+                await userSetPassword(user1._id, {
+                    password: "abcdefghijk",
+                    oldPassword: user1.password
+                });
+                assert(false, "Unexpected user set password");
+            } catch (error) {
+                assert.strictEqual(error.statusCode, 500);
+                assert.match(error.message, /Cannot set password, athentication failed/);
+            }
         });
 
         it("should not add user to unknown backend", async () => {

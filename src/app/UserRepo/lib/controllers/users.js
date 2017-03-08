@@ -1,6 +1,5 @@
 "use strict";
 
-const asyncBusboy = require("async-busboy");
 const User = require("../types/user");
 const { Controller } = require("servicecom");
 
@@ -9,6 +8,7 @@ class Users extends Controller {
         super(User);
 
         this._addAction("auth", this._authenticate);
+        this._addAction("setpassword", this._setPassword);
         this._addAction("addkey", this._addKey);
         this._addGetter("keys", this._getKeys);
     }
@@ -28,6 +28,28 @@ class Users extends Controller {
 
         return {
             authenticated,
+            user: obj.serialize()
+        };
+    }
+
+    async _setPassword(id, data) {
+        if (typeof data !== "object" || data === null) {
+            throw new Error("Request body must be an object");
+        }
+
+        if (typeof data.password !== "string") {
+            throw new Error("password not a string");
+        }
+
+        if (typeof data.oldPassword !== "string") {
+            throw new Error("oldPassword not a string");
+        }
+
+        const obj = await this._getTypeInstance(id);
+
+        await obj.setPassword(data.password, data.oldPassword);
+
+        return {
             user: obj.serialize()
         };
     }

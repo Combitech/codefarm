@@ -2,7 +2,6 @@
 
 const fs = require("fs-extra-promise");
 const yargs = require("yargs");
-const path = require("path");
 const rp = require("request-promise");
 const { userrepo: configUserRepo } = require("./config.json");
 
@@ -16,90 +15,62 @@ const argv = yargs
     requiresArg: true,
     default: process.env.USER
 })
-.option("n", {
-    alias: "name",
-    describe: "User name",
-    type: "string",
-    requiresArg: true,
-    default: process.env.USER
-})
 .option("password", {
     describe: "Password",
     type: "string"
 })
-.option("b", {
-    alias: "backend",
-    describe: "Backend name",
-    type: "string",
-    requiresArg: true,
-    default: "Dummy"
+.option("newPassword", {
+    describe: "New password",
+    type: "string"
 })
-.option("email", {
-    describe: "User emails",
-    type: "array",
-    default: []
-})
-.option("k", {
-    alias: "key",
+.option("key", {
     describe: "Public key",
-    type: "string",
-    requiresArg: true,
-    default: path.join(process.env.HOME, ".ssh", "id_rsa.pub")
-})
-.option("t", {
-    alias: "teams",
-    describe: "Teams",
-    type: "array",
-    default: []
-})
-.option("privilege", {
-    describe: "Privilege",
-    type: "array",
-    default: []
-})
-.option("no_key", {
-    describe: "Do not upload key",
-    type: "bool",
-    default: false
-})
-.option("no_create", {
-    describe: "Do not create user",
-    type: "bool",
-    default: false
+    type: "string"
 })
 .option("avatar", {
     describe: "Avatar image file to upload",
-    type: "string",
-    requiresArg: true
+    type: "string"
 })
 .argv;
 
 const run = async () => {
     console.log(`User ${argv.id}`);
     let result;
-    if (!argv.no_create) {
-        console.log(`Adding user ${argv.id}`);
-        result = await rp.post({
-            url: `http://localhost:${configUserRepo.web.port}/user`,
-            body: {
-                _id: argv.id,
-                name: argv.name,
-                teams: argv.teams,
-                email: argv.email,
-                backend: argv.backend,
-                password: argv.password,
-                privileges: argv.privilege
-            },
-            json: true
-        });
-        console.dir(result, { colors: true, depth: null });
-        if (result.result !== "success") {
-            console.error("Failed to create user");
-            process.exit(1);
+
+    if (argv.newPassword) {
+        console.log(`Setting password for user ${argv.id}`);
+        try {
+            result = await rp.post({
+                url: `http://localhost:${configUserRepo.web.port}/user/${argv.id}/setpassword`,
+                body: {
+                    password: argv.newPassword,
+                    oldPassword: argv.password
+                },
+                json: true
+            });
+
+            console.dir(result, { colors: true, depth: null });
+        } catch (error) {
+            console.error("Failed to set password", error.message);
+        }
+    } else if (argv.password) {
+        console.log(`Authenticating user ${argv.id}`);
+        try {
+            result = await rp.post({
+                url: `http://localhost:${configUserRepo.web.port}/user/${argv.id}/auth`,
+                body: {
+                    password: argv.password
+                },
+                json: true
+            });
+
+            console.dir(result, { colors: true, depth: null });
+        } catch (error) {
+            console.error("Failed to authenticate user", error.message);
         }
     }
 
-    if (!argv.no_key) {
+    if (argv.key) {
         console.log(`Adding public key to user ${argv.id}`);
         result = await rp.post({
             url: `http://localhost:${configUserRepo.web.port}/user/${argv.id}/addkey`,

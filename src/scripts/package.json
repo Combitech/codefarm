@@ -10,6 +10,7 @@
     "revision-cmd": "node --harmony_async_await ./revision-cmd.js",
     "job-cmd": "node --harmony_async_await ./job-cmd.js",
     "log-cmd": "node --harmony_async_await ./log-cmd.js",
+    "user-cmd": "node --harmony_async_await ./user-cmd.js",
     "create-config": "node --harmony_async_await ./create-config.js",
     "create-userrepo-backend": "node --harmony_async_await ./create-userrepo-backend.js",
     "create-user": "node --harmony_async_await ./create-user.js",

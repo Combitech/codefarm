@@ -65,6 +65,12 @@ class BackendProxy extends BackendProxyBase {
         return instance.authenticateUser(user, password);
     }
 
+    async setPasswordUser(user, newPassword, oldPassword) {
+        const instance = this.getBackend(user.backend);
+
+        return instance.setPasswordUser(user, newPassword, oldPassword);
+    }
+
     async lookupTeam(query) {
         for (const name of Object.keys(this.backends)) {
             const team = await this.backends[name].lookupTeam(query);

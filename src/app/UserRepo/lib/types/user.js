@@ -148,6 +148,13 @@ class User extends Type {
     async authenticate(password) {
         return BackendProxy.instance.authenticateUser(this, password);
     }
+
+    async setPassword(newPassword, oldPassword) {
+        const passwordUpdated = await BackendProxy.instance.setPasswordUser(this, newPassword, oldPassword);
+        if (passwordUpdated) {
+            await this.save();
+        }
+    }
 }
 
 module.exports = User;

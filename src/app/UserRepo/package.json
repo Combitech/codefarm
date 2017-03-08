@@ -36,6 +36,7 @@
     "servicecom"
   ],
   "dependencies": {
+    "argon2": "^0.15.0",
     "async-busboy": "^0.3.3",
     "yargs": "^6.3.0"
   },

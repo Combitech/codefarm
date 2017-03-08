@@ -1,6 +1,7 @@
 "use strict";
 
-const { assertType } = require("misc");
+const { assertType, assertProp } = require("misc");
+const argon2 = require("argon2");
 
 const MIN_PASSWORD_LENGTH = 8;
 
@@ -13,9 +14,22 @@ class Dummy {
     async start() {
     }
 
-    async hashPassword(password) {
-        // TODO: Use real hashing algorithm...
-        return `Hashed ${password}`;
+    _validatePassword(password) {
+        assertType(password, "password", "string");
+        if (password.length < MIN_PASSWORD_LENGTH) {
+            throw new Error(`Password to short, minimum length is ${MIN_PASSWORD_LENGTH}`);
+        }
+    }
+
+    async _hashPassword(password) {
+        const salt = await argon2.generateSalt();
+        const hash = await argon2.hash(password, salt);
+
+        return hash;
+    }
+
+    async _verifyPassword(passwordHash, password) {
+        return argon2.verify(passwordHash, password);
     }
 
     constructUser(user) {
@@ -26,10 +40,10 @@ class Dummy {
 
     async validateUser(event, data) {
         if (event === "create") {
-            assertType(data.password, "data.password", "string");
-            if (data.password.length < MIN_PASSWORD_LENGTH) {
-                throw new Error(`Password to short, minimum length is ${MIN_PASSWORD_LENGTH}`);
-            }
+            this._validatePassword(data.password);
+        } else if (event === "update") {
+            // Do not allow password updates, use setpassword action
+            assertProp(data, "password", false);
         }
     }
 
@@ -39,25 +53,34 @@ class Dummy {
 
     async createUser(user) {
         if (user.password) {
-            user.passwordHash = await this.hashPassword(user.password);
+            user.passwordHash = await this._hashPassword(user.password);
             delete user.password;
         }
     }
 
-    async updateUser(user) {
-        if (user.password) {
-            user.passwordHash = await this.hashPassword(user.password);
-            delete user.password;
-        }
+    async updateUser(/* user */) {
     }
 
     async removeUser(/* user */) {
     }
 
     async authenticateUser(user, password) {
-        const passwordHash = await this.hashPassword(password);
+        if (!user.passwordHash) {
+            throw new Error("Failed to authenticate user, no password set!");
+        }
 
-        return user.passwordHash === passwordHash;
+        return this._verifyPassword(user.passwordHash, password);
+    }
+
+    async setPasswordUser(user, newPassword, oldPassword) {
+        const authenticated = await this.authenticateUser(user, oldPassword);
+        if (!authenticated) {
+            throw new Error("Cannot set password, athentication failed!");
+        }
+        this._validatePassword(newPassword);
+        user.passwordHash = await this._hashPassword(newPassword);
+
+        return true;
     }
 
     async lookupTeam(/* query */) {
