@@ -2,7 +2,6 @@
 /* global window */
 
 import React from "react";
-import Snackbar from "react-toolbox/lib/snackbar";
 import LightComponent from "ui-lib/light_component";
 import Chip from "react-toolbox/lib/chip";
 import Link from "react-toolbox/lib/link";
@@ -19,6 +18,7 @@ import {
 } from "ui-components/type_admin";
 import * as pathBuilder from "ui-lib/path_builder";
 import * as queryBuilder from "ui-lib/query_builder";
+import Notification from "ui-observables/notification";
 
 class Item extends LightComponent {
     constructor(props) {
@@ -27,17 +27,12 @@ class Item extends LightComponent {
         this.state = {
             runId: false,
             runTabIndex: 0,
-            baselineCollectorIndex: 0,
-            statusMessage: { msg: "", type: "accept" }
+            baselineCollectorIndex: 0
         };
     }
 
     _showMessage(msg, type = "accept") {
-        this.setState({ statusMessage: { msg: msg, type: type } });
-    }
-
-    _closeSnackbar() {
-        this._showMessage("");
+        Notification.instance.publish(msg, type);
     }
 
     async _downloadLog(item) {
@@ -211,87 +206,76 @@ class Item extends LightComponent {
         );
 
         return (
-            <div>
-                <TASection
-                    controls={controls}
-                    breadcrumbs={this.props.breadcrumbs}
-                >
-                    <div className={this.props.theme.container}>
-                        <Row>
-                            <Col className={this.props.theme.panel}>
-                                <div className={this.props.theme.tags}>
-                                    {item.tags.map((tag) => (
-                                        <Chip key={tag}>{tag}</Chip>
-                                    ))}
-                                </div>
-                            </Col>
-                        </Row>
-                        <Row>
-                            <Col xs={12} md={5} className={this.props.theme.panel}>
-                                <h6 className={this.props.theme.title}>Properties</h6>
-                                <table className={this.props.theme.properties}>
-                                    <tbody>
-                                        <tr>
-                                            <td>Name</td>
-                                            <td>{item.name}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Criteria</td>
-                                            <td>{item.criteria}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Slave Id</td>
-                                            <td>
-                                                <Link
-                                                    label={ item.slaveId || "None" }
-                                                    onClick={() => {
-                                                        this.context.router.push({
-                                                            pathname: pathBuilder.fromType("exec.slave", { _id: item.slaveId })
-                                                        });
-                                                    }}
-                                                />
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>Finished</td>
-                                            <td>{item.finished ? `at ${item.finished}` : "No"}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Status</td>
-                                            <td>{item.status}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Created</td>
-                                            <td>{item.created}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Saved</td>
-                                            <td>{item.saved}</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </Col>
-                            <Col xs={12} md={7} className={this.props.theme.panel}>
-                                {baselineContent}
-                            </Col>
-                        </Row>
-                        <Row>
-                            <Col xs={12} className={this.props.theme.panel}>
-                                {runContent}
-                            </Col>
-                        </Row>
-                    </div>
-                </TASection>
-                <Snackbar
-                    action="Dismiss"
-                    active={this.state.statusMessage.msg.length > 0}
-                    label={this.state.statusMessage.msg}
-                    timeout={3000}
-                    onClick={this._closeSnackbar.bind(this)}
-                    onTimeout={this._closeSnackbar.bind(this)}
-                    type={this.state.statusMessage.type}
-                />
-            </div>
+            <TASection
+                controls={controls}
+                breadcrumbs={this.props.breadcrumbs}
+            >
+                <div className={this.props.theme.container}>
+                    <Row>
+                        <Col className={this.props.theme.panel}>
+                            <div className={this.props.theme.tags}>
+                                {item.tags.map((tag) => (
+                                    <Chip key={tag}>{tag}</Chip>
+                                ))}
+                            </div>
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col xs={12} md={5} className={this.props.theme.panel}>
+                            <h6 className={this.props.theme.title}>Properties</h6>
+                            <table className={this.props.theme.properties}>
+                                <tbody>
+                                    <tr>
+                                        <td>Name</td>
+                                        <td>{item.name}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Criteria</td>
+                                        <td>{item.criteria}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Slave Id</td>
+                                        <td>
+                                            <Link
+                                                label={ item.slaveId || "None" }
+                                                onClick={() => {
+                                                    this.context.router.push({
+                                                        pathname: pathBuilder.fromType("exec.slave", { _id: item.slaveId })
+                                                    });
+                                                }}
+                                            />
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Finished</td>
+                                        <td>{item.finished ? `at ${item.finished}` : "No"}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Status</td>
+                                        <td>{item.status}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Created</td>
+                                        <td>{item.created}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Saved</td>
+                                        <td>{item.saved}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </Col>
+                        <Col xs={12} md={7} className={this.props.theme.panel}>
+                            {baselineContent}
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col xs={12} className={this.props.theme.panel}>
+                            {runContent}
+                        </Col>
+                    </Row>
+                </div>
+            </TASection>
         );
     }
 }

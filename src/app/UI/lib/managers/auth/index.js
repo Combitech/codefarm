@@ -28,7 +28,7 @@ class Auth {
         this._privateKey = null;
     }
 
-    async login(email, password, decodedTokenKey = null) {
+    async login(email, password) {
         if (typeof email !== "string") {
             throw new Error("email required");
         }
@@ -69,17 +69,19 @@ class Auth {
             const tokenOpts = {
                 expiresIn: TOKEN_EXPIRES_IN
             };
-            result = {
-                success: true,
-                data: {
-                    username: user.name,
-                    scope: scope,
-                    priv
-                }
-            };
-            result.token = await this._createToken(tokenData, tokenOpts);
-            if (typeof decodedTokenKey === "string") {
-                result[decodedTokenKey] = tokenData;
+            const token = await this._createToken(tokenData, tokenOpts);
+
+            if (token) {
+                result = {
+                    success: true,
+                    user: tokenData,
+                    token
+                };
+            } else {
+                result = {
+                    success: false,
+                    message: "Server failed to create token"
+                };
             }
         } else {
             result = {

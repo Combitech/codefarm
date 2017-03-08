@@ -1,7 +1,6 @@
 
 import React from "react";
 import Chip from "react-toolbox/lib/chip";
-import Snackbar from "react-toolbox/lib/snackbar";
 import LightComponent from "ui-lib/light_component";
 import { Row, Col } from "react-flexbox-grid";
 // Re-use job-list-item component from job section
@@ -13,22 +12,15 @@ import {
 } from "ui-components/type_admin";
 import api from "api.io/api.io-client";
 import * as pathBuilder from "ui-lib/path_builder";
+import Notification from "ui-observables/notification";
 
 class Item extends LightComponent {
     constructor(props) {
         super(props);
-
-        this.state = {
-            statusMessage: { msg: "", type: "accept" }
-        };
     }
 
     _showMessage(msg, type = "accept") {
-        this.setState({ statusMessage: { msg: msg, type: type } });
-    }
-
-    _closeSnackbar() {
-        this._showMessage("");
+        Notification.instance.publish(msg, type);
     }
 
     async onTestConnection() {
@@ -157,15 +149,6 @@ class Item extends LightComponent {
                             />
                         </Col>
                     </Row>
-                    <Snackbar
-                        action="Dismiss"
-                        active={this.state.statusMessage.msg.length > 0}
-                        label={this.state.statusMessage.msg}
-                        timeout={5000}
-                        onClick={this._closeSnackbar.bind(this)}
-                        onTimeout={this._closeSnackbar.bind(this)}
-                        type={this.state.statusMessage.type}
-                    />
                 </div>
             </TASection>
         );

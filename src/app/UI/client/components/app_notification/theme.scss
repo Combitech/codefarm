@@ -10,13 +10,18 @@
         margin-left: auto;
     }
 
-    .topRightButton {
+    .signInButton {
         margin-left: auto;
+    }
+
+    .userMenu {
+        margin-right: $unit / 2;
     }
 
     .userAvatar {
         margin-top: -3px;
         width: $unit * 3;
         height: $unit * 3;
+        //margin-right: $unit / 2;
     }
 }

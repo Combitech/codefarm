@@ -2,6 +2,7 @@
 import React from "react";
 import AppLoader from "ui-components/app_loader";
 import AppTopBar from "ui-components/app_top_bar";
+import AppNotification from "ui-components/app_notification";
 
 class AppLayout extends React.Component {
     render() {
@@ -10,6 +11,7 @@ class AppLayout extends React.Component {
                 <AppLoader />
                 <AppTopBar/>
                 {this.props.children}
+                <AppNotification/>
             </div>
         );
     }

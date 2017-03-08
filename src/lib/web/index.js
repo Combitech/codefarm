@@ -53,7 +53,8 @@ class Web extends AsyncEventEmitter {
         if (params.auth) {
             if (params.auth.name && params.auth.pass) {
                 this.app.use(auth(params.auth));
-            } else if (params.auth.jwtSecret) {
+            }
+            if (params.auth.jwtSecret) {
                 this.app.use(koaJwt({
                     secret: params.auth.jwtSecret,
                     cookie: params.auth.jwtCookieName,

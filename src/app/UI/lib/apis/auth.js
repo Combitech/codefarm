@@ -8,8 +8,7 @@ const authApiExports = api.register("auth", {
     login: api.export(async (session, email, password) => {
         let result;
         try {
-            const decodedTokenResultKey = "decodedKey";
-            result = await AuthMgr.instance.login(email, password, decodedTokenResultKey);
+            result = await AuthMgr.instance.login(email, password);
             if (result.success) {
                 // Ask client to add cookie...
                 Object.assign(result, {
@@ -23,8 +22,7 @@ const authApiExports = api.register("auth", {
                 });
 
                 // Set user access token
-                session.user = result[decodedTokenResultKey];
-                delete result[decodedTokenResultKey];
+                session.user = result.user;
             }
         } catch (error) {
             // Remove user access token
@@ -46,9 +44,7 @@ const authApiExports = api.register("auth", {
         if (session.user && Object.keys(session.user).length > 0) {
             result = {
                 success: true,
-                data: {
-                    username: session.user.username
-                },
+                user: session.user,
                 // Ask client to remove cookie...
                 setCookies: [ {
                     name: AuthMgr.instance.cookieName,
@@ -65,10 +61,20 @@ const authApiExports = api.register("auth", {
 
         return result;
     }),
-    checkAuth: api.export(async (session) => ({
-        success: true,
-        user: session.user
-    }))
+    whoami: api.export(async (session) => {
+        let result = {
+            success: false,
+            message: "Not logged in"
+        };
+        if (session.user && Object.keys(session.user).length > 0) {
+            result = {
+                success: true,
+                user: session.user
+            };
+        }
+
+        return result;
+    })
 });
 
 class AuthApi {

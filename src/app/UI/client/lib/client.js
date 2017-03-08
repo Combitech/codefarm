@@ -11,6 +11,7 @@ import routes from "./routes";
 import "react-toolbox/lib/commons.scss";
 // Add global styles to html head
 import "ui-styles/global.scss";
+import ActiveUser from "ui-observables/active_user";
 
 // https://github.com/petkaantonov/bluebird/issues/903
 // https://github.com/babel/babel/issues/3922
@@ -32,6 +33,7 @@ window.onload = () => {
     api.connect(params)
     .then(() => {
         console.log(`Connected to backend, available APIs are ${Object.keys(JSON.parse(JSON.stringify(api))).join(", ")}`);
+        ActiveUser.instance.start();
         ReactDOM.render(<AppRoutes routes={routes} />, document.getElementById("main"));
     })
     .catch((error) => {

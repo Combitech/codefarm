@@ -2,27 +2,26 @@ import React from "react";
 import { CardTitle, CardText, CardActions } from "react-toolbox/lib/card";
 import { List, ListItem, ListDivider, ListSubHeader } from "react-toolbox/lib/list";
 import Button from "react-toolbox/lib/button";
-import Snackbar from "react-toolbox/lib/snackbar";
 import LightComponent from "ui-lib/light_component";
 import ExpandableCard from "ui-components/expandable_card";
 import ConfigDialog from "./ConfigDialog";
 import stateVar from "ui-lib/state_var";
 import STATE from "../../../../lib/types/service_state";
+import Notification from "ui-observables/notification";
 
 class NodeInfoCard extends LightComponent {
     constructor(props) {
         super(props);
 
         this.state = {
-            statusMessage: { msg: "", type: "accept" },
             configDialogOpen: stateVar(this, "configDialogOpen", false),
             currentConfig: {},
             expanded: stateVar(this, "expanded", false)
         };
     }
 
-    showMessage(msg, type = "accept") {
-        this.setState({ statusMessage: { msg: msg, type: type } });
+    _showMessage(msg, type = "accept") {
+        Notification.instance.publish(msg, type);
     }
 
     async restartService() {
@@ -30,7 +29,7 @@ class NodeInfoCard extends LightComponent {
         console.log(`Restart service ${serviceId}`);
         const data = await this.props.service.restart();
         const serviceName = data.name;
-        this.showMessage(`Service ${serviceName} restarted`);
+        this._showMessage(`Service ${serviceName} restarted`);
         console.log("Restart response", data);
     }
 
@@ -42,15 +41,11 @@ class NodeInfoCard extends LightComponent {
         console.log(`Active config for ${serviceId}`, activeConfig);
 
         if (activeConfig && activeConfig.length === 1) {
-            this.showMessage(`Got active config for ${serviceId}`);
+            this._showMessage(`Got active config for ${serviceId}`);
             this.state.configDialogOpen.set(true);
         } else {
-            this.showMessage(`Error requesting active config for ${serviceId}`);
+            this._showMessage(`Error requesting active config for ${serviceId}`);
         }
-    }
-
-    closeSnackbar() {
-        this.showMessage("");
     }
 
     render() {
@@ -182,15 +177,6 @@ class NodeInfoCard extends LightComponent {
                     open={this.state.configDialogOpen}
                     titleText={"Active service config"}
                     configData={this.state.currentConfig}
-                />
-                <Snackbar
-                    action="Dismiss"
-                    active={this.state.statusMessage.msg.length > 0}
-                    label={this.state.statusMessage.msg}
-                    timeout={3000}
-                    onClick={this.closeSnackbar.bind(this)}
-                    onTimeout={this.closeSnackbar.bind(this)}
-                    type={this.state.statusMessage.type}
                 />
             </div>
         );

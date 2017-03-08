@@ -2,7 +2,6 @@
 /* global window */
 
 import React from "react";
-import Snackbar from "react-toolbox/lib/snackbar";
 import Chip from "react-toolbox/lib/chip";
 import { Row, Col } from "react-flexbox-grid";
 import LightComponent from "ui-lib/light_component";
@@ -19,6 +18,7 @@ import { StringUtil } from "misc";
 import ExtendedItem from "ui-observables/extended_item";
 import FlowList from "ui-observables/flow_list";
 import { States as ObservableDataStates } from "ui-lib/observable_data";
+import Notification from "ui-observables/notification";
 
 class Item extends LightComponent {
     constructor(props) {
@@ -35,7 +35,6 @@ class Item extends LightComponent {
 
         this.state = {
             step: stateVar(this, "step", ""),
-            statusMessage: { msg: "", type: "accept" },
             itemExt: this.itemExt.value.getValue(),
             itemExtState: this.itemExt.state.getValue(),
             flows: this.flows.value.getValue(),
@@ -65,11 +64,7 @@ class Item extends LightComponent {
     }
 
     _showMessage(msg, type = "accept") {
-        this.setState({ statusMessage: { msg: msg, type: type } });
-    }
-
-    _closeSnackbar() {
-        this._showMessage("");
+        Notification.instance.publish(msg, type);
     }
 
     async _getArtifactRepoRestUrl() {
@@ -166,114 +161,103 @@ class Item extends LightComponent {
         const itemExt = this.state.itemExt.get("_id") ? this.state.itemExt.toJS() : false;
 
         return (
-            <div>
-                <TASection
-                    controls={controls}
-                    breadcrumbs={this.props.breadcrumbs}
-                >
-                    {loadIndicator}
-                    {itemExt &&
-                        <div className={this.props.theme.container}>
-                            <Flows
-                                theme={this.props.theme}
-                                item={this.props.item}
-                                itemExt={itemExt}
-                                pathname={this.props.pathname}
-                                step={this.state.step}
-                                flows={flows}
-                                FlowComponent={Flow}
-                            />
-                            {this.state.step.value ? (
+            <TASection
+                controls={controls}
+                breadcrumbs={this.props.breadcrumbs}
+            >
+                {loadIndicator}
+                {itemExt &&
+                    <div className={this.props.theme.container}>
+                        <Flows
+                            theme={this.props.theme}
+                            item={this.props.item}
+                            itemExt={itemExt}
+                            pathname={this.props.pathname}
+                            step={this.state.step}
+                            flows={flows}
+                            FlowComponent={Flow}
+                        />
+                        {this.state.step.value ? (
+                            <Row>
+                                {`Selected ${this.state.step.value}`}
+                            </Row>
+                        ) : (
+                            <div>
                                 <Row>
-                                    {`Selected ${this.state.step.value}`}
+                                    <Col className={this.props.theme.panel}>
+                                        <div className={this.props.theme.tags}>
+                                            {this.props.item.tags.map((tag) => (
+                                                <Chip key={tag}>{tag}</Chip>
+                                            ))}
+                                        </div>
+                                    </Col>
                                 </Row>
-                            ) : (
-                                <div>
-                                    <Row>
-                                        <Col className={this.props.theme.panel}>
-                                            <div className={this.props.theme.tags}>
-                                                {this.props.item.tags.map((tag) => (
-                                                    <Chip key={tag}>{tag}</Chip>
-                                                ))}
-                                            </div>
-                                        </Col>
-                                    </Row>
-                                    <Row>
-                                        <Col xs={12} md={5} className={this.props.theme.panel}>
-                                            <h6 className={this.props.theme.title}>Properties</h6>
+                                <Row>
+                                    <Col xs={12} md={5} className={this.props.theme.panel}>
+                                        <h6 className={this.props.theme.title}>Properties</h6>
+                                        <table className={this.props.theme.properties}>
+                                            <tbody>
+                                                <tr>
+                                                    <td>Name</td>
+                                                    <td>{this.props.item.name}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Version</td>
+                                                    <td>{this.props.item.version}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>State</td>
+                                                    <td>{stateStr}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Created</td>
+                                                    <td>{this.props.item.created}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Modified</td>
+                                                    <td>{this.props.item.saved}</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </Col>
+                                    {hasFile &&
+                                        <Col xs={12} md={7} className={this.props.theme.panel}>
+                                            <h6 className={this.props.theme.title}>File info</h6>
                                             <table className={this.props.theme.properties}>
                                                 <tbody>
                                                     <tr>
-                                                        <td>Name</td>
-                                                        <td>{this.props.item.name}</td>
+                                                        <td>File name</td>
+                                                        <td>{this.props.item.fileMeta.filename}</td>
                                                     </tr>
                                                     <tr>
-                                                        <td>Version</td>
-                                                        <td>{this.props.item.version}</td>
+                                                        <td>MIME type</td>
+                                                        <td>{this.props.item.fileMeta.mimeType}</td>
                                                     </tr>
                                                     <tr>
-                                                        <td>State</td>
-                                                        <td>{stateStr}</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>Created</td>
-                                                        <td>{this.props.item.created}</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>Modified</td>
-                                                        <td>{this.props.item.saved}</td>
+                                                        <td>Size</td>
+                                                        <td>{this.props.item.fileMeta.size} bytes</td>
                                                     </tr>
                                                 </tbody>
                                             </table>
+                                            <h6 className={this.props.theme.title}>Hashes</h6>
+                                            <table className={this.props.theme.properties}>
+                                                <tbody>
+                                                    {Object.keys(this.props.item.fileMeta.hashes).map((hashAlg) => (
+                                                        <tr key={hashAlg}>
+                                                            <td>{StringUtil.toUpperCaseLetter(hashAlg)}</td>
+                                                            <td>{this.props.item.fileMeta.hashes[hashAlg]}</td>
+                                                        </tr>
+                                                    ))}
+                                                </tbody>
+                                            </table>
                                         </Col>
-                                        {hasFile &&
-                                            <Col xs={12} md={7} className={this.props.theme.panel}>
-                                                <h6 className={this.props.theme.title}>File info</h6>
-                                                <table className={this.props.theme.properties}>
-                                                    <tbody>
-                                                        <tr>
-                                                            <td>File name</td>
-                                                            <td>{this.props.item.fileMeta.filename}</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>MIME type</td>
-                                                            <td>{this.props.item.fileMeta.mimeType}</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>Size</td>
-                                                            <td>{this.props.item.fileMeta.size} bytes</td>
-                                                        </tr>
-                                                    </tbody>
-                                                </table>
-                                                <h6 className={this.props.theme.title}>Hashes</h6>
-                                                <table className={this.props.theme.properties}>
-                                                    <tbody>
-                                                        {Object.keys(this.props.item.fileMeta.hashes).map((hashAlg) => (
-                                                            <tr key={hashAlg}>
-                                                                <td>{StringUtil.toUpperCaseLetter(hashAlg)}</td>
-                                                                <td>{this.props.item.fileMeta.hashes[hashAlg]}</td>
-                                                            </tr>
-                                                        ))}
-                                                    </tbody>
-                                                </table>
-                                            </Col>
-                                        }
-                                    </Row>
-                                </div>
-                            )}
-                        </div>
-                    }
-                </TASection>
-                <Snackbar
-                    action="Dismiss"
-                    active={this.state.statusMessage.msg.length > 0}
-                    label={this.state.statusMessage.msg}
-                    timeout={3000}
-                    onClick={this._closeSnackbar.bind(this)}
-                    onTimeout={this._closeSnackbar.bind(this)}
-                    type={this.state.statusMessage.type}
-                />
-            </div>
+                                    }
+                                </Row>
+                            </div>
+                        )}
+                    </div>
+                }
+            </TASection>
         );
     }
 }
