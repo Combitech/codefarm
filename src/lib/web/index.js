@@ -15,6 +15,7 @@ const serve = require("koa-static");
 const { AsyncEventEmitter } = require("emitter");
 const { ensureArray } = require("misc");
 const singleton = require("singleton");
+const log = require("log");
 
 class Web extends AsyncEventEmitter {
     constructor() {
@@ -181,15 +182,20 @@ class Web extends AsyncEventEmitter {
             } catch (e) {
             }
             if (token) {
-                const decodedToken = await new Promise(
-                    (resolve, reject) => jwt.verify(
-                        token,
-                        secret,
-                        {},
-                        (err, decoded) => err ? reject(err) : resolve(decoded)
-                    )
-                );
-                request.session[decodedTokenSessionKey] = decodedToken;
+                try {
+                    const decodedToken = await new Promise(
+                        (resolve, reject) => jwt.verify(
+                            token,
+                            secret,
+                            {},
+                            (err, decoded) => err ? reject(err) : resolve(decoded)
+                        )
+                    );
+                    request.session[decodedTokenSessionKey] = decodedToken;
+                } catch (error) {
+                    // Failed to verify JWT token, log and proceed without setting request.session
+                    log.verbose(`web: Failed to decode JWT token in cookie ${cookieName}`);
+                }
             }
         }
     }

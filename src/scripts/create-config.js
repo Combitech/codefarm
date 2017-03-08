@@ -43,7 +43,7 @@ const argv = yargs
     default: null
 })
 .option("jwtsecret", {
-    describe: "JWT private key",
+    describe: "JWT private key path",
     type: "string",
     default: null
 })
@@ -78,16 +78,16 @@ const run = async () => {
     console.log(`Create config from file ${argv.config}`);
     const cfg = JSON.parse(await fs.readFileAsync(argv.config));
 
-    if (argv.authname !== null && argv.authpass !== null) {
+    if (argv.authname && argv.authpass) {
         cfg.ui.web.auth = Object.assign({}, cfg.ui.web.auth, {
             name: `${argv.authname}`,
             pass: `${argv.authpass}`
         });
     }
 
-    if (argv.jwtsecret !== null) {
+    if (argv.jwtsecret) {
         cfg.ui.web.auth = Object.assign({}, cfg.ui.web.auth, {
-            jwtSecret: argv.jwtsecret
+            jwtSecretPath: path.resolve(argv.jwtsecret)
         });
     }
 
