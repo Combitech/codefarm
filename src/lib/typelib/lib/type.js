@@ -155,6 +155,12 @@ class Type {
         return this._instantiate(data);
     }
 
+    static async exist(id) {
+        const data = await this.findOneRaw({ _id: id });
+
+        return !!data;
+    }
+
     static async findRef(ref, options) {
         assertType(ref, "ref", "ref");
         if (ref.type !== this.getType) {

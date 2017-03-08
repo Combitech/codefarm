@@ -5,13 +5,9 @@ const { assertType, assertProp } = require("misc");
 const { Type } = require("typelib");
 const BackendProxy = require("../backend_proxy");
 const Team = require("./team");
+const Policy = require("./policy");
 
 const DEFAULT_BACKEND = "Dummy";
-
-const USER_PRIVILEGE = {
-    ADMIN: "adm",
-    MGMT: "mgmt"
-};
 
 class User extends Type {
     constructor(data) {
@@ -23,7 +19,7 @@ class User extends Type {
         this.telephone = false;
         this.keys = [];
         this.teams = [];
-        this.privileges = [];
+        this.policyRefs = [];
 
         if (data) {
             this.set(data);
@@ -61,6 +57,15 @@ class User extends Type {
     }
 
     async _saveHook(olddata) {
+        if (this.policies) {
+            // Convert policies to refs
+            this.policyRefs = this.policies.map((policyId) => ({
+                _ref: true,
+                id: policyId,
+                type: Policy.getType()
+            }));
+            delete this.policies;
+        }
         if (!olddata) {
             await BackendProxy.instance.createUser(this);
         } else {
@@ -104,11 +109,12 @@ class User extends Type {
             assertProp(data, "backend", false);
         }
 
-        if (data.privileges) {
-            assertType(data.privileges, "data.privileges", "array");
-            for (const privilege of data.privileges) {
-                if (!Object.values(USER_PRIVILEGE).includes(privilege)) {
-                    throw new Error(`Unknown privilege ${privilege}`);
+        if (data.policies) {
+            assertType(data.policies, "data.policies", "array");
+            for (const policyId of data.policies) {
+                const exist = await Policy.exist(policyId);
+                if (!exist) {
+                    throw new Error(`Unknown policy id ${policyId}`);
                 }
             }
         }

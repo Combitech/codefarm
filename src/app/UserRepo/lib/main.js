@@ -9,6 +9,7 @@ const Users = require("./controllers/users");
 const Teams = require("./controllers/teams");
 const UserAvatars = require("./controllers/user_avatars");
 const TeamAvatars = require("./controllers/team_avatars");
+const Policies = require("./controllers/policies");
 const Backends = require("./controllers/backends");
 const BackendProxy = require("./backend_proxy");
 
@@ -26,7 +27,7 @@ class Main extends Service {
     }
 
     async onOnline() {
-        const routes = [].concat(Users.instance.routes, Teams.instance.routes, UserAvatars.instance.routes, TeamAvatars.instance.routes, Backends.instance.routes, this.routes);
+        const routes = [].concat(Users.instance.routes, Teams.instance.routes, UserAvatars.instance.routes, TeamAvatars.instance.routes, Backends.instance.routes, Policies.instance.routes, this.routes);
 
         await ServiceComBus.instance.start(Object.assign({
             name: this.name,
@@ -39,6 +40,7 @@ class Main extends Service {
             UserAvatars.instance,
             TeamAvatars.instance,
             Backends.instance,
+            Policies.instance,
             this.statesControllerInstance
         ]);
 

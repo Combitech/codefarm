@@ -52,8 +52,8 @@ const argv = yargs
     type: "array",
     default: []
 })
-.option("privilege", {
-    describe: "Privilege",
+.option("policy", {
+    describe: "Policy",
     type: "array",
     default: []
 })
@@ -88,7 +88,7 @@ const run = async () => {
                 email: argv.email,
                 backend: argv.backend,
                 password: argv.password,
-                privileges: argv.privilege
+                policies: argv.policy
             },
             json: true
         });

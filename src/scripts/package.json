@@ -15,6 +15,7 @@
     "create-userrepo-backend": "node --harmony_async_await ./create-userrepo-backend.js",
     "create-user": "node --harmony_async_await ./create-user.js",
     "create-team": "node --harmony_async_await ./create-team.js",
+    "create-policy": "node --harmony_async_await ./create-policy.js",
     "create-coderepo-git-backend": "node --harmony_async_await ./create-coderepo-git-backend.js",
     "create-coderepo-gerrit-backend": "node --harmony_async_await ./create-coderepo-gerrit-backend.js",
     "create-coderepo-github-backend": "node --harmony_async_await ./create-coderepo-github-backend.js",

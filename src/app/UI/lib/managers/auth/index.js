@@ -3,6 +3,7 @@
 const singleton = require("singleton");
 const { ServiceComBus } = require("servicecom");
 const jwt = require("jsonwebtoken");
+const { ensureArray } = require("misc");
 
 const TOKEN_EXPIRES_IN = "5 days";
 
@@ -26,6 +27,29 @@ class Auth {
     async dispose() {
         this.routes = [];
         this._privateKey = null;
+    }
+
+    async _getUserPrivileges(user) {
+        const client = ServiceComBus.instance.getClient("userrepo");
+        const policyIds = user.policyRefs
+            .map((ref) => ensureArray(ref.id))
+            .reduce((acc, val) => acc.concat(val), []);
+        let policies = [];
+        if (policyIds.length > 0) {
+            policies = await client.list("policy", {
+                _id: {
+                    $in: policyIds
+                }
+            });
+        }
+
+        // Get all privileges from policies and remove duplicates
+        const privileges = policies
+            .map((policy) => policy.privileges)
+            .reduce((acc, val) => acc.concat(val), [])
+            .filter((priv, index, self) => self.indexOf(priv) === index);
+
+        return privileges;
     }
 
     async login(email, password) {
@@ -59,7 +83,7 @@ class Auth {
         if (authenticated) {
             const user = users[0];
             const scope = user.scope || "default";
-            const priv = user.privileges || [];
+            const priv = await this._getUserPrivileges(user);
             const tokenData = {
                 username: user.name,
                 scope: [ scope ],

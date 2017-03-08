@@ -23,6 +23,11 @@ const argv = yargs
     describe: "New password",
     type: "string"
 })
+.option("policy", {
+    describe: "Policy",
+    type: "array",
+    default: []
+})
 .option("key", {
     describe: "Public key",
     type: "string"
@@ -67,6 +72,23 @@ const run = async () => {
             console.dir(result, { colors: true, depth: null });
         } catch (error) {
             console.error("Failed to authenticate user", error.message);
+        }
+    }
+
+    if (argv.policy.length > 0) {
+        console.log(`Setting policies ${argv.policy.join(", ")} to user ${argv.id}`);
+        try {
+            result = await rp.patch({
+                url: `http://localhost:${configUserRepo.web.port}/user/${argv.id}`,
+                body: {
+                    policies: argv.policy
+                },
+                json: true
+            });
+
+            console.dir(result, { colors: true, depth: null });
+        } catch (error) {
+            console.error("Failed to set policy for user", error.message);
         }
     }
 

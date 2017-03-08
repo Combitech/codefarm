@@ -47,13 +47,6 @@ class Team extends Type {
         await BackendProxy.instance.removeTeam(this);
     }
 
-    static async exist(teamId) {
-        const db = await this._getDb();
-        const data = await db.findOne(this.typeName, { _id: teamId });
-
-        return !!data;
-    }
-
     static async findOne(query, options) {
         const db = await this._getDb();
         const data = await db.findOne(this.typeName, query, options);
