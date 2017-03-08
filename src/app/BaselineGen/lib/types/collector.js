@@ -1,7 +1,7 @@
 "use strict";
 
 const { ServiceMgr } = require("service");
-const { Type, notification } = require("typelib");
+const { Type } = require("typelib");
 const { TagCriteria } = require("misc");
 
 const STATES = {

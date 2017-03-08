@@ -3,7 +3,6 @@
 const { ServiceMgr } = require("service");
 const { assertType, assertProp } = require("misc");
 const { Type } = require("typelib");
-const BackendProxy = require("../backend_proxy");
 
 class Policy extends Type {
     constructor(data) {
