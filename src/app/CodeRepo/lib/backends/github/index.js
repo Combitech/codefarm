@@ -180,7 +180,7 @@ class GithubBackend extends AsyncEventEmitter {
 
         //Check if title contains SKIP_REVIEW and if so set the review:skip tag
         const commit = await this._getCommit(event.repository.name, event.pull_request.head.sha);
-        if (commit.message.indexOf("SKIP_REVIEW") !== -1) {
+        if (commit.commit.message.indexOf("SKIP_REVIEW") !== -1) {
             revision.skipReview();
         }
     }
@@ -197,7 +197,7 @@ class GithubBackend extends AsyncEventEmitter {
 
         //Check if title contains SKIP_REVIEW and if so set the review:skip tag
         const commit = await this._getCommit(event.repository.name, event.pull_request.head.sha);
-        if (commit.message.indexOf("SKIP_REVIEW") !== -1) {
+        if (commit.commit.message.indexOf("SKIP_REVIEW") !== -1) {
             revision.skipReview();
         }
     }
