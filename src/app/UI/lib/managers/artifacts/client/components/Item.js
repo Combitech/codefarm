@@ -91,7 +91,7 @@ class Item extends LightComponent {
     }
 
     async onValidate(item) {
-        const data = await api.rest.get(
+        const data = await api.type.action(
             "artifactrepo.artifact",
             item._id,
             "validate"

@@ -412,7 +412,7 @@ describe("ArtifactRepo", () => {
         });
 
         it("shall validate artifact ok when untampered", async () => {
-            const result = await rp({
+            const result = await rp.post({
                 url: `${baseUrl}/artifact/${art1Ver0Id}/validate`,
                 json: true
             });
@@ -429,7 +429,7 @@ describe("ArtifactRepo", () => {
             // Modify artifact file
             await fs.appendFileAsync(art1Ver0Path, "\n*** FILE TAMPERED WITH ***\n");
 
-            const result = await rp({
+            const result = await rp.post({
                 url: `${baseUrl}/artifact/${art1Ver0Id}/validate`,
                 json: true
             });

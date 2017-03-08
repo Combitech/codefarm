@@ -9,8 +9,8 @@ class Artifacts extends Controller {
         super(Artifact, [ "read", "create", "tag", "ref" ]);
 
         this._addAction("upload", this._uploadArtifact, "Upload artifact");
+        this._addAction("validate", this._validateArtifact, "Validate artifact");
         this._addGetter("download", this._downloadArtifact, "Download artifact");
-        this._addGetter("validate", this._validateArtifact, "Validate artifact");
     }
 
     async _uploadArtifact(id, data, ctx) {
@@ -50,12 +50,8 @@ class Artifacts extends Controller {
 
         // TODO: Shall validate report in another format?
         return {
-            result: "success",
-            action: "validate",
-            data: {
-                validation: validation,
-                artifact: obj.serialize()
-            }
+            validation: validation,
+            artifact: obj.serialize()
         };
     }
 }
