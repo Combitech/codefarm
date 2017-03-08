@@ -151,11 +151,11 @@ class Revision extends Type {
 
         this.reviews.forEach((review) => {
             if (review.state === ReviewState.APPROVED) {
-                this.tags.push(`review:approved:${approvecount}`);
                 approvecount++;
+                this.tags.push(`review:approved:${approvecount}`);
             } else if (review.state === ReviewState.REJECTED) {
-                this.tags.push(`review:rejected:${rejectcount}`);
                 rejectcount++;
+                this.tags.push(`review:rejected:${rejectcount}`);
             }
         });
 
