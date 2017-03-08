@@ -77,15 +77,19 @@ class Overview extends LightComponent {
             });
         });
 
-        this.props.item.reviews.forEach((review, reviewIndex) => {
-            list.push({
-                id: `review-${reviewIndex}`,
-                time: moment(review.updated).unix(),
-                item: review,
-                Card: ReviewCard,
-                props: {}
+        this.props.item.reviews
+            // Filter out reviews without author (email)
+            //TODO: Remove filter once we are sure Email is resolved correctly
+            .filter((review) => review.userEmail)
+            .forEach((review, reviewIndex) => {
+                list.push({
+                    id: `review-${reviewIndex}`,
+                    time: moment(review.updated).unix(),
+                    item: review,
+                    Card: ReviewCard,
+                    props: {}
+                });
             });
-        });
 
         // for (const baseline of this.state.baselines.toJS()) {
         //     const time = moment(baseline.created);
