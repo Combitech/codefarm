@@ -142,7 +142,7 @@ class GithubBackend extends AsyncEventEmitter {
         try {
             return await this._sendRequest(url, {}, "GET");
         } catch (err) {
-            ServiceMgr.instance.log("info", `Unable to get author for ${repositoryName}:${commitSha}`);
+            ServiceMgr.instance.log("info", `Unable to get commit for ${repositoryName}:${commitSha}`);
 
             return null;
         }
@@ -179,7 +179,8 @@ class GithubBackend extends AsyncEventEmitter {
         const revision = await this.Revision.allocate(repository._id, event.pull_request.id.toString(), patch);
 
         //Check if title contains SKIP_REVIEW and if so set the review:skip tag
-        if (event.pull_request.body.indexOf("SKIP_REVIEW") !== -1) {
+        const commit = await this._getCommit(event.repository.name, event.pull_request.head.sha);
+        if (commit.message.indexOf("SKIP_REVIEW") !== -1) {
             revision.skipReview();
         }
     }
@@ -195,7 +196,8 @@ class GithubBackend extends AsyncEventEmitter {
         const revision = await this.Revision.allocate(repository._id, event.pull_request.id.toString(), patch);
 
         //Check if title contains SKIP_REVIEW and if so set the review:skip tag
-        if (event.pull_request.body.indexOf("SKIP_REVIEW") !== -1) {
+        const commit = await this._getCommit(event.repository.name, event.pull_request.head.sha);
+        if (commit.message.indexOf("SKIP_REVIEW") !== -1) {
             revision.skipReview();
         }
     }
@@ -260,7 +262,7 @@ class GithubBackend extends AsyncEventEmitter {
             revision = await this.Revision.allocate(repository._id, commit.id, patch);
             revision.setMerged();
         }
-        ServiceMgr.instance.log("verbose", `Merged ${events.commits.length} commits to ${repository._id}`);
+        ServiceMgr.instance.log("verbose", `Merged ${event.commits.length} commits to ${repository._id}`);
     }
 
     async _onPullRequestReview(event) {
