@@ -20,9 +20,9 @@ module.exports = async (argv) => {
 
     const defaultBlSpec = (
         name,
-        script = false,
-        slaveCriteria = false,
-        tagScript = false,
+        script = "",
+        slaveCriteria = "",
+        tagScript = "",
         parentStepNames = [],
         visible = true
     ) => {
@@ -49,18 +49,18 @@ module.exports = async (argv) => {
 
     const tagBlSpec = (
         name,
-        tagScript = false,
+        tagScript = "",
         parentStepNames = [],
         visible = true
-    ) => defaultBlSpec(name, false, false, tagScript, parentStepNames, visible);
+    ) => defaultBlSpec(name, "", "", tagScript, parentStepNames, visible);
 
     const slaveScriptBlSpec = (
         name,
-        script = false,
-        slaveCriteria = false,
+        script = "",
+        slaveCriteria = "",
         parentStepNames = [],
         visible = true
-    ) => defaultBlSpec(name, script, slaveCriteria, false, parentStepNames, visible);
+    ) => defaultBlSpec(name, script, slaveCriteria, "", parentStepNames, visible);
 
     const baselineSpecs = [
         {
