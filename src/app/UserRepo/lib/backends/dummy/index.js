@@ -73,9 +73,12 @@ class Dummy {
     }
 
     async setPasswordUser(user, newPassword, oldPassword) {
-        const authenticated = await this.authenticateUser(user, oldPassword);
-        if (!authenticated) {
-            throw new Error("Cannot set password, athentication failed!");
+        // Only authenticate if password is set
+        if (user.passwordHash) {
+            const authenticated = await this.authenticateUser(user, oldPassword);
+            if (!authenticated) {
+                throw new Error("Cannot set password, athentication failed!");
+            }
         }
         this._validatePassword(newPassword);
         user.passwordHash = await this._hashPassword(newPassword);
