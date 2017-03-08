@@ -80,7 +80,7 @@ module.exports = async (argv) => {
         }, {
             _id: "CG",
             collectors: [
-                defaultCollector(`${flowIdTag} AND !step:CG:success AND !merged`)
+                defaultCollector(`${flowIdTag} AND ((review:approved:1 AND !review:rejected:1) OR review:skip) AND !step:CG:success AND !merged`)
             ]
         }, {
             _id: "Merge",
