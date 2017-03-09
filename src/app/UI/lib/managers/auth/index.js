@@ -1,6 +1,7 @@
 "use strict";
 
 const singleton = require("singleton");
+const { ServiceMgr } = require("service");
 const { ServiceComBus } = require("servicecom");
 const jwt = require("jsonwebtoken");
 const { ensureArray } = require("misc");
@@ -16,12 +17,23 @@ class Auth {
         return this._cookieName;
     }
 
+    get publicKey() {
+        return this._publicKey;
+    }
+
     async start(config) {
         if (config) {
-            this._privateKey = config.jwtSecret;
             this._cookieName = config.jwtCookieName;
         }
         this._addRoute("post", "/login", this._login, "User login");
+
+        const client = ServiceComBus.instance.getClient("mgmt");
+
+        const key = await client.getkey("service", "");
+        this._publicKey = key.public;
+        if (this._publicKey) {
+            ServiceMgr.instance.log("info", `Got JWT public key for algorithm ${key.algorithm}`);
+        }
     }
 
     async dispose() {
@@ -138,29 +150,19 @@ class Auth {
         });
     }
 
-    async _createToken(data, opts) {
-        if (!this._privateKey) {
-            return false;
-        }
+    async _createToken(data) {
+        const client = ServiceComBus.instance.getClient("mgmt");
 
-        return new Promise((resolve, reject) =>
-            jwt.sign(data, this._privateKey, opts, (err, token) => {
-                if (err) {
-                    reject(err);
-                } else {
-                    resolve(token);
-                }
-            })
-        );
+        return client.createtoken("service", "", data);
     }
 
     async _verifyToken(data, opts = {}) {
-        if (!this._privateKey) {
+        if (!this._publicKey) {
             return false;
         }
 
         return new Promise((resolve, reject) =>
-            jwt.verify(data, this._privateKey, opts, (err, token) => {
+            jwt.verify(data, this._publicKey, opts, (err, token) => {
                 if (err) {
                     reject(err);
                 } else {

@@ -57,7 +57,7 @@ class Web extends AsyncEventEmitter {
             }
             if (params.auth.jwtSecret) {
                 this.app.use(koaJwt({
-                    secret: params.auth.jwtSecret,
+                    secret: params.auth.jwtPublicKey,
                     cookie: params.auth.jwtCookieName,
                     // Set ctx.state.user if authenticated
                     passthrough: true
@@ -168,12 +168,12 @@ class Web extends AsyncEventEmitter {
      * @return {Promise} Resolved when done
      */
     async _apiJwtAuthHandler(authParams, request) {
-        if (!authParams || !authParams.jwtSecret || !authParams.jwtCookieName) {
+        if (!authParams || !authParams.jwtPublicKey || !authParams.jwtCookieName) {
             return false;
         }
         const decodedTokenSessionKey = "user";
         const cookieName = authParams.jwtCookieName;
-        const secret = authParams.jwtSecret;
+        const publicKey = authParams.jwtPublicKey;
         request.session[decodedTokenSessionKey] = {};
         if (request.headers.cookie && request.headers.cookie.indexOf(cookieName) !== -1) {
             let token;
@@ -186,7 +186,7 @@ class Web extends AsyncEventEmitter {
                     const decodedToken = await new Promise(
                         (resolve, reject) => jwt.verify(
                             token,
-                            secret,
+                            publicKey,
                             {},
                             (err, decoded) => err ? reject(err) : resolve(decoded)
                         )

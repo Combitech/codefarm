@@ -1,12 +1,14 @@
 "use strict";
 
 const os = require("os");
+const fs = require("fs-extra-promise");
 const Web = require("web");
 const { Service } = require("service");
 const { ServiceComBus } = require("servicecom");
 const Monitor = require("./monitor");
 const Configs = require("./controllers/configs");
 const Config = require("./types/config");
+const ServiceCtrl = require("./controllers/services");
 const Db = require("./db");
 const { notification } = require("typelib");
 
@@ -41,7 +43,14 @@ class Main extends Service {
         await Db.instance.connect(dbConfig);
         this.addDisposable(Db.instance);
 
-        const routes = [].concat(Configs.instance.routes, this.routes);
+        if (this.config.jwtprivate && this.config.jwtpublic) {
+            ServiceCtrl.instance.setKeys({
+                private: await fs.readFileAsync(this.config.jwtprivate, "utf8"),
+                public: await fs.readFileAsync(this.config.jwtpublic, "utf8")
+            });
+        }
+
+        const routes = [].concat(Configs.instance.routes, ServiceCtrl.instance.routes, this.routes);
 
         await ServiceComBus.instance.start(Object.assign({
             name: this.name,
@@ -50,6 +59,7 @@ class Main extends Service {
         this.addDisposable(ServiceComBus.instance);
         ServiceComBus.instance.attachControllers([
             Configs.instance,
+            ServiceCtrl.instance,
             this.statesControllerInstance
         ]);
 

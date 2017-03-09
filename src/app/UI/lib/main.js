@@ -2,7 +2,6 @@
 
 const os = require("os");
 const { join } = require("path");
-const fs = require("fs-extra-promise");
 const clone = require("clone");
 const api = require("api.io");
 const Web = require("web");
@@ -32,16 +31,6 @@ class Main extends Service {
 
     async onOnline() {
         const webConfig = clone(this.config.web);
-
-        // Read jwtSecret and put in webConfig. webConfig cloned from this.config.web
-        // to make sure that we don't expose jwtSecret.
-        if (webConfig.auth && webConfig.auth.jwtSecretPath) {
-            try {
-                webConfig.auth.jwtSecret = await fs.readFileAsync(webConfig.auth.jwtSecretPath, "utf8");
-            } catch (error) {
-                throw new ServiceError(`Failed to read JWT secret from file ${webConfig.auth.jwtSecretPath} with message: ${error.message}`, true);
-            }
-        }
 
         // Add dependencies to all services without restart when they go offline
         // Needed for the service proxy
@@ -106,6 +95,9 @@ class Main extends Service {
         webConfig.api = api;
 
         const routes = [].concat(this.routes, ServiceProxy.instance.routes, AuthMgr.instance.routes);
+
+        webConfig.auth = webConfig.auth || {};
+        webConfig.auth.jwtPublicKey = AuthMgr.instance.publicKey;
 
         await Web.instance.start(webConfig, routes);
         this.addDisposable(Web.instance);

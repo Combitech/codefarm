@@ -42,11 +42,6 @@ const argv = yargs
     type: "string",
     default: null
 })
-.option("jwtsecret", {
-    describe: "JWT private key path",
-    type: "string",
-    default: null
-})
 .argv;
 
 const createConfig = async (serviceName, serviceCfg) => {
@@ -82,12 +77,6 @@ const run = async () => {
         cfg.ui.web.auth = Object.assign({}, cfg.ui.web.auth, {
             name: `${argv.authname}`,
             pass: `${argv.authpass}`
-        });
-    }
-
-    if (argv.jwtsecret) {
-        cfg.ui.web.auth = Object.assign({}, cfg.ui.web.auth, {
-            jwtSecretPath: path.resolve(argv.jwtsecret)
         });
     }
 

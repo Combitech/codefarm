@@ -1,7 +1,7 @@
 "use strict";
 
 const { name, version } = require("./package.json");
-const { join } = require("path");
+const path = require("path");
 const yargs = require("yargs");
 const Main = require("./lib/main");
 const { ServiceMgr, getCmdLineOpts: getServiceOpts } = require("service");
@@ -20,7 +20,7 @@ const argv = yargs
     alias: "config",
     describe: "Configuration file",
     type: "string",
-    default: join(__dirname, "cfg", "config.json")
+    default: path.join(__dirname, "cfg", "config.json")
 })
 .option("p", {
     alias: "port",
@@ -37,6 +37,16 @@ const argv = yargs
     describe: "Mongo DB URI",
     type: "string",
     default: "mongodb://localhost:27017"
+})
+.option("jwtprivate", {
+    describe: "Path to private key used for JWT encryption",
+    type: "string",
+    default: path.join(process.env.HOME, ".ssh", "id_rsa")
+})
+.option("jwtpublic", {
+    describe: "Path to private key used for JWT encryption",
+    type: "string",
+    default: path.join(process.env.HOME, ".ssh", "id_rsa.pem.pub")
 })
 .options(getServiceOpts({ queueName: name }))
 .argv;

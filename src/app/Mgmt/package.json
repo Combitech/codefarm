@@ -35,6 +35,8 @@
   ],
   "dependencies": {
     "deep-assign": "^2.0.0",
+    "fs-extra-promise": "^0.4.1",
+    "jsonwebtoken": "^7.3.0",
     "moment": "^2.16.0",
     "yargs": "^6.3.0"
   },

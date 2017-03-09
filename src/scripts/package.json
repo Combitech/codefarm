@@ -6,6 +6,7 @@
   "scripts": {
     "lint": "git ls-files \"*.js\" | xargs eslint",
     "test": "echo \"Error: no test specified\" && exit 1",
+    "mgmt-cmd":  "node --harmony_async_await ./mgmt-cmd.js",
     "service-cmd":  "node --harmony_async_await ./service-cmd.js",
     "revision-cmd": "node --harmony_async_await ./revision-cmd.js",
     "job-cmd": "node --harmony_async_await ./job-cmd.js",

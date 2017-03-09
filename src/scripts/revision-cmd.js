@@ -26,7 +26,7 @@ const argv = yargs
 
 const run = async () => {
     const baseUrl = `http://localhost:${config.web.port}`;
-    console.log(`Revision command`);
+    console.log("Revision command");
     let getRevision = true;
 
     if (argv.merge) {
@@ -40,7 +40,7 @@ const run = async () => {
     }
 
     if (getRevision) {
-        console.log(`Get revision ${argv.id}`)
+        console.log(`Get revision ${argv.id}`);
         const result = await rp.get({
             url: `${baseUrl}/revision/${argv.id}`,
             json: true
@@ -48,7 +48,7 @@ const run = async () => {
 
         console.dir(result, { colors: true, depth: null });
     }
-}
+};
 
 run()
 .catch((error) => {
