@@ -18,9 +18,11 @@ class ScriptServer extends AsyncEventEmitter {
         });
 
         if (port) {
+            this._log(`Attempting to listen on port ${port}`);
             this.listener.listen(port, "127.0.0.1");
             this._log(`Listening on port ${port}`);
         } else if (namedSocket) {
+            this._log(`Attempting to listen on named socket ${namedSocket}`);
             this.listener.listen(namedSocket);
             this._log(`Listening on named socket ${namedSocket}`);
         }
