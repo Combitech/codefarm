@@ -108,7 +108,12 @@ class GithubBackend extends AsyncEventEmitter {
                 oldrev: event.pull_request.base.sha,
                 newrev: changeSha,
                 refname: event.pull_request.head.ref,
-                files: commit ? commit.files : []
+                files: commit ? commit.files.map((file) => ({
+                    name: file.filename,
+                    status: file.status,
+                    url: file.blob_url,
+                    download: file.raw_url
+                })) : []
             }
         };
     }
@@ -255,7 +260,12 @@ class GithubBackend extends AsyncEventEmitter {
                     oldrev: null, // TODO: set this
                     newrev: commit.id,
                     refname: event.ref,
-                    files: info ? info.files : []
+                    files: info ? info.files.map((file) => ({
+                        name: file.filename,
+                        status: file.status,
+                        url: file.blob_url,
+                        download: file.raw_url
+                    })) : []
                 }
             };
 
