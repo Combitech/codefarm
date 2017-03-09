@@ -37,7 +37,7 @@
     "singleton"
   ],
   "dependencies": {
-    "api.io": "^0.6.0",
+    "api.io": "^0.7.0",
     "babel-core": "^6.18.2",
     "babel-loader": "^6.4.0",
     "babel-plugin-transform-async-to-module-method": "^6.16.0",
