@@ -5,6 +5,10 @@ const { ensureArray } = require("misc");
 const singleton = require("singleton");
 
 const ROUTE_WILDCARD = "(.*)";
+const REQ_TYPE = {
+    HTTP: "http",
+    MB: "mb"
+};
 
 class Controller {
     constructor(Type, support = [ "read", "create", "update", "remove", "tag", "ref", "comment" ]) {
@@ -37,6 +41,10 @@ class Controller {
         this.msgbus.on("request", this._onRequest.bind(this));
     }
 
+    _createCtx(reqType, opts = {}) {
+        return Object.assign({ reqType }, opts);
+    }
+
     async _onRequest(request) {
         if (request.data.typeName !== this.collectionName) {
             return;
@@ -49,7 +57,8 @@ class Controller {
                 this._throw("No such method", 400);
             }
 
-            const result = await method(...request.data.params);
+            const ctx = this._createCtx(REQ_TYPE.MB);
+            const result = await method(ctx, ...request.data.params);
 
             await this.msgbus.respond(request, result);
         } catch (error) {
@@ -69,8 +78,8 @@ class Controller {
              * setting the mongodb query to { name: somename }
              */
             const { query, options } = this._buildFindQuery(ctx);
-
-            const list = await handler(query, options);
+            const handlerCtx = this._createCtx(REQ_TYPE.HTTP, { httpCtx: ctx });
+            const list = await handler(handlerCtx, query, options);
 
             ctx.type = "json";
             ctx.body = JSON.stringify(list, null, 2);
@@ -85,7 +94,8 @@ class Controller {
         this._addRoute("post", `/${this.collectionName}`, async (ctx) => {
             const data = ctx.request.body;
 
-            const obj = await handler(data);
+            const handlerCtx = this._createCtx(REQ_TYPE.HTTP, { httpCtx: ctx });
+            const obj = await handler(handlerCtx, data);
 
             ctx.set("Location", `/${this.collectionName}/${obj._id}`);
             ctx.status = 201;
@@ -100,7 +110,8 @@ class Controller {
         handler = handler.bind(this);
 
         this._addRoute("get", `/${this.collectionName}/:id`, async (ctx, id) => {
-            const obj = await handler(id);
+            const handlerCtx = this._createCtx(REQ_TYPE.HTTP, { httpCtx: ctx });
+            const obj = await handler(handlerCtx, id);
 
             ctx.type = "json";
             ctx.body = JSON.stringify(obj, null, 2);
@@ -115,7 +126,8 @@ class Controller {
         this._addRoute("patch", `/${this.collectionName}/:id`, async (ctx, id) => {
             const data = ctx.request.body;
 
-            const obj = await handler(id, data);
+            const handlerCtx = this._createCtx(REQ_TYPE.HTTP, { httpCtx: ctx });
+            const obj = await handler(handlerCtx, id, data);
 
             ctx.type = "json";
             ctx.body = JSON.stringify({ result: "success", action: "update", data: obj }, null, 2);
@@ -128,7 +140,8 @@ class Controller {
         handler = handler.bind(this);
 
         this._addRoute("delete", `/${this.collectionName}/:id`, async (ctx, id) => {
-            const obj = await handler(id);
+            const handlerCtx = this._createCtx(REQ_TYPE.HTTP, { httpCtx: ctx });
+            const obj = await handler(handlerCtx, id);
 
             ctx.type = "json";
             ctx.body = JSON.stringify({ result: "success", action: "remove", data: obj }, null, 2);
@@ -143,7 +156,8 @@ class Controller {
         this._addRoute("post", `/${this.collectionName}/:id/${name}`, async (ctx, id) => {
             const data = ctx.request.body;
 
-            const obj = await handler(id, data, ctx);
+            const handlerCtx = this._createCtx(REQ_TYPE.HTTP, { httpCtx: ctx });
+            const obj = await handler(handlerCtx, id, data);
 
             ctx.type = "json";
             ctx.body = JSON.stringify({
@@ -160,7 +174,8 @@ class Controller {
         handler = handler.bind(this);
 
         this._addRoute("get", `/${this.collectionName}/:id/${name}`, async (ctx, id) => {
-            const obj = await handler(id, ctx);
+            const handlerCtx = this._createCtx(REQ_TYPE.HTTP, { httpCtx: ctx });
+            const obj = await handler(handlerCtx, id);
 
             // If explicitly returned nothing, then the method has set stuff on ctx itself
             if (typeof obj !== "undefined") {
@@ -239,7 +254,7 @@ class Controller {
         throw error;
     }
 
-    _isAllowed(action) {
+    _isAllowed(ctx, action) {
         if (!this.support.includes(action)) {
             this._throw(`${action} is not allowed`, 501);
         }
@@ -273,8 +288,8 @@ class Controller {
 
     // Basic operations
 
-    async _list(query = {}, options = {}) {
-        this._isAllowed("read");
+    async _list(ctx, query = {}, options = {}) {
+        this._isAllowed(ctx, "read");
 
         if (query.hasOwnProperty("__options")) {
             Object.assign(options, query.__options);
@@ -307,8 +322,8 @@ class Controller {
         return list.map((obj) => obj.serialize());
     }
 
-    async _create(data) {
-        this._isAllowed("create");
+    async _create(ctx, data) {
+        this._isAllowed(ctx, "create");
 
         await this._validate("create", data);
 
@@ -321,16 +336,16 @@ class Controller {
         return obj.serialize();
     }
 
-    async _get(id) {
-        this._isAllowed("read");
+    async _get(ctx, id) {
+        this._isAllowed(ctx, "read");
 
         const obj = await this._getTypeInstance(id);
 
         return obj.serialize();
     }
 
-    async _update(id, data) {
-        this._isAllowed("update");
+    async _update(ctx, id, data) {
+        this._isAllowed(ctx, "update");
 
         await this._validate("update", data);
 
@@ -341,8 +356,8 @@ class Controller {
         return obj.serialize();
     }
 
-    async _remove(id) {
-        this._isAllowed("remove");
+    async _remove(ctx, id) {
+        this._isAllowed(ctx, "remove");
 
         const obj = await this._getTypeInstance(id);
         await obj.remove();
@@ -353,8 +368,8 @@ class Controller {
 
     // Action operations
 
-    async _tag(id, data) {
-        this._isAllowed("tag");
+    async _tag(ctx, id, data) {
+        this._isAllowed(ctx, "tag");
 
         !data.tag && this._throw("No tag supplied", 400);
 
@@ -365,8 +380,8 @@ class Controller {
         return obj.serialize();
     }
 
-    async _untag(id, data) {
-        this._isAllowed("tag");
+    async _untag(ctx, id, data) {
+        this._isAllowed(ctx, "tag");
 
         const obj = await this._getTypeInstance(id);
         const tags = ensureArray(data.tag);
@@ -375,8 +390,8 @@ class Controller {
         return obj.serialize();
     }
 
-    async _addRef(id, data) {
-        this._isAllowed("ref");
+    async _addRef(ctx, id, data) {
+        this._isAllowed(ctx, "ref");
 
         !data.ref && this._throw("No ref supplied", 400);
 
@@ -387,8 +402,8 @@ class Controller {
         return obj.serialize();
     }
 
-    async _comment(id, data) {
-        this._isAllowed("comment");
+    async _comment(ctx, id, data) {
+        this._isAllowed(ctx, "comment");
 
         !data.text && this._throw("No text supplied", 400);
         !data.time && this._throw("No time supplied", 400);
@@ -399,8 +414,8 @@ class Controller {
         return obj.serialize();
     }
 
-    async _uncomment(id, data) {
-        this._isAllowed("comment");
+    async _uncomment(ctx, id, data) {
+        this._isAllowed(ctx, "comment");
 
         const obj = await this._getTypeInstance(id);
         await obj.uncomment(data.id);

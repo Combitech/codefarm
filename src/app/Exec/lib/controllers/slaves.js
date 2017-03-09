@@ -11,13 +11,13 @@ class Slaves extends Controller {
         this._addAction("setOnline", this._setOnline);
     }
 
-    async _verify(id) {
+    async _verify(ctx, id) {
         const slave = await this._getTypeInstance(id);
 
         return await Control.instance.verifySlave(slave);
     }
 
-    async _setOnline(id, data) {
+    async _setOnline(ctx, id, data) {
         const slave = await this._getTypeInstance(id);
 
         if (data.offline === true || data.online === false) {

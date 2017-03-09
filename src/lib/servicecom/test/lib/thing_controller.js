@@ -10,7 +10,7 @@ class ThingController extends Controller {
         this._addGetter("thingy", this._thingy);
     }
 
-    async _thingy(id) {
+    async _thingy(ctx, id) {
         const obj = await this._getTypeInstance(id);
 
         return obj.thingy;

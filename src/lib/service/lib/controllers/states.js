@@ -10,7 +10,7 @@ class States extends Controller {
         this._addAction("restart", this._restart);
     }
 
-    async _restart() {
+    async _restart(/* ctx */) {
         const obj = State.instance;
 
         obj.restart("REST restart request");

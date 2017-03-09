@@ -13,7 +13,7 @@ class Users extends Controller {
         this._addGetter("keys", this._getKeys);
     }
 
-    async _authenticate(id, data) {
+    async _authenticate(ctx, id, data) {
         if (typeof data !== "object" || data === null) {
             throw new Error("Request body must be an object");
         }
@@ -32,7 +32,7 @@ class Users extends Controller {
         };
     }
 
-    async _setPassword(id, data) {
+    async _setPassword(ctx, id, data) {
         if (typeof data !== "object" || data === null) {
             throw new Error("Request body must be an object");
         }
@@ -52,7 +52,7 @@ class Users extends Controller {
         return obj.serialize();
     }
 
-    async _addKey(id, data) {
+    async _addKey(ctx, id, data) {
         if (typeof data !== "string" || data === "") {
             throw new Error("Request body must be a string");
         }
@@ -65,7 +65,7 @@ class Users extends Controller {
     }
 
     async _getKeys(ctx, id) {
-        const obj = await this._getTypeInstance(ctx, id);
+        const obj = await this._getTypeInstance(id);
 
         return obj.keys;
     }

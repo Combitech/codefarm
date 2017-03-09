@@ -183,7 +183,7 @@ class GithubBackend extends AsyncEventEmitter {
 
         const revision = await this.Revision.allocate(repository._id, event.pull_request.id.toString(), patch);
 
-        //Check if title contains SKIP_REVIEW and if so set the review:skip tag
+        // Check if title contains SKIP_REVIEW and if so set the review:skip tag
         const commit = await this._getCommit(event.repository.name, event.pull_request.head.sha);
         if (commit.commit.message.indexOf("SKIP_REVIEW") !== -1) {
             revision.skipReview();

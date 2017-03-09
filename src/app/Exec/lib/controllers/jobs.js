@@ -10,7 +10,7 @@ class Jobs extends Controller {
         this._addAction("rerun", this._rerun);
     }
 
-    async _rerun(id) {
+    async _rerun(ctx, id) {
         const obj = await this._getTypeInstance(id);
 
         await obj.rerun();
