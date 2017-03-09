@@ -247,6 +247,14 @@ class Item extends LightComponent {
                                         </td>
                                     </tr>
                                     <tr>
+                                        <td>Workspace Name</td>
+                                        <td>{item.workspaceName ? item.workspaceName : "No name specified"}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Workspace Cleanup Policy</td>
+                                        <td>{item.workspaceCleanup}</td>
+                                    </tr>
+                                    <tr>
                                         <td>Finished</td>
                                         <td>{item.finished ? `at ${item.finished}` : "No"}</td>
                                     </tr>

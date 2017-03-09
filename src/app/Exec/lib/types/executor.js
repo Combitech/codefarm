@@ -20,6 +20,14 @@ const LEVEL = {
     WARNING: "warn"
 };
 
+const DETACH_REASON = {
+    FAILED_TO_START: "failed_to_start",
+    FAILED_TO_REATTACH: "failed_to_reattach",
+    FAILED_TO_ATTACH: "failed_to_attach",
+    FINISHED_WITH_ERROR: "finished_with_error",
+    FINISHED_WITH_SUCCESS: "finished_with_success"
+};
+
 const ATTACH_TIMEOUT_MS = 10000;
 
 class Executor extends Type {
@@ -142,10 +150,23 @@ class Executor extends Type {
 
     async _ensureWorkspace() {
         try {
+            await this._logln(`Ensuring workspace, ${this.workspace}`);
             await this.__ssh.mkdir(path.dirname(this.workspace));
             await this.__ssh.mkdir(this.workspace);
+            await this.__ssh.mkdir(this.workspace + "/abc");
+            await this.__ssh.mkdir(this.workspace + "/abc/hej");
         } catch (error) {
             throw new Error(`Error creating slave workspace at ${this.workspace}: ${error}`);
+        }
+    }
+
+    async _removeWorkspace() {
+        try {
+            await this._logln(`Removing workspace, ${this.workspace}`);
+            await this.__ssh.rmdir(this.workspace + "/abc");
+            await this.__ssh.rmdir(this.workspace);
+        } catch (error) {
+            throw new Error(`Error removing slave workspace at ${this.workspace}: ${error}`);
         }
     }
 
@@ -263,7 +284,7 @@ class Executor extends Type {
         const { pathname } = url.parse(slave.uri);
 
         this.uri = slave.uri;
-        this.workspace = path.join(pathname, `slave-${this.slaveId}`, `job-${this.jobId}`);
+        this.workspace = path.join(pathname, `slave-${this.slaveId}`, job.workspaceName || `job-${this.jobId}`);
         this.privateKeyPath = slave.privateKeyPath;
 
         try {
@@ -285,6 +306,7 @@ class Executor extends Type {
             this.logId = await this.allocateLog("interactive", [ "stdout", "stderr" ]);
             await notification.emit(`${this.constructor.typeName}.started`, this);
             this.started = true;
+            this.workspaceCleanup = job.workspaceCleanup;
             await this.save();
             await this._attach();
             await this._uploadScript(job.script);
@@ -293,7 +315,7 @@ class Executor extends Type {
             await this._logln("Error while trying to start execution", LEVEL.ERROR);
             await this._logln(error, LEVEL.ERROR);
             await notification.emit(`${this.constructor.typeName}.failure`, this);
-            await this.detach();
+            await this.detach(DETACH_REASON.FAILED_TO_START);
             await this.remove();
 
             throw error;
@@ -321,7 +343,7 @@ class Executor extends Type {
             await this._logln(error, LEVEL.ERROR);
 
             await notification.emit(`${this.constructor.typeName}.failure`, this);
-            await this.detach();
+            await this.detach(DETACH_REASON.FAILED_TO_REATTACH);
             await this.remove();
 
             throw error;
@@ -339,7 +361,7 @@ class Executor extends Type {
         return new Promise((resolve, reject) => {
             const timeout = setTimeout(async () => {
                 await this._logln("Attached failed: Timeout", LEVEL.ERROR);
-                await this.detach();
+                await this.detach(DETACH_REASON.FAILED_TO_ATTACH);
                 reject("Timeout");
             }, ATTACH_TIMEOUT_MS);
 
@@ -359,7 +381,7 @@ class Executor extends Type {
                 } else {
                     await this._logln(`Attached failed: ${data.msg}`, LEVEL.ERROR);
                     await this.remove();
-                    await this.detach();
+                    await this.detach(DETACH_REASON.FAILED_TO_ATTACH);
                     reject(data.msg);
                 }
             });
@@ -370,7 +392,7 @@ class Executor extends Type {
                 if (data.status === "offline" && !this.finished) {
                     await this._logln("Script finished abnormaly, executor is dead", LEVEL.ERROR);
                     await notification.emit(`${this.constructor.typeName}.failure`, this);
-                    await this.detach();
+                    await this.detach(DETACH_REASON.FINISHED_WITH_ERROR);
                     await this.remove();
                 }
             });
@@ -438,23 +460,41 @@ class Executor extends Type {
                 this.finished = true;
                 await this.save();
                 await notification.emit(`${this.constructor.typeName}.finished`, this, data.result);
-                await this.detach();
+                await this.detach(data.result === "success" ? DETACH_REASON.FINISHED_WITH_SUCCESS : DETACH_REASON.FINISHED_WITH_ERROR);
                 await this.remove();
             });
         });
     }
 
-    async detach() {
+    async detach(reason) {
         if (!this.__com) {
             return;
         }
 
-        await this.__ssh.disconnect();
         this.__com.removeAllListeners();
         await this.__com.destroy();
         this.__com = false;
 
-        await this._logln("Detached");
+        if (this.workspaceCleanup === Job.CLEANUP_POLICY.KEEP) {
+            // Do nothing
+        } else if (this.workspaceCleanup === Job.CLEANUP_POLICY.REMOVE_ON_FINISH) {
+            if (reason === DETACH_REASON.FINISHED_WITH_ERROR || reason === DETACH_REASON.FINISHED_WITH_SUCCESS) {
+                await this._removeWorkspace();
+            }
+        } else if (this.workspaceCleanup === Job.CLEANUP_POLICY.REMOVE_ON_SUCCESS) {
+            if (reason === DETACH_REASON.FINISHED_WITH_SUCCESS) {
+                await this._removeWorkspace();
+            }
+        } else if (this.workspaceCleanup === Job.CLEANUP_POLICY.REMOVE_WHEN_NEEDED) {
+            // TODO: Write a _TO_BE_REMOVED file to the workspace so it can be,
+            // cleaned up later by a sweep. For now we just remove it directly.
+            if (reason === DETACH_REASON.FINISHED_WITH_ERROR || reason === DETACH_REASON.FINISHED_WITH_SUCCESS) {
+                await this._removeWorkspace();
+            }
+        }
+
+        await this.__ssh.disconnect();
+        await this._logln(`Detached, reason ${reason}`);
     }
 
     async abort() {
@@ -467,6 +507,7 @@ class Executor extends Type {
         await this.save();
         this.__com.sendCommand("abort"); // TODO: Await abort
         notification.emit(`${this.constructor.typeName}.finished`, this, "aborted");
+        await this.detach(DETACH_REASON.FINISHED_WITH_ERROR);
         await this.remove();
     }
 

@@ -27,7 +27,9 @@ module.exports = async (argv) => {
         slaveCriteria = "",
         tagScript = "",
         parentStepNames = [],
-        visible = true
+        visible = true,
+        workspaceName = "",
+        workspaceCleanup = "keep"
     ) => {
         return {
             name: name,
@@ -46,7 +48,9 @@ module.exports = async (argv) => {
             script: script,
             tagScript: tagScript,
             parentStepNames: parentStepNames,
-            visible: visible
+            visible: visible,
+            workspaceName: workspaceName,
+            workspaceCleanup: workspaceCleanup
         };
     };
 
@@ -62,8 +66,10 @@ module.exports = async (argv) => {
         script = "",
         slaveCriteria = "",
         parentStepNames = [],
-        visible = true
-    ) => defaultBlSpec(name, script, slaveCriteria, "", parentStepNames, visible);
+        visible = true,
+        workspaceName = "",
+        workspaceCleanup = "keep"
+    ) => defaultBlSpec(name, script, slaveCriteria, "", parentStepNames, visible, workspaceName, workspaceCleanup);
 
     const baselineSpecs = [
         {
@@ -151,22 +157,22 @@ module.exports = async (argv) => {
             "PushToMaster", "tags.push(\"step:CG:skip\"); tags.push(\"step:Merge:skip\");", [], false
         ),
         slaveScriptBlSpec(
-            "CG", testScript, defaultSlaveCriteria
+            "CG", testScript, defaultSlaveCriteria, "", "remove_on_success"
         ),
         slaveScriptBlSpec(
-            "Merge", mergeScript, defaultSlaveCriteria, [ "CG" ]
+            "Merge", mergeScript, defaultSlaveCriteria, [ "CG" ], "", "remove_on_success"
         ),
         slaveScriptBlSpec(
-            "Build", dummyScript, defaultSlaveCriteria, [ "Merge" ]
+            "Build", dummyScript, defaultSlaveCriteria, [ "Merge" ], "", "remove_on_success"
         ),
         slaveScriptBlSpec(
-            "Regression", testScript, defaultSlaveCriteria, [ "Merge" ]
+            "Regression", testScript, defaultSlaveCriteria, [ "Merge" ], "", "remove_on_success"
         ),
         slaveScriptBlSpec(
-            "Lint", lintScript, defaultSlaveCriteria, [ "Merge" ]
+            "Lint", lintScript, defaultSlaveCriteria, [ "Merge" ], "", "remove_on_success"
         ),
         slaveScriptBlSpec(
-            "Deliver", dummyScript, defaultSlaveCriteria, [ "Build" ]
+            "Deliver", dummyScript, defaultSlaveCriteria, [ "Build" ], "", "remove_on_success"
         )
 
     ];

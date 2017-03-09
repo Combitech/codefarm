@@ -2,6 +2,7 @@
 import React from "react";
 import Component from "ui-lib/component";
 import Input from "react-toolbox/lib/input";
+import Dropdown from "react-toolbox/lib/dropdown";
 import Autocomplete from "react-toolbox/lib/autocomplete";
 import {
     Form as TAForm,
@@ -33,6 +34,16 @@ class Edit extends Component {
                 editable: true,
                 required: () => true,
                 defaultValue: ""
+            },
+            "workspaceName": {
+                editable: true,
+                required: () => false,
+                defaultValue: ""
+            },
+            "workspaceCleanup": {
+                editable: true,
+                required: () => true,
+                defaultValue: "keep"
             }
         };
 
@@ -48,6 +59,13 @@ class Edit extends Component {
 
     render() {
         this.log("render", this.props, this.state);
+
+        const cleanupPolicies = [
+            { value: "keep", label: "Do not remove" },
+            { value: "remove_on_finish", label: "Remove on finish" },
+            { value: "remove_on_success", label: "Remove on success" },
+            { value: "remove_when_needed", label: "Remove when needed" }
+        ];
 
         return (
             <TASection
@@ -93,6 +111,24 @@ class Edit extends Component {
                         disabled={this.props.item && !this.itemProperties.script.editable}
                         value={this.state.script.value}
                         onChange={this.state.script.set}
+                    />
+                    <Input
+                        type="text"
+                        label="Workspace Name"
+                        name="workspaceName"
+                        floating={true}
+                        required={this.itemProperties.workspaceName.required()}
+                        disabled={this.props.item && !this.itemProperties.workspaceName.editable}
+                        value={this.state.workspaceName.value}
+                        onChange={this.state.workspaceName.set}
+                    />
+                    <Dropdown
+                        label="Workspace Cleanup Policy"
+                        required={this.itemProperties.workspaceCleanup.required()}
+                        disabled={this.props.item && !this.itemProperties.workspaceCleanup.editable}
+                        onChange={this.state.workspaceCleanup.set}
+                        source={cleanupPolicies}
+                        value={this.state.workspaceCleanup.value}
                     />
                     <Autocomplete
                         selectedPosition="below"

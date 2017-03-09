@@ -194,7 +194,8 @@ describe("Exec", () => {
                     uri: `ssh://${process.env.USER}@localhost:/tmp`,
                     tags: [ "tag1", "tag2" ],
                     executors: 1,
-                    privateKeyPath: privateKeyPath
+                    privateKeyPath: privateKeyPath,
+                    workspaceCleanup: "remove_on_finish"
                 }
             });
 
@@ -266,7 +267,8 @@ describe("Exec", () => {
                     uri: `ssh://${process.env.USER}@localhost:/tmp`,
                     tags: [ "tag1", "tag2" ],
                     executors: 1,
-                    privateKeyPath: privateKeyPath
+                    privateKeyPath: privateKeyPath,
+                    workspaceCleanup: "remove_on_finish"
                 }
             });
 
@@ -301,7 +303,8 @@ describe("Exec", () => {
                                 id: [ "change1", "change2", "lastChange" ]
                             }
                         ]
-                    }
+                    },
+                    workspaceCleanup: "remove_on_finish"
                 }
             });
 
@@ -366,7 +369,8 @@ describe("Exec", () => {
                                 id: [ "change1", "change2", "lastChange" ]
                             }
                         ]
-                    }
+                    },
+                    workspaceCleanup: "remove_on_finish"
                 }
             });
 
@@ -428,7 +432,8 @@ describe("Exec", () => {
                                 id: [ "change1", "change2", "lastChange" ]
                             }
                         ]
-                    }
+                    },
+                    workspaceCleanup: "remove_on_finish"
                 }
             });
 
@@ -492,7 +497,8 @@ describe("Exec", () => {
                                 id: [ "change1", "change2", "lastChange" ]
                             }
                         ]
-                    }
+                    },
+                    workspaceCleanup: "remove_on_finish"
                 }
             });
 
@@ -568,7 +574,8 @@ describe("Exec", () => {
                                 id: [ "change1", "change2", "lastChange" ]
                             }
                         ]
-                    }
+                    },
+                    workspaceCleanup: "remove_on_finish"
                 }
             });
 
@@ -638,7 +645,8 @@ describe("Exec", () => {
                                 id: [ "change1", "change2", "lastChange" ]
                             }
                         ]
-                    }
+                    },
+                    workspaceCleanup: "remove_on_finish"
                 }
             });
 
@@ -711,7 +719,8 @@ describe("Exec", () => {
                                 id: [ "change1", "change2", "lastChange" ]
                             }
                         ]
-                    }
+                    },
+                    workspaceCleanup: "remove_on_finish"
                 }
             });
 
@@ -781,7 +790,8 @@ describe("Exec", () => {
                                 id: [ "change1", "change2", "lastChange" ]
                             }
                         ]
-                    }
+                    },
+                    workspaceCleanup: "remove_on_finish"
                 }
             });
 
@@ -853,7 +863,8 @@ describe("Exec", () => {
                                 id: [ "change1", "change2", "lastChange" ]
                             }
                         ]
-                    }
+                    },
+                    workspaceCleanup: "remove_on_finish"
                 }
             });
 

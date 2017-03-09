@@ -61,6 +61,7 @@ class SshClient {
                 if (end) {
                     stream.on("close", end);
                 }
+
                 resolve({ stdin: stream.stdin, stdout: stream, stderr: stream.stderr });
             });
         });
@@ -96,6 +97,30 @@ class SshClient {
 
                 resolve();
             });
+        });
+    }
+
+    rmdir(remotePath) {
+        return new Promise((resolve, reject) => {
+            this.client.exec(`rm -rf ${remotePath}`, (error, stream) => {
+                if (error) {
+                    return reject(error);
+                }
+
+                // We must register a listener otherwiese we dont get close
+                stream.on("data", () => {});
+
+                stream.on("close", resolve);
+            });
+
+            // TODO: rmdir here is not recursive and fails when directory is not empty
+            // this.sftp.rmdir(remotePath, (error) => {
+            //     if (error) {
+            //         return reject(error);
+            //     }
+            //
+            //     resolve();
+            // });
         });
     }
 

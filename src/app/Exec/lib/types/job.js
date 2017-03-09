@@ -5,6 +5,13 @@ const { assertType, assertProp } = require("misc");
 const { Type } = require("typelib");
 const { notification } = require("typelib");
 
+const CLEANUP_POLICY = { // Keep in sync with same list in FlowCtrl step
+    KEEP: "keep",
+    REMOVE_ON_FINISH: "remove_on_finish",
+    REMOVE_ON_SUCCESS: "remove_on_success",
+    REMOVE_WHEN_NEEDED: "remove_when_needed"
+};
+
 const STATUS = {
     QUEUED: "queued",
     ALLOCATED: "allocated",
@@ -33,6 +40,8 @@ class Job extends Type {
         this.script = false;
         this.baseline = false;
         this.requeueOnFailure = true;
+        this.workspaceName = false;
+        this.workspaceCleanup = CLEANUP_POLICY.KEEP;
 
         this.slaveId = false;
         this.finished = false;
@@ -228,5 +237,7 @@ class Job extends Type {
         await this.save();
     }
 }
+
+Job.CLEANUP_POLICY = CLEANUP_POLICY;
 
 module.exports = Job;
