@@ -9,6 +9,7 @@ const Monitor = require("./monitor");
 const Configs = require("./controllers/configs");
 const Config = require("./types/config");
 const ServiceCtrl = require("./controllers/services");
+const Token = require("./token");
 const Db = require("./db");
 const { notification } = require("typelib");
 
@@ -48,7 +49,7 @@ class Main extends Service {
                 private: await fs.readFileAsync(this.config.jwtprivate, "utf8"),
                 public: await fs.readFileAsync(this.config.jwtpublic, "utf8")
             };
-            ServiceCtrl.instance.setKeys(keys);
+            Token.instance.setKeys(keys);
             Config.setGlobalOpts({ publicKey: keys.public });
         }
         this.addDisposable(Configs.instance);
