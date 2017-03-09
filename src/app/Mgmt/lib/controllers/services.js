@@ -35,7 +35,7 @@ class Services extends Controller {
         this._keys = Object.assign({}, keys);
     }
 
-    async createToken(id, data) {
+    async createToken(ctx, id, data) {
         if (typeof data !== "object" || data === null) {
             throw new Error("Request body must be an object");
         }
@@ -54,7 +54,7 @@ class Services extends Controller {
         return token;
     }
 
-    async verifyToken(id, data) {
+    async verifyToken(ctx, id, data) {
         if (typeof data !== "object" || data === null) {
             throw new Error("Request body must be an object");
         }
@@ -73,7 +73,7 @@ class Services extends Controller {
         return decoded;
     }
 
-    async getKey() {
+    async getKey(/* ctx */) {
         return {
             algorithm: TOKEN_ALGORITHM,
             public: this._keys && this._keys.public

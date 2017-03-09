@@ -12,14 +12,14 @@ class Logs extends Controller {
         this._addGetter("download", this._download, "Download log");
     }
 
-    async _upload(id, data, ctx) {
-        if (!ctx) {
+    async _upload(ctx, id) {
+        if (ctx.reqType !== "http") {
             this._throw("Upload can only be called via HTTP", 400);
         }
 
         const obj = await this._getTypeInstance(id);
 
-        const { files, fields } = await asyncBusboy(ctx.req);
+        const { files, fields } = await asyncBusboy(ctx.httpCtx.req);
         if (files.length !== 1) {
             throw new Error(`Expected one log file, ${files.length} files got`);
         }
@@ -29,17 +29,17 @@ class Logs extends Controller {
         return obj;
     }
 
-    async _download(id, ctx) {
-        if (!ctx) {
+    async _download(ctx, id) {
+        if (ctx.reqType !== "http") {
             this._throw("Download can only be called via HTTP", 400);
         }
 
         const obj = await this._getTypeInstance(id);
         const stream = await obj.download();
 
-        ctx.length = obj.fileMeta.size;
-        ctx.type = obj.fileMeta.mimeType;
-        ctx.body = stream;
+        ctx.httpCtx.length = obj.fileMeta.size;
+        ctx.httpCtx.type = obj.fileMeta.mimeType;
+        ctx.httpCtx.body = stream;
     }
 }
 

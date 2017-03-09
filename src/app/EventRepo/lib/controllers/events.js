@@ -13,22 +13,22 @@ class Events extends Controller {
         this._addGetter("after", this._getAfter);
     }
 
-    async _getBefore(id, ctx) {
+    async _getBefore(ctx, id) {
         const event = await this._getTypeInstance(id);
 
-        ctx.type = "json";
-        ctx.body = new PassThrough();
+        ctx.httpCtx.type = "json";
+        ctx.httpCtx.body = new PassThrough();
 
-        await chain(ctx.body, event, "getParents");
+        await chain(ctx.httpCtx.body, event, "getParents");
     }
 
-    async _getAfter(id, ctx) {
+    async _getAfter(ctx, id) {
         const event = await this._getTypeInstance(id);
 
-        ctx.type = "json";
-        ctx.body = new PassThrough();
+        ctx.httpCtx.type = "json";
+        ctx.httpCtx.body = new PassThrough();
 
-        await chain(ctx.body, event, "getChildren");
+        await chain(ctx.httpCtx.body, event, "getChildren");
     }
 }
 

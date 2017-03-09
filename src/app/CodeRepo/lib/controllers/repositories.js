@@ -9,7 +9,7 @@ class Repositories extends Controller {
         this._addGetter("uri", this._uri);
     }
 
-    async _uri(id) {
+    async _uri(ctx, id) {
         const obj = await this._getTypeInstance(id);
         const uri = await obj.getUri();
 

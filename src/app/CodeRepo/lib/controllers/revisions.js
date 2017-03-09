@@ -10,7 +10,7 @@ class Revisions extends Controller {
         this._addAction("merge", this._merge);
     }
 
-    async _merge(id) {
+    async _merge(ctx, id) {
         const revision = await this._getTypeInstance(id);
 
         // TODO: Asynchronous updates done by backend as part of merge isn't updated in revision

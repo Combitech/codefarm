@@ -11,7 +11,7 @@ class Specifications extends Controller {
         this._addAction("request", this._request);
     }
 
-    async _request(id) {
+    async _request(ctx, id) {
         const specification = await this._getTypeInstance(id);
 
         await notification.emit(`${specification.constructor.typeName}.request`, specification);
