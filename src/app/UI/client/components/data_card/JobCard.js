@@ -1,5 +1,6 @@
 
 import React from "react";
+import moment from "moment";
 import LightComponent from "ui-lib/light_component";
 import { CardTitle } from "react-toolbox/lib/card";
 import HiddenText from "ui-components/hidden_text";
@@ -37,7 +38,7 @@ class JobCard extends LightComponent {
                     title={`${this.props.item.name} job ${statusText[this.props.item.status]}`}
                     subtitle={(
                         <DateTime
-                            value={this.props.item.finished ? this.props.item.finished : this.props.item.saved}
+                            value={this.props.item.finished ? this.props.item.finished : (this.props.item.saved || this.props.item.started)}
                             niceDate={true}
                         />
                     )}
@@ -72,10 +73,19 @@ class JobCard extends LightComponent {
                                 </td>
                             </tr>
                             <tr>
-                                <td>Created</td>
+                                <td>Created at</td>
                                 <td>
                                     <DateTime
                                         value={this.props.item.created}
+                                        niceDate={true}
+                                    />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Started at</td>
+                                <td>
+                                    <DateTime
+                                        value={this.props.item.started}
                                         niceDate={true}
                                     />
                                 </td>
@@ -90,6 +100,14 @@ class JobCard extends LightComponent {
                                     />
                                 </td>
                             </tr>
+                            {this.props.item.finished && (
+                                <tr>
+                                    <td>Duration</td>
+                                    <td>
+                                        {moment.duration(moment(this.props.item.finished).diff(this.props.item.started)).humanize()}
+                                    </td>
+                                </tr>
+                            )}
                             {this.props.item.slaveId && (
                                 <tr>
                                     <td>Executed on slave</td>

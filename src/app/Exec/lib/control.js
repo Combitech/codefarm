@@ -21,6 +21,10 @@ class Control {
             await this._startJobs();
         });
 
+        notification.on("slave.updated", async () => {
+            await this._startJobs();
+        });
+
         notification.on("job.created", async () => {
             await this._startJobs();
         });

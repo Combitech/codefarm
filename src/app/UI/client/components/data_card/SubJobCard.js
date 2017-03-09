@@ -1,5 +1,6 @@
 
 import React from "react";
+import moment from "moment";
 import LightComponent from "ui-lib/light_component";
 import { CardTitle } from "react-toolbox/lib/card";
 import HiddenText from "ui-components/hidden_text";
@@ -58,6 +59,33 @@ class SubJobCard extends LightComponent {
                                     />
                                 </td>
                             </tr>
+                            <tr>
+                                <td>Started at</td>
+                                <td>
+                                    <DateTime
+                                        value={this.props.item.created}
+                                        niceDate={true}
+                                    />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Finished at</td>
+                                <td>
+                                    <DateTime
+                                        value={this.props.item.finished}
+                                        niceDate={true}
+                                        defaultText="No finished yet"
+                                    />
+                                </td>
+                            </tr>
+                            {this.props.item.finished && (
+                                <tr>
+                                    <td>Duration</td>
+                                    <td>
+                                        {moment.duration(moment(this.props.item.finished).diff(this.props.item.started)).humanize()}
+                                    </td>
+                                </tr>
+                            )}
                             {this.props.item.result && Object.keys(this.props.item.result).map((key) => (
                                 <tr key={key}>
                                     <td>{key}</td>

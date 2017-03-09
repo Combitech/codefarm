@@ -79,7 +79,7 @@ class Overview extends LightComponent {
 
         this.props.item.reviews
             // Filter out reviews without author (email)
-            //TODO: Remove filter once we are sure Email is resolved correctly
+            // TODO: Remove filter once we are sure Email is resolved correctly
             .filter((review) => review.userEmail)
             .forEach((review, reviewIndex) => {
                 list.push({
@@ -119,7 +119,7 @@ class Overview extends LightComponent {
         for (const job of jobs) {
             list.push({
                 id: job._id,
-                time: moment(job.finished ? job.finished : job.saved).unix(),
+                time: moment(job.finished ? job.finished : (job.started || job.saved)).unix(),
                 item: job,
                 Card: JobCard,
                 props: {
