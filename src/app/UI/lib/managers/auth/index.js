@@ -22,17 +22,14 @@ class Auth {
     }
 
     async start(config) {
-        if (config) {
-            this._cookieName = config.jwtCookieName;
+        if (config.web.auth) {
+            this._cookieName = config.web.jwtCookieName;
         }
         this._addRoute("post", "/login", this._login, "User login");
 
-        const client = ServiceComBus.instance.getClient("mgmt");
-
-        const key = await client.getkey("service", "");
-        this._publicKey = key.public;
+        this._publicKey = config.publicKey;
         if (this._publicKey) {
-            ServiceMgr.instance.log("info", `Got JWT public key for algorithm ${key.algorithm}`);
+            ServiceMgr.instance.log("info", "JWT public key setup");
         }
     }
 

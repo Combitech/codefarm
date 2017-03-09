@@ -26,6 +26,10 @@ const argv = yargs
     type: "bool",
     default: false
 })
+.option("getconfig", {
+    describe: "Get config for service",
+    type: "string"
+})
 .argv;
 
 const run = async () => {
@@ -67,12 +71,27 @@ const run = async () => {
         console.log("Get public key");
         try {
             result = await rp.get({
-                url: `http://localhost:${argv.port}/service/X/getkey`
+                url: `http://localhost:${argv.port}/service/X/getkey`,
+                json: true
             });
 
-            console.log(result);
+            console.dir(result, { colors: true, depth: null });
         } catch (error) {
             console.error("Failed to get key", error.message);
+        }
+    }
+
+    if (argv.getconfig) {
+        console.log(`Get config for service ${argv.getconfig}`);
+        try {
+            result = await rp.get({
+                url: `http://localhost:${argv.port}/config?name=${argv.getconfig}&tags=active`,
+                json: true
+            });
+
+            console.dir(result, { colors: true, depth: null });
+        } catch (error) {
+            console.error("Failed to get config", error.message);
         }
     }
 };

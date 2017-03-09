@@ -61,6 +61,10 @@ class Configs extends Controller {
             }
         }
     }
+
+    async dispose() {
+        Config.disposeGlobals();
+    }
 }
 
 module.exports = Configs;

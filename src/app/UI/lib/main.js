@@ -6,7 +6,7 @@ const clone = require("clone");
 const api = require("api.io");
 const Web = require("web");
 const { ServiceComBus, HttpClient } = require("servicecom");
-const { Service, ServiceError } = require("service");
+const { Service } = require("service");
 const MgmtMgr = require("./managers/mgmt");
 const AuthMgr = require("./managers/auth");
 const ServiceProxy = require("./service_proxy");
@@ -58,7 +58,7 @@ class Main extends Service {
         const mb = this.msgBus;
         mb.addListener("data", MgmtMgr.instance.getEventMonitorBusListener());
 
-        await AuthMgr.instance.start(webConfig.auth);
+        await AuthMgr.instance.start(this.config);
         this.addDisposable(AuthMgr.instance);
 
         await ServiceProxy.instance.start();
@@ -97,7 +97,7 @@ class Main extends Service {
         const routes = [].concat(this.routes, ServiceProxy.instance.routes, AuthMgr.instance.routes);
 
         webConfig.auth = webConfig.auth || {};
-        webConfig.auth.jwtPublicKey = AuthMgr.instance.publicKey;
+        webConfig.auth.jwtPublicKey = this.config.publicKey;
 
         await Web.instance.start(webConfig, routes);
         this.addDisposable(Web.instance);

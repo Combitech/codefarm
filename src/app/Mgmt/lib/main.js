@@ -44,11 +44,14 @@ class Main extends Service {
         this.addDisposable(Db.instance);
 
         if (this.config.jwtprivate && this.config.jwtpublic) {
-            ServiceCtrl.instance.setKeys({
+            const keys = {
                 private: await fs.readFileAsync(this.config.jwtprivate, "utf8"),
                 public: await fs.readFileAsync(this.config.jwtpublic, "utf8")
-            });
+            };
+            ServiceCtrl.instance.setKeys(keys);
+            Config.setGlobalOpts({ publicKey: keys.public });
         }
+        this.addDisposable(Configs.instance);
 
         const routes = [].concat(Configs.instance.routes, ServiceCtrl.instance.routes, this.routes);
 

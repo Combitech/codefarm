@@ -6,6 +6,7 @@ const { assertType, assertProp } = require("misc");
 const Db = require("../db");
 
 let msgBus = false;
+let globalOpts = {};
 
 class Config extends Type {
     constructor(data) {
@@ -18,6 +19,10 @@ class Config extends Type {
 
     static setMb(mb) {
         msgBus = mb;
+    }
+
+    static setGlobalOpts(opts) {
+        globalOpts = Object.assign(globalOpts, opts);
     }
 
     static get serviceName() {
@@ -43,6 +48,17 @@ class Config extends Type {
         // Required not to exist
         assertProp(data, "_id", false);
     }
+
+    serialize() {
+        const data = super.serialize();
+
+        return Object.assign(data, globalOpts);
+    }
 }
+
+Config.disposeGlobals = () => {
+    msgBus = false;
+    globalOpts = {};
+};
 
 module.exports = Config;
