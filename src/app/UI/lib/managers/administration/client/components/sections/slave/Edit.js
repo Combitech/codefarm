@@ -20,7 +20,7 @@ class Edit extends Component {
             "_id": {
                 editable: false,
                 required: () => true,
-                defaultValue: sillyname().toLowerCase().replace(" ", "_")
+                defaultValue: sillyname().toLowerCase().replace(/ /g, "_")
             },
             "tags": {
                 editable: true,

@@ -191,6 +191,7 @@ describe("Exec", () => {
                 url: `http://localhost:${testInfo.config.web.port}/slave`,
                 json: true,
                 body: {
+                    _id: "Slave1",
                     uri: `ssh://${process.env.USER}@localhost:/tmp`,
                     tags: [ "tag1", "tag2" ],
                     executors: 1,
@@ -264,6 +265,7 @@ describe("Exec", () => {
                 url: `http://localhost:${testInfo.config.web.port}/slave`,
                 json: true,
                 body: {
+                    _id: "Slave2",
                     uri: `ssh://${process.env.USER}@localhost:/tmp`,
                     tags: [ "tag1", "tag2" ],
                     executors: 1,

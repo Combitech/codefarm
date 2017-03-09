@@ -279,9 +279,9 @@ class Executor extends Type {
         await this._logln(`Allocating executor on slave ${this.slaveId} for job ${this.jobId}`);
 
         const { pathname } = url.parse(slave.uri);
-
+        const workspaceName = job.workspaceName || `job-${this.jobName.replace(/ /g, "_")}-${this.jobId}`
         this.uri = slave.uri;
-        this.workspace = path.join(pathname, `slave-${this.slaveId}`, job.workspaceName || `job-${this.jobName}-${this.jobId}`);
+        this.workspace = path.join(pathname, `slave-${this.slaveId}`, workspaceName);
         this.privateKeyPath = slave.privateKeyPath;
 
         try {
