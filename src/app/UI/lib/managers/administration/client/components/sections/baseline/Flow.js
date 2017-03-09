@@ -56,10 +56,10 @@ class FlowComponent extends LightComponent {
             },
             type: StepStatus,
             disabled: () => false,
-            active: () => !this.props.step.value,
+            active: () => this.props.step === "",
             parentIds: [],
             handlers: {
-                onClick: () => this.props.step.set()
+                onClick: () => this.props.onStepSelect && this.props.onStepSelect(null)
             }
         };
 
@@ -100,10 +100,10 @@ class FlowComponent extends LightComponent {
                     step: step
                 },
                 disabled: () => false,
-                active: () => this.props.step.value === step.name,
+                active: () => this.props.step === step.name,
                 parentIds: parentIds,
                 handlers: {
-                    onClick: () => this.props.step.set(step.name)
+                    onClick: () => this.props.onStepSelect && this.props.onStepSelect(step.name)
                 }
             };
 
@@ -142,8 +142,9 @@ FlowComponent.propTypes = {
     itemExt: React.PropTypes.object.isRequired,
     pathname: React.PropTypes.string.isRequired,
     flow: React.PropTypes.object.isRequired,
-    step: React.PropTypes.object.isRequired,
-    firstStepName: React.PropTypes.string
+    step: React.PropTypes.string,
+    firstStepName: React.PropTypes.string,
+    onStepSelect: React.PropTypes.func
 };
 
 FlowComponent.contextTypes = {

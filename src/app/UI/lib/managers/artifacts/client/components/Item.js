@@ -7,7 +7,6 @@ import { Row, Col } from "react-flexbox-grid";
 import LightComponent from "ui-lib/light_component";
 import api from "api.io/api.io-client";
 import { Flows } from "ui-components/flow";
-import stateVar from "ui-lib/state_var";
 import Flow from "./Flow";
 import {
     Section as TASection,
@@ -19,6 +18,7 @@ import ExtendedItem from "ui-observables/extended_item";
 import FlowList from "ui-observables/flow_list";
 import { States as ObservableDataStates } from "ui-lib/observable_data";
 import Notification from "ui-observables/notification";
+import LocationQuery from "ui-observables/location_query";
 
 class Item extends LightComponent {
     constructor(props) {
@@ -34,7 +34,7 @@ class Item extends LightComponent {
         });
 
         this.state = {
-            step: stateVar(this, "step", ""),
+            params: LocationQuery.instance.params.getValue(),
             itemExt: this.itemExt.value.getValue(),
             itemExtState: this.itemExt.state.getValue(),
             flows: this.flows.value.getValue(),
@@ -50,6 +50,7 @@ class Item extends LightComponent {
         this.addDisposable(this.itemExt.state.subscribe((itemExtState) => this.setState({ itemExtState })));
         this.addDisposable(this.flows.value.subscribe((flows) => this.setState({ flows })));
         this.addDisposable(this.flows.state.subscribe((flowsState) => this.setState({ flowsState })));
+        this.addDisposable(LocationQuery.instance.params.subscribe((params) => this.setState({ params })));
     }
 
     componentWillReceiveProps(nextProps) {
@@ -159,6 +160,7 @@ class Item extends LightComponent {
 
         const flows = this.state.flows.toJS();
         const itemExt = this.state.itemExt.get("_id") ? this.state.itemExt.toJS() : false;
+        const step = this.state.params.toJS().step || "";
 
         return (
             <TASection
@@ -173,13 +175,14 @@ class Item extends LightComponent {
                             item={this.props.item}
                             itemExt={itemExt}
                             pathname={this.props.pathname}
-                            step={this.state.step}
+                            step={step}
+                            onStepSelect={(step) => LocationQuery.instance.setParams({ step })}
                             flows={flows}
                             FlowComponent={Flow}
                         />
-                        {this.state.step.value ? (
+                        {step ? (
                             <Row>
-                                {`Selected ${this.state.step.value}`}
+                                {`Selected ${step}`}
                             </Row>
                         ) : (
                             <div>
