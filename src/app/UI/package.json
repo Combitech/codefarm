@@ -78,6 +78,7 @@
     "rxjs": "^5.2.0",
     "sass-loader": "^6.0.3",
     "sift": "^3.2.6",
+    "sillyname": "^0.1.0",
     "source-map-support": "^0.4.6",
     "style-loader": "^0.13.1",
     "uglify-js": "^2.8.9",

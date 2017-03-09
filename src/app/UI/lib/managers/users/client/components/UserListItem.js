@@ -1,6 +1,6 @@
 
 import React from "react";
-import Chip from "react-toolbox/lib/chip";
+import Tags from "ui-components/tags";
 import LightComponent from "ui-lib/light_component";
 import { ListItem } from "react-toolbox/lib/list";
 
@@ -25,9 +25,7 @@ class UserListItem extends LightComponent {
                 selectable={!!this.props.onClick}
                 caption={`${item.name}`}
                 legend={contactStr}
-                rightActions={item.tags.map((tag) => (
-                    <Chip key={tag}>{tag}</Chip>
-                ))}
+                rightActions={[ (<Tags key="tags" list={item.tags} />) ]}
             />
         );
     }

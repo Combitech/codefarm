@@ -1,5 +1,6 @@
 
 import React from "react";
+import sillyname from "sillyname";
 import Component from "ui-lib/component";
 import Input from "react-toolbox/lib/input";
 import Slider from "react-toolbox/lib/slider";
@@ -10,11 +11,17 @@ import {
     utils as tautils
 } from "ui-components/type_admin";
 
+
 class Edit extends Component {
     constructor(props) {
         super(props);
 
         this.itemProperties = {
+            "_id": {
+                editable: false,
+                required: () => true,
+                defaultValue: sillyname().toLowerCase().replace(" ", "_")
+            },
             "tags": {
                 editable: true,
                 required: () => false,
@@ -63,6 +70,16 @@ class Edit extends Component {
                     onConfirm={() => this.onConfirm()}
                     onCancel={() => this.props.onCancel()}
                 >
+                    <Input
+                        type="text"
+                        label="Name"
+                        name="_id"
+                        floating={true}
+                        required={this.itemProperties._id.required()}
+                        disabled={this.props.item && !this.itemProperties._id.editable}
+                        value={this.state._id.value}
+                        onChange={this.state._id.set}
+                    />
                     <Input
                         type="text"
                         label="URI"

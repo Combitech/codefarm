@@ -3,7 +3,7 @@
 
 import React from "react";
 import LightComponent from "ui-lib/light_component";
-import Chip from "react-toolbox/lib/chip";
+import Tags from "ui-components/tags";
 import Link from "react-toolbox/lib/link";
 import { Tab, Tabs } from "react-toolbox/lib/tabs";
 import { Row, Col } from "react-flexbox-grid";
@@ -214,9 +214,7 @@ class Item extends LightComponent {
                     <Row>
                         <Col className={this.props.theme.panel}>
                             <div className={this.props.theme.tags}>
-                                {item.tags.map((tag) => (
-                                    <Chip key={tag}>{tag}</Chip>
-                                ))}
+                                <Tags list={this.props.item.tags} />
                             </div>
                         </Col>
                     </Row>

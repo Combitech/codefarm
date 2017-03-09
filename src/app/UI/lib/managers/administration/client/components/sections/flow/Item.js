@@ -5,7 +5,7 @@ import {
     Section as TASection,
     LoadIndicator as TALoadIndicator
 } from "ui-components/type_admin";
-import Chip from "react-toolbox/lib/chip";
+import Tags from "ui-components/tags";
 import { Row, Col } from "react-flexbox-grid";
 import stateVar from "ui-lib/state_var";
 import Flow from "./Flow";
@@ -60,9 +60,7 @@ class Item extends LightComponent {
                     <Row>
                         <Col xs={12} md={12} className={this.props.theme.panel}>
                             <div className={this.props.theme.tags}>
-                                {this.props.item.tags.map((tag) => (
-                                    <Chip key={tag}>{tag}</Chip>
-                                ))}
+                                <Tags list={this.props.item.tags} />
                             </div>
                             <p>
                                 {this.props.item.description}

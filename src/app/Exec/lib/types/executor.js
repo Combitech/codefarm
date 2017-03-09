@@ -281,7 +281,7 @@ class Executor extends Type {
         const { pathname } = url.parse(slave.uri);
 
         this.uri = slave.uri;
-        this.workspace = path.join(pathname, `slave-${this.slaveId}`, job.workspaceName || `job-${this.jobId}`);
+        this.workspace = path.join(pathname, `slave-${this.slaveId}`, job.workspaceName || `job-${this.jobName}-${this.jobId}`);
         this.privateKeyPath = slave.privateKeyPath;
 
         try {
