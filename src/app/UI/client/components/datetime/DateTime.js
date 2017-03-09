@@ -16,7 +16,7 @@ class DateTime extends React.PureComponent {
             const timestamp = moment(props.value).local();
             const niceDate = () => timestamp.format("dddd, MMMM Do YYYY");
             const date = () => timestamp.format("YYYY-MM-DD");
-            const time = () => timestamp.format("hh:mm:ss");
+            const time = () => timestamp.format("HH:mm:ss");
 
             if (props.showDate && props.showTime) {
                 if (props.niceDate) {
