@@ -16,11 +16,6 @@ class Slave extends Type {
         if (data) {
             this.set(data);
         }
-
-        // Add id as tag
-        if (!this.tags.includes(this._id)) {
-            this.tags.push(this._id);
-        }
     }
 
     static get serviceName() {
@@ -40,8 +35,6 @@ class Slave extends Type {
     }
 
     static async validate(event, data) {
-        assertProp(data, "_id", false);
-
         if (data.executors) {
             data.executors = parseInt(data.executors, 10);
         }
@@ -51,6 +44,7 @@ class Slave extends Type {
         }
 
         if (event === "create") {
+            assertProp(data, "_id", true);
             assertProp(data, "uri", true);
             assertType(data.uri, "data.uri", "string");
             assertProp(data, "executors", true);
@@ -60,6 +54,14 @@ class Slave extends Type {
             }
             assertProp(data, "privateKeyPath", true);
             assertType(data.privateKeyPath, "data.privateKeyPath", "string");
+
+            // Add id as tag
+            data.tags = data.tags || [];
+            if (!data.tags.includes(data._id)) {
+                data.tags.push(data._id);
+            }
+        } else {
+            assertProp(data, "_id", false);
         }
     }
 

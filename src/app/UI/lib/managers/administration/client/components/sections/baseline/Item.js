@@ -2,7 +2,7 @@
 import React from "react";
 import api from "api.io/api.io-client";
 import LightComponent from "ui-lib/light_component";
-import Chip from "react-toolbox/lib/chip";
+import Tags from "ui-components/tags";
 import { Row, Col } from "react-flexbox-grid";
 import {
     Section as TASection,
@@ -43,9 +43,7 @@ class Item extends LightComponent {
                     <Row>
                         <Col xs={12} md={5} className={this.props.theme.panel}>
                             <div className={this.props.theme.tags}>
-                                {this.props.item.tags.map((tag) => (
-                                    <Chip key={tag}>{tag}</Chip>
-                                ))}
+                                <Tags list={this.props.item.tags} />
                             </div>
                             {this.props.item.collectors.map((collector) => (
                                 <div key={collector.name}>

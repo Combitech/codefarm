@@ -1,6 +1,6 @@
 
 import React from "react";
-import Chip from "react-toolbox/lib/chip";
+import Tags from "ui-components/tags";
 import LightComponent from "ui-lib/light_component";
 import { ListItem } from "react-toolbox/lib/list";
 
@@ -18,9 +18,7 @@ class ListComponentItem extends LightComponent {
                 selectable={!!this.props.onClick}
                 caption={item._id}
                 legend={`Created at ${item.created} - Modified at ${item.saved}`}
-                rightActions={item.tags.map((tag) => (
-                    <Chip key={tag}>{tag}</Chip>
-                ))}
+                rightActions={[ (<Tags key="tags" list={item.tags} />) ]}
             />
         );
     }

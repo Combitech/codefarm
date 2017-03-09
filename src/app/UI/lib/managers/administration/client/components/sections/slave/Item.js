@@ -1,6 +1,6 @@
 
 import React from "react";
-import Chip from "react-toolbox/lib/chip";
+import Tags from "ui-components/tags";
 import LightComponent from "ui-lib/light_component";
 import { Row, Col } from "react-flexbox-grid";
 // Re-use job-list-item component from job section
@@ -81,11 +81,8 @@ class Item extends LightComponent {
                 <div className={this.props.theme.container}>
                     <Row>
                         <Col xs={12} md={5} className={this.props.theme.panel}>
-
                             <div className={this.props.theme.tags}>
-                                {this.props.item.tags.map((tag) => (
-                                    <Chip key={tag}>{tag}</Chip>
-                                ))}
+                                <Tags list={this.props.item.tags} />
                             </div>
                             <h6 className={this.props.theme.title}>Properties</h6>
                             <table className={this.props.theme.properties}>
