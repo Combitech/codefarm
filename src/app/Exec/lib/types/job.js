@@ -44,6 +44,7 @@ class Job extends Type {
         this.workspaceCleanup = CLEANUP_POLICY.KEEP;
 
         this.slaveId = false;
+        this.started = false;
         this.finished = false;
         this.status = STATUS.QUEUED;
         // Incremented in setOngoing. If job fails due to environment failure
@@ -198,7 +199,9 @@ class Job extends Type {
         } else {
             this.lastRunId++;
         }
+
         this.status = STATUS.ONGOING;
+        this.started = new Date();
 
         await this.addLog("stdout", stdOutLogId, false);
         await this.save();
