@@ -153,8 +153,6 @@ class Executor extends Type {
             await this._logln(`Ensuring workspace, ${this.workspace}`);
             await this.__ssh.mkdir(path.dirname(this.workspace));
             await this.__ssh.mkdir(this.workspace);
-            await this.__ssh.mkdir(this.workspace + "/abc");
-            await this.__ssh.mkdir(this.workspace + "/abc/hej");
         } catch (error) {
             throw new Error(`Error creating slave workspace at ${this.workspace}: ${error}`);
         }
@@ -163,7 +161,6 @@ class Executor extends Type {
     async _removeWorkspace() {
         try {
             await this._logln(`Removing workspace, ${this.workspace}`);
-            await this.__ssh.rmdir(this.workspace + "/abc");
             await this.__ssh.rmdir(this.workspace);
         } catch (error) {
             throw new Error(`Error removing slave workspace at ${this.workspace}: ${error}`);
