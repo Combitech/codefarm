@@ -6,6 +6,13 @@ const { ServiceComBus } = require("servicecom");
 const { assertType, assertProp } = require("misc");
 const { Type } = require("typelib");
 
+const CLEANUP_POLICY = { // Keep in sync with same list in Exec job
+    KEEP: "keep",
+    REMOVE_ON_FINISH: "remove_on_finish",
+    REMOVE_ON_SUCCESS: "remove_on_success",
+    REMOVE_WHEN_NEEDED: "remove_when_needed"
+};
+
 class Step extends Type {
     constructor(data) {
         super();
@@ -20,6 +27,8 @@ class Step extends Type {
         this.tagScript = false;
         this.parentSteps = [];
         this.visible = true;
+        this.workspaceName = false;
+        this.workspaceCleanup = CLEANUP_POLICY.KEEP;
 
         this.jobs = [];
 
@@ -62,6 +71,7 @@ class Step extends Type {
             assertProp(data, "baseline", true);
             assertType(data.baseline, "data.baseline", "ref");
             // assertType(data.script, "data.parentSteps", "array"); TODO: This does not work correctly
+            // TODO: Check workspace and cleanup policy
         }
     }
 
@@ -127,7 +137,9 @@ class Step extends Type {
             name: this.name,
             criteria: this.criteria,
             script: this.script,
-            baseline: baseline
+            baseline: baseline,
+            workspaceName: this.workspaceName,
+            workspaceCleanup: this.workspaceCleanup
         });
 
         this.jobs.push({ jobId: data._id, baseline: baseline });

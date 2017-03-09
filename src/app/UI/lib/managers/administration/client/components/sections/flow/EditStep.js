@@ -48,6 +48,16 @@ class EditStep extends Component {
                 required: () => false,
                 defaultValue: ""
             },
+            "workspaceName": {
+                editable: true,
+                required: () => false,
+                defaultValue: ""
+            },
+            "workspaceCleanup": {
+                editable: true,
+                required: () => true,
+                defaultValue: "keep"
+            },
             "parentSteps": {
                 editable: true,
                 required: () => false,
@@ -119,6 +129,12 @@ class EditStep extends Component {
 
         const steps = this.getSteps();
         const baselines = this.getBaselines();
+        const cleanupPolicies = [
+            { value: "keep", label: "Do not remove" },
+            { value: "remove_on_finish", label: "Remove on finish" },
+            { value: "remove_on_success", label: "Remove on success" },
+            { value: "remove_when_needed", label: "Remove when needed" }
+        ];
 
         return (
             <TASection
@@ -230,6 +246,24 @@ class EditStep extends Component {
                         disabled={this.props.item && !this.itemProperties.tagScript.editable}
                         value={this.state.tagScript.value}
                         onChange={this.state.tagScript.set}
+                    />
+                    <Input
+                        type="text"
+                        label="Workspace Name"
+                        name="workspaceName"
+                        floating={true}
+                        required={this.itemProperties.workspaceName.required()}
+                        disabled={this.props.item && !this.itemProperties.workspaceName.editable}
+                        value={this.state.workspaceName.value}
+                        onChange={this.state.workspaceName.set}
+                    />
+                    <Dropdown
+                        label="Workspace Cleanup Policy"
+                        required={this.itemProperties.workspaceCleanup.required()}
+                        disabled={this.props.item && !this.itemProperties.workspaceCleanup.editable}
+                        onChange={this.state.workspaceCleanup.set}
+                        source={cleanupPolicies}
+                        value={this.state.workspaceCleanup.value}
                     />
                 </TAForm>
             </TASection>
