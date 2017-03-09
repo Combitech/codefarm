@@ -2,11 +2,11 @@
 /* global window */
 
 import React from "react";
-import Chip from "react-toolbox/lib/chip";
 import { Row, Col } from "react-flexbox-grid";
 import LightComponent from "ui-lib/light_component";
 import api from "api.io/api.io-client";
 import { Flows } from "ui-components/flow";
+import Tags from "ui-components/tags";
 import Flow from "./Flow";
 import {
     Section as TASection,
@@ -188,11 +188,7 @@ class Item extends LightComponent {
                             <div>
                                 <Row>
                                     <Col className={this.props.theme.panel}>
-                                        <div className={this.props.theme.tags}>
-                                            {this.props.item.tags.map((tag) => (
-                                                <Chip key={tag}>{tag}</Chip>
-                                            ))}
-                                        </div>
+                                        <Tags list={this.props.item.tags} />
                                     </Col>
                                 </Row>
                                 <Row>

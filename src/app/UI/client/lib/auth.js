@@ -52,8 +52,42 @@ const whoami = async(debug = false) => {
     return response;
 };
 
+const setPassword = async (userId, oldPassword, newPassword, debug = false) => {
+    // Check that we are changing for active user
+    const activeUserId = ActiveUser.instance.user.getValue().get("id");
+    if (userId !== activeUserId) {
+        throw new Error(`User ${activeUserId} isn't signed in!`);
+    }
+
+    let errorMsg;
+    let user;
+    try {
+        const data = {
+            oldPassword: oldPassword,
+            password: newPassword
+        };
+        user = await api.type.action("userrepo.user", userId, "setpassword", data);
+        debug && console.log("Set password response", user);
+        if (user) {
+            Notification.instance.publish(`Password updated for user ${user._id}`);
+        } else {
+            errorMsg = `Failed to update password for user ${userId}`;
+        }
+    } catch (error) {
+        console.error("Failed to update password", error.message);
+        errorMsg = `Failed to update password for user ${userId}: ${error.message}`;
+    }
+
+    if (errorMsg) {
+        Notification.instance.publish(errorMsg, "warning");
+    }
+
+    return user;
+};
+
 export {
     signin,
     signout,
-    whoami
+    whoami,
+    setPassword
 };

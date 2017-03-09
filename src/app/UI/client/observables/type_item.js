@@ -5,8 +5,8 @@ import api from "api.io/api.io-client";
 
 class TypeItem extends ObservableData {
     constructor(initialOpts, debug = false) {
-        if (typeof initialOpts.type !== "string") {
-            throw new Error("type must be set to a string in the initial opts");
+        if (typeof initialOpts.type !== "string" && initialOpts.type !== false) {
+            throw new Error("type must be set to a string or false in the initial opts");
         }
 
         if (typeof initialOpts.id !== "string" && initialOpts.id !== false) {
@@ -31,7 +31,7 @@ class TypeItem extends ObservableData {
     }
 
     async _load(opts) {
-        if (this.state.getValue() === ObservableDataStates.DISPOSED || !opts.id) {
+        if (this.state.getValue() === ObservableDataStates.DISPOSED || !opts.id || !opts.type) {
             this._disposeEventHandlers();
 
             return this._initialValue;

@@ -14,7 +14,7 @@ class View extends LightComponent {
         this.log("Constructor");
 
         this.item = new TypeItem({
-            type: props.route.type,
+            type: props.route.type || false,
             id: props.params[props.route.path.substr(1).split("/")[0]] || false,
             subscribe: props.route.path.startsWith(":")
         });
@@ -34,7 +34,9 @@ class View extends LightComponent {
 
     componentWillReceiveProps(nextProps) {
         this.item.setOpts({
-            id: nextProps.params[nextProps.route.path.substr(1).split("/")[0]] || false
+            type: nextProps.route.type,
+            id: nextProps.params[nextProps.route.path.substr(1).split("/")[0]] || false,
+            subscribe: nextProps.route.path.startsWith(":")
         });
     }
 
@@ -72,7 +74,7 @@ class View extends LightComponent {
             });
         } else {
             props.breadcrumbs = props.breadcrumbs.concat({
-                label: this.props.route.label,
+                label: this.props.route.label || this.props.route.path,
                 pathname: this.getPathname()
             });
         }
@@ -145,13 +147,31 @@ class View extends LightComponent {
             ));
         }
 
+        if (this.props.route.List) {
+            return (
+                <div className={this.props.theme.view}>
+                    <this.props.route.List
+                        {...props}
+                        route={this.props.route}
+                        type={this.props.route.type}
+                    />
+                </div>
+            );
+        }
+
+        if (this.props.route.Action) {
+            return (
+                <div className={this.props.theme.view}>
+                    <this.props.route.Action
+                        {...props}
+                        route={this.props.route}
+                    />
+                </div>
+            );
+        }
+
         return (
             <div className={this.props.theme.view}>
-                {this.props.route.List && <this.props.route.List
-                    {...props}
-                    route={this.props.route}
-                    type={this.props.route.type}
-                />}
             </div>
         );
     }

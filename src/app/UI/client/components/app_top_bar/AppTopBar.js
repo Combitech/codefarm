@@ -83,10 +83,12 @@ class AppTopBar extends LightComponent {
                             value="/feedback"
                             caption="Send feedback"
                         />
-                        <MenuItem
-                            value="/profile"
-                            caption="Profile"
-                        />
+                        {activeUser.id &&
+                            <MenuItem
+                                value={`/collaborators/users/${activeUser.id}`}
+                                caption="Profile"
+                            />
+                        }
                         <MenuItem
                             value="/help"
                             caption="Help"

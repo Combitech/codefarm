@@ -2,10 +2,12 @@
 import React from "react";
 import { Route } from "react-router";
 import {
-    View as TAView
+    View as TAView,
+    Edit as TAEdit
 } from "ui-components/type_admin";
 import UserList from "./UserList";
 import UserItem from "./UserItem";
+import UserUpdatePassword from "./UserUpdatePassword";
 import TeamList from "./TeamList";
 import TeamItem from "./TeamItem";
 
@@ -23,7 +25,14 @@ const routes = [
             component={TAView}
             Item={UserItem}
             type="userrepo.user"
-        />
+        >
+            <Route
+                path="updatepassword"
+                component={TAView}
+                Action={UserUpdatePassword}
+                label="Update Password"
+            />
+        </Route>
     </Route>,
     <Route
         key="teams"

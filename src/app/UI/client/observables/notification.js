@@ -29,7 +29,7 @@ class Notification {
     }
 
     publish(msg, type = "accept", timeout = DEFAULT_MSG_TIMEOUT) {
-        const nextMsg = { msg, type, timeout };
+        const nextMsg = { msg, type, timeout, timestamp: Date.now() };
         if (JSON.stringify(this._msg.getValue().toJS()) !== JSON.stringify(nextMsg)) {
             console.log(`Notification published - ${nextMsg.type} - ${nextMsg.msg}`);
             this._msg.next(Immutable.fromJS(nextMsg));

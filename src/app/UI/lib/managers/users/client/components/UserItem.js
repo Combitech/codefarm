@@ -1,23 +1,50 @@
 
 import React from "react";
-import Chip from "react-toolbox/lib/chip";
 import { Row, Col } from "react-flexbox-grid";
 import LightComponent from "ui-lib/light_component";
 import {
     Section as TASection,
-    List as TAList
+    List as TAList,
+    ControlButton as TAControlButton
 } from "ui-components/type_admin";
 import CollaboratorAvatar from "ui-components/collaborator_avatar";
+import Tags from "ui-components/tags";
 import TeamListItem from "./TeamListItem";
 import * as pathBuilder from "ui-lib/path_builder";
 import * as queryBuilder from "ui-lib/query_builder";
 import theme from "./theme.scss";
+import ActiveUser from "ui-observables/active_user";
 
 class Item extends LightComponent {
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            activeUser: ActiveUser.instance.user.getValue()
+        };
+    }
+
+    componentDidMount() {
+        this.addDisposable(ActiveUser.instance.user.subscribe((activeUser) => this.setState({ activeUser })));
+    }
+
     render() {
         this.log("render", this.props);
 
+        const isSignedInUser = this.state.activeUser.get("id") === this.props.item._id;
+
         const controls = this.props.controls.slice(0);
+        if (isSignedInUser) {
+            controls.push((
+                <TAControlButton
+                    key="setpassword"
+                    label="Update password"
+                    onClick={() => this.context.router.push({
+                        pathname: `${this.props.pathname}/updatepassword`
+                    })}
+                />
+            ));
+        }
 
         return (
             <div>
@@ -26,12 +53,19 @@ class Item extends LightComponent {
                     breadcrumbs={this.props.breadcrumbs}
                 >
                     <div className={this.props.theme.container}>
+                        {isSignedInUser &&
+                            <Row>
+                                <Col className={this.props.theme.panel}>
+                                    <Tags
+                                        list={[ "Current user" ]}
+                                    />
+                                </Col>
+                            </Row>
+                        }
                         <Row>
                             <Col className={this.props.theme.panel}>
                                 <div className={this.props.theme.tags}>
-                                    {this.props.item.tags.map((tag) => (
-                                        <Chip key={tag}>{tag}</Chip>
-                                    ))}
+                                    <Tags list={this.props.item.tags} />
                                 </div>
                             </Col>
                         </Row>

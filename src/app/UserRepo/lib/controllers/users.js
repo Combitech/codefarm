@@ -49,9 +49,7 @@ class Users extends Controller {
 
         await obj.setPassword(data.password, data.oldPassword);
 
-        return {
-            user: obj.serialize()
-        };
+        return obj.serialize();
     }
 
     async _addKey(id, data) {
