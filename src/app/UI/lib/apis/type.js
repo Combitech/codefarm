@@ -10,7 +10,7 @@ const { checkAuthorized } = require("./_util.js");
 const UPDATE_RATE_LIMIT_MS = 1000;
 
 const typeApiExports = api.register("type", {
-    get: api.export(async (session, type, query) => {
+    get: api.export(async (session, type, query = {}) => {
         checkAuthorized(session, type, "r");
         const [ serviceId, typeName ] = type.split(".");
         const client = ServiceComBus.instance.getClient(serviceId);

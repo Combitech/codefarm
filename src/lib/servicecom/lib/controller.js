@@ -2,6 +2,7 @@
 
 const qs = require("qs");
 const { ensureArray } = require("misc");
+const log = require("log");
 const singleton = require("singleton");
 
 const ROUTE_WILDCARD = "(.*)";
@@ -57,11 +58,14 @@ class Controller {
                 this._throw("No such method", 400);
             }
 
-            const ctx = this._createCtx(REQ_TYPE.MB);
+            const ctx = this._createCtx(REQ_TYPE.MB, {
+                tokenData: request._tokenData
+            });
             const result = await method(ctx, ...request.data.params);
 
             await this.msgbus.respond(request, result);
         } catch (error) {
+            log.error(`Request from ${request.source.service} failed.`, error);
             await this.msgbus.respond(request, error.message, "failure", error.status);
         }
     }

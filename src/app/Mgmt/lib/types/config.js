@@ -4,7 +4,7 @@ const { ServiceMgr } = require("service");
 const { Type } = require("typelib");
 const { assertType, assertProp } = require("misc");
 const Db = require("../db");
-const Token = require("../token");
+const Auth = require("auth");
 
 let msgBus = false;
 let globalOpts = {};
@@ -67,7 +67,7 @@ class Config extends Type {
             priv: [ "rwad:*" ]
         };
 
-        this.__token = await Token.instance.create(tokenData);
+        this.__token = await Auth.instance.createToken(tokenData);
     }
 
     static async findMany(...args) {

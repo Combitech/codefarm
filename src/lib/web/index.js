@@ -4,7 +4,6 @@ const Koa = require("koa");
 const send = require("koa-send");
 const auth = require("koa-basic-auth");
 const koaJwt = require("koa-jwt");
-const jwt = require("jsonwebtoken");
 const cookie = require("cookie");
 const route = require("koa-route");
 const bodyParser = require("koa-bodyparser");
@@ -16,6 +15,7 @@ const { AsyncEventEmitter } = require("emitter");
 const { ensureArray } = require("misc");
 const singleton = require("singleton");
 const log = require("log");
+const Auth = require("auth");
 
 class Web extends AsyncEventEmitter {
     constructor() {
@@ -55,7 +55,10 @@ class Web extends AsyncEventEmitter {
             if (params.auth.name && params.auth.pass) {
                 this.app.use(auth(params.auth));
             }
-            if (params.auth.jwtSecret) {
+            if (params.auth.jwtPublicKey) {
+                Auth.instance.setKeys({
+                    public: params.auth.jwtPublicKey
+                });
                 this.app.use(koaJwt({
                     secret: params.auth.jwtPublicKey,
                     cookie: params.auth.jwtCookieName,
@@ -173,7 +176,6 @@ class Web extends AsyncEventEmitter {
         }
         const decodedTokenSessionKey = "user";
         const cookieName = authParams.jwtCookieName;
-        const publicKey = authParams.jwtPublicKey;
         request.session[decodedTokenSessionKey] = {};
         if (request.headers.cookie && request.headers.cookie.indexOf(cookieName) !== -1) {
             let token;
@@ -183,14 +185,7 @@ class Web extends AsyncEventEmitter {
             }
             if (token) {
                 try {
-                    const decodedToken = await new Promise(
-                        (resolve, reject) => jwt.verify(
-                            token,
-                            publicKey,
-                            {},
-                            (err, decoded) => err ? reject(err) : resolve(decoded)
-                        )
-                    );
+                    const decodedToken = await Auth.instance.verifyToken(token);
                     request.session[decodedTokenSessionKey] = decodedToken;
                 } catch (error) {
                     // Failed to verify JWT token, log and proceed without setting request.session

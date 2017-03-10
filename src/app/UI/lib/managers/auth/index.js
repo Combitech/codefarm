@@ -3,7 +3,6 @@
 const singleton = require("singleton");
 const { ServiceMgr } = require("service");
 const { ServiceComBus } = require("servicecom");
-const jwt = require("jsonwebtoken");
 const { ensureArray } = require("misc");
 
 const TOKEN_EXPIRES_IN = "5 days";
@@ -23,7 +22,7 @@ class Auth {
 
     async start(config) {
         if (config.web.auth) {
-            this._cookieName = config.web.jwtCookieName;
+            this._cookieName = config.web.auth.jwtCookieName;
         }
         this._addRoute("post", "/login", this._login, "User login");
 
@@ -91,12 +90,10 @@ class Auth {
 
         if (authenticated) {
             const user = users[0];
-            const scope = user.scope || "default";
             const priv = await this._getUserPrivileges(user);
             const tokenData = {
-                username: user.name,
-                scope: [ scope ],
                 id: user._id,
+                username: user.name,
                 priv
             };
             const tokenOpts = {
@@ -151,22 +148,6 @@ class Auth {
         const client = ServiceComBus.instance.getClient("mgmt");
 
         return client.createtoken("service", "", data);
-    }
-
-    async _verifyToken(data, opts = {}) {
-        if (!this._publicKey) {
-            return false;
-        }
-
-        return new Promise((resolve, reject) =>
-            jwt.verify(data, this._publicKey, opts, (err, token) => {
-                if (err) {
-                    reject(err);
-                } else {
-                    resolve(token);
-                }
-            })
-        );
     }
 }
 

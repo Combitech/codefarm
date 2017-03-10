@@ -29,7 +29,9 @@ class Main extends Service {
 
         await ServiceComBus.instance.start(Object.assign({
             name: this.name,
-            uri: this.config.msgbus
+            uri: this.config.msgbus,
+            publicKey: this.config.publicKey,
+            token: this.config.token
         }, this.config.servicecom));
         this.addDisposable(ServiceComBus.instance);
         ServiceComBus.instance.attachControllers([

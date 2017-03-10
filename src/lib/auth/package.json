@@ -1,7 +1,7 @@
 {
-  "name": "logbus",
+  "name": "auth",
   "version": "0.0.0",
-  "description": "Log Bus Library",
+  "description": "Authentication Helper Library",
   "main": "index.js",
   "scripts": {
     "compile": "echo 'No compile needed'",
@@ -16,13 +16,16 @@
     "node": ">= 7.0.0"
   },
   "libraries": [
-    "msgbus"
+    "misc",
+    "singleton"
   ],
-  "dependencies": {},
+  "dependencies": {
+    "jsonwebtoken": "^7.3.0"
+  },
   "devDependencies": {
     "babel-eslint": "^7.1.0",
     "chai": "^3.5.0",
-    "eslint": "^3.17.1",
+    "eslint": "^3.7.0",
     "mocha": "^3.1.0"
   }
 }

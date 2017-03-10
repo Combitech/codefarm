@@ -9,7 +9,7 @@ const Monitor = require("./monitor");
 const Configs = require("./controllers/configs");
 const Config = require("./types/config");
 const ServiceCtrl = require("./controllers/services");
-const Token = require("./token");
+const Auth = require("auth");
 const Db = require("./db");
 const { notification } = require("typelib");
 
@@ -35,6 +35,15 @@ class Main extends Service {
         Config.setMb(this.mgr.msgBus);
     }
 
+    async _createToken() {
+        const tokenData = {
+            src: this.name,
+            priv: [ "rwad:*" ]
+        };
+
+        return Auth.instance.createToken(tokenData);
+    }
+
     async onOnline() {
         const dbConfig = {
             uri: this.config.mongo,
@@ -44,12 +53,13 @@ class Main extends Service {
         await Db.instance.connect(dbConfig);
         this.addDisposable(Db.instance);
 
+        let keys;
         if (this.config.jwtprivate && this.config.jwtpublic) {
-            const keys = {
+            keys = {
                 private: await fs.readFileAsync(this.config.jwtprivate, "utf8"),
                 public: await fs.readFileAsync(this.config.jwtpublic, "utf8")
             };
-            Token.instance.setKeys(keys);
+            Auth.instance.setKeys(keys);
             Config.setGlobalOpts({ publicKey: keys.public });
         }
         this.addDisposable(Configs.instance);
@@ -58,7 +68,9 @@ class Main extends Service {
 
         await ServiceComBus.instance.start(Object.assign({
             name: this.name,
-            uri: this.config.msgbus
+            uri: this.config.msgbus,
+            publicKey: keys && keys.public,
+            token: await this._createToken()
         }, this.config.servicecom));
         this.addDisposable(ServiceComBus.instance);
         ServiceComBus.instance.attachControllers([

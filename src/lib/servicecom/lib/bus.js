@@ -6,6 +6,8 @@ const MsgBus = require("msgbus");
 const { AsyncEventEmitter } = require("emitter");
 const { Deferred } = require("misc");
 const singleton = require("singleton");
+const log = require("log");
+const Auth = require("auth");
 const MbClient = require("./mb_client");
 
 class ServiceComBus extends AsyncEventEmitter {
@@ -73,7 +75,38 @@ class ServiceComBus extends AsyncEventEmitter {
         }
     }
 
+    async _authenticate(message) {
+        let tokenData = false;
+        if (message.token) {
+            const publicKey = this.config.publicKey;
+
+            try {
+                tokenData = await Auth.instance.verifyToken(message.token, { publicKey });
+                // Validate message source
+                // TODO: Any other way to check source than message.source.service?
+                if (tokenData.src && tokenData.src !== message.source.service) {
+                    throw new Error(`Expected src ${tokenData.src}, got ${message.source.service}`);
+                }
+            } catch (error) {
+                log.error(`${this.config.name} received faulty token from ${message.source.service}`, error.message, message);
+            }
+        } else {
+            log.debug(`${this.config.name} received no token from ${message.source.service}`, message);
+        }
+
+        return tokenData;
+    }
+
     async _onData(message) {
+        if (!this.config.testMode && (message.type === "response" || message.type === "request")) {
+            message._tokenData = await this._authenticate(message);
+            if (!message._tokenData) {
+                log.error(`${this.config.name} received unauthorized ${message.type} ` +
+                    `from ${message.source.service}, message dropped`);
+
+                return;
+            }
+        }
         if (message.type === "response") {
             const pending = this._retreivePendingRequest(message._id);
 
@@ -82,6 +115,7 @@ class ServiceComBus extends AsyncEventEmitter {
             }
 
             if (message.result !== "success") {
+                console.log("failed", message);
                 const error = new Error(message.data);
                 error.status = message.status;
 
@@ -135,6 +169,7 @@ class ServiceComBus extends AsyncEventEmitter {
             request: {
                 _id: this.msgbus.constructor.generateId(),
                 time: moment().utc().format(),
+                token: this.config.token,
                 type: "request",
                 data: data,
                 timeout: timeout,
@@ -159,6 +194,7 @@ class ServiceComBus extends AsyncEventEmitter {
         const response = {
             _id: request._id,
             time: moment().utc().format(),
+            token: this.config.token,
             type: "response",
             data: data,
             result: result,

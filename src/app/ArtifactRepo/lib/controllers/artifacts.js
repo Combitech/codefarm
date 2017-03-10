@@ -45,6 +45,7 @@ class Artifacts extends Controller {
     }
 
     async _validateArtifact(ctx, id) {
+        console.log("validateArtifact", ctx.tokenData);
         const obj = await this._getTypeInstance(id);
         const validation = await obj.validate();
 

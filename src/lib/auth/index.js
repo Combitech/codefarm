@@ -17,25 +17,30 @@ $ openssl rsa -in $HOME/.ssh/id_rsa.pub -pubout -outform PEM -out $HOME/.ssh/id_
 */
 
 const TOKEN_ALGORITHM = "RS256";
+const TOKEN_ISSUER = "codefarm";
 
-class Token {
+class Auth {
     constructor() {
     }
 
     setKeys(keys) {
-        assertType(keys.private, "keys.private", "string");
-        assertType(keys.public, "keys.public", "string");
+        if (keys.private) {
+            assertType(keys.private, "keys.private", "string");
+        }
+        if (keys.public) {
+            assertType(keys.public, "keys.public", "string");
+        }
         this._keys = Object.assign({}, keys);
     }
 
-    async create(data, opts) {
+    async createToken(data, opts) {
         if (typeof data !== "object" || data === null) {
             throw new Error("Request body must be an object");
         }
 
         const tokenData = Object.assign({}, data);
         const tokenOpts = Object.assign({
-            issuer: "codefarm",
+            issuer: TOKEN_ISSUER,
             algorithm: TOKEN_ALGORITHM
         }, opts);
 
@@ -44,13 +49,13 @@ class Token {
         return token;
     }
 
-    async verify(token, opts) {
+    async verifyToken(token, opts) {
         if (typeof token !== "string") {
             throw new Error("token not a string");
         }
 
         const tokenOpts = Object.assign({
-            issuer: "codefarm"
+            issuer: TOKEN_ISSUER
         }, opts);
 
         const decoded = await this._verifyToken(token, tokenOpts);
@@ -66,12 +71,22 @@ class Token {
     }
 
     async _createToken(data, opts) {
-        if (!this._keys) {
+        let privateKey;
+        if (opts && opts.privateKey) {
+            privateKey = opts.privateKey;
+            delete opts.privateKey;
+        } else if (this._keys && this._keys.private) {
+            privateKey = this._keys.private;
+        } else if (!this._keys) {
             return false;
         }
 
+        if (!privateKey) {
+            throw new Error("Missing private key");
+        }
+
         return new Promise((resolve, reject) =>
-            jwt.sign(data, this._keys.private, opts, (err, token) => {
+            jwt.sign(data, privateKey, opts, (err, token) => {
                 if (err) {
                     reject(err);
                 } else {
@@ -82,12 +97,22 @@ class Token {
     }
 
     async _verifyToken(data, opts = {}) {
-        if (!this._keys) {
+        let publicKey;
+        if (opts && opts.publicKey) {
+            publicKey = opts.publicKey;
+            delete opts.publicKey;
+        } else if (this._keys && this._keys.public) {
+            publicKey = this._keys.public;
+        } else if (!this._keys) {
             return false;
         }
 
+        if (!publicKey) {
+            throw new Error("Missing public key");
+        }
+
         return new Promise((resolve, reject) =>
-            jwt.verify(data, this._keys.public, opts, (err, token) => {
+            jwt.verify(data, publicKey, opts, (err, token) => {
                 if (err) {
                     reject(err);
                 } else {
@@ -98,4 +123,4 @@ class Token {
     }
 }
 
-module.exports = singleton(Token);
+module.exports = singleton(Auth);
