@@ -77,6 +77,8 @@ class ServiceComBus extends AsyncEventEmitter {
 
     async _authenticate(message) {
         let tokenData = false;
+        const msgSrc = message.source && message.source.service;
+        const name = this.config.name;
         if (message.token) {
             const publicKey = this.config.publicKey;
 
@@ -84,14 +86,21 @@ class ServiceComBus extends AsyncEventEmitter {
                 tokenData = await Auth.instance.verifyToken(message.token, { publicKey });
                 // Validate message source
                 // TODO: Any other way to check source than message.source.service?
-                if (tokenData.src && tokenData.src !== message.source.service) {
-                    throw new Error(`Expected src ${tokenData.src}, got ${message.source.service}`);
+                if (tokenData.type === Auth.TOKEN_TYPE.SERVICE) {
+                    if (tokenData.src !== msgSrc) {
+                        throw new Error(`Expected src ${tokenData.src}, got ${msgSrc}`);
+                    }
+                } else if (tokenData.type === Auth.TOKEN_TYPE.USER) {
+                    // TODO
+                    console.log("rx user message");
+                } else {
+                    throw new Error(`Unsupported token type ${tokenData.type}`);
                 }
             } catch (error) {
-                log.error(`${this.config.name} received faulty token from ${message.source.service}`, error.message, message);
+                log.error(`${name} received faulty token from ${msgSrc}`, error.message, message);
             }
         } else {
-            log.debug(`${this.config.name} received no token from ${message.source.service}`, message);
+            log.debug(`${name} received no token from ${msgSrc}`, message);
         }
 
         return tokenData;
@@ -164,12 +173,12 @@ class ServiceComBus extends AsyncEventEmitter {
         return pending;
     }
 
-    async request(targetService, data, timeout) {
+    async request(targetService, data, timeout, token = false) {
         const pendingRequest = {
             request: {
                 _id: this.msgbus.constructor.generateId(),
                 time: moment().utc().format(),
-                token: this.config.token,
+                token: token || this.config.token, // Use configured token if none specified
                 type: "request",
                 data: data,
                 timeout: timeout,

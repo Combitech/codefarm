@@ -58,12 +58,12 @@ class MbClient {
         }, timeout);
     }
 
-    async call(name, typeName, id, data, timeout = DEFAULT_TIMEOUT_MS) {
+    async call(name, typeName, id, data, token, timeout = DEFAULT_TIMEOUT_MS) {
         return this.msgbus.request(this.serviceName, {
             method: name,
             typeName: typeName,
             params: data ? [ id, data ] : [ id ]
-        }, timeout);
+        }, timeout, token);
     }
 }
 

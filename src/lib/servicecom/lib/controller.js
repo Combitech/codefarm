@@ -3,6 +3,7 @@
 const qs = require("qs");
 const { ensureArray } = require("misc");
 const log = require("log");
+const { isTokenValidForAccess } = require("auth");
 const singleton = require("singleton");
 
 const ROUTE_WILDCARD = "(.*)";
@@ -258,9 +259,16 @@ class Controller {
         throw error;
     }
 
-    _isAllowed(ctx, action) {
+    isAllowed(ctx, action) {
         if (!this.support.includes(action)) {
             this._throw(`${action} is not allowed`, 501);
+        }
+        if (ctx.tokenData) {
+            try {
+                isTokenValidForAccess(ctx.tokenData, this.Type.getType(), action);
+            } catch (error) {
+                this.throw(`${action} is not authorized`, 401);
+            }
         }
     }
 
@@ -293,7 +301,7 @@ class Controller {
     // Basic operations
 
     async _list(ctx, query = {}, options = {}) {
-        this._isAllowed(ctx, "read");
+        this.isAllowed(ctx, "read");
 
         if (query.hasOwnProperty("__options")) {
             Object.assign(options, query.__options);
@@ -327,7 +335,7 @@ class Controller {
     }
 
     async _create(ctx, data) {
-        this._isAllowed(ctx, "create");
+        this.isAllowed(ctx, "create");
 
         await this._validate("create", data);
 
@@ -341,7 +349,7 @@ class Controller {
     }
 
     async _get(ctx, id) {
-        this._isAllowed(ctx, "read");
+        this.isAllowed(ctx, "read");
 
         const obj = await this._getTypeInstance(id);
 
@@ -349,7 +357,7 @@ class Controller {
     }
 
     async _update(ctx, id, data) {
-        this._isAllowed(ctx, "update");
+        this.isAllowed(ctx, "update");
 
         await this._validate("update", data);
 
@@ -361,7 +369,7 @@ class Controller {
     }
 
     async _remove(ctx, id) {
-        this._isAllowed(ctx, "remove");
+        this.isAllowed(ctx, "remove");
 
         const obj = await this._getTypeInstance(id);
         await obj.remove();
@@ -373,7 +381,7 @@ class Controller {
     // Action operations
 
     async _tag(ctx, id, data) {
-        this._isAllowed(ctx, "tag");
+        this.isAllowed(ctx, "tag");
 
         !data.tag && this._throw("No tag supplied", 400);
 
@@ -385,7 +393,7 @@ class Controller {
     }
 
     async _untag(ctx, id, data) {
-        this._isAllowed(ctx, "tag");
+        this.isAllowed(ctx, "tag");
 
         const obj = await this._getTypeInstance(id);
         const tags = ensureArray(data.tag);
@@ -395,7 +403,7 @@ class Controller {
     }
 
     async _addRef(ctx, id, data) {
-        this._isAllowed(ctx, "ref");
+        this.isAllowed(ctx, "ref");
 
         !data.ref && this._throw("No ref supplied", 400);
 
@@ -407,7 +415,7 @@ class Controller {
     }
 
     async _comment(ctx, id, data) {
-        this._isAllowed(ctx, "comment");
+        this.isAllowed(ctx, "comment");
 
         !data.text && this._throw("No text supplied", 400);
         !data.time && this._throw("No time supplied", 400);
@@ -419,7 +427,7 @@ class Controller {
     }
 
     async _uncomment(ctx, id, data) {
-        this._isAllowed(ctx, "comment");
+        this.isAllowed(ctx, "comment");
 
         const obj = await this._getTypeInstance(id);
         await obj.uncomment(data.id);

@@ -44,7 +44,7 @@ const authApiExports = api.register("auth", {
         if (session.user && Object.keys(session.user).length > 0) {
             result = {
                 success: true,
-                user: session.user,
+                user: session.user.tokenData,
                 // Ask client to remove cookie...
                 setCookies: [ {
                     name: AuthMgr.instance.cookieName,
@@ -69,7 +69,7 @@ const authApiExports = api.register("auth", {
         if (session.user && Object.keys(session.user).length > 0) {
             result = {
                 success: true,
-                user: session.user
+                user: session.user.tokenData
             };
         }
 

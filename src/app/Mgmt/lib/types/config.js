@@ -61,20 +61,22 @@ class Config extends Type {
         });
     }
 
-    async _createToken() {
+    static async createToken(name) {
         const tokenData = {
-            src: this.name,
-            priv: [ "rwad:*" ]
+            src: name,
+            priv: [ "*:*" ]
         };
 
-        this.__token = await Auth.instance.createToken(tokenData);
+        const { token } = await Auth.instance.createToken(tokenData, {}, Auth.TOKEN_TYPE.SERVICE);
+
+        return token;
     }
 
     static async findMany(...args) {
         const objs = await super.findMany(...args);
         if (objs) {
             for (const obj of objs) {
-                await obj._createToken();
+                obj.__token = await obj.constructor.createToken(obj.name);
             }
         }
 
@@ -84,7 +86,7 @@ class Config extends Type {
     static async findOne(...args) {
         const obj = await super.findOne(...args);
         if (obj) {
-            await obj._createToken();
+            obj.__token = await obj.constructor.createToken(obj.name);
         }
 
         return obj;

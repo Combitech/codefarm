@@ -11,25 +11,26 @@ const UPDATE_RATE_LIMIT_MS = 1000;
 
 const typeApiExports = api.register("type", {
     get: api.export(async (session, type, query = {}) => {
-        checkAuthorized(session, type, "r");
+        checkAuthorized(session, type, "read");
         const [ serviceId, typeName ] = type.split(".");
         const client = ServiceComBus.instance.getClient(serviceId);
 
         return client.list(typeName, query);
     }),
     getter: api.export(async (session, type, id, getter) => {
-        checkAuthorized(session, type, "r");
+        checkAuthorized(session, type, "read");
         const [ serviceId, typeName ] = type.split(".");
         const client = ServiceComBus.instance.getClient(serviceId);
 
         return client[getter](typeName, id);
     }),
     action: api.export(async (session, type, id, action, data = {}) => {
-        checkAuthorized(session, type, "a");
+        checkAuthorized(session, type, action);
         const [ serviceId, typeName ] = type.split(".");
         const client = ServiceComBus.instance.getClient(serviceId);
+        const token = session.user && session.user.token;
 
-        return client[action](typeName, id, data);
+        return client[action](typeName, id, data, token);
     })
 });
 

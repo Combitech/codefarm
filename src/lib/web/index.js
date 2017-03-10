@@ -174,9 +174,8 @@ class Web extends AsyncEventEmitter {
         if (!authParams || !authParams.jwtPublicKey || !authParams.jwtCookieName) {
             return false;
         }
-        const decodedTokenSessionKey = "user";
         const cookieName = authParams.jwtCookieName;
-        request.session[decodedTokenSessionKey] = {};
+        request.session.user = {};
         if (request.headers.cookie && request.headers.cookie.indexOf(cookieName) !== -1) {
             let token;
             try {
@@ -186,7 +185,8 @@ class Web extends AsyncEventEmitter {
             if (token) {
                 try {
                     const decodedToken = await Auth.instance.verifyToken(token);
-                    request.session[decodedTokenSessionKey] = decodedToken;
+                    request.session.user.token = token;
+                    request.session.user.tokenData = decodedToken;
                 } catch (error) {
                     // Failed to verify JWT token, log and proceed without setting request.session
                     log.verbose(`web: Failed to decode JWT token in cookie ${cookieName}`);

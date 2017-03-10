@@ -18,6 +18,12 @@ $ openssl rsa -in $HOME/.ssh/id_rsa.pub -pubout -outform PEM -out $HOME/.ssh/id_
 
 const TOKEN_ALGORITHM = "RS256";
 const TOKEN_ISSUER = "codefarm";
+const ACCESS_WILDCARD = "*";
+
+const TOKEN_TYPE = {
+    USER: "usr",
+    SERVICE: "service"
+};
 
 class Auth {
     constructor() {
@@ -33,12 +39,14 @@ class Auth {
         this._keys = Object.assign({}, keys);
     }
 
-    async createToken(data, opts) {
+    async createToken(data, opts, tokenType = TOKEN_TYPE.USER) {
         if (typeof data !== "object" || data === null) {
             throw new Error("Request body must be an object");
         }
 
-        const tokenData = Object.assign({}, data);
+        const tokenData = Object.assign({}, data, {
+            type: tokenType
+        });
         const tokenOpts = Object.assign({
             issuer: TOKEN_ISSUER,
             algorithm: TOKEN_ALGORITHM
@@ -46,7 +54,10 @@ class Auth {
 
         const token = await this._createToken(tokenData, tokenOpts);
 
-        return token;
+        return {
+            token,
+            tokenData
+        };
     }
 
     async verifyToken(token, opts) {
@@ -122,5 +133,44 @@ class Auth {
         );
     }
 }
+
+Auth.isTokenValidForAccess = (tokenData, type, accessType = "r") => {
+    // TODO: The following code allows unauthorized access. Remove when deployed...
+    if (!tokenData) {
+        return true;
+    }
+
+    // Privileges are in format "acc1,acc2:service.type"
+    const privileges = (tokenData && tokenData.priv) || [];
+    const [ serviceName, typeName ] = type.split(".");
+    const myPriv = privileges.filter((priv) => {
+        const [ , privType ] = priv.split(":");
+        const [ privService, privTypeName ] = privType.split(".");
+
+        let match = false;
+        if (privService === ACCESS_WILDCARD) {
+            match = true;
+        } else if (privService === serviceName) {
+            match = (privTypeName === ACCESS_WILDCARD) || (privTypeName === typeName);
+        }
+
+        return match;
+    });
+    // Extract accesses and put one item per access in a list
+    const allowedAccessList = myPriv
+        // extract acc1,acc2,... and split to list [ "acc1", "acc2", ... ]
+        .map((priv) => priv.split(":")[0].split(","))
+        // Flatten list
+        .reduce((acc, val) => acc.concat(val), []);
+    const allowed = allowedAccessList.includes(ACCESS_WILDCARD) || allowedAccessList.includes(accessType);
+
+    if (!allowed) {
+        throw new Error(`Access ${accessType}:${type} denied`);
+    }
+
+    return true;
+};
+
+Auth.TOKEN_TYPE = TOKEN_TYPE;
 
 module.exports = singleton(Auth);

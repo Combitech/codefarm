@@ -1,8 +1,6 @@
 "use strict";
 
-const fs = require("fs-extra-promise");
 const yargs = require("yargs");
-const path = require("path");
 const rp = require("request-promise");
 const { userrepo: configUserRepo } = require("./config.json");
 
@@ -68,10 +66,10 @@ const argv = yargs
 */
 
 const templates = {
-    super: [ "rwda:*" ],
-    adm: [ "rwda:*" ],
-    mgmt: [ "rwa:*" ],
-    usr: [ "r:*" ]
+    super: [ "*:*" ],
+    adm: [ "*:*" ],
+    mgmt: [ "*:*" ],
+    usr: [ "r:*", "read,comment:*" ]
 };
 
 const run = async () => {

@@ -3,10 +3,11 @@
 const asyncBusboy = require("async-busboy");
 const Artifact = require("../types/artifact");
 const { Controller } = require("servicecom");
+const { isTokenValidForAccess } = require("auth");
 
 class Artifacts extends Controller {
     constructor() {
-        super(Artifact, [ "read", "create", "tag", "ref" ]);
+        super(Artifact, [ "read", "create", "tag", "ref", "validate" ]);
 
         this._addAction("upload", this._uploadArtifact, "Upload artifact");
         this._addAction("validate", this._validateArtifact, "Validate artifact");
@@ -45,7 +46,7 @@ class Artifacts extends Controller {
     }
 
     async _validateArtifact(ctx, id) {
-        console.log("validateArtifact", ctx.tokenData);
+        this.isAllowed(ctx, "validate");
         const obj = await this._getTypeInstance(id);
         const validation = await obj.validate();
 

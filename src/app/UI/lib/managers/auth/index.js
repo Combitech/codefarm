@@ -99,13 +99,13 @@ class Auth {
             const tokenOpts = {
                 expiresIn: TOKEN_EXPIRES_IN
             };
-            const token = await this._createToken(tokenData, tokenOpts);
+            const createResp = await this._createToken(tokenData, tokenOpts);
 
-            if (token) {
+            if (createResp) {
                 result = {
                     success: true,
-                    user: tokenData,
-                    token
+                    user: createResp.tokenData,
+                    token: createResp.token
                 };
             } else {
                 result = {
