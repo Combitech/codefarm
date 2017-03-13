@@ -52,12 +52,12 @@
     "source-map-support": "^0.4.6",
     "webpack": "^2.2.1",
     "webpack-async-await": "^1.1.0",
-    "yargs": "^6.0.0"
+    "yargs": "^6.0.0",
+    "get-port": "^2.1.0"
   },
   "devDependencies": {
     "chai": "^3.5.0",
     "eslint": "^3.7.0",
-    "get-port": "^2.1.0",
     "mocha": "^3.1.0",
     "request-promise": "^4.1.1"
   }

@@ -5,6 +5,7 @@ const fs = require("fs-extra-promise");
 const { Server } = require("./daemon/server");
 const { ScriptServer } = require("./daemon/script_server");
 const { Executor } = require("./daemon/executor");
+const getPort = require("get-port");
 
 module.exports = {
     run: async (workspace, port) => {
@@ -14,10 +15,14 @@ module.exports = {
             fs.appendFileSync(logfile, `${new Date()}  RUN  ${line}\n`);
         };
 
-        const tempDir = await fs.mkdtempAsync("/tmp/cf-deamon-");
+        const cliConfig = {
+            port: await getPort()
+        };
+
+        await fs.writeFileAsync(path.join(workspace, "cliConfig.json"), JSON.stringify(cliConfig));
 
         const server = new Server("client", logfile, port);
-        const scriptServer = new ScriptServer("cmd", logfile, path.join(tempDir, "cmd.sock"));
+        const scriptServer = new ScriptServer("cmd", logfile, cliConfig.port);
         const executor = new Executor(logfile);
 
         scriptServer.on("type_read", async (data) => {
@@ -119,7 +124,6 @@ module.exports = {
             await server.finish(code === 0 ? "success" : "fail");
             server.end();
             scriptServer.dispose();
-            await fs.remove(tempDir);
         });
 
         process.on("uncaughtException", (error) => {

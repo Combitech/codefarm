@@ -4,6 +4,7 @@ const net = require("net");
 const { spawn } = require("child_process");
 const fs = require("fs-extra-promise");
 const { AsyncEventEmitter } = require("emitter");
+const getPort = require("get-port");
 
 class Daemon extends AsyncEventEmitter {
     constructor(logfile, workspace, port) {
@@ -13,22 +14,6 @@ class Daemon extends AsyncEventEmitter {
         this.logfile = logfile;
         this.workspace = workspace;
         this.port = port;
-    }
-
-    _getPort() {
-        return new Promise((resolve, reject) => {
-            let port = 0;
-            const server = net.createServer();
-
-            server.on("listening", () => {
-                port = server.address().port;
-                server.close();
-            });
-
-            server.on("close", () => { resolve(port); });
-            server.on("error", () => { reject("Could not allocated free port"); });
-            server.listen(port, "127.0.0.1");
-        });
     }
 
     async _run(script) {
@@ -85,7 +70,7 @@ class Daemon extends AsyncEventEmitter {
                 } catch (error) {}
             }
 
-            this.port = await this._getPort();
+            this.port = await getPort();
 
             this._log(`Starting daemon on port ${this.port}`);
             this.emit("status", "connecting", `Starting daemon on port ${this.port}`);

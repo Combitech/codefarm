@@ -11,6 +11,8 @@ const log = require("./log");
 const ComClient = require("./com");
 const outputFormatter = require("./output_formatter");
 const jsonQuery = require("./json_query");
+const fs = require("fs-extra-promise");
+
 const commands = [
     require("./commands/read_type"),
     require("./commands/create_type"),
@@ -26,7 +28,6 @@ const commands = [
     require("./commands/load_file")
 ];
 
-const DEFAULT_SOCKET_PATH = path.join(__dirname, "cmd.sock");
 const DEFAULT_SOCKET_TIMEOUT = 5000;
 const DEFAULT_OUTPUT_FORMAT = "json";
 const DEFAULT_QUERY_ENGINE = "jsonpath";
@@ -68,9 +69,8 @@ module.exports = {
                 DEFAULT_QUERY_ENGINE
             )
             .option(
-                "--socket <path>",
-                `Command socket path, defaults is ${DEFAULT_SOCKET_PATH}`,
-                DEFAULT_SOCKET_PATH
+                "--port <port>",
+                "Command socket port"
             )
             .option(
                 "--timeout <seconds>",
@@ -88,10 +88,21 @@ module.exports = {
         commander.parse(argv);
     },
     run: async (comClient) => {
-        let res = "";
         const readyCmd = commands.find((cmd) => cmd.isReady());
+        let config = commander;
+        let res = "";
+
         if (readyCmd) {
-            const com = comClient || new ComClient(commander.socket, commander.timeout * 1000);
+            if (!comClient) {
+                const content = await fs.readFileAsync(path.join(__dirname, "cliConfig.json"));
+                config = Object.assign({}, commander, JSON.parse(content));
+
+                if (!config.port) {
+                    throw new Error("No port specified");
+                }
+            }
+
+            const com = comClient || new ComClient(config.port, config.timeout * 1000);
             let responseData;
             try {
                 const data = await readyCmd.run(com);
@@ -106,19 +117,19 @@ module.exports = {
                 throw err;
             }
 
-            if (commander.query.length > 0) {
+            if (config.query.length > 0) {
                 let queryResults = [];
-                for (const query of commander.query) {
+                for (const query of config.query) {
                     try {
-                        const queryRes = jsonQuery.query(responseData, query, commander.queryEngine);
+                        const queryRes = jsonQuery.query(responseData, query, config.queryEngine);
                         queryResults = queryResults.concat(queryRes);
                     } catch (err) {
                         throw new Error(`Query "${query}" error: ${err.message}`);
                     }
                 }
-                res = outputFormatter.format(queryResults, commander.format);
+                res = outputFormatter.format(queryResults, config.format);
             } else {
-                res = outputFormatter.format(responseData, commander.format);
+                res = outputFormatter.format(responseData, config.format);
             }
         } else {
             res = await new Promise((resolve) =>
