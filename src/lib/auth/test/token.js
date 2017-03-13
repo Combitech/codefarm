@@ -28,7 +28,9 @@ describe("token", () => {
         assert.strictEqual(createRes.tokenData.b, tokenData.b);
         assert.strictEqual(createRes.tokenData.type, tokenType);
 
-        const verifyRes = await Auth.instance.verifyToken(createRes.token);
+        const verifyRes = await Auth.instance.verifyToken(createRes.token, {
+            algorithms: [ "HS256" ]
+        });
         const expectedVerifyRes = Object.assign({}, createRes.tokenData, {
             iat: verifyRes.iat,
             iss: verifyRes.iss

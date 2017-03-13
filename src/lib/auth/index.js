@@ -66,7 +66,8 @@ class Auth {
         }
 
         const tokenOpts = Object.assign({
-            issuer: TOKEN_ISSUER
+            issuer: TOKEN_ISSUER,
+            algorithms: [ TOKEN_ALGORITHM ]
         }, opts);
 
         const decoded = await this._verifyToken(token, tokenOpts);
