@@ -12,7 +12,7 @@ import {
 
 class Item extends LightComponent {
     async onForceRequest() {
-        const response = await api.type.action(
+        const response = await api.rest.action(
             "baselinegen.specification",
             this.props.item._id,
             "request"

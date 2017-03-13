@@ -173,28 +173,28 @@ class ServiceComBus extends AsyncEventEmitter {
         return pending;
     }
 
-    async request(targetService, data, timeout, token = false) {
+    async request(targetService, data, opts = {}) {
         const pendingRequest = {
             request: {
                 _id: this.msgbus.constructor.generateId(),
                 time: moment().utc().format(),
-                token: token || this.config.token, // Use configured token if none specified
+                token: opts.token || this.config.token, // Use configured token if none specified
                 type: "request",
                 data: data,
-                timeout: timeout,
+                timeout: opts.timeout,
                 source: {
                     hostname: os.hostname(),
                     service: this.msgbus.getRoutingKey()
                 }
             },
-            timeout: timeout,
+            timeout: opts.timeout,
             deferred: new Deferred(),
             targetService: targetService
         };
 
         this._addPendingRequest(pendingRequest);
 
-        await this.msgbus.publishRaw(pendingRequest.request, targetService, timeout);
+        await this.msgbus.publishRaw(pendingRequest.request, targetService, opts.timeout);
 
         return pendingRequest.deferred.promise;
     }

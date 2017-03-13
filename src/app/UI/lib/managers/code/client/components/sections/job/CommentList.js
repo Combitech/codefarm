@@ -17,7 +17,7 @@ class CommentList extends LightComponent {
     }
 
     async onComment(comment) {
-        await api.type.action(this.props.item.type, this.props.item._id, "comment", comment);
+        await api.rest.action(this.props.item.type, this.props.item._id, "comment", comment);
     }
 
     render() {

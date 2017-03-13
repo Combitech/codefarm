@@ -25,20 +25,28 @@ class Item extends LightComponent {
 
     async onTestConnection() {
         const id = this.props.item._id;
-        const res = await api.type.action("exec.slave", id, "verify");
-
-        if (res.ok) {
-            this._showMessage("Slave connection test OK");
-        } else {
-            this._showMessage(`Slave connection test failed with message "${res.msg}"`, "warning");
+        let errorMsg;
+        try {
+            const res = await api.rest.action("exec.slave", id, "verify");
+            if (res.ok) {
+                this._showMessage("Slave connection test OK");
+            } else {
+                errorMsg = `Slave connection test failed with message "${res.msg}"`;
+            }
+            console.log(`Slave ${id} test connection result`, res);
+        } catch (error) {
+            console.error(`Slave ${id} test connection failed with error`, error);
+            errorMsg = `Slave connection test failed with message "${error.message || error}"`;
         }
-        console.log(`Slave ${id} test connection result`, res);
+        if (errorMsg) {
+            this._showMessage(errorMsg, "warning");
+        }
     }
 
     async onSetOfflineOnline() {
         const id = this.props.item._id;
         const setOnline = this.props.item.offline;
-        const res = await api.type.action("exec.slave", id, "setOnline", {
+        const res = await api.rest.action("exec.slave", id, "setOnline", {
             online: setOnline
         });
 

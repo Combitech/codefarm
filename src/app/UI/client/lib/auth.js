@@ -66,7 +66,7 @@ const setPassword = async (userId, oldPassword, newPassword, debug = false) => {
             oldPassword: oldPassword,
             password: newPassword
         };
-        user = await api.type.action("userrepo.user", userId, "setpassword", data);
+        user = await api.rest.action("userrepo.user", userId, "setpassword", data);
         debug && console.log("Set password response", user);
         if (user) {
             Notification.instance.publish(`Password updated for user ${user._id}`);

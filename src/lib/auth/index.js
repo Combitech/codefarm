@@ -13,7 +13,7 @@ $ openssl rsa -in jwtRS256.key -pubout -outform PEM -out jwtRS256.key.pub
 
 The regular ssh keys are sufficient, but the public key needs to be converted
 to the PEM format.
-$ openssl rsa -in $HOME/.ssh/id_rsa.pub -pubout -outform PEM -out $HOME/.ssh/id_rsa.pem.pub
+$ openssl rsa -in $HOME/.ssh/id_rsa -pubout -outform PEM -out $HOME/.ssh/id_rsa.pem.pub
 */
 
 const TOKEN_ALGORITHM = "RS256";
@@ -134,7 +134,7 @@ class Auth {
     }
 }
 
-Auth.isTokenValidForAccess = (tokenData, type, accessType = "r") => {
+Auth.isTokenValidForAccess = (tokenData, type, accessType = "read") => {
     // TODO: The following code allows unauthorized access. Remove when deployed...
     if (!tokenData) {
         return true;

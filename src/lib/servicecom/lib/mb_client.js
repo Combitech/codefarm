@@ -18,52 +18,76 @@ class MbClient {
         });
     }
 
-    async get(typeName, id, timeout = DEFAULT_TIMEOUT_MS) {
+    async get(typeName, id, opts) {
+        opts = Object.assign({
+            timeout: DEFAULT_TIMEOUT_MS
+        }, opts);
+
         return this.msgbus.request(this.serviceName, {
             method: "get",
             typeName: typeName,
             params: [ id ]
-        }, timeout);
+        }, opts);
     }
 
-    async list(typeName, query, timeout = DEFAULT_TIMEOUT_MS) {
+    async list(typeName, query, opts) {
+        opts = Object.assign({
+            timeout: DEFAULT_TIMEOUT_MS
+        }, opts);
+
         return this.msgbus.request(this.serviceName, {
             method: "list",
             typeName: typeName,
             params: [ query ]
-        }, timeout);
+        }, opts);
     }
 
-    async create(typeName, data, timeout = DEFAULT_TIMEOUT_MS) {
+    async create(typeName, data, opts) {
+        opts = Object.assign({
+            timeout: DEFAULT_TIMEOUT_MS
+        }, opts);
+
         return this.msgbus.request(this.serviceName, {
             method: "create",
             typeName: typeName,
             params: data ? [ data ] : []
-        }, timeout);
+        }, opts);
     }
 
-    async update(typeName, id, data, timeout = DEFAULT_TIMEOUT_MS) {
+    async update(typeName, id, data, opts) {
+        opts = Object.assign({
+            timeout: DEFAULT_TIMEOUT_MS
+        }, opts);
+
         return this.msgbus.request(this.serviceName, {
             method: "update",
             typeName: typeName,
             params: data ? [ id, data ] : [ id ]
-        }, timeout);
+        }, opts);
     }
 
-    async remove(typeName, id, timeout = DEFAULT_TIMEOUT_MS) {
+    async remove(typeName, id, opts) {
+        opts = Object.assign({
+            timeout: DEFAULT_TIMEOUT_MS
+        }, opts);
+
         return this.msgbus.request(this.serviceName, {
             method: "remove",
             typeName: typeName,
             params: [ id ]
-        }, timeout);
+        }, opts);
     }
 
-    async call(name, typeName, id, data, token, timeout = DEFAULT_TIMEOUT_MS) {
+    async call(name, typeName, id, data, opts) {
+        opts = Object.assign({
+            timeout: DEFAULT_TIMEOUT_MS
+        }, opts);
+
         return this.msgbus.request(this.serviceName, {
             method: name,
             typeName: typeName,
             params: data ? [ id, data ] : [ id ]
-        }, timeout, token);
+        }, opts);
     }
 }
 

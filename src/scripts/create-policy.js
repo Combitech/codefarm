@@ -68,8 +68,13 @@ const argv = yargs
 const templates = {
     super: [ "*:*" ],
     adm: [ "*:*" ],
-    mgmt: [ "*:*" ],
-    usr: [ "r:*", "read,comment:*" ]
+    mgmt: [ "verify,setOnline:exec.slave" ],
+    usr: [
+        "read,comment:*",
+        "create:dataresolve.data",
+        "auth,setpassword,addkey:userrepo.user",
+        "validate:artifactrepo:artifact"
+    ]
 };
 
 const run = async () => {
