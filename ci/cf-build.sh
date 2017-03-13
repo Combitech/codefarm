@@ -36,6 +36,8 @@ fi
 gitroot=$(git rev-parse --show-toplevel)
 echo "Git root is ${gitroot}"
 
+echo "Now I will build helper scripts"
+$gitroot/ci/scripts-build.sh ${CLIARG}
 echo "Now I will build libs"
 $gitroot/ci/libs-build-${mode}.sh ${CLIARG} all
 echo "Now I will build components"
