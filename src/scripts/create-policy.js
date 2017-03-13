@@ -12,11 +12,6 @@ const argv = yargs
     describe: "Policy id",
     type: "string"
 })
-.option("n", {
-    alias: "name",
-    describe: "Policy name",
-    type: "string"
-})
 .option("description", {
     describe: "Policy description",
     type: "string"
