@@ -5,6 +5,7 @@ const fs = require("fs-extra-promise");
 const { Server } = require("./daemon/server");
 const { ScriptServer } = require("./daemon/script_server");
 const { Executor } = require("./daemon/executor");
+const getPort = require("get-port");
 
 module.exports = {
     run: async (workspace, port) => {
@@ -14,8 +15,14 @@ module.exports = {
             fs.appendFileSync(logfile, `${new Date()}  RUN  ${line}\n`);
         };
 
+        const cliConfig = {
+            port: await getPort()
+        };
+
+        await fs.writeFileAsync(path.join(workspace, "cliConfig.json"), JSON.stringify(cliConfig));
+
         const server = new Server("client", logfile, port);
-        const scriptServer = new ScriptServer("cmd", logfile, path.join(workspace, "cmd.sock"));
+        const scriptServer = new ScriptServer("cmd", logfile, cliConfig.port);
         const executor = new Executor(logfile);
 
         scriptServer.on("type_read", async (data) => {

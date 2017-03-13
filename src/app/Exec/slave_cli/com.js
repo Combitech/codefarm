@@ -7,9 +7,9 @@ const { AsyncEventEmitter } = require("emitter");
 let client;
 
 class ComClient extends AsyncEventEmitter {
-    constructor(socketPath, timeout = 0) {
+    constructor(port, timeout = 0) {
         super();
-        this._socketPath = socketPath;
+        this._port = port;
         this._timeout = timeout;
         this._rxQueue = [];
     }
@@ -21,7 +21,7 @@ class ComClient extends AsyncEventEmitter {
             this._client.setNoDelay();
             this._remoteEnded = false;
             const connectOpts = {
-                path: this._socketPath
+                port: this._port
             };
             log.verbose("com: Will connect to socket using options", connectOpts);
 
