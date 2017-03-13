@@ -12,7 +12,7 @@ class Page extends LightComponent {
         super(props);
         this.state = {
             activeUser: ActiveUser.instance.user.getValue(),
-            email: "",
+            emailOrId: "",
             password: ""
         };
     }
@@ -22,7 +22,7 @@ class Page extends LightComponent {
     }
 
     async _login() {
-        const response = await signin(this.state.email, this.state.password);
+        const response = await signin(this.state.emailOrId, this.state.password);
         this.log("Sign in response", response);
         if (response.success) {
             this.context.router.push({
@@ -67,11 +67,11 @@ class Page extends LightComponent {
                                     <CardTitle title="CodeFarm Sign In"/>
                                     <CardText>
                                         <Input
-                                            type="email"
-                                            label="Email"
+                                            type="text"
+                                            label="User id or email"
                                             required={true}
-                                            value={this.state.email}
-                                            onChange={(email) => this.setState({ email })}
+                                            value={this.state.emailOrId}
+                                            onChange={(emailOrId) => this.setState({ emailOrId })}
                                         />
                                         <Input
                                             type="password"

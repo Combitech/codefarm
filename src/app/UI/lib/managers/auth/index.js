@@ -57,13 +57,13 @@ class Auth {
         return privileges;
     }
 
-    async login(email, password) {
-        if (typeof email !== "string") {
-            throw new Error("email required");
+    async login(emailOrId, password) {
+        if (typeof emailOrId !== "string") {
+            throw new Error("emailOrId required");
         }
 
-        if (email.length === 0) {
-            throw new Error("email of non-zero length required");
+        if (emailOrId.length === 0) {
+            throw new Error("emailOrId of non-zero length required");
         }
 
         if (typeof password !== "string") {
@@ -71,8 +71,13 @@ class Auth {
         }
 
         const client = ServiceComBus.instance.getClient("userrepo");
-        // Get user with email
-        const users = await client.list("user", { email });
+        // Get user with email or _id
+        const users = await client.list("user", {
+            $or: [
+                { _id: emailOrId },
+                { email: emailOrId }
+            ]
+        });
         if (!(users instanceof Array)) {
             throw new Error(`Expected array result, got data: ${JSON.stringify(users)}`);
         }
