@@ -68,12 +68,12 @@ const argv = yargs
 const templates = {
     super: [ "*:*" ],
     adm: [ "*:*" ],
-    mgmt: [ "verify,setOnline:exec.slave" ],
+    mgmt: [ "verify,setonline:exec.slave" ],
     usr: [
         "read,comment:*",
         "create:dataresolve.data",
         "auth,setpassword,addkey:userrepo.user",
-        "validate:artifactrepo:artifact"
+        "validate:artifactrepo.artifact"
     ]
 };
 

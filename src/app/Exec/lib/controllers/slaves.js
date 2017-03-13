@@ -6,18 +6,20 @@ const Control = require("../control");
 
 class Slaves extends Controller {
     constructor() {
-        super(Slave);
+        super(Slave, Controller.DEFAULT_SUPPORT.concat([ "verify", "setonline" ]));
         this._addAction("verify", this._verify);
-        this._addAction("setOnline", this._setOnline);
+        this._addAction("setonline", this._setOnline);
     }
 
     async _verify(ctx, id) {
+        this._isAllowed(ctx, "verify");
         const slave = await this._getTypeInstance(id);
 
         return await Control.instance.verifySlave(slave);
     }
 
     async _setOnline(ctx, id, data) {
+        this._isAllowed(ctx, "setonline");
         const slave = await this._getTypeInstance(id);
 
         if (data.offline === true || data.online === false) {

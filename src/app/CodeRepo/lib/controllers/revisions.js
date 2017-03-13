@@ -5,12 +5,13 @@ const { Controller } = require("servicecom");
 
 class Revisions extends Controller {
     constructor() {
-        super(Revision, [ "read", "tag", "ref", "comment" ]);
+        super(Revision, [ "read", "tag", "ref", "comment", "merge" ]);
 
         this._addAction("merge", this._merge);
     }
 
     async _merge(ctx, id) {
+        this._isAllowed(ctx, "merge");
         const revision = await this._getTypeInstance(id);
 
         // TODO: Asynchronous updates done by backend as part of merge isn't updated in revision

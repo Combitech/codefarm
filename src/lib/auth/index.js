@@ -134,7 +134,7 @@ class Auth {
     }
 }
 
-Auth.isTokenValidForAccess = (tokenData, type, accessType = "read") => {
+Auth.isTokenValidForAccess = (tokenData, type, accessType = "read", debug = false) => {
     // TODO: The following code allows unauthorized access. Remove when deployed...
     if (!tokenData) {
         return true;
@@ -142,6 +142,7 @@ Auth.isTokenValidForAccess = (tokenData, type, accessType = "read") => {
 
     // Privileges are in format "acc1,acc2:service.type"
     const privileges = (tokenData && tokenData.priv) || [];
+    debug && console.log(`isTokenValidForAccess: privileges=${privileges.join(";")}, type=${type}, access=${accessType}`);
     const [ serviceName, typeName ] = type.split(".");
     const myPriv = privileges.filter((priv) => {
         const [ , privType ] = priv.split(":");

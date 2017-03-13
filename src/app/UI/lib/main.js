@@ -96,7 +96,7 @@ class Main extends Service {
 
         webConfig.api = api;
 
-        const routes = [].concat(this.routes, ServiceProxy.instance.routes, AuthMgr.instance.routes);
+        const routes = [].concat(this.routes, ServiceProxy.instance.routes);
 
         webConfig.auth = webConfig.auth || {};
         webConfig.auth.jwtPublicKey = this.config.publicKey;

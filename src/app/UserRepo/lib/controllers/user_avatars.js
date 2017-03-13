@@ -6,7 +6,7 @@ const AvatarCtrl = require("./avatar_ctrl");
 
 class UserAvatars extends Controller {
     constructor() {
-        super(UserAvatar);
+        super(UserAvatar, Controller.DEFAULT_SUPPORT.concat([ "upload", "avatar" ]));
         this.avatarCtrl = new AvatarCtrl(this);
 
         this._addAction(

@@ -46,7 +46,7 @@ class Item extends LightComponent {
     async onSetOfflineOnline() {
         const id = this.props.item._id;
         const setOnline = this.props.item.offline;
-        const res = await api.rest.action("exec.slave", id, "setOnline", {
+        const res = await api.rest.action("exec.slave", id, "setonline", {
             online: setOnline
         });
 

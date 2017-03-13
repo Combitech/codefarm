@@ -85,14 +85,12 @@ class ServiceComBus extends AsyncEventEmitter {
             try {
                 tokenData = await Auth.instance.verifyToken(message.token, { publicKey });
                 // Validate message source
-                // TODO: Any other way to check source than message.source.service?
                 if (tokenData.type === Auth.TOKEN_TYPE.SERVICE) {
                     if (tokenData.src !== msgSrc) {
                         throw new Error(`Expected src ${tokenData.src}, got ${msgSrc}`);
                     }
                 } else if (tokenData.type === Auth.TOKEN_TYPE.USER) {
-                    // TODO
-                    console.log("rx user message");
+                    // Nothing to verify for user here...
                 } else {
                     throw new Error(`Unsupported token type ${tokenData.type}`);
                 }

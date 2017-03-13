@@ -5,13 +5,11 @@ const api = require("api.io");
 const { ServiceMgr } = require("service");
 const { ServiceComBus } = require("servicecom");
 const singleton = require("singleton");
-const { checkAuthorized } = require("./_util.js");
 
 const UPDATE_RATE_LIMIT_MS = 1000;
 
 const typeApiExports = api.register("type", {
     get: api.export(async (session, type, query = {}) => {
-        checkAuthorized(session, type, "read");
         const token = session.user && session.user.token;
         const [ serviceId, typeName ] = type.split(".");
         const client = ServiceComBus.instance.getClient(serviceId);
@@ -19,7 +17,6 @@ const typeApiExports = api.register("type", {
         return client.list(typeName, query, { token });
     }),
     getter: api.export(async (session, type, id, getter) => {
-        checkAuthorized(session, type, "read");
         const token = session.user && session.user.token;
         const [ serviceId, typeName ] = type.split(".");
         const client = ServiceComBus.instance.getClient(serviceId);

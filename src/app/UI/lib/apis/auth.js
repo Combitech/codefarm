@@ -22,7 +22,12 @@ const authApiExports = api.register("auth", {
                 });
 
                 // Set user access token
-                session.user = result.user;
+                session.user = {
+                    token: result.token,
+                    tokenData: result.tokenData
+                };
+
+                result.user = result.tokenData;
             }
         } catch (error) {
             // Remove user access token
