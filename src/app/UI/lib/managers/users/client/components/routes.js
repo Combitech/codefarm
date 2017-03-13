@@ -2,8 +2,7 @@
 import React from "react";
 import { Route } from "react-router";
 import {
-    View as TAView,
-    Edit as TAEdit
+    View as TAView
 } from "ui-components/type_admin";
 import UserList from "./UserList";
 import UserItem from "./UserItem";

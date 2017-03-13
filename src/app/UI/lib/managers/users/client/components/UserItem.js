@@ -8,6 +8,7 @@ import {
     ControlButton as TAControlButton
 } from "ui-components/type_admin";
 import CollaboratorAvatar from "ui-components/collaborator_avatar";
+import DateTime from "ui-components/datetime";
 import Tags from "ui-components/tags";
 import TeamListItem from "./TeamListItem";
 import * as pathBuilder from "ui-lib/path_builder";
@@ -100,11 +101,21 @@ class Item extends LightComponent {
                                         </tr>
                                         <tr>
                                             <td>Created</td>
-                                            <td>{this.props.item.created}</td>
+                                            <td>
+                                                <DateTime
+                                                    value={this.props.item.created}
+                                                    niceDate={true}
+                                                />
+                                            </td>
                                         </tr>
                                         <tr>
                                             <td>Modified</td>
-                                            <td>{this.props.item.saved}</td>
+                                            <td>
+                                                <DateTime
+                                                    value={this.props.item.saved}
+                                                    niceDate={true}
+                                                />
+                                            </td>
                                         </tr>
                                     </tbody>
                                 </table>

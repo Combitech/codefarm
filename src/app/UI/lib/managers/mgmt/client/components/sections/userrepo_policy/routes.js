@@ -13,29 +13,29 @@ import Remove from "./Remove";
 
 const routes = (
     <Route
-        path="userrepos"
+        path="userrepo_policies"
         component={TAView}
         List={List}
-        type="userrepo.backend"
-        label="User Repository Backends"
+        type="userrepo.policy"
+        label="User Policies"
     >
         <Route
             path="create"
             component={TAEdit}
             Create={Edit}
-            type="userrepo.backend"
+            type="userrepo.policy"
         />
         <Route
-            path=":backendId"
+            path=":policyId"
             component={TAView}
             Item={Item}
-            type="userrepo.backend"
+            type="userrepo.policy"
         >
-            {/* <Route
+            <Route
                 path="edit"
                 component={TAEdit}
                 Edit={Edit}
-            />*/}
+            />
             <Route
                 path="remove"
                 component={TARemove}

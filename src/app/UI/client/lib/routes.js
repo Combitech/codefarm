@@ -25,7 +25,8 @@ import adminPageFlowRoutes from "ui-mgr/administration/client/components/section
 import adminPageJobRoutes from "ui-mgr/administration/client/components/sections/job/routes";
 import adminPageSlaveRoutes from "ui-mgr/administration/client/components/sections/slave/routes";
 import adminPageBaselineRoutes from "ui-mgr/administration/client/components/sections/baseline/routes";
-import mgmtPageUserrepoRoutes from "ui-mgr/mgmt/client/components/sections/userrepo/routes";
+import mgmtPageUserrepoBackendRoutes from "ui-mgr/mgmt/client/components/sections/userrepo_backend/routes";
+import mgmtPageUserrepoPolicyRoutes from "ui-mgr/mgmt/client/components/sections/userrepo_policy/routes";
 import mgmtPageCoderepoRoutes from "ui-mgr/mgmt/client/components/sections/coderepo/routes";
 import mgmtPageArtifactrepoRoutes from "ui-mgr/mgmt/client/components/sections/artifactrepo/routes";
 import mgmtPageLogrepoRoutes from "ui-mgr/mgmt/client/components/sections/logrepo/routes";
@@ -64,7 +65,8 @@ const routes = (
                 component={MtmtPageEventMonitor}
             />
 
-            {mgmtPageUserrepoRoutes}
+            {mgmtPageUserrepoBackendRoutes}
+            {mgmtPageUserrepoPolicyRoutes}
             {mgmtPageCoderepoRoutes}
             {mgmtPageArtifactrepoRoutes}
             {mgmtPageLogrepoRoutes}
