@@ -97,3 +97,26 @@ if [[ "${target}" == "UI" && "${mode}" == "rel" ]]; then
 
   popd
 fi
+
+# Special case for Exec in release mode: run compile
+if [[ "${target}" == "Exec" && "${mode}" == "rel" ]]; then
+  echo "Running Exec compile"
+  pushd ${gitroot}/src/app/${target}
+    subJobName="${component}_compile_build_${mode}"
+    subJobId=$($CLI -q '$._id' --format values create_subjob build "${subJobName}" ongoing)
+
+    yarn compile --production || result=1
+
+    stopTime=$(($(date +%s%N)/1000000))
+    testDuration=`expr $stopTime - $startTime`
+    testDurationStr={\"timeMs\":$testDuration}
+
+    if [[ $result -eq 1 ]]; then
+      $CLI update_subjob $subJobId -s fail --result $testDurationStr
+      exit 1
+    else
+      $CLI update_subjob $subJobId -s success --result $testDurationStr
+    fi
+
+  popd
+fi
