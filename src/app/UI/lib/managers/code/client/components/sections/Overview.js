@@ -119,7 +119,7 @@ class Overview extends LightComponent {
         for (const job of jobs) {
             list.push({
                 id: job._id,
-                time: moment(job.finished ? job.finished : (job.started || job.saved)).unix(),
+                time: moment(job.finished ? job.finished : (job.saved || job.started)).unix(),
                 item: job,
                 Card: JobCard,
                 props: {

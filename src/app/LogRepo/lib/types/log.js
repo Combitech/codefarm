@@ -110,7 +110,7 @@ class Log extends Type {
         await repository.removeLog(this);
     }
 
-    async upload(fileStream /* fields, parentIds = [] */) {
+    async upload(fileStream) {
         if (this.state === STATE.COMMITED) {
             throw new Error("Log already uploaded");
         }
