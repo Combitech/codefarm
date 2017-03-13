@@ -44,7 +44,7 @@ class Item extends LightComponent {
     }
 
     async onRerun() {
-        await api.type.action(
+        await api.rest.action(
             "exec.job",
             this.props.item._id,
             "rerun"

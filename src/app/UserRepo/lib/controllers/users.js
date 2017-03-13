@@ -5,7 +5,7 @@ const { Controller } = require("servicecom");
 
 class Users extends Controller {
     constructor() {
-        super(User);
+        super(User, Controller.DEFAULT_SUPPORT.concat([ "auth", "setpassword", "addkey", "keys" ]));
 
         this._addAction("auth", this._authenticate);
         this._addAction("setpassword", this._setPassword);
@@ -14,6 +14,7 @@ class Users extends Controller {
     }
 
     async _authenticate(ctx, id, data) {
+        this._isAllowed(ctx, "auth");
         if (typeof data !== "object" || data === null) {
             throw new Error("Request body must be an object");
         }
@@ -33,6 +34,7 @@ class Users extends Controller {
     }
 
     async _setPassword(ctx, id, data) {
+        this._isAllowed(ctx, "setpassword");
         if (typeof data !== "object" || data === null) {
             throw new Error("Request body must be an object");
         }
@@ -53,6 +55,7 @@ class Users extends Controller {
     }
 
     async _addKey(ctx, id, data) {
+        this._isAllowed(ctx, "addkey");
         if (typeof data !== "string" || data === "") {
             throw new Error("Request body must be a string");
         }

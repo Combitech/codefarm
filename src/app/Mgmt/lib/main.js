@@ -38,10 +38,12 @@ class Main extends Service {
     async _createToken() {
         const tokenData = {
             src: this.name,
-            priv: [ "rwad:*" ]
+            priv: [ "*:*" ]
         };
 
-        return Auth.instance.createToken(tokenData);
+        const { token } = await Auth.instance.createToken(tokenData, {}, Auth.TOKEN_TYPE.SERVICE);
+
+        return token;
     }
 
     async onOnline() {
@@ -70,7 +72,7 @@ class Main extends Service {
             name: this.name,
             uri: this.config.msgbus,
             publicKey: keys && keys.public,
-            token: await this._createToken()
+            token: await Config.createToken(this.name)
         }, this.config.servicecom));
         this.addDisposable(ServiceComBus.instance);
         ServiceComBus.instance.attachControllers([

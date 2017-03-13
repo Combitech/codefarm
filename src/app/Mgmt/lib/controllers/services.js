@@ -8,7 +8,7 @@ const TOKEN_EXPIRES_IN = "5 days";
 
 class Services extends Controller {
     constructor() {
-        super(Service, []);
+        super(Service, [ "createtoken", "verifytoken", "getkey" ]);
 
         this._addAction("createtoken", this.createToken);
         this._addAction("verifytoken", this.verifyToken);
@@ -16,6 +16,7 @@ class Services extends Controller {
     }
 
     async createToken(ctx, id, data) {
+        this._isAllowed(ctx, "createtoken");
         if (typeof data !== "object" || data === null) {
             throw new Error("Request body must be an object");
         }
@@ -24,6 +25,7 @@ class Services extends Controller {
     }
 
     async verifyToken(ctx, id, data) {
+        this._isAllowed(ctx, "verifytoken");
         if (typeof data !== "object" || data === null) {
             throw new Error("Request body must be an object");
         }
@@ -35,7 +37,9 @@ class Services extends Controller {
         return Auth.instance.verifyToken(data.token, { expiresIn: TOKEN_EXPIRES_IN });
     }
 
-    async getKey(/* ctx */) {
+    async getKey(ctx) {
+        this._isAllowed(ctx, "getkey");
+
         return Auth.instance.getPublicKey();
     }
 }

@@ -3,6 +3,7 @@
 const qs = require("qs");
 const { ensureArray } = require("misc");
 const log = require("log");
+const { isTokenValidForAccess } = require("auth");
 const singleton = require("singleton");
 
 const ROUTE_WILDCARD = "(.*)";
@@ -11,8 +12,10 @@ const REQ_TYPE = {
     MB: "mb"
 };
 
+const DEFAULT_SUPPORT = [ "read", "create", "update", "remove", "tag", "ref", "comment" ];
+
 class Controller {
-    constructor(Type, support = [ "read", "create", "update", "remove", "tag", "ref", "comment" ]) {
+    constructor(Type, support = DEFAULT_SUPPORT) {
         this.Type = Type;
         this.collectionName = this.Type.typeName;
         this.support = support;
@@ -262,6 +265,14 @@ class Controller {
         if (!this.support.includes(action)) {
             this._throw(`${action} is not allowed`, 501);
         }
+        if (ctx.tokenData) {
+            try {
+                isTokenValidForAccess(ctx.tokenData, this.Type.getType(), action);
+            } catch (error) {
+                console.log("error", error);
+                this._throw(`${action} is not authorized`, 401);
+            }
+        }
     }
 
     async _getTypeInstance(id) {
@@ -427,5 +438,7 @@ class Controller {
         return obj.serialize();
     }
 }
+
+Controller.DEFAULT_SUPPORT = DEFAULT_SUPPORT;
 
 module.exports = singleton(Controller);

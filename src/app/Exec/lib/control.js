@@ -414,6 +414,8 @@ class Control {
         if (!slave.offline) {
             const job = new Job({
                 name: `Verify_slave_${slave._id}`,
+                // All slaves have their ID as a tag... This will match a specific slave
+                criteria: `${slave._id}`,
                 requeueOnFailure: false,
                 script: `#!/bin/bash
                     echo "My job is to verify slave ${slave._id}"
@@ -425,8 +427,7 @@ class Control {
                     name: `Dummy baseline to verify slave ${slave._id}`,
                     content: []
                 },
-                // All slaves have their ID as a tag... This will match a specific slave
-                criteria: `${slave._id}`
+                workspaceCleanup: Job.CLEANUP_POLICY.REMOVE_ON_SUCCESS
             });
             const finishedJobPromise = this._waitForJobCompletion(job._id);
             job.save();

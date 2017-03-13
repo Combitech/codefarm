@@ -3,49 +3,49 @@
 const api = require("api.io");
 const { ServiceComBus } = require("servicecom");
 const singleton = require("singleton");
-const { checkAuthorized } = require("./_util.js");
 
 const restApiExports = api.register("rest", {
     list: api.export(async (session, type, query = {}) => {
-        checkAuthorized(session, type, "r");
+        const token = session.user && session.user.token;
         const [ serviceId, typeName ] = type.split(".");
         const client = ServiceComBus.instance.getClient(serviceId);
 
-        return client.list(typeName, query);
+        return client.list(typeName, query, { token });
     }),
     get: api.export(async (session, type, id, getterName) => {
-        checkAuthorized(session, type, "r");
+        const token = session.user && session.user.token;
         const [ serviceId, typeName ] = type.split(".");
         const client = ServiceComBus.instance.getClient(serviceId);
 
-        return client[getterName || "get"](typeName, id);
+        return client[getterName || "get"](typeName, id, { token });
     }),
     save: api.export(async (session, type, id, data = {}) => {
-        checkAuthorized(session, type, "w");
+        const token = session.user && session.user.token;
         const [ serviceId, typeName ] = type.split(".");
         const client = ServiceComBus.instance.getClient(serviceId);
 
-        return client.update(typeName, id, data);
+        return client.update(typeName, id, data, { token });
     }),
     remove: api.export(async (session, type, id) => {
-        checkAuthorized(session, type, "d");
+        const token = session.user && session.user.token;
         const [ serviceId, typeName ] = type.split(".");
         const client = ServiceComBus.instance.getClient(serviceId);
 
-        return client.remove(typeName, id);
+        return client.remove(typeName, id, { token });
     }),
-    action: api.export(async (session, type, id, action, data) => {
-        checkAuthorized(session, type, "a");
+    action: api.export(async (session, type, id, action, data = {}) => {
+        const token = session.user && session.user.token;
         const [ serviceId, typeName ] = type.split(".");
         const client = ServiceComBus.instance.getClient(serviceId);
 
-        return client[action](typeName, id, data);
+        return client[action](typeName, id, data, { token });
     }),
     post: api.export(async (session, type, data) => {
+        const token = session.user && session.user.token;
         const [ serviceId, typeName ] = type.split(".");
         const client = ServiceComBus.instance.getClient(serviceId);
 
-        return client.create(typeName, data);
+        return client.create(typeName, data, { token });
     })
 });
 

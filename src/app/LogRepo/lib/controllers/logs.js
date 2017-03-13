@@ -6,7 +6,7 @@ const { Controller } = require("servicecom");
 
 class Logs extends Controller {
     constructor() {
-        super(Log, [ "read", "create", "remove", "tag", "ref" ]);
+        super(Log, [ "read", "create", "remove", "tag", "ref", "upload" ]);
 
         this._addAction("upload", this._upload, "Upload log");
         this._addGetter("download", this._download, "Download log");

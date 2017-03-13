@@ -9,7 +9,6 @@ const TOKEN_EXPIRES_IN = "5 days";
 
 class Auth {
     constructor() {
-        this.routes = [];
     }
 
     get cookieName() {
@@ -24,7 +23,6 @@ class Auth {
         if (config.web.auth) {
             this._cookieName = config.web.auth.jwtCookieName;
         }
-        this._addRoute("post", "/login", this._login, "User login");
 
         this._publicKey = config.publicKey;
         if (this._publicKey) {
@@ -33,7 +31,6 @@ class Auth {
     }
 
     async dispose() {
-        this.routes = [];
         this._privateKey = null;
     }
 
@@ -99,13 +96,13 @@ class Auth {
             const tokenOpts = {
                 expiresIn: TOKEN_EXPIRES_IN
             };
-            const token = await this._createToken(tokenData, tokenOpts);
+            const createResp = await this._createToken(tokenData, tokenOpts);
 
-            if (token) {
+            if (createResp) {
                 result = {
                     success: true,
-                    user: tokenData,
-                    token
+                    token: createResp.token,
+                    tokenData: createResp.tokenData
                 };
             } else {
                 result = {
@@ -121,27 +118,6 @@ class Auth {
         }
 
         return result;
-    }
-
-    async _login(ctx) {
-        const data = ctx.request.body;
-
-        const result = await this.login(data.email, data.password);
-
-        if (result.cookieName && result.token) {
-            ctx.cookies.set(result.cookieName, result.token);
-        }
-        ctx.type = "json";
-        ctx.body = JSON.stringify(result);
-    }
-
-    _addRoute(method, route, handler, description = "") {
-        this.routes.push({
-            method: method,
-            route: route,
-            handler: handler.bind(this),
-            description: description
-        });
     }
 
     async _createToken(data) {

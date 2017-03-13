@@ -22,7 +22,12 @@ const authApiExports = api.register("auth", {
                 });
 
                 // Set user access token
-                session.user = result.user;
+                session.user = {
+                    token: result.token,
+                    tokenData: result.tokenData
+                };
+
+                result.user = result.tokenData;
             }
         } catch (error) {
             // Remove user access token
@@ -44,7 +49,7 @@ const authApiExports = api.register("auth", {
         if (session.user && Object.keys(session.user).length > 0) {
             result = {
                 success: true,
-                user: session.user,
+                user: session.user.tokenData,
                 // Ask client to remove cookie...
                 setCookies: [ {
                     name: AuthMgr.instance.cookieName,
@@ -69,7 +74,7 @@ const authApiExports = api.register("auth", {
         if (session.user && Object.keys(session.user).length > 0) {
             result = {
                 success: true,
-                user: session.user
+                user: session.user.tokenData
             };
         }
 

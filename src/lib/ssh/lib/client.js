@@ -100,6 +100,18 @@ class SshClient {
         });
     }
 
+    readdir(remotePath) {
+        return new Promise((resolve, reject) => {
+            this.sftp.readdir(remotePath, (error, data) => {
+                if (error) {
+                    return reject(error);
+                }
+
+                resolve(data);
+            });
+        });
+    }
+
     rmdir(remotePath) {
         return new Promise((resolve, reject) => {
             this.client.exec(`rm -rf ${remotePath}`, (error, stream) => {
