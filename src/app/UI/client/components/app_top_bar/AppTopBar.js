@@ -16,7 +16,7 @@ class AppTopBar extends LightComponent {
         this.state = {
             activeUser: ActiveUser.instance.user.getValue(),
             userMenuOpen: false,
-            loginEnabled: false
+            loginEnabled: true
         };
     }
 
@@ -143,7 +143,7 @@ class AppTopBar extends LightComponent {
                 }
                 <Switch
                     className={this.props.theme.topRightButton}
-                    label="Sign in beta enabled"
+                    label="Sign in enabled"
                     checked={this.state.loginEnabled}
                     onChange={(loginEnabled) => this.setState({ loginEnabled })}
                 />
