@@ -9,7 +9,7 @@ const Monitor = require("./monitor");
 const Configs = require("./controllers/configs");
 const Config = require("./types/config");
 const ServiceCtrl = require("./controllers/services");
-const Auth = require("auth");
+const { Token } = require("auth");
 const Db = require("./db");
 const { notification } = require("typelib");
 
@@ -41,7 +41,7 @@ class Main extends Service {
             priv: [ "*:*" ]
         };
 
-        const { token } = await Auth.instance.createToken(tokenData, {}, Auth.TOKEN_TYPE.SERVICE);
+        const { token } = await Token.instance.createToken(tokenData, {}, Token.TOKEN_TYPE.SERVICE);
 
         return token;
     }
@@ -61,7 +61,7 @@ class Main extends Service {
                 private: await fs.readFileAsync(this.config.jwtprivate, "utf8"),
                 public: await fs.readFileAsync(this.config.jwtpublic, "utf8")
             };
-            Auth.instance.setKeys(keys);
+            Token.instance.setKeys(keys);
             Config.setGlobalOpts({ publicKey: keys.public });
         }
         this.addDisposable(Configs.instance);

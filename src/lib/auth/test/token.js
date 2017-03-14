@@ -3,7 +3,7 @@
 /* global describe it */
 
 const { assert } = require("chai");
-const Auth = require("../index");
+const { Token } = require("../index");
 
 describe("token", () => {
     it("should create and validate", async () => {
@@ -14,11 +14,11 @@ describe("token", () => {
         const tokenType = "testType";
         // Use alg HS256 with secret instead of private public key-pair which needs to be generated...
         const testSecret = "top-secret-string-used-in-test";
-        Auth.instance.setKeys({
+        Token.instance.setKeys({
             private: testSecret,
             public: testSecret
         });
-        const createRes = await Auth.instance.createToken(tokenData, {
+        const createRes = await Token.instance.createToken(tokenData, {
             // Use secret-based alg during test to get rid of key-generation...
             algorithm: "HS256"
         }, tokenType);
@@ -28,7 +28,7 @@ describe("token", () => {
         assert.strictEqual(createRes.tokenData.b, tokenData.b);
         assert.strictEqual(createRes.tokenData.type, tokenType);
 
-        const verifyRes = await Auth.instance.verifyToken(createRes.token, {
+        const verifyRes = await Token.instance.verifyToken(createRes.token, {
             algorithms: [ "HS256" ]
         });
         const expectedVerifyRes = Object.assign({}, createRes.tokenData, {

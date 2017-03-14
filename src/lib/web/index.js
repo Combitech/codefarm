@@ -15,7 +15,7 @@ const { AsyncEventEmitter } = require("emitter");
 const { ensureArray } = require("misc");
 const singleton = require("singleton");
 const log = require("log");
-const Auth = require("auth");
+const { Token } = require("auth");
 
 class Web extends AsyncEventEmitter {
     constructor() {
@@ -56,7 +56,7 @@ class Web extends AsyncEventEmitter {
                 this.app.use(auth(params.auth));
             }
             if (params.auth.jwtPublicKey) {
-                Auth.instance.setKeys({
+                Token.instance.setKeys({
                     public: params.auth.jwtPublicKey
                 });
                 this.app.use(koaJwt({
@@ -184,7 +184,7 @@ class Web extends AsyncEventEmitter {
             }
             if (token) {
                 try {
-                    const decodedToken = await Auth.instance.verifyToken(token);
+                    const decodedToken = await Token.instance.verifyToken(token);
                     request.session.user.token = token;
                     request.session.user.tokenData = decodedToken;
                 } catch (error) {

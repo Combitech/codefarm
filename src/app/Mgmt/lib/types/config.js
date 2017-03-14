@@ -4,7 +4,7 @@ const { ServiceMgr } = require("service");
 const { Type } = require("typelib");
 const { assertType, assertProp } = require("misc");
 const Db = require("../db");
-const Auth = require("auth");
+const { Token } = require("auth");
 
 let msgBus = false;
 let globalOpts = {};
@@ -67,7 +67,7 @@ class Config extends Type {
             priv: [ "*:*" ]
         };
 
-        const { token } = await Auth.instance.createToken(tokenData, {}, Auth.TOKEN_TYPE.SERVICE);
+        const { token } = await Token.instance.createToken(tokenData, {}, Token.TOKEN_TYPE.SERVICE);
 
         return token;
     }

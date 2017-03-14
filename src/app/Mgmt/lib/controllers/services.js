@@ -2,7 +2,7 @@
 
 const Service = require("../types/service");
 const { Controller } = require("servicecom");
-const Auth = require("auth");
+const { Token } = require("auth");
 
 const TOKEN_EXPIRES_IN = "5 days";
 
@@ -21,7 +21,7 @@ class Services extends Controller {
             throw new Error("Request body must be an object");
         }
 
-        return Auth.instance.createToken(data, { expiresIn: TOKEN_EXPIRES_IN });
+        return Token.instance.createToken(data, { expiresIn: TOKEN_EXPIRES_IN });
     }
 
     async verifyToken(ctx, id, data) {
@@ -34,13 +34,13 @@ class Services extends Controller {
             throw new Error("token not a string");
         }
 
-        return Auth.instance.verifyToken(data.token, { expiresIn: TOKEN_EXPIRES_IN });
+        return Token.instance.verifyToken(data.token, { expiresIn: TOKEN_EXPIRES_IN });
     }
 
     async getKey(ctx) {
         this._isAllowed(ctx, "getkey");
 
-        return Auth.instance.getPublicKey();
+        return Token.instance.getPublicKey();
     }
 }
 

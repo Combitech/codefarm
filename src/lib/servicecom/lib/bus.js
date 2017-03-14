@@ -7,7 +7,7 @@ const { AsyncEventEmitter } = require("emitter");
 const { Deferred } = require("misc");
 const singleton = require("singleton");
 const log = require("log");
-const Auth = require("auth");
+const { Token } = require("auth");
 const MbClient = require("./mb_client");
 
 class ServiceComBus extends AsyncEventEmitter {
@@ -83,13 +83,13 @@ class ServiceComBus extends AsyncEventEmitter {
             const publicKey = this.config.publicKey;
 
             try {
-                tokenData = await Auth.instance.verifyToken(message.token, { publicKey });
+                tokenData = await Token.instance.verifyToken(message.token, { publicKey });
                 // Validate message source
-                if (tokenData.type === Auth.TOKEN_TYPE.SERVICE) {
+                if (tokenData.type === Token.TOKEN_TYPE.SERVICE) {
                     if (tokenData.src !== msgSrc) {
                         throw new Error(`Expected src ${tokenData.src}, got ${msgSrc}`);
                     }
-                } else if (tokenData.type === Auth.TOKEN_TYPE.USER) {
+                } else if (tokenData.type === Token.TOKEN_TYPE.USER) {
                     // Nothing to verify for user here...
                 } else {
                     throw new Error(`Unsupported token type ${tokenData.type}`);
