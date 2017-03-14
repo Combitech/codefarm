@@ -1,7 +1,7 @@
 {
-  "name": "logbus",
+  "name": "loglib",
   "version": "0.0.0",
-  "description": "Log Bus Library",
+  "description": "LogRepo Communication Library",
   "main": "index.js",
   "scripts": {
     "compile": "echo 'No compile needed'",
@@ -16,7 +16,9 @@
     "node": ">= 7.0.0"
   },
   "libraries": [
-    "msgbus"
+    "buslib",
+    "singleton",
+    "servicecom"
   ],
   "dependencies": {},
   "devDependencies": {

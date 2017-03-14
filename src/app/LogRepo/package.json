@@ -28,7 +28,6 @@
     "database",
     "typelib",
     "msgbus",
-    "logbus",
     "emitter",
     "log",
     "service",
@@ -37,11 +36,13 @@
     "version",
     "backend",
     "testsupport",
-    "servicecom"
+    "servicecom",
+    "loglib"
   ],
   "dependencies": {
     "async-busboy": "^0.3.3",
     "fs-extra-promise": "^0.4.1",
+    "read-last-lines": "^1.1.0",
     "yargs": "^6.3.0"
   },
   "devDependencies": {

@@ -3,6 +3,7 @@
 const { ServiceMgr } = require("service");
 const path = require("path");
 const fs = require("fs-extra-promise");
+const readLastLines = require("read-last-lines");
 
 class FsBackend {
     constructor(name, params) {
@@ -110,6 +111,15 @@ class FsBackend {
         }
 
         return fs.createReadStream(logFilePath);
+    }
+
+    async getLastLines(repository, log, limit) {
+        const repoPath = this._getBasePath(repository);
+        const { absPath: logFilePath } = this._getLogPath(repoPath, log);
+
+        const data = await readLastLines.read(logFilePath, limit);
+
+        return data.split("\n");
     }
 
     async removeLog(repository, log) {

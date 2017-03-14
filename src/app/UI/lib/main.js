@@ -6,6 +6,7 @@ const clone = require("clone");
 const api = require("api.io");
 const Web = require("web");
 const { ServiceComBus, HttpClient } = require("servicecom");
+const { LogClient } = require("loglib");
 const { Service } = require("service");
 const MgmtMgr = require("./managers/mgmt");
 const AuthMgr = require("./managers/auth");
@@ -14,7 +15,8 @@ const ServiceProxy = require("./service_proxy");
 const Apis = [
     require("./apis/auth"),
     require("./apis/rest"),
-    require("./apis/type")
+    require("./apis/type"),
+    require("./apis/log")
 ];
 
 class Main extends Service {
@@ -52,6 +54,9 @@ class Main extends Service {
         ServiceComBus.instance.attachControllers([
             this.statesControllerInstance
         ]);
+
+        await LogClient.instance.start(this.config.msgbus);
+        this.addDisposable(LogClient.instance);
 
         await MgmtMgr.instance.start();
         this.addDisposable(MgmtMgr.instance);
@@ -95,6 +100,7 @@ class Main extends Service {
         }
 
         webConfig.api = api;
+        webConfig.Apis = Apis;
 
         const routes = [].concat(this.routes, ServiceProxy.instance.routes);
 

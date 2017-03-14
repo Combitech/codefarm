@@ -35,7 +35,8 @@
     "msgbus",
     "misc",
     "servicecom",
-    "singleton"
+    "singleton",
+    "loglib"
   ],
   "dependencies": {
     "api.io": "^0.7.1",

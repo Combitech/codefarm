@@ -155,6 +155,22 @@ class Web extends AsyncEventEmitter {
             await this.api.start(this.server, {
                 authHandler: this._apiJwtAuthHandler.bind(this, params.auth)
             });
+
+            this.api.on("connection", (client) => {
+                for (const Api of params.Apis) {
+                    if (Api.instance.clientConnected) {
+                        Api.instance.clientConnected(client);
+                    }
+                }
+            });
+
+            this.api.on("disconnection", (client) => {
+                for (const Api of params.Apis) {
+                    if (Api.instance.clientDisconnected) {
+                        Api.instance.clientDisconnected(client);
+                    }
+                }
+            });
         }
 
         await this.emit("start", { port: params.port });

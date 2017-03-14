@@ -16,6 +16,15 @@
     text-overflow: ellipsis;
 }
 
+.log {
+    font-size: 1.2rem;
+    font-family: "Roboto Mono";
+    white-space: pre;
+    line-height: 1.5rem;
+    display: block;
+    overflow: auto;
+}
+
 .input {
     padding: $unit * 1.6;
 }

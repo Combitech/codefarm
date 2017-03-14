@@ -2,7 +2,6 @@
 
 const os = require("os");
 const Database = require("database");
-const LogBus = require("logbus");
 const Web = require("web");
 const { Service } = require("service");
 const { ServiceComBus } = require("servicecom");
@@ -11,6 +10,7 @@ const Logs = require("./controllers/logs");
 const Log = require("./types/log");
 const Backends = require("./controllers/backends");
 const BackendProxy = require("./backend_proxy");
+const { RawLogClient, LogClient } = require("loglib");
 
 class Main extends Service {
     constructor(name, version) {
@@ -23,7 +23,6 @@ class Main extends Service {
         });
 
         await this.need("db", "mgmt", Database, this.config.db);
-        await this.need("lb", "mgmt", LogBus, Object.assign({ queue: true }, this.config.lb));
     }
 
     async onOnline() {
@@ -43,11 +42,16 @@ class Main extends Service {
             this.statesControllerInstance
         ]);
 
+        await RawLogClient.instance.start(this.config.msgbus);
+        this.addDisposable(RawLogClient.instance);
+
+        await LogClient.instance.start(this.config.msgbus);
+        this.addDisposable(LogClient.instance);
+
         await BackendProxy.instance.start(this.config.backends);
         this.addDisposable(BackendProxy.instance);
 
-        const lb = await this.use("lb");
-        lb.on("data", async (data) => {
+        RawLogClient.instance.subscribe(async (data) => {
             await Log.append(data._id, data.data);
         });
 

@@ -29,7 +29,7 @@
     "database",
     "typelib",
     "msgbus",
-    "logbus",
+    "loglib",
     "emitter",
     "log",
     "service",
