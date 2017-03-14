@@ -26,7 +26,7 @@ const routes = (
             type="userrepo.policy"
         />
         <Route
-            path=":policyId"
+            path=":_id"
             component={TAView}
             Item={Item}
             type="userrepo.policy"

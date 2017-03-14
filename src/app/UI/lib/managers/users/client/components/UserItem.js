@@ -11,6 +11,7 @@ import CollaboratorAvatar from "ui-components/collaborator_avatar";
 import DateTime from "ui-components/datetime";
 import Tags from "ui-components/tags";
 import TeamListItem from "./TeamListItem";
+import PolicyListItem from "./PolicyListItem";
 import * as pathBuilder from "ui-lib/path_builder";
 import * as queryBuilder from "ui-lib/query_builder";
 import theme from "./theme.scss";
@@ -127,6 +128,17 @@ class Item extends LightComponent {
                                     onSelect={(item) => {
                                         this.context.router.push({
                                             pathname: pathBuilder.fromType("userrepo.team", item)
+                                        });
+                                    }}
+                                />
+                            <h6 className={this.props.theme.title}>Granted access policies</h6>
+                                <TAList
+                                    type="userrepo.policy"
+                                    query={queryBuilder.anyOf("_id", this.props.item.policyRefs.map((ref) => ref.id))}
+                                    ListItemComponent={PolicyListItem}
+                                    onSelect={(item) => {
+                                        this.context.router.push({
+                                            pathname: pathBuilder.fromType("userrepo.policy", item)
                                         });
                                     }}
                                 />

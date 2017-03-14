@@ -26,7 +26,7 @@ const routes = (
             type="userrepo.backend"
         />
         <Route
-            path=":backendId"
+            path=":_id"
             component={TAView}
             Item={Item}
             type="userrepo.backend"
