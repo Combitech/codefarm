@@ -63,7 +63,16 @@ const argv = yargs
 const templates = {
     super: [ "*:*" ],
     adm: [ "*:*" ],
-    mgmt: [ "verify,setonline:exec.slave" ],
+    mgmt: [
+        "create,update:coderepo.backend",
+        "create,update:logrepo.backend",
+        "create,update:artifactrepo.backend",
+        "create,update:coderepo.backend",
+        "create,update:userrepo.backend",
+        "setpolicies:userrepo.usercreate",
+        "create,update:user.policy",
+        "verify,setonline:exec.slave"
+    ],
     usr: [
         "read,comment:*",
         "create:dataresolve.data",
