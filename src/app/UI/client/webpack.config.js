@@ -205,10 +205,7 @@ module.exports = function(options) {
             }),
             new webpack.optimize.UglifyJsPlugin({
                 compress: {
-                    warnings: false,
-                    // Enabling this feature triggers a removal of do {} while(false) with break statements inside...
-                    // See https://github.com/mishoo/UglifyJS2/issues/1532
-                    evaluate: false
+                    warnings: false
                 },
                 // Safe to mangle as long as property mangling is disabled...
                 mangle: true,
