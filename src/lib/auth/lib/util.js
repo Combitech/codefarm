@@ -48,15 +48,25 @@ const validatePrivilegeFormat = (access, opts = {}) => {
     return true;
 };
 
-const isTokenValidForAccess = (tokenData, type, access = "read", debug = false) => {
+const isTokenValidForAccess = (tokenDataOrPrivilegeArray, type, access = "read", opts) => {
+    opts = Object.assign({
+        throwOnError: true,
+        debug: false
+    }, opts);
+
     // TODO: The following code allows unauthorized access. Remove when deployed...
-    if (!tokenData) {
+    if (!tokenDataOrPrivilegeArray) {
         return true;
     }
 
     // Privileges are in format "acc1,acc2:service.type"
-    const privileges = (tokenData && tokenData.priv) || [];
-    debug && console.log(`isTokenValidForAccess: privileges=${privileges.join(";")}, type=${type}, access=${access}`);
+    let privileges = [];
+    if (tokenDataOrPrivilegeArray instanceof Array) {
+        privileges = tokenDataOrPrivilegeArray;
+    } else if ((typeof tokenDataOrPrivilegeArray === "object") && tokenDataOrPrivilegeArray.priv) {
+        privileges = tokenDataOrPrivilegeArray.priv;
+    }
+    opts.debug && console.log(`isTokenValidForAccess: privileges=${privileges.join(";")}, type=${type}, access=${access}`);
     const [ serviceName, typeName ] = type.split(SERVICE_TYPE_NAME_DELIM);
     const myPriv = privileges.filter((priv) => {
         const [ , privType ] = priv.split(ACCESS_TYPE_DELIM);
@@ -79,11 +89,11 @@ const isTokenValidForAccess = (tokenData, type, access = "read", debug = false) 
         .reduce((acc, val) => acc.concat(val), []);
     const allowed = allowedAccessList.includes(WILDCARD) || allowedAccessList.includes(access);
 
-    if (!allowed) {
+    if (!allowed && opts.throwOnError) {
         throw new Error(`Access ${access}:${type} denied`);
     }
 
-    return true;
+    return allowed;
 };
 
 module.exports = {

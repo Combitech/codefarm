@@ -135,5 +135,14 @@ describe("isTokenValidForAccess", () => {
                 assert.doesNotThrow(testFn);
             }
         });
+        it(`should ${test.testType} ${test.accessType} on type ${test.type} using privilege array ${JSON.stringify(test.tokenData.priv)}`, () => {
+            const testFn = isTokenValidForAccess.bind(null, test.tokenData.priv, test.type, test.accessType);
+            if (test.testType === TEST_TYPE.ACCESS_DENIED) {
+                const errorRegex = new RegExp(`Access ${test.accessType}:${test.type} denied`);
+                assert.throws(testFn, errorRegex);
+            } else if (test.testType === TEST_TYPE.ACCESS_GRANTED) {
+                assert.doesNotThrow(testFn);
+            }
+        });
     }
 });

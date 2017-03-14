@@ -79,7 +79,7 @@ const run = async () => {
         console.log(`Setting policies ${argv.policy.join(", ")} to user ${argv.id}`);
         try {
             result = await rp.patch({
-                url: `http://localhost:${configUserRepo.web.port}/user/${argv.id}`,
+                url: `http://localhost:${configUserRepo.web.port}/user/${argv.id}/setpolicies`,
                 body: {
                     policies: argv.policy
                 },

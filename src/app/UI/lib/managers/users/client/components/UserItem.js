@@ -16,6 +16,7 @@ import * as pathBuilder from "ui-lib/path_builder";
 import * as queryBuilder from "ui-lib/query_builder";
 import theme from "./theme.scss";
 import ActiveUser from "ui-observables/active_user";
+import { isTokenValidForAccess } from "auth/lib/util";
 
 class Item extends LightComponent {
     constructor(props) {
@@ -34,6 +35,7 @@ class Item extends LightComponent {
         this.log("render", this.props);
 
         const isSignedInUser = this.state.activeUser.get("id") === this.props.item._id;
+        const isSetPoliciesGranted = isTokenValidForAccess(this.state.activeUser.get("priv").toJS(), "userrepo.user", "setpolicies", { throwOnError: false });
 
         const controls = this.props.controls.slice(0);
         if (isSignedInUser) {
@@ -43,6 +45,18 @@ class Item extends LightComponent {
                     label="Update password"
                     onClick={() => this.context.router.push({
                         pathname: `${this.props.pathname}/updatepassword`
+                    })}
+                />
+            ));
+        }
+
+        if (isSetPoliciesGranted) {
+            controls.push((
+                <TAControlButton
+                    key="setpolicies"
+                    label="Update policies"
+                    onClick={() => this.context.router.push({
+                        pathname: `${this.props.pathname}/updatepolicies`
                     })}
                 />
             ));

@@ -161,6 +161,20 @@ class User extends Type {
             await this.save();
         }
     }
+
+    async setPolicies(policyIds) {
+        for (const policyId of policyIds) {
+            const exist = await Policy.exist(policyId);
+            if (!exist) {
+                throw new Error(`Unknown policy id ${policyId}`);
+            }
+        }
+
+        // _saveHook will transform this.policies into this.policyRefs
+        this.policies = policyIds;
+
+        await this.save();
+    }
 }
 
 module.exports = User;

@@ -2,13 +2,15 @@
 
 const User = require("../types/user");
 const { Controller } = require("servicecom");
+const { assertType } = require("misc");
 
 class Users extends Controller {
     constructor() {
-        super(User, Controller.DEFAULT_SUPPORT.concat([ "auth", "setpassword", "addkey", "keys" ]));
+        super(User, Controller.DEFAULT_SUPPORT.concat([ "auth", "setpassword", "setpolicies", "addkey", "keys" ]));
 
         this._addAction("auth", this._authenticate);
         this._addAction("setpassword", this._setPassword);
+        this._addAction("setpolicies", this._setPolicies);
         this._addAction("addkey", this._addKey);
         this._addGetter("keys", this._getKeys);
     }
@@ -35,21 +37,25 @@ class Users extends Controller {
 
     async _setPassword(ctx, id, data) {
         this._isAllowed(ctx, "setpassword");
-        if (typeof data !== "object" || data === null) {
-            throw new Error("Request body must be an object");
-        }
-
-        if (typeof data.password !== "string") {
-            throw new Error("password not a string");
-        }
-
-        if (typeof data.oldPassword !== "string") {
-            throw new Error("oldPassword not a string");
-        }
+        assertType(data, "request body", "object");
+        assertType(data.password, "password", "string");
+        assertType(data.oldPassword, "oldPassword", "string");
 
         const obj = await this._getTypeInstance(id);
 
         await obj.setPassword(data.password, data.oldPassword);
+
+        return obj.serialize();
+    }
+
+    async _setPolicies(ctx, id, data) {
+        this._isAllowed(ctx, "setpolicies");
+        assertType(data, "request body", "object");
+        assertType(data.policies, "policies", "array");
+
+        const obj = await this._getTypeInstance(id);
+
+        await obj.setPolicies(data.policies);
 
         return obj.serialize();
     }
