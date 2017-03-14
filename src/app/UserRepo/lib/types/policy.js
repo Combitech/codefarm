@@ -3,6 +3,7 @@
 const { ServiceMgr } = require("service");
 const { assertType, assertProp } = require("misc");
 const { Type } = require("typelib");
+const { validatePrivilegeFormat } = require("auth");
 
 class Policy extends Type {
     constructor(data) {
@@ -42,6 +43,7 @@ class Policy extends Type {
 
         if (data.privileges) {
             assertType(data.privileges, "data.privileges", "array");
+            data.privileges.forEach(validatePrivilegeFormat);
         }
     }
 }

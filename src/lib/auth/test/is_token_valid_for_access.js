@@ -53,7 +53,7 @@ describe("isTokenValidForAccess", () => {
             accessType: "read"
         },
         {
-            testType: TEST_TYPE.ACCESS_GRANTED,
+            testType: TEST_TYPE.ACCESS_DENIED,
             tokenData: { priv: [ "write:service1.type1" ] },
             type: "service1.type1",
             accessType: "read"
@@ -128,10 +128,10 @@ describe("isTokenValidForAccess", () => {
     for (const test of tests) {
         it(`should ${test.testType} ${test.accessType} on type ${test.type} using token ${JSON.stringify(test.tokenData)}`, () => {
             const testFn = isTokenValidForAccess.bind(null, test.tokenData, test.type, test.accessType);
-            if (test.testType === TEST_TYPE.THROWS) {
+            if (test.testType === TEST_TYPE.ACCESS_DENIED) {
                 const errorRegex = new RegExp(`Access ${test.accessType}:${test.type} denied`);
                 assert.throws(testFn, errorRegex);
-            } else if (test.testType === TEST_TYPE.DOES_NOT_THROW) {
+            } else if (test.testType === TEST_TYPE.ACCESS_GRANTED) {
                 assert.doesNotThrow(testFn);
             }
         });

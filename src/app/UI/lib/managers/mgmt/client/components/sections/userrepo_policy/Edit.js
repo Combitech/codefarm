@@ -8,6 +8,8 @@ import {
     Section as TASection,
     utils as tautils
 } from "ui-components/type_admin";
+import { validatePrivilegeFormat } from "auth/lib/util";
+import arrayToSentence from "array-to-sentence";
 
 
 class Edit extends Component {
@@ -42,8 +44,43 @@ class Edit extends Component {
         });
     }
 
+    isValid() {
+        let formValid = tautils.isValid(this, this.itemProperties);
+
+        if (formValid) {
+            const privileges = this.state.privileges.value;
+            formValid = privileges
+                .map((priv) => this.isValidPrivilege(priv))
+                .every((isValid) => isValid);
+        }
+
+        return formValid;
+    }
+
+    isValidPrivilege(privilege, logError = true) {
+        let isValid = false;
+        try {
+            isValid = validatePrivilegeFormat(privilege);
+        } catch (error) {
+            logError && console.log("Invalid privilege:", error.message);
+        }
+
+        return isValid;
+    }
+
     render() {
         console.log("EditLocal-RENDER", this.props, this.state);
+
+        const privileges = this.state.privileges.value;
+
+        const invalidPrivileges = privileges.filter((priv) => !this.isValidPrivilege(priv, false));
+
+        let privilegeErrorMessage = "";
+        if (invalidPrivileges.length === 1) {
+            privilegeErrorMessage = `Privilege ${arrayToSentence(invalidPrivileges)} has invalid format`;
+        } else if (invalidPrivileges.length > 1) {
+            privilegeErrorMessage = `Privileges ${arrayToSentence(invalidPrivileges, { separator: "; " })} has invalid format`;
+        }
 
         return (
             <TASection
@@ -51,7 +88,7 @@ class Edit extends Component {
                 controls={this.props.controls}
             >
                 <TAForm
-                    confirmAllowed={tautils.isValid(this, this.itemProperties)}
+                    confirmAllowed={this.isValid()}
                     confirmText={this.props.item ? "Save" : "Create"}
                     primaryText={`${this.props.item ? "Edit" : "Create"} user policy`}
                     secondaryText="A user policy contains a set of privileges. Note! Changes take effect for affected users at new login."
@@ -84,8 +121,9 @@ class Edit extends Component {
                         label="Privileges"
                         disabled={this.props.item && !this.itemProperties.privileges.editable}
                         onChange={this.state.privileges.set}
-                        source={this.state.privileges.value}
-                        value={this.state.privileges.value}
+                        source={privileges}
+                        value={privileges}
+                        error={privilegeErrorMessage}
                     />
                 </TAForm>
             </TASection>

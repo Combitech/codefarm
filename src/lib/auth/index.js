@@ -2,10 +2,12 @@
 
 const Token = require("./lib/token");
 const {
-    isTokenValidForAccess
+    isTokenValidForAccess,
+    validatePrivilegeFormat
 } = require("./lib/util");
 
 module.exports = {
     Token,
-    isTokenValidForAccess
+    isTokenValidForAccess,
+    validatePrivilegeFormat
 };
