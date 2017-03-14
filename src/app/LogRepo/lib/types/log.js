@@ -3,6 +3,7 @@
 const { ServiceMgr } = require("service");
 const { assertType, assertProp } = require("misc");
 const { Type } = require("typelib");
+const { LogClient } = require("loglib");
 const BackendProxy = require("../backend_proxy");
 const Repository = require("./repository");
 
@@ -95,6 +96,8 @@ class Log extends Type {
 
         log.fileMeta.size += line.length;
         await log.save();
+
+        await LogClient.instance.publish(id, line.replace(/\n$/, ""));
     }
 
     async _saveHook(/* olddata */) {
@@ -140,6 +143,18 @@ class Log extends Type {
         const repository = await Repository.findOne({ _id: this.repository });
 
         return await BackendProxy.instance.getLogReadStream(repository, this);
+    }
+
+    async getLastLines(limit) {
+        if (this.state !== STATE.COMMITED) {
+            const error = new Error("No log uploaded");
+            error.status = 404;
+            throw error;
+        }
+
+        const repository = await Repository.findOne({ _id: this.repository });
+
+        return await BackendProxy.instance.getLastLines(repository, this, limit);
     }
 }
 

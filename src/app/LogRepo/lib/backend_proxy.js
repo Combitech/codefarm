@@ -62,6 +62,12 @@ class BackendProxy extends BackendProxyBase {
         await backend.removeLog(repository, log);
     }
 
+    async getLastLines(repository, log, limit) {
+        const backend = this.getBackend(repository.backend);
+
+        return await backend.getLastLines(repository, log, limit);
+    }
+
     async dispose() {
         await super.dispose();
     }

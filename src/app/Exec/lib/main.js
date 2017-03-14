@@ -2,7 +2,7 @@
 
 const os = require("os");
 const Database = require("database");
-const LogBus = require("logbus");
+const { RawLogClient } = require("loglib");
 const Web = require("web");
 const { Service } = require("service");
 const { ServiceComBus, HttpClient } = require("servicecom");
@@ -22,7 +22,6 @@ class Main extends Service {
         });
 
         await this.need("db", "mgmt", Database, this.config.db);
-        await this.need("lb", "mgmt", LogBus, this.config.logBus);
 
         // Need HttpClient to upload files
         await this.need("logrepo", "logrepo", HttpClient, this.config.logRepo);
@@ -45,6 +44,9 @@ class Main extends Service {
             SubJobs.instance,
             this.statesControllerInstance
         ]);
+
+        await RawLogClient.instance.start(this.config.msgbus);
+        this.addDisposable(RawLogClient.instance);
 
         await Control.instance.start();
         this.addDisposable(Control.instance);

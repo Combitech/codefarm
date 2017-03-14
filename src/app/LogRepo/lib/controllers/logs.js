@@ -10,6 +10,7 @@ class Logs extends Controller {
 
         this._addAction("upload", this._upload, "Upload log");
         this._addGetter("download", this._download, "Download log");
+        this._addAction("lines", this._lines, "Get lines");
     }
 
     async _upload(ctx, id) {
@@ -40,6 +41,12 @@ class Logs extends Controller {
         ctx.httpCtx.length = obj.fileMeta.size;
         ctx.httpCtx.type = obj.fileMeta.mimeType;
         ctx.httpCtx.body = stream;
+    }
+
+    async _lines(ctx, id, query) {
+        const obj = await this._getTypeInstance(id);
+
+        return await obj.getLastLines(query.limit);
     }
 }
 

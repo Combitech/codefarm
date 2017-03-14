@@ -9,6 +9,7 @@ import stateVar from "ui-lib/state_var";
 import OutputTab from "./job/OutputTab";
 import JobTab from "./job/JobTab";
 import SubJobTab from "./job/SubJobTab";
+import LogTab from "./job/LogTab";
 
 class Job extends LightComponent {
     constructor(props) {
@@ -40,14 +41,17 @@ class Job extends LightComponent {
                         job={job}
                     />
                 </Tab>
-                {run && run.logs.map((ref) => (
+                {(run && run.logs.length) && (
                     <Tab
-                        key={ref.id}
-                        label={`${ref.name}`}
+                        key="logs"
+                        label="Logs"
                     >
-                        <LogViewer log={ref} />
+                        <LogTab
+                            theme={this.props.theme}
+                            logRefs={run.logs}
+                        />
                     </Tab>
-                ))}
+                )}
                 {(run && run.subJobs.length) && (
                     <Tab
                         key="subjobs"

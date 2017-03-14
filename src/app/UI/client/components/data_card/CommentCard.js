@@ -47,7 +47,7 @@ class CommentCard extends LightComponent {
                     avatar={(
                         <UserAvatar
                             className={this.props.theme.avatar}
-                            identifier={user ? user._id : false}
+                            userId={user ? user._id : false}
                         />
                     )}
                     title={`${user ? user.name : "Someone"} said...`}

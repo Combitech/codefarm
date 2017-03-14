@@ -38,7 +38,7 @@ class Overview extends LightComponent {
     }
 
     async onComment(comment) {
-        await api.rest.action(this.props.item.type, this.props.item._id, "comment", comment);
+        await api.type.action(this.props.item.type, this.props.item._id, "comment", comment);
     }
 
     render() {
@@ -119,7 +119,7 @@ class Overview extends LightComponent {
         for (const job of jobs) {
             list.push({
                 id: job._id,
-                time: moment(job.finished ? job.finished : (job.saved || job.started)).unix(),
+                time: moment(job.finished ? job.finished : job.saved).unix(),
                 item: job,
                 Card: JobCard,
                 props: {

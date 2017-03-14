@@ -7,6 +7,7 @@ const fs = require("fs-extra-promise");
 const { ServiceMgr } = require("service");
 const { ServiceComBus } = require("servicecom");
 const { Type, notification } = require("typelib");
+const { RawLogClient } = require("loglib");
 const { SshClient } = require("ssh");
 const { SlaveCom } = require("../slavecom");
 const { ObjSerialize } = require("misc");
@@ -75,8 +76,7 @@ class Executor extends Type {
 
     async _log(str, level = LEVEL.STDOUT, tag = "exe", time) {
         if (this.logId) {
-            const lb = await ServiceMgr.instance.use("lb");
-            await lb.publish(this.logId, time, level, tag, str);
+            await RawLogClient.instance.append(this.logId, time, level, tag, str);
         }
 
         if (str[str.length - 1] === "\n") {
