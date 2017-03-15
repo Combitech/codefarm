@@ -2,7 +2,6 @@
 import React from "react";
 import LightComponent from "ui-lib/light_component";
 // import { StatusIcon } from "ui-components/status";
-import LogViewer from "ui-components/log_viewer";
 import { Tab, Tabs } from "react-toolbox/lib/tabs";
 import stateVar from "ui-lib/state_var";
 
