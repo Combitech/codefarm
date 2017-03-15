@@ -33,6 +33,14 @@
     font-family: "Roboto Mono";
 }
 
+.link {
+    cursor: pointer;
+
+    &:hover {
+        color: $cf-color-selected;
+    }
+}
+
 .hiddenText {
     float: right;
     font-size: $font-size-small * 0.9;
@@ -79,4 +87,8 @@
     td:last-child {
         color: $color-text-secondary;
     }
+}
+
+.centeredButtons {
+    text-align: center;
 }

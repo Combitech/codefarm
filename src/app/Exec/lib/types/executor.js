@@ -75,16 +75,16 @@ class Executor extends Type {
     }
 
     async _log(str, level = LEVEL.STDOUT, tag = "exe", time) {
-        if (this.logId) {
-            await RawLogClient.instance.append(this.logId, time, level, tag, str);
-        }
+        str = str.replace(/\n$/, "");
 
-        if (str[str.length - 1] === "\n") {
-            str = str.substr(0, str.length - 1);
-        }
+        for (const line of str.split("\n")) {
+            if (this.logId) {
+                await RawLogClient.instance.append(this.logId, time, level, tag, line);
+            }
 
-        const prefix = `${tag.toUpperCase()}:${level}`;
-        ServiceMgr.instance.log("info", `Executor[${this._id}]: Slave[${this.slaveId}]: Job[${this.jobId}]: [${prefix}] ${str}`);
+            const prefix = `${tag.toUpperCase()}:${level}`;
+            ServiceMgr.instance.log("info", `Executor[${this._id}]: Slave[${this.slaveId}]: Job[${this.jobId}]: [${prefix}] ${line}`);
+        }
     }
 
     get _defaultTags() {

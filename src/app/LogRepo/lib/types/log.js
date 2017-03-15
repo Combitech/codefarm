@@ -74,6 +74,13 @@ class Log extends Type {
         const repository = await Repository.findOne({ _id: log.repository });
         const tags = [];
 
+        // If this is an empty saved log that we append into
+        if (log.state !== STATE.COMMITED) {
+            log.state = STATE.COMMITED;
+            log.fileMeta.size = 0;
+            log.fileMeta.mimeType = "text/plain";
+        }
+
         if (data.time) {
             tags.push(data.time);
         }
@@ -84,20 +91,20 @@ class Log extends Type {
             tags.push(data.level);
         }
         const prefix = tags.length > 0 ? `[${tags.join(" ")}] ` : "";
-        const line = `${prefix}${data.str}`;
-        await repository.appendLog(id, line);
 
-        // If this is an empty saved log that we append into
-        if (log.state !== STATE.COMMITED) {
-            log.state = STATE.COMMITED;
-            log.fileMeta.size = 0;
-            log.fileMeta.mimeType = "text/plain";
+        for (const line of data.str.split("\n")) {
+            const pline = `${prefix}${line}`;
+
+            await repository.appendLog(id, pline);
+            await LogClient.instance.publish(id, {
+                offset: log.fileMeta.size,
+                line: pline
+            });
+
+            log.fileMeta.size += pline.length;
         }
 
-        log.fileMeta.size += line.length;
         await log.save();
-
-        await LogClient.instance.publish(id, line.replace(/\n$/, ""));
     }
 
     async _saveHook(/* olddata */) {
@@ -152,9 +159,21 @@ class Log extends Type {
             throw error;
         }
 
+        const lines = [];
         const repository = await Repository.findOne({ _id: this.repository });
+        const textLines = await BackendProxy.instance.getLastLines(repository, this, limit);
 
-        return await BackendProxy.instance.getLastLines(repository, this, limit);
+        let offset = this.fileMeta.size;
+
+        for (let n = textLines.length - 1; n >= 0; n--) {
+            const line = textLines[n];
+
+            offset -= (line.length + 1); // +1 for the \n
+
+            lines.push({ offset, line });
+        }
+
+        return lines.reverse();
     }
 }
 
