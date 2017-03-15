@@ -24,7 +24,7 @@ class User extends Type {
         this.keys = [];
         this.teams = [];
         this.policyRefs = [];
-        this.aliases = [];
+        this.aliases = {};
 
         if (data) {
             this.set(data);
