@@ -1,5 +1,4 @@
 
-import Immutable from "immutable";
 import ObservableData, { States as ObservableDataStates } from "ui-lib/observable_data";
 import api from "api.io/api.io-client";
 
@@ -15,14 +14,17 @@ class LogLines extends ObservableData {
 
         this._evtSubs = [];
         this.addDisposable({
-            dispose: () => this._disposeEventHandlers()
+            dispose: () => {
+                this._disposeEventHandlers()
+                .catch((error) => console.error(error));
+            }
         });
     }
 
     async _load(opts) {
-        if (this.state.getValue() === ObservableDataStates.DISPOSED || !opts.id) {
-            this._disposeEventHandlers();
+        await this._disposeEventHandlers();
 
+        if (this.state.getValue() === ObservableDataStates.DISPOSED || !opts.id) {
             return this._initialValue;
         }
 
@@ -30,31 +32,36 @@ class LogLines extends ObservableData {
             limit: opts.limit
         });
 
-        this.subscription = await api.log.subscribe(opts.id);
+        if (opts.subscribe) {
+            this.subscription = await api.log.subscribe(opts.id);
 
-        this._evtSubs.push(api.log.on("line", (data) => {
-            let list = this._value.getValue().push(data.line);
+            this._evtSubs.push(api.log.on("line", (data) => {
+                const opts = this._opts.getValue().toJS();
+                const lastLine = this._value.getValue().last();
 
-            if (opts.limit) {
-                list = list.slice(-opts.limit);
-            }
+                if (lastLine && (lastLine.offset >= data.offset)) {
+                    return;
+                }
 
-            this._value.next(list);
-        }, { query: { id: opts.id } }));
+                let list = this._value.getValue().push(data.line);
+
+                if (opts.limit) {
+                    list = list.slice(-opts.limit);
+                }
+
+                this._value.next(list);
+            }, { query: { id: opts.id }, id: `${opts.id}-${Date.now()}-${opts.limit}` }));
+        }
 
         return lines;
     }
 
-    _disposeEventHandlers() {
+    async _disposeEventHandlers() {
         this._evtSubs.forEach(api.log.off);
         this._evtSubs = [];
 
         if (this.subscription) {
-            api.log.unsubscribe(this.subscription).
-            catch((error) => {
-                console.error(error);
-            });
-
+            await api.log.unsubscribe(this.subscription);
             this.subscription = null;
         }
     }

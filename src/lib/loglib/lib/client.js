@@ -4,19 +4,24 @@ const singleton = require("singleton");
 
 class Client {
     constructor() {
+        this.config = {};
         this.bus = null;
         this.exchangeName = "logs";
         this.queues = [];
     }
 
-    async start(uri) {
+    async start(config) {
         if (this.bus) {
             throw new Error("Bus already created, please dispose before starting again");
         }
 
+        this.config = config;
         this.bus = new Bus();
 
-        await this.bus.start(uri);
+        await this.bus.start({
+            uri: this.config.uri,
+            testMode: this.config.testMode
+        });
         await this.bus.assertExchange(this.exchangeName);
     }
 

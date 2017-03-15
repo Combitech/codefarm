@@ -39,7 +39,7 @@ describe("LogRepo", () => {
                 bus: {
                     testMode: true
                 },
-                lb: {
+                loglib: {
                     testMode: true
                 },
                 backends: {

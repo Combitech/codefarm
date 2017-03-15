@@ -8,6 +8,7 @@ class Bus extends AsyncEventEmitter {
     constructor(synchronized = false) {
         super();
 
+        this.config = {};
         this.connection = null;
         this.channel = null;
 
@@ -16,29 +17,35 @@ class Bus extends AsyncEventEmitter {
         }
     }
 
-    async start(uri) {
-        this.connection = await amqp.connect(uri);
-        this.channel = await this.connection.createChannel();
+    async start(config) {
+        this.config = config;
 
-        this.channel.on("close", () => {
-            this.emit("close", `Channel closed: ${uri}`);
-        });
+        if (!this.config.testMode) {
+            this.connection = await amqp.connect(this.config.uri);
+            this.channel = await this.connection.createChannel();
 
-        this.channel.on("error", (error) => {
-            this.emit("error", error);
-        });
+            this.channel.on("close", () => {
+                this.emit("close", `Channel closed: ${this.config.uri}`);
+            });
 
-        await this.emit("connect", uri);
+            this.channel.on("error", (error) => {
+                this.emit("error", error);
+            });
+        }
 
-        return uri;
+        await this.emit("connect", this.config.uri);
+
+        return this.config.uri;
     }
 
     async assertExchange(name, durable = true) {
-        if (!this.channel) {
-            throw new Error("Bus must be connected before assertExchange");
-        }
+        if (!this.config.testMode) {
+            if (!this.channel) {
+                throw new Error("Bus must be connected before assertExchange");
+            }
 
-        await this.channel.assertExchange(name, "topic", { durable });
+            await this.channel.assertExchange(name, "topic", { durable });
+        }
 
         await this.emit("exchange", name);
 
@@ -46,19 +53,21 @@ class Bus extends AsyncEventEmitter {
     }
 
     async assertQueue(exchange, name, durable = true, exclusive = true, routingKey = "") {
-        if (!this.channel) {
-            throw new Error("Bus must be connected before assertExchange");
-        }
+        if (!this.config.testMode) {
+            if (!this.channel) {
+                throw new Error("Bus must be connected before assertExchange");
+            }
 
-        const queueRef = await this.channel.assertQueue(name, { exclusive, durable, autoDelete: !durable });
-        const queue = await this.channel.bindQueue(queueRef.queue, exchange, routingKey);
+            const queueRef = await this.channel.assertQueue(name, { exclusive, durable, autoDelete: !durable });
+            const queue = await this.channel.bindQueue(queueRef.queue, exchange, routingKey);
 
-        this.channel.consume(queue.queue, (msg) => {
-            this._handleMessage(name, msg)
-            .catch((error) => {
-                this.emit("error", error);
+            this.channel.consume(queue.queue, (msg) => {
+                this._handleMessage(name, msg)
+                .catch((error) => {
+                    this.emit("error", error);
+                });
             });
-        });
+        }
 
         await this.emit("queue", name);
 
@@ -66,7 +75,13 @@ class Bus extends AsyncEventEmitter {
     }
 
     async deleteQueue(name) {
-        await this.channel.deleteQueue(name);
+        if (!this.config.testMode) {
+            if (!this.channel) {
+                throw new Error("Bus must be connected before assertExchange");
+            }
+
+            await this.channel.deleteQueue(name);
+        }
     }
 
     async _handleMessage(queue, msg) {
@@ -79,26 +94,30 @@ class Bus extends AsyncEventEmitter {
         await this.emit("data", content);
         await this.emit(`data.${queue}`, content);
 
-        this.channel.ack(msg);
+        if (!this.config.testMode) {
+            this.channel.ack(msg);
+        }
     }
 
     async publish(exchange, data, routingKey = "", timeout = 0) {
-        if (!this.channel) {
-            throw new Error("Bus must be connected before assertExchange");
-        }
+        if (!this.config.testMode) {
+            if (!this.channel) {
+                throw new Error("Bus must be connected before assertExchange");
+            }
 
-        const opts = {
-            contentType: "application/json"
-        };
+            const opts = {
+                contentType: "application/json"
+            };
 
-        if (timeout) {
-            opts.expiration = timeout.toString();
-        }
+            if (timeout) {
+                opts.expiration = timeout.toString();
+            }
 
-        const content = new Buffer(JSON.stringify(data));
+            const content = new Buffer(JSON.stringify(data));
 
-        if (!this.channel.publish(exchange, routingKey, content, opts)) {
-            throw new Error("Channel publish failed, the channel's write buffer is full!");
+            if (!this.channel.publish(exchange, routingKey, content, opts)) {
+                throw new Error("Channel publish failed, the channel's write buffer is full!");
+            }
         }
 
         await this.emit("publish", data);

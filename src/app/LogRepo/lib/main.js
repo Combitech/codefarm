@@ -42,10 +42,14 @@ class Main extends Service {
             this.statesControllerInstance
         ]);
 
-        await RawLogClient.instance.start(this.config.msgbus);
+        await RawLogClient.instance.start(Object.assign({
+            uri: this.config.msgbus
+        }, this.config.loglib));
         this.addDisposable(RawLogClient.instance);
 
-        await LogClient.instance.start(this.config.msgbus);
+        await LogClient.instance.start(Object.assign({
+            uri: this.config.msgbus
+        }, this.config.loglib));
         this.addDisposable(LogClient.instance);
 
         await BackendProxy.instance.start(this.config.backends);

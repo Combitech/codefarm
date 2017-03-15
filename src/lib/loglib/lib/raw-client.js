@@ -1,34 +1,29 @@
 
-const { ServiceComBus } = require("servicecom");
 const { Bus } = require("buslib");
 const singleton = require("singleton");
 
 class RawClient {
     constructor() {
+        this.config = {};
         this.bus = null;
         this.exchangeName = "logs-raw";
         this.queueName = this.exchangeName;
         this.hasCreatedQueue = false;
     }
 
-    async start(uri) {
+    async start(config) {
         if (this.bus) {
             throw new Error("Bus already created, please dispose before starting again");
         }
 
+        this.config = config;
         this.bus = new Bus();
 
-        await this.bus.start(uri);
-        await this.bus.assertExchange(this.exchangeName);
-    }
-
-    async create(name, tags) {
-        const client = ServiceComBus.instance.getClient("logrepo");
-
-        return await client.create("logrepo.log", {
-            name: name,
-            tags: tags
+        await this.bus.start({
+            uri: this.config.uri,
+            testMode: this.config.testMode
         });
+        await this.bus.assertExchange(this.exchangeName);
     }
 
     async append(id, time, level, tag, str) {
