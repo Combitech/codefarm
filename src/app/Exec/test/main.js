@@ -50,7 +50,7 @@ describe("Exec", () => {
                 bus: {
                     testMode: true
                 },
-                logBus: {
+                loglib: {
                     testMode: true
                 },
                 servicecom: {

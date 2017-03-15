@@ -95,13 +95,13 @@ class Log extends Type {
         for (const line of data.str.split("\n")) {
             const pline = `${prefix}${line}`;
 
-            await repository.appendLog(id, pline);
+            await repository.appendLog(id, `${pline}\n`);
             await LogClient.instance.publish(id, {
                 offset: log.fileMeta.size,
                 line: pline
             });
 
-            log.fileMeta.size += pline.length;
+            log.fileMeta.size += (pline.length + 1); // +1 for \n
         }
 
         await log.save();

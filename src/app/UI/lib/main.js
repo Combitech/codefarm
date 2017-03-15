@@ -55,7 +55,9 @@ class Main extends Service {
             this.statesControllerInstance
         ]);
 
-        await LogClient.instance.start(this.config.msgbus);
+        await LogClient.instance.start(Object.assign({
+            uri: this.config.msgbus
+        }, this.config.loglib));
         this.addDisposable(LogClient.instance);
 
         await MgmtMgr.instance.start();

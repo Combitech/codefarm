@@ -51,7 +51,6 @@ class LogCard extends LightComponent {
 
     render() {
         const lines = this.state.lines.toJS();
-        console.log(lines);
 
         return (
             <ExpandableCard
@@ -75,7 +74,7 @@ class LogCard extends LightComponent {
                     )}
                 />
                 <CardText>
-                    {(lines[0] && lines[0].offset > 0) && (
+                    {(lines.length && lines[0].offset > 0) && (
                         <div className={this.props.theme.centeredButtons}>
                             <Button
                                 label="Show 10 more lines"
