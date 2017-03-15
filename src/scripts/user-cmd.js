@@ -36,6 +36,10 @@ const argv = yargs
     describe: "Avatar image file to upload",
     type: "string"
 })
+.option("githubalias", {
+    describe: "Alias on GitHub to identify with user",
+    type: "string"
+})
 .argv;
 
 const run = async () => {
@@ -72,6 +76,23 @@ const run = async () => {
             console.dir(result, { colors: true, depth: null });
         } catch (error) {
             console.error("Failed to authenticate user", error.message);
+        }
+    }
+
+    if (argv.githubalias && argv.githubalias.length > 0) {
+        console.log(`Setting/Updating github alias for user ${argv.id}`);
+        try {
+            result = await rp.patch({
+                url: `http://localhost:${configUserRepo.web.port}/user/${argv.id}`,
+                body: {
+                    aliases: {github: argv.githubalias}
+                },
+                json: true
+            });
+
+            console.dir(result, { colors: true, depth: null });
+        } catch (error) {
+            console.error("Failed to set policy for user", error.message);
         }
     }
 

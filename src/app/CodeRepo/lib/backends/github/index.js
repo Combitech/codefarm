@@ -1,6 +1,7 @@
 "use strict";
 
 const { ServiceMgr } = require("service");
+const { ServiceComBus } = require("servicecom");
 const rp = require("request-promise");
 const moment = require("moment");
 const { AsyncEventEmitter } = require("emitter");
@@ -118,28 +119,38 @@ class GithubBackend extends AsyncEventEmitter {
         };
     }
 
-    // TODO: Find a better way for this, resolving is dependant on user having pushed in last 30 events
-    // This is a shot at resolving the username on a review by listing the user events
-    async _getUserEmail(userName) {
-        const url = `${GITHUB_API_BASE}/users/${userName}/events/public`;
-        try {
-            const result = await this._sendRequest(url, {}, "GET");
-            for (const event of result) {
-                if (event.type && event.type === "PushEvent" && event.payload && event.payload.commits) {
-                    for (const commit of event.payload.commits) {
-                        if (commit.author.name === userName) {
-                            return commit.author.email;
-                        }
-                    }
-                }
-            }
-        } catch (err) {
-            ServiceMgr.instance.log("info", `Unable to retrieve events for username ${userName}:`);
+    // Lookup user based on github alias
+    async _getUserByGithubLogin(githubUserName) {
+        let ref=false
+
+        if (typeof githubUserName !== "string" || githubUserName.length === 0) {
+            ServiceMgr.instance.log("error", `Expected name as non-zero length string but got '${githubUserName}'`, error);
+            return false;
         }
 
-        ServiceMgr.instance.log("info", `Unable to get email for username ${userName}:`);
+        try {
+            const client = ServiceComBus.instance.getClient("userrepo");
+            const users = await client.list("user", { "aliases.github": githubUserName});
 
-        return null;
+            if (users.length === 0) {
+                ServiceMgr.instance.log("info", `Found no user with github alias '${githubUserName}'`);
+                return false;
+            } else if (users.length > 1) {
+                ServiceMgr.instance.log("error", `Found ${users.length} users with github alias '${githubUserName}'`);
+                return false;
+            }
+
+            ref = {
+                id: users[0]._id,
+                email: users[0].email[0],
+                type: "userrepo.user",
+                _ref: true
+            };
+        } catch (error) {
+            ServiceMgr.instance.log("error", `Can't get user ref for user with github alias '${githubUserName}'`, error);
+        }
+
+        return ref
     }
 
     async _getCommit(repositoryName, commitSha) {
@@ -281,14 +292,19 @@ class GithubBackend extends AsyncEventEmitter {
         ServiceMgr.instance.log("verbose", `Review ${event.review.state} for ${event.pull_request.id}`);
 
         const revision = await this._getRevision(event.pull_request.id.toString());
-        const userEmail = await this._getUserEmail(event.review.user.login);
+        const user = await this._getUserByGithubLogin(event.review.user.login);
+        const email = user ? user.email : false;
+        if (email) {
+            ServiceMgr.instance.log("verbose", `Reviewer '${event.review.user.login}' resolved to '${user.id}' ('${email}')`);
+        }
+
         const state = event.review.state;
         if (state === "commented") {
-            await revision.addReview(userEmail, this.Revision.ReviewState.NEUTRAL);
+            await revision.addReview(email, this.Revision.ReviewState.NEUTRAL);
         } else if (state === "changes_requested") {
-            await revision.addReview(userEmail, this.Revision.ReviewState.REJECTED);
+            await revision.addReview(email, this.Revision.ReviewState.REJECTED);
         } else if (state === "approved") {
-            await revision.addReview(userEmail, this.Revision.ReviewState.APPROVED);
+            await revision.addReview(email, this.Revision.ReviewState.APPROVED);
         } else {
             ServiceMgr.instance.log("verbose", `unknown review state ${state} on ${revision._id}`);
         }

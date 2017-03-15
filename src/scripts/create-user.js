@@ -72,11 +72,17 @@ const argv = yargs
     type: "string",
     requiresArg: true
 })
+.option("githubalias", {
+    describe: "Username on github",
+    type: "string",
+    requiresArg: true
+})
 .argv;
 
 const run = async () => {
     console.log(`User ${argv.id}`);
     let result;
+
     if (!argv.no_create) {
         console.log(`Adding user ${argv.id}`);
         result = await rp.post({
@@ -84,6 +90,7 @@ const run = async () => {
             body: {
                 _id: argv.id,
                 name: argv.name,
+                aliases: { github: argv.githubalias },
                 teams: argv.teams,
                 email: argv.email,
                 backend: argv.backend,

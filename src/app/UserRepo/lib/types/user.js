@@ -9,6 +9,10 @@ const Policy = require("./policy");
 
 const DEFAULT_BACKEND = "Dummy";
 
+const USER_ALIASTYPES = {
+    GITHUB: "github"
+}
+
 class User extends Type {
     constructor(data) {
         super();
@@ -20,6 +24,7 @@ class User extends Type {
         this.keys = [];
         this.teams = [];
         this.policyRefs = [];
+        this.aliases = [];
 
         if (data) {
             this.set(data);
@@ -107,6 +112,15 @@ class User extends Type {
         } else if (event === "update") {
             assertProp(data, "_id", false);
             assertProp(data, "backend", false);
+        }
+
+        if (data.aliases) {
+            assertType(data.aliases, "data.aliases", "object");
+            for (const aliaskey of Object.keys(data.aliases)) {
+                if (!Object.values(USER_ALIASTYPES).includes(aliaskey)) {
+                    throw new Error(`Unknown alias type ${aliaskey}`);
+                }
+            }
         }
 
         if (data.policies) {
