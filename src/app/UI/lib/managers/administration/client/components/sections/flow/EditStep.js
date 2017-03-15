@@ -1,6 +1,6 @@
 
 import React from "react";
-import Component from "ui-lib/component";
+import LightComponent from "ui-lib/light_component";
 import Input from "react-toolbox/lib/input";
 import Slider from "react-toolbox/lib/slider";
 import Dropdown from "react-toolbox/lib/dropdown";
@@ -12,10 +12,22 @@ import {
     LoadIndicator as TALoadIndicator,
     utils as tautils
 } from "ui-components/type_admin";
+import TypeList from "ui-observables/type_list";
+import { States as ObservableDataStates } from "ui-lib/observable_data";
 
-class EditStep extends Component {
+class EditStep extends LightComponent {
     constructor(props) {
         super(props);
+
+        this.stepList = new TypeList({
+            type: "flowctrl.step",
+            query: {
+                "flow.id": props.parentItems[props.parentItems.length - 1]._id
+            }
+        });
+        this.baselineList = new TypeList({
+            type: "baselinegen.specification"
+        });
 
         this.itemProperties = {
             "name": {
@@ -77,18 +89,29 @@ class EditStep extends Component {
             }
         };
 
-        tautils.createStateProperties(this, this.itemProperties, this.props.item);
+        this.state = Object.assign({
+            steps: this.stepList.value.getValue(),
+            stepsState: this.stepList.state.getValue(),
+            baselines: this.baselineList.value.getValue(),
+            baselinesState: this.baselineList.state.getValue()
+        }, tautils.createStateProperties(this, this.itemProperties, this.props.item));
+    }
 
-        this.addTypeListStateVariable("steps", "flowctrl.step", (props) => ({
-            "flow.id": props.parentItems[props.parentItems.length - 1]._id
-        }));
-        this.addTypeListStateVariable("baselines", "baselinegen.specification");
+    componentDidMount() {
+        this.log("componentDidMount", this.props, this.state);
+        this.addDisposable(this.stepList.start());
+        this.addDisposable(this.stepList.value.subscribe((steps) => this.setState({ steps })));
+        this.addDisposable(this.stepList.state.subscribe((stepsState) => this.setState({ stepsState })));
+
+        this.addDisposable(this.baselineList.start());
+        this.addDisposable(this.baselineList.value.subscribe((baselines) => this.setState({ baselines })));
+        this.addDisposable(this.baselineList.state.subscribe((baselinesState) => this.setState({ baselinesState })));
     }
 
     getSteps() {
         const steps = {};
 
-        for (const step of this.state.steps) {
+        for (const step of this.state.steps.toJS()) {
             if (!this.props.item || step._id !== this.props.item._id) {
                 steps[step._id] = step.name;
             }
@@ -98,14 +121,14 @@ class EditStep extends Component {
     }
 
     getBaselines() {
-        return this.state.baselines.map((baseline) => ({
+        return this.state.baselines.toJS().map((baseline) => ({
             value: baseline._id,
             label: baseline._id
         }));
     }
 
     async onConfirm() {
-        const data = tautils.serialize(this, this.itemProperties, this.props.item);
+        const data = tautils.serialize(this.state, this.itemProperties, this.props.item);
         data.flow = {
             _ref: true,
             id: this.props.parentItems[this.props.parentItems.length - 1]._id,
@@ -121,7 +144,8 @@ class EditStep extends Component {
     render() {
         this.log("render", this.props, this.state);
 
-        if (this.state.loadingAsync.value) {
+        if (this.state.stepsState === ObservableDataStates.LOADING ||
+            this.state.baselinesState === ObservableDataStates.LOADING) {
             return (
                 <TALoadIndicator />
             );
@@ -142,7 +166,7 @@ class EditStep extends Component {
                 controls={this.props.controls}
             >
                 <TAForm
-                    confirmAllowed={tautils.isValid(this, this.itemProperties)}
+                    confirmAllowed={tautils.isValid(this.state, this.itemProperties)}
                     confirmText={this.props.item ? "Save" : "Create"}
                     primaryText={`${this.props.item ? "Edit" : "Create"} flow step`}
                     secondaryText="A flow step specifies things to listen for and then take action based on that"

@@ -1,7 +1,7 @@
 
 import React from "react";
 import { StringUtil } from "misc";
-import Component from "ui-lib/component";
+import LightComponent from "ui-lib/light_component";
 import Input from "react-toolbox/lib/input";
 import Dropdown from "react-toolbox/lib/dropdown";
 import Checkbox from "react-toolbox/lib/checkbox";
@@ -12,10 +12,16 @@ import {
     LoadIndicator as TALoadIndicator,
     utils as tautils
 } from "ui-components/type_admin";
+import TypeList from "ui-observables/type_list";
+import { States as ObservableDataStates } from "ui-lib/observable_data";
 
-class Edit extends Component {
+class Edit extends LightComponent {
     constructor(props) {
         super(props);
+
+        this.backendList = new TypeList({
+            type: "artifactrepo.backend"
+        });
 
         this.itemProperties = {
             "_id": {
@@ -45,9 +51,17 @@ class Edit extends Component {
             }
         };
 
-        tautils.createStateProperties(this, this.itemProperties, this.props.item);
+        this.state = Object.assign({
+            backends: this.backendList.value.getValue(),
+            backendsState: this.backendList.state.getValue()
+        }, tautils.createStateProperties(this, this.itemProperties, this.props.item));
+    }
 
-        this.addTypeListStateVariable("backends", "artifactrepo.backend");
+    componentDidMount() {
+        this.log("componentDidMount", this.props, this.state);
+        this.addDisposable(this.backendList.start());
+        this.addDisposable(this.backendList.value.subscribe((backends) => this.setState({ backends })));
+        this.addDisposable(this.backendList.state.subscribe((backendsState) => this.setState({ backendsState })));
     }
 
     getVersionSchemes(backend) {
@@ -71,13 +85,13 @@ class Edit extends Component {
     }
 
     getBackends() {
-        return this.state.backends.map((backend) => ({
+        return this.state.backends.toJS().map((backend) => ({
             value: backend._id, label: backend._id
         }));
     }
 
     async onConfirm() {
-        const data = tautils.serialize(this, this.itemProperties, this.props.item);
+        const data = tautils.serialize(this.state, this.itemProperties, this.props.item);
         await this.props.onSave("artifactrepo.repository", data, {
             create: !this.props.item
         });
@@ -86,13 +100,13 @@ class Edit extends Component {
     render() {
         this.log("render", this.props, this.state);
 
-        if (this.state.loadingAsync.value) {
+        if (this.state.backendsState === ObservableDataStates.LOADING) {
             return (
                 <TALoadIndicator />
             );
         }
 
-        const backend = this.state.backends.find((backend) => backend._id === this.state.backend.value);
+        const backend = this.state.backends.toJS().find((backend) => backend._id === this.state.backend.value);
         const backends = this.getBackends();
         const versionSchemes = this.getVersionSchemes(backend);
         const hashAlgorithms = this.getHashAlgorhitms(backend);
@@ -103,7 +117,7 @@ class Edit extends Component {
                 controls={this.props.controls}
             >
                 <TAForm
-                    confirmAllowed={tautils.isValid(this, this.itemProperties)}
+                    confirmAllowed={tautils.isValid(this.state, this.itemProperties)}
                     confirmText={this.props.item ? "Save" : "Create"}
                     primaryText={`${this.props.item ? "Edit" : "Create"} artifact repository`}
                     secondaryText="A artifact repository contains binary file versions"

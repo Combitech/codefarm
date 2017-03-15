@@ -17,7 +17,6 @@ export const FLOWS = "CFFlows";
 export const HIDDEN_TEXT = "CFHiddenText";
 export const LOG_VIEWER = "CFLogViewer";
 export const STATUS = "CFStatus";
-export const TYPE_TABLE = "CFTypeTable";
 export const TYPE_ADMIN = "CFTypeAdmin";
 export const SVG_GRID = "CFSvgGrid";
 export const TAGS = "CFTags";

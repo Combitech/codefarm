@@ -1,6 +1,6 @@
 
 import React from "react";
-import Component from "ui-lib/component";
+import LightComponent from "ui-lib/light_component";
 import Input from "react-toolbox/lib/input";
 import Dropdown from "react-toolbox/lib/dropdown";
 import Switch from "react-toolbox/lib/switch";
@@ -11,7 +11,7 @@ import {
     utils as tautils
 } from "ui-components/type_admin";
 
-class Edit extends Component {
+class Edit extends LightComponent {
     constructor(props) {
         super(props);
 
@@ -53,7 +53,7 @@ class Edit extends Component {
             }
         };
 
-        tautils.createStateProperties(this, this.itemProperties, this.props.item);
+        this.state = tautils.createStateProperties(this, this.itemProperties, this.props.item);
     }
 
     getCollectTypes() {
@@ -64,7 +64,7 @@ class Edit extends Component {
     }
 
     async onConfirm() {
-        const data = tautils.serialize(this, this.itemProperties, this.props.item);
+        const data = tautils.serialize(this.state, this.itemProperties, this.props.item);
         await this.props.onSave("baselinegen.specification", data, {
             create: !this.props.item
         });
@@ -81,7 +81,7 @@ class Edit extends Component {
                 controls={this.props.controls}
             >
                 <TAForm
-                    confirmAllowed={tautils.isValid(this, this.itemProperties)}
+                    confirmAllowed={tautils.isValid(this.state, this.itemProperties)}
                     confirmText={this.props.item ? "Save" : "Create"}
                     primaryText={`${this.props.item ? "Edit" : "Create"} baseline`}
                     secondaryText="A baseline collects ids based on a criteria"

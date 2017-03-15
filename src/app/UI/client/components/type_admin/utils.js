@@ -1,6 +1,8 @@
+import stateVar from "ui-lib/state_var";
 
 const utils = {
     createStateProperties(inst, properties, item) {
+        const state = {};
         for (const key of Object.keys(properties)) {
             let value = properties[key].defaultValue;
             if (key.includes("[")) {
@@ -19,20 +21,22 @@ const utils = {
                 deserializedValue = properties[key].deserialize(value);
             }
 
-            inst.addStateVariable(key, deserializedValue);
+            state[key] = stateVar(inst, key, deserializedValue);
         }
+
+        return state;
     },
-    isValid(inst, properties) {
+    isValid(state, properties) {
         for (const key of Object.keys(properties)) {
             if (properties[key].required()) {
                 if (properties[key].defaultValue.constructor === Array &&
-                    inst.state[key].value.length === 0) {
+                    state[key].value.length === 0) {
                     return false;
                 } else if (properties[key].defaultValue.constructor === Number &&
-                           isNaN(parseInt(inst.state[key].value, 10))) {
+                           isNaN(parseInt(state[key].value, 10))) {
                     return false;
                 } else if (properties[key].defaultValue.constructor === String &&
-                           inst.state[key].value === "") {
+                           state[key].value === "") {
                     return false;
                 }
             }
@@ -40,7 +44,7 @@ const utils = {
 
         return true;
     },
-    serialize(inst, properties, item) {
+    serialize(state, properties, item) {
         const data = {};
 
         const set = (data, key, value, serialize) => {
@@ -63,14 +67,14 @@ const utils = {
         if (item) {
             for (const key of Object.keys(properties)) {
                 if (properties[key].editable) {
-                    set(data, key, inst.state[key].value, properties[key].serialize);
+                    set(data, key, state[key].value, properties[key].serialize);
                 }
             }
 
             data._id = item._id;
         } else {
             for (const key of Object.keys(properties)) {
-                set(data, key, inst.state[key].value, properties[key].serialize);
+                set(data, key, state[key].value, properties[key].serialize);
             }
         }
 

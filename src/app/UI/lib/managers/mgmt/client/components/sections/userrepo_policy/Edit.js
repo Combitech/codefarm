@@ -1,6 +1,6 @@
 
 import React from "react";
-import Component from "ui-lib/component";
+import LightComponent from "ui-lib/light_component";
 import Input from "react-toolbox/lib/input";
 import Autocomplete from "react-toolbox/lib/autocomplete";
 import {
@@ -11,8 +11,7 @@ import {
 import { validatePrivilegeFormat } from "auth/lib/util";
 import arrayToSentence from "array-to-sentence";
 
-
-class Edit extends Component {
+class Edit extends LightComponent {
     constructor(props) {
         super(props);
 
@@ -34,18 +33,18 @@ class Edit extends Component {
             }
         };
 
-        tautils.createStateProperties(this, this.itemProperties, this.props.item);
+        this.state = tautils.createStateProperties(this, this.itemProperties, this.props.item);
     }
 
     async onConfirm() {
-        const data = tautils.serialize(this, this.itemProperties, this.props.item);
+        const data = tautils.serialize(this.state, this.itemProperties, this.props.item);
         await this.props.onSave("userrepo.policy", data, {
             create: !this.props.item
         });
     }
 
     isValid() {
-        let formValid = tautils.isValid(this, this.itemProperties);
+        let formValid = tautils.isValid(this.state, this.itemProperties);
 
         if (formValid) {
             const privileges = this.state.privileges.value;

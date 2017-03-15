@@ -1,6 +1,6 @@
 
 import React from "react";
-import Component from "ui-lib/component";
+import LightComponent from "ui-lib/light_component";
 import Autocomplete from "react-toolbox/lib/autocomplete";
 import {
     Form as TAForm,
@@ -13,7 +13,7 @@ import { isTokenValidForAccess } from "auth/lib/util";
 import TypeList from "ui-observables/type_list";
 import Notification from "ui-observables/notification";
 
-class UserUpdatePolicies extends Component {
+class UserUpdatePolicies extends LightComponent {
     constructor(props) {
         super(props);
 
@@ -32,11 +32,10 @@ class UserUpdatePolicies extends Component {
             }
         };
 
-        tautils.createStateProperties(this, this.itemProperties);
-
-        // Need to set state directly since initialized by tautils above...
-        this.state.activeUser = ActiveUser.instance.user.getValue(); // eslint-disable-line react/no-direct-mutation-state
-        this.state.availablePolicies = this.availablePolicyList.value.getValue(); // eslint-disable-line react/no-direct-mutation-state
+        this.state = Object.assign({
+            activeUser: ActiveUser.instance.user.getValue(),
+            availablePolicies: this.availablePolicyList.value.getValue()
+        }, tautils.createStateProperties(this, this.itemProperties));
     }
 
     componentDidMount() {
@@ -57,7 +56,7 @@ class UserUpdatePolicies extends Component {
     }
 
     async _onConfirm() {
-        const data = tautils.serialize(this, this.itemProperties);
+        const data = tautils.serialize(this.state, this.itemProperties);
         const user = this._getUser();
         try {
             const response = await api.rest.action("userrepo.user", user._id, "setpolicies", data);
@@ -79,7 +78,7 @@ class UserUpdatePolicies extends Component {
 
     _confirmAllowed() {
         const user = this._getUser();
-        const inputsValid = tautils.isValid(this, this.itemProperties);
+        const inputsValid = tautils.isValid(this.state, this.itemProperties);
 
         return user && inputsValid;
     }

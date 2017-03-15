@@ -1,6 +1,6 @@
 
 import React from "react";
-import Component from "ui-lib/component";
+import LightComponent from "ui-lib/light_component";
 import Input from "react-toolbox/lib/input";
 import {
     Form as TAForm,
@@ -10,7 +10,7 @@ import {
 import ActiveUser from "ui-observables/active_user";
 import { setPassword } from "ui-lib/auth";
 
-class UserUpdatePassword extends Component {
+class UserUpdatePassword extends LightComponent {
     constructor(props) {
         super(props);
 
@@ -18,24 +18,26 @@ class UserUpdatePassword extends Component {
             "oldPassword": {
                 editable: true,
                 required: () => true,
+                serialize: (value) => `${value}`,
                 defaultValue: ""
             },
             "newPassword1": {
                 editable: true,
                 required: () => true,
+                serialize: (value) => `${value}`,
                 defaultValue: ""
             },
             "newPassword2": {
                 editable: true,
                 required: () => true,
+                serialize: (value) => `${value}`,
                 defaultValue: ""
             }
         };
 
-        tautils.createStateProperties(this, this.itemProperties);
-
-        // Need to set state directly since initialized by tautils above...
-        this.state.activeUser = ActiveUser.instance.user.getValue(); // eslint-disable-line react/no-direct-mutation-state
+        this.state = Object.assign({
+            activeUser: ActiveUser.instance.user.getValue()
+        }, tautils.createStateProperties(this, this.itemProperties));
     }
 
     componentDidMount() {
@@ -43,7 +45,7 @@ class UserUpdatePassword extends Component {
     }
 
     async _onConfirm() {
-        const data = tautils.serialize(this, this.itemProperties);
+        const data = tautils.serialize(this.state, this.itemProperties);
         await setPassword(this.state.activeUser.get("id"), data.oldPassword, data.newPassword1);
     }
 
@@ -52,7 +54,7 @@ class UserUpdatePassword extends Component {
     }
 
     _confirmAllowed() {
-        const inputsValid = tautils.isValid(this, this.itemProperties);
+        const inputsValid = tautils.isValid(this.state, this.itemProperties);
         const newPasswordsEq = this.state.newPassword1.value && this.state.newPassword1.value === this.state.newPassword2.value;
 
         return inputsValid && newPasswordsEq;
