@@ -1,7 +1,10 @@
 
+/* global window document */
+
 import React from "react";
 import LightComponent from "ui-lib/light_component";
 import { CardTitle, CardText } from "react-toolbox/lib/card";
+import { Button } from "react-toolbox/lib/button";
 import HiddenText from "ui-components/hidden_text";
 import DateTime from "ui-components/datetime";
 import Tags from "ui-components/tags";
@@ -36,7 +39,20 @@ class LogCard extends LightComponent {
         });
     }
 
+    onMoreLines() {
+        const limit = this.logLines.opts.getValue().get("limit");
+
+        this.logLines.setOpts({ limit: limit + 10 });
+    }
+
+    download() {
+        window.open(`${document.location.origin}/logrepo/log/${this.props.item._id}/download`);
+    }
+
     render() {
+        const lines = this.state.lines.toJS();
+        console.log(lines);
+
         return (
             <ExpandableCard
                 className={this.props.theme.card}
@@ -59,8 +75,16 @@ class LogCard extends LightComponent {
                     )}
                 />
                 <CardText>
+                    {(lines[0] && lines[0].offset > 0) && (
+                        <div className={this.props.theme.centeredButtons}>
+                            <Button
+                                label="Show 10 more lines"
+                                onClick={() => this.onMoreLines()}
+                            />
+                        </div>
+                    )}
                     <span className={this.props.theme.log}>
-                        {this.state.lines.toJS().join("\n")}
+                        {lines.map((i) => i.line).join("\n")}
                     </span>
                 </CardText>
                 {this.state.expanded.value && (
@@ -75,9 +99,12 @@ class LogCard extends LightComponent {
                             <tr>
                                 <td>Name</td>
                                 <td>
-                                    <span className={this.props.theme.monospace}>
+                                    <a
+                                        className={`${this.props.theme.link} ${this.props.theme.monospace}`}
+                                        onClick={() => this.download()}
+                                    >
                                         {this.props.item.name}
-                                    </span>
+                                    </a>
                                     <HiddenText
                                         className={this.props.theme.hiddenText}
                                         label="SHOW ID"
