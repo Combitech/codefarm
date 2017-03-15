@@ -101,7 +101,14 @@ class UserUpdatePolicies extends LightComponent {
             accessError = error.message;
         }
 
-        const availablePolicies = this.state.availablePolicies.toJS().map((policy) => policy._id);
+        const availablePolicies = {};
+        for (const policy of this.state.availablePolicies.toJS()) {
+            let policyItemText = `${policy._id}`;
+            if (policy.description) {
+                policyItemText = `${policyItemText} - ${policy.description}`;
+            }
+            availablePolicies[policy._id] = policyItemText;
+        }
         const user = this._getUser();
 
         return (
