@@ -3,7 +3,6 @@
 const Config = require("../types/config");
 const { Controller } = require("servicecom");
 const { ServiceMgr } = require("service");
-const { ensureArray } = require("misc");
 
 const ACTIVE_TAG = "active";
 
@@ -25,7 +24,7 @@ class Configs extends Controller {
      *   from those events.
      * @public
      * @param {Config} config Config instance tagged
-     * @param {String} tag Tag
+     * @param {String} tags Tag
      * @return {undefined}
      */
     async onTagged(config, tags) {

@@ -11,7 +11,7 @@ const DEFAULT_BACKEND = "Dummy";
 
 const USER_ALIASTYPES = {
     GITHUB: "github"
-}
+};
 
 class User extends Type {
     constructor(data) {
