@@ -1,6 +1,7 @@
 
 @import "react-toolbox/components/colors";
 @import "react-toolbox/components/globals";
+@import "~ui-styles/common";
 
 .content {
     margin-left: $baseline-grid * 40;
@@ -11,4 +12,10 @@
     &Large {
         max-width: 480px;
     }
+}
+
+.currentUserLabel {
+    @extend .tagBase;
+    float: right;
+    background-color: $color-accent;
 }

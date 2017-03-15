@@ -3,8 +3,13 @@ import React from "react";
 
 class Tags extends React.PureComponent {
     render() {
+        let tagsClassName = this.props.theme.tags;
+        if (this.props.className) {
+            tagsClassName = this.props.className;
+        }
+
         return (
-            <div className={this.props.theme.tags}>
+            <div className={tagsClassName}>
                 {this.props.list.map((tag) => (
                     <div
                         key={tag}

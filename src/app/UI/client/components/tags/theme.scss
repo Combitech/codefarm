@@ -2,24 +2,15 @@
 @import "react-toolbox/components/colors";
 @import "react-toolbox/components/globals";
 @import "~ui-styles/colors";
+@import "~ui-styles/common";
 
-$tag-padding: $unit / 2;
+$tag-padding: $tag-base-padding;
 
 .tags {
     margin: 0 (-$tag-padding) (-$tag-padding) 0;
 }
 
 .tag {
-    background-color: $cf-color-pane-background;
-    color: $color-white;
-    padding: $tag-padding $unit;
+    @extend .tagBase;
     margin: 0 $tag-padding $tag-padding 0;
-    border-radius: $tag-padding;
-    font-size: $font-size-tiny;
-    font-weight: $font-weight-semi-bold;
-    display: inline-block;
-    white-space: nowrap;
-    max-width: 100%;
-    overflow: hidden;
-    text-overflow: ellipsis;
 }

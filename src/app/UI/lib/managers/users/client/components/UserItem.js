@@ -38,28 +38,35 @@ class Item extends LightComponent {
         const isSetPoliciesGranted = isTokenValidForAccess(this.state.activeUser.get("priv").toJS(), "userrepo.user", "setpolicies", { throwOnError: false });
 
         const controls = this.props.controls.slice(0);
-        if (isSignedInUser) {
-            controls.push((
-                <TAControlButton
-                    key="setpassword"
-                    label="Update password"
-                    onClick={() => this.context.router.push({
-                        pathname: `${this.props.pathname}/updatepassword`
-                    })}
-                />
-            ));
-        }
+        controls.push((
+            <TAControlButton
+                disabled={!isSignedInUser}
+                key="setpassword"
+                label="Update password"
+                onClick={() => this.context.router.push({
+                    pathname: `${this.props.pathname}/updatepassword`
+                })}
+            />
+        ));
 
-        if (isSetPoliciesGranted) {
-            controls.push((
-                <TAControlButton
-                    key="setpolicies"
-                    label="Update policies"
-                    onClick={() => this.context.router.push({
-                        pathname: `${this.props.pathname}/updatepolicies`
-                    })}
-                />
-            ));
+        controls.push((
+            <TAControlButton
+                disabled={!isSetPoliciesGranted}
+                key="setpolicies"
+                label="Update policies"
+                onClick={() => this.context.router.push({
+                    pathname: `${this.props.pathname}/updatepolicies`
+                })}
+            />
+        ));
+
+        let currentUserLabel;
+        if (isSignedInUser) {
+            currentUserLabel = (
+                <div className={this.props.theme.currentUserLabel}>
+                    Current user
+                </div>
+            );
         }
 
         return (
@@ -69,15 +76,6 @@ class Item extends LightComponent {
                     breadcrumbs={this.props.breadcrumbs}
                 >
                     <div className={this.props.theme.container}>
-                        {isSignedInUser &&
-                            <Row>
-                                <Col className={this.props.theme.panel}>
-                                    <Tags
-                                        list={[ "Current user" ]}
-                                    />
-                                </Col>
-                            </Row>
-                        }
                         <Row>
                             <Col className={this.props.theme.panel}>
                                 <div className={this.props.theme.tags}>
@@ -92,7 +90,7 @@ class Item extends LightComponent {
                                     <tbody>
                                         <tr>
                                             <td>ID</td>
-                                            <td>{this.props.item._id}</td>
+                                            <td>{this.props.item._id}{currentUserLabel}</td>
                                         </tr>
                                         <tr>
                                             <td>Name</td>
