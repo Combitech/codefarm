@@ -33,11 +33,11 @@ gitroot=$(git rev-parse --show-toplevel)
 source $gitroot/ci/common.source
 
 if [ "${targets}" == "all" ]; then
-  targets=${componenttests[@]}
+  targets=${components[@]}
 else
   for target in ${targets[@]}; do
-    if [[ " ${componenttests[*]} " != *" ${target} "* ]]; then
-      echo "Error: Component must be one of ${componenttests[*]} or 'all'"
+    if [[ " ${components[*]} " != *" ${target} "* ]]; then
+      echo "Error: Component must be one of ${components[*]} or 'all'"
       printUsage
       exit 1
     fi
