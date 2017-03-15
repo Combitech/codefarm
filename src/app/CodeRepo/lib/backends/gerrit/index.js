@@ -201,14 +201,23 @@ class GerritBackend extends AsyncEventEmitter {
             const changeId = event.changeKey.id;
             const revision = await this.Revision.findOne({ _id: changeId });
             if (revision) {
-                const userId = event.patchSet.uploader.email;
+                const query = { email: event.patchSet.uploader.email };
+                const alias = event.patchSet.uploader.name;
+                const userRef = await revision.getUserRef(query);
+
+                if (!userRef) {
+                    ServiceMgr.instance.log("info", `Failed to resolve reviewer gerrit email '${event.patchSet.uploader.email}' to user`);
+                } else {
+                    ServiceMgr.instance.log("verbose", `Reviewer gerrit email '${event.patchSet.uploader.email}' resolved to user '${userRef.id}'`);
+                }
+
                 const state = parseInt(event.approvals[0].value, 10);
                 if (state === 0) {
-                    await revision.addReview(userId, this.Revision.ReviewState.NEUTRAL);
+                    await revision.addReview(userRef, alias, this.Revision.ReviewState.NEUTRAL);
                 } else if (state < 0) {
-                    await revision.addReview(userId, this.Revision.ReviewState.REJECTED);
+                    await revision.addReview(userRef, alias, this.Revision.ReviewState.REJECTED);
                 } else if (state > 0) {
-                    await revision.addReview(userId, this.Revision.ReviewState.APPROVED);
+                    await revision.addReview(userRef, alias, this.Revision.ReviewState.APPROVED);
                 } else {
                     ServiceMgr.instance.log("verbose", `unknown review state ${state} on ${revision._id}`);
                 }

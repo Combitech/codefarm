@@ -14,7 +14,7 @@ class ReviewCard extends LightComponent {
         super(props);
 
         this.user = new UserItem({
-            identifier: props.item.userRef ? props.item.userRef.id : props.item.userEmail
+            identifier: props.item.userRef ? props.item.userRef.id : props.item.alias
         });
 
         this.state = {
