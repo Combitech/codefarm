@@ -23,6 +23,7 @@ class Revision extends Type {
 
         this.repository = false;
         this.status = REVISION_STATUS.SUBMITTED;
+        this.statusSetAt = new Date();
         this.patches = [];
         this.reviews = [];
 
@@ -98,6 +99,7 @@ class Revision extends Type {
         }
 
         this.status = REVISION_STATUS.MERGED;
+        this.statusSetAt = new Date();
         this.tags.push(REVISION_STATUS.MERGED);
 
         if (patch) {
@@ -114,14 +116,15 @@ class Revision extends Type {
         }
 
         this.status = REVISION_STATUS.ABANDONED;
+        this.statusSetAt = new Date();
         this.tags.push(REVISION_STATUS.ABANDONED);
         await this.save();
     }
 
     async skipReview() {
         this.tags = this.tags.filter((tag) => !tag.startsWith("review:"));
-        this.tags.push(`review:skip`);
-        await this.save()
+        this.tags.push("review:skip");
+        await this.save();
     }
 
     async addReview(userEmail, state) {

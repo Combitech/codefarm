@@ -15,7 +15,7 @@ class PagedTypeList extends TypeList {
         const defaultOpts = {
             query: {},
             limit: 10,
-            sortOn: "created",
+            sortOn: "statusSetAt",
             sortOnType: "Date",
             relativeValue: null,
             isRelativeFrom: true,
