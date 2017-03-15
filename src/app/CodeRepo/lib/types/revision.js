@@ -63,7 +63,7 @@ class Revision extends Type {
 
         // If we get a new patch we should restart the flow and thus need
         // to remove all tags set by steps.
-        revision.tags = revision.tags.filter((tag) => !tag.startsWith("step:"));
+        await revision.clearTags("step:", false);
 
         await revision.save();
 
@@ -122,8 +122,14 @@ class Revision extends Type {
     }
 
     async skipReview() {
-        this.tags = this.tags.filter((tag) => !tag.startsWith("review:"));
+        await this.clearTags("review:", false);
         this.tags.push("review:skip");
+        await this.save();
+    }
+
+    async clearReviews() {
+        this.reviews.length = 0;
+        await this.clearTags("review:", false);
         await this.save();
     }
 
@@ -147,21 +153,23 @@ class Revision extends Type {
             });
         }
 
-        // Regenerate review tags
-        this.tags = this.tags.filter((tag) => !tag.startsWith("review:"));
+        // Clear and regenerate review tags
+        await this.clearTags("review:", false);
+        const reviewTags = [];
         let approvecount = 0;
         let rejectcount = 0;
 
         this.reviews.forEach((review) => {
             if (review.state === ReviewState.APPROVED) {
                 approvecount++;
-                this.tags.push(`review:approved:${approvecount}`);
+                reviewTags.push(`review:approved:${approvecount}`);
             } else if (review.state === ReviewState.REJECTED) {
                 rejectcount++;
-                this.tags.push(`review:rejected:${rejectcount}`);
+                reviewTags.push(`review:rejected:${rejectcount}`);
             }
         });
 
+        this.tag(reviewTags);
         await this.save();
     }
 

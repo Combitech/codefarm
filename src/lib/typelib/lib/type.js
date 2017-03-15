@@ -22,6 +22,7 @@ class Type {
         synchronize(this, "remove");
         synchronize(this, "tag");
         synchronize(this, "untag");
+        synchronize(this, "clearTags");
         synchronize(this, "addRef");
         synchronize(this, "comment");
         synchronize(this, "uncomment");
@@ -237,12 +238,12 @@ class Type {
         }
     }
 
-    async tag(tag) {
-        if (!tag) {
+    async tag(tags) {
+        if (!tags) {
             throw new Error("Can not tag with null");
         }
 
-        let newTags = ensureArray(tag);
+        let newTags = ensureArray(tags);
         newTags = newTags.filter((newTag) => !this.tags.includes(newTag));
 
         if (newTags.length === 0) {
@@ -252,28 +253,51 @@ class Type {
         this.tags.splice(this.tags.length, 0, ...newTags);
 
         await this.save();
-        await notification.emit(`${this.constructor.typeName}.tagged`, this, tag);
+        await notification.emit(`${this.constructor.typeName}.tagged`, this, newTags);
     }
 
-    async untag(tag) {
-        if (!tag) {
-            throw new Error("Can not tag with null");
+    async untag(tags) {
+        if (!tags) {
+            throw new Error("Can not untag null");
         }
 
-        const tagIndiciesToRemove = ensureArray(tag)
-            .map((tagToRemove) => this.tags.indexOf(tagToRemove))
-            .filter((tagIndex) => tagIndex !== -1);
+        let remTags = ensureArray(tags);
+        remTags = remTags.filter((remTag) => this.tags.includes(remTag));
+        const indicesToRemove = remTags.map((remTag) => this.tags.indexOf(remTag));
 
-        if (tagIndiciesToRemove.length === 0) {
+        if (indicesToRemove.length === 0) {
             return;
         }
 
-        for (const index of tagIndiciesToRemove) {
+        for (const index of indicesToRemove) {
             this.tags.splice(index, 1);
         }
 
         await this.save();
-        await notification.emit(`${this.constructor.typeName}.untagged`, this, tag);
+        await notification.emit(`${this.constructor.typeName}.untagged`, this, remTags);
+    }
+
+    async clearTags(tagStartsWith, save = true) {
+        if (!tagStartsWith) {
+            throw new Error("Can not clear tags with start pattern 'null'");
+        }
+
+        const matchingTags = this.tags.filter((tag) => tag.startsWith(tagStartsWith));
+        const indicesToRemove = matchingTags.map((match) => this.tags.indexOf(match));
+
+        if (indicesToRemove.length === 0) {
+            return;
+        }
+
+        for (const index of indicesToRemove) {
+            this.tags.splice(index, 1);
+        }
+
+        await notification.emit(`${this.constructor.typeName}.untagged`, this, matchingTags);
+
+        if (save) {
+            await this.save();
+        }
     }
 
     async addRef(ref) {

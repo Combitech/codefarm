@@ -28,8 +28,7 @@ class Configs extends Controller {
      * @param {String} tag Tag
      * @return {undefined}
      */
-    async onTagged(config, tag) {
-        const tags = ensureArray(tag);
+    async onTagged(config, tags) {
         if (tags.includes(ACTIVE_TAG)) {
             ServiceMgr.instance.log(
                 "verbose",

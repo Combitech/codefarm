@@ -121,22 +121,25 @@ class GithubBackend extends AsyncEventEmitter {
 
     // Lookup user based on github alias
     async _getUserByGithubLogin(githubUserName) {
-        let ref=false
+        let ref = false;
 
         if (typeof githubUserName !== "string" || githubUserName.length === 0) {
-            ServiceMgr.instance.log("error", `Expected name as non-zero length string but got '${githubUserName}'`, error);
+            ServiceMgr.instance.log("error", `Expected name as non-zero length string but got '${githubUserName}'`);
+
             return false;
         }
 
         try {
             const client = ServiceComBus.instance.getClient("userrepo");
-            const users = await client.list("user", { "aliases.github": githubUserName});
+            const users = await client.list("user", { "aliases.github": githubUserName });
 
             if (users.length === 0) {
                 ServiceMgr.instance.log("info", `Found no user with github alias '${githubUserName}'`);
+
                 return false;
             } else if (users.length > 1) {
                 ServiceMgr.instance.log("error", `Found ${users.length} users with github alias '${githubUserName}'`);
+
                 return false;
             }
 
@@ -150,7 +153,7 @@ class GithubBackend extends AsyncEventEmitter {
             ServiceMgr.instance.log("error", `Can't get user ref for user with github alias '${githubUserName}'`, error);
         }
 
-        return ref
+        return ref;
     }
 
     async _getCommit(repositoryName, commitSha) {
@@ -197,7 +200,7 @@ class GithubBackend extends AsyncEventEmitter {
         // Check if title contains SKIP_REVIEW and if so set the review:skip tag
         const commit = await this._getCommit(event.repository.name, event.pull_request.head.sha);
         if (commit.commit.message.indexOf("SKIP_REVIEW") !== -1) {
-            revision.skipReview();
+            await revision.skipReview();
         }
     }
 
@@ -211,10 +214,13 @@ class GithubBackend extends AsyncEventEmitter {
         // This will create a new patch on existing revision
         const revision = await this.Revision.allocate(repository._id, event.pull_request.id.toString(), patch);
 
-        //Check if title contains SKIP_REVIEW and if so set the review:skip tag
+        // Check if title contains SKIP_REVIEW and if so set the review:skip tag
         const commit = await this._getCommit(event.repository.name, event.pull_request.head.sha);
         if (commit.commit.message.indexOf("SKIP_REVIEW") !== -1) {
-            revision.skipReview();
+            await revision.skipReview();
+        } else {
+            // Will also clear review tags
+            await revision.clearReviews();
         }
     }
 
