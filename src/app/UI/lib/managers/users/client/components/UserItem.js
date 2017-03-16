@@ -44,6 +44,17 @@ class Item extends LightComponent {
 
         controls.push((
             <TAControlButton
+                disabled={!isSignedInUser}
+                key="addkey"
+                label="Add public key"
+                onClick={() => this.context.router.push({
+                    pathname: `${this.props.pathname}/addkey`
+                })}
+            />
+        ));
+
+        controls.push((
+            <TAControlButton
                 disabled={!isSetPoliciesGranted}
                 key="setpolicies"
                 label="Update policies"

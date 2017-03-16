@@ -8,6 +8,7 @@ import {
 import UserList from "./UserList";
 import UserItem from "./UserItem";
 import UserUpdatePassword from "./UserUpdatePassword";
+import UserAddKey from "./UserAddKey";
 import UserUpdatePolicies from "./UserUpdatePolicies";
 import TeamList from "./TeamList";
 import TeamItem from "./TeamItem";
@@ -32,6 +33,12 @@ const routes = [
                 component={TAView}
                 Action={UserUpdatePassword}
                 label="Update Password"
+            />
+            <Route
+                path="addkey"
+                component={TAView}
+                Action={UserAddKey}
+                label="Add public key"
             />
             <Route
                 path="updatepolicies"
