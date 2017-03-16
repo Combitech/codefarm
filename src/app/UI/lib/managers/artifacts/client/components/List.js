@@ -37,7 +37,7 @@ class List extends LightComponent {
     componentWillReceiveProps(nextProps) {
         this.log("componentWillReceiveProps");
         if (nextProps.item) {
-            this.typeList.setOpts({
+            this.artifactList.setOpts({
                 repositoryId: nextProps.item._id
             });
         }

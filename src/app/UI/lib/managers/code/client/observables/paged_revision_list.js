@@ -23,6 +23,7 @@ class RevisionList extends PagedTypeList {
     constructor(initialOpts, debug = false) {
         const defaultOpts = {
             type: "coderepo.revision",
+            sortOn: "statusSetAt",
             query: false,
             repositoryId: null,
             filter: "",

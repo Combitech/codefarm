@@ -64,10 +64,6 @@ class Item extends LightComponent {
         });
     }
 
-    _showMessage(msg, type = "accept") {
-        Notification.instance.publish(msg, type);
-    }
-
     async _getArtifactRepoRestUrl() {
         const response = await api.type.get("artifactrepo.state");
 
@@ -92,16 +88,20 @@ class Item extends LightComponent {
     }
 
     async onValidate(item) {
-        const data = await api.rest.action(
-            "artifactrepo.artifact",
-            item._id,
-            "validate"
-        );
+        try {
+            const data = await api.rest.action(
+                "artifactrepo.artifact",
+                item._id,
+                "validate"
+            );
 
-        const hashResults = data.validation;
-        const hashAlgs = Object.keys(hashResults);
+            const hashResults = data.validation;
+            const hashAlgs = Object.keys(hashResults);
+            console.log(`artifact ${item._id} validation result`, hashResults);
 
-        if (hashAlgs.length > 0) {
+            if (hashAlgs.length === 0) {
+                throw new Error("No hashing algorithms configured!");
+            }
             let allOk = true;
             for (const alg of hashAlgs) {
                 const hashOk = hashResults[alg];
@@ -110,14 +110,13 @@ class Item extends LightComponent {
                 }
             }
             if (allOk) {
-                this._showMessage("Artifact valid");
+                Notification.instance.publish("Artifact valid");
             } else {
-                this._showMessage("Artifact not valid!", "warning");
+                Notification.instance.publish("Artifact not valid!", "warning");
             }
-        } else {
-            this._showMessage("Couldn't validate, no algorithms configured!");
+        } catch (error) {
+            Notification.instance.publish(`Failed to validate artifact: ${error.message || error}`, "warning");
         }
-        console.log(`artifact ${item._id} validation result`, hashResults);
     }
 
     render() {
