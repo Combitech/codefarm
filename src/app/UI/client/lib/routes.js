@@ -3,7 +3,7 @@ import { Route, IndexRoute, IndexRedirect } from "react-router";
 import Layout from "ui-components/app_layout";
 import IndexPage from "ui-components/IndexPage";
 import NotFoundPage from "ui-components/NotFoundPage";
-import { AppNotificationsPage } from "ui-components/app_notification"
+import { AppNotificationsPage } from "ui-components/app_notification";
 import CodePage from "ui-mgr/code/client/components";
 import ArtifactsPage from "ui-mgr/artifacts/client/components";
 import UsersPage from "ui-mgr/users/client/components";

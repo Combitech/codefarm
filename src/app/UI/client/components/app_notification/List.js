@@ -1,14 +1,11 @@
 
 import React from "react";
 import moment from "moment";
-import Immutable from "immutable";
 import LightComponent from "ui-lib/light_component";
 import {
-    Section as TASection,
-    List as TAList,
-    ListComponent as TAListComponent
+    Section as TASection
 } from "ui-components/type_admin";
-import { List, ListDivider, ListItem } from "react-toolbox/lib/list";
+import { List, ListItem } from "react-toolbox/lib/list";
 import Notification from "ui-observables/notification";
 
 const msgTypeIcon = {
