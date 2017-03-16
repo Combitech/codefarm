@@ -3,7 +3,7 @@ import React from "react";
 import AppBar from "react-toolbox/lib/app_bar";
 import { Button, IconButton } from "react-toolbox/lib/button";
 import Switch from "react-toolbox/lib/switch";
-import { Menu, MenuItem } from "react-toolbox/lib/menu";
+import { Menu, MenuItem, MenuDivider } from "react-toolbox/lib/menu";
 import LightComponent from "ui-lib/light_component";
 import { CodeFarmIcon } from "ui-components/app_icons";
 import ActiveUser from "ui-observables/active_user";
@@ -80,19 +80,24 @@ class AppTopBar extends LightComponent {
                             caption="Management"
                         />
                         <MenuItem
-                            value="/feedback"
-                            caption="Send feedback"
+                            value="/notifications"
+                            caption="Notifications"
                         />
                         {activeUser.id &&
                             <MenuItem
                                 value={`/collaborators/users/${activeUser.id}`}
-                                caption="Profile"
+                                caption="User profile"
                             />
                         }
+                        <MenuItem
+                            value="/feedback"
+                            caption="Send feedback"
+                        />
                         <MenuItem
                             value="/help"
                             caption="Help"
                         />
+                        <MenuDivider />
                         <MenuItem
                             value="/signout"
                             caption="Sign out"

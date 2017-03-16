@@ -10,8 +10,8 @@ class Notification {
     constructor() {
         this.debug = false;
         this.id = instanceCounter++;
-        this._initialMsg = {};
-        this._msg = new Rx.BehaviorSubject(Immutable.fromJS(this._initialMsg));
+        this._latestMsg = new Rx.BehaviorSubject(Immutable.fromJS({}));
+        this._messages = new Rx.BehaviorSubject(Immutable.fromJS([]));
     }
 
     log(...args) {
@@ -25,14 +25,20 @@ class Notification {
     }
 
     get msg() {
-        return this._msg;
+        return this._latestMsg;
+    }
+
+    get messages() {
+        return this._messages;
     }
 
     publish(msg, type = "accept", timeout = DEFAULT_MSG_TIMEOUT) {
         const nextMsg = { msg, type, timeout, timestamp: Date.now() };
-        if (JSON.stringify(this._msg.getValue().toJS()) !== JSON.stringify(nextMsg)) {
+        if (JSON.stringify(this._latestMsg.getValue().toJS()) !== JSON.stringify(nextMsg)) {
             console.log(`Notification published - ${nextMsg.type} - ${nextMsg.msg}`);
-            this._msg.next(Immutable.fromJS(nextMsg));
+            const nextMsgImmutable = Immutable.fromJS(nextMsg);
+            this._latestMsg.next(nextMsgImmutable);
+            this._messages.next(this._messages.getValue().push(nextMsgImmutable));
         }
     }
 }

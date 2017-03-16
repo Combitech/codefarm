@@ -2,26 +2,7 @@
 @import "react-toolbox/components/colors";
 @import "react-toolbox/components/globals";
 
-.topBar {
-    background-color: $color-white;
-    color: $color-black;
-
-    .iconMenu {
-        margin-left: auto;
-    }
-
-    .signInButton {
-        margin-left: auto;
-    }
-
-    .userMenu {
-        margin-right: $unit / 2;
-    }
-
-    .userAvatar {
-        margin-top: -3px;
-        width: $unit * 3;
-        height: $unit * 3;
-        //margin-right: $unit / 2;
-    }
+.content {
+    margin-left: $baseline-grid * 40;
+    margin-top: $standard-increment-desktop;
 }
