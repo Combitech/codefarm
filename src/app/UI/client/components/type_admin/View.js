@@ -99,33 +99,48 @@ class View extends LightComponent {
         if (props.item) {
             if (childRoutes) {
                 if (childRoutes.find((route) => route.path === "create")) {
+                    const hasCreateAccess = isTokenValidForAccess(
+                        userPriv, props.item.type, "create", { throwOnError: false }
+                    );
+
                     props.controls.push((
                         <ControlButton
                             theme={this.props.theme}
                             key="create"
                             label="Create"
+                            disabled={!hasCreateAccess}
                             pathname={`${props.pathname}/create`}
                         />
                     ));
                 }
 
                 if (childRoutes.find((route) => route.path === "edit")) {
+                    const hasUpdateAccess = isTokenValidForAccess(
+                        userPriv, props.item.type, "update", { throwOnError: false }
+                    );
+
                     props.controls.push((
                         <ControlButton
                             theme={this.props.theme}
                             key="edit"
                             label="Edit"
+                            disabled={!hasUpdateAccess}
                             pathname={`${props.pathname}/edit`}
                         />
                     ));
                 }
 
                 if (childRoutes.find((route) => route.path === "remove")) {
+                    const hasRemoveAccess = isTokenValidForAccess(
+                        userPriv, props.item.type, "remove", { throwOnError: false }
+                    );
+
                     props.controls.push((
                         <ControlButton
                             theme={this.props.theme}
                             key="remove"
                             label="Remove"
+                            disabled={!hasRemoveAccess}
                             pathname={`${props.pathname}/remove`}
                         />
                     ));
@@ -135,7 +150,6 @@ class View extends LightComponent {
                     const hasTagAccess = isTokenValidForAccess(
                         userPriv, props.item.type, "tag", { throwOnError: false }
                     );
-                    console.log("tag priv", userPriv, props.item.type, hasTagAccess);
 
                     props.controls.push((
                         <ControlButton
@@ -161,11 +175,16 @@ class View extends LightComponent {
         }
 
         if (childRoutes && childRoutes.find((route) => route.path === "create")) {
+            const hasCreateAccess = isTokenValidForAccess(
+                userPriv, this.props.route.type, "create", { throwOnError: false }
+            );
+
             props.controls.push((
                 <ControlButton
                     theme={this.props.theme}
                     key="create"
                     label="Create"
+                    disabled={!hasCreateAccess}
                     pathname={`${props.pathname}/create`}
                 />
             ));
