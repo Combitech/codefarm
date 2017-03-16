@@ -6,6 +6,8 @@ import stateVar from "ui-lib/state_var";
 import LightComponent from "ui-lib/light_component";
 import LoadIndicator from "./LoadIndicator";
 import ControlButton from "./ControlButton";
+import ActiveUser from "ui-observables/active_user";
+import { isTokenValidForAccess } from "auth/lib/util";
 
 class View extends LightComponent {
     constructor(props) {
@@ -20,6 +22,7 @@ class View extends LightComponent {
         });
 
         this.state = {
+            activeUser: ActiveUser.instance.user.getValue(),
             context: stateVar(this, "context", {}),
             item: this.item.value.getValue(),
             state: this.item.state.getValue()
@@ -27,6 +30,7 @@ class View extends LightComponent {
     }
 
     componentDidMount() {
+        this.addDisposable(ActiveUser.instance.user.subscribe((activeUser) => this.setState({ activeUser })));
         this.addDisposable(this.item.start());
         this.addDisposable(this.item.value.subscribe((item) => this.setState({ item })));
         this.addDisposable(this.item.state.subscribe((state) => this.setState({ state })));
@@ -51,6 +55,8 @@ class View extends LightComponent {
             );
         }
 
+        const userPriv = this.state.activeUser.has("priv") && this.state.activeUser.get("priv").toJS();
+
         const parentItems = this.props.parentItems.slice(0);
 
         if (this.props.item) {
@@ -60,7 +66,8 @@ class View extends LightComponent {
         const props = {
             theme: this.props.theme,
             parentItems: parentItems,
-            item: this.state.item.toJS()._id ? this.state.item.toJS() : null,
+            activeUser: this.state.activeUser,
+            item: this.state.item.has("_id") ? this.state.item.toJS() : null,
             breadcrumbs: this.props.breadcrumbs,
             controls: [],
             pathname: this.getPathname(),
@@ -120,6 +127,23 @@ class View extends LightComponent {
                             key="remove"
                             label="Remove"
                             pathname={`${props.pathname}/remove`}
+                        />
+                    ));
+                }
+
+                if (childRoutes.find((route) => route.path === "tags")) {
+                    const hasTagAccess = isTokenValidForAccess(
+                        userPriv, props.item.type, "tag", { throwOnError: false }
+                    );
+                    console.log("tag priv", userPriv, props.item.type, hasTagAccess);
+
+                    props.controls.push((
+                        <ControlButton
+                            theme={this.props.theme}
+                            key="tags"
+                            label="Edit tags"
+                            disabled={!hasTagAccess}
+                            pathname={`${props.pathname}/tags`}
                         />
                     ));
                 }

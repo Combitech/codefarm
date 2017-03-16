@@ -1,5 +1,6 @@
 
 import React from "react";
+import ImmutablePropTypes from "react-immutable-proptypes";
 import { Row, Col } from "react-flexbox-grid";
 import LightComponent from "ui-lib/light_component";
 import {
@@ -15,27 +16,19 @@ import PolicyListItem from "./PolicyListItem";
 import * as pathBuilder from "ui-lib/path_builder";
 import * as queryBuilder from "ui-lib/query_builder";
 import theme from "./theme.scss";
-import ActiveUser from "ui-observables/active_user";
 import { isTokenValidForAccess } from "auth/lib/util";
 
 class Item extends LightComponent {
-    constructor(props) {
-        super(props);
-
-        this.state = {
-            activeUser: ActiveUser.instance.user.getValue()
-        };
-    }
-
-    componentDidMount() {
-        this.addDisposable(ActiveUser.instance.user.subscribe((activeUser) => this.setState({ activeUser })));
-    }
-
     render() {
         this.log("render", this.props);
 
-        const isSignedInUser = this.state.activeUser.get("id") === this.props.item._id;
-        const isSetPoliciesGranted = isTokenValidForAccess(this.state.activeUser.get("priv").toJS(), "userrepo.user", "setpolicies", { throwOnError: false });
+        const isSignedInUser = this.props.activeUser.get("id") === this.props.item._id;
+        const isSetPoliciesGranted = isTokenValidForAccess(
+            this.props.activeUser.has("priv") && this.props.activeUser.get("priv").toJS(),
+            "userrepo.user",
+            "setpolicies",
+            { throwOnError: false }
+        );
 
         const controls = this.props.controls.slice(0);
         controls.push((
@@ -78,9 +71,9 @@ class Item extends LightComponent {
                     <div className={this.props.theme.container}>
                         <Row>
                             <Col className={this.props.theme.panel}>
-                                <div className={this.props.theme.tags}>
+                                <Row className={this.props.theme.row}>
                                     <Tags list={this.props.item.tags} />
-                                </div>
+                                </Row>
                             </Col>
                         </Row>
                         <Row>
@@ -176,7 +169,8 @@ Item.propTypes = {
     item: React.PropTypes.object.isRequired,
     pathname: React.PropTypes.string.isRequired,
     breadcrumbs: React.PropTypes.array.isRequired,
-    controls: React.PropTypes.array.isRequired
+    controls: React.PropTypes.array.isRequired,
+    activeUser: ImmutablePropTypes.map.isRequired
 };
 
 Item.contextTypes = {

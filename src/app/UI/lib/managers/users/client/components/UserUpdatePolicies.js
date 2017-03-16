@@ -1,5 +1,6 @@
 
 import React from "react";
+import ImmutablePropTypes from "react-immutable-proptypes";
 import LightComponent from "ui-lib/light_component";
 import Autocomplete from "react-toolbox/lib/autocomplete";
 import {
@@ -7,7 +8,6 @@ import {
     Section as TASection,
     utils as tautils
 } from "ui-components/type_admin";
-import ActiveUser from "ui-observables/active_user";
 import api from "api.io/api.io-client";
 import { isTokenValidForAccess } from "auth/lib/util";
 import TypeList from "ui-observables/type_list";
@@ -33,14 +33,12 @@ class UserUpdatePolicies extends LightComponent {
         };
 
         this.state = Object.assign({
-            activeUser: ActiveUser.instance.user.getValue(),
             availablePolicies: this.availablePolicyList.value.getValue()
         }, tautils.createStateProperties(this, this.itemProperties));
     }
 
     componentDidMount() {
         this.log("componentDidMount", this.props, this.state);
-        this.addDisposable(ActiveUser.instance.user.subscribe((activeUser) => this.setState({ activeUser })));
         this.addDisposable(this.availablePolicyList.start());
         this.addDisposable(this.availablePolicyList.value.subscribe((availablePolicies) => this.setState({ availablePolicies })));
     }
@@ -92,11 +90,11 @@ class UserUpdatePolicies extends LightComponent {
     render() {
         this.log("render", this.props, this.state);
 
-        const signedInUser = this.state.activeUser.toJS();
+        const signedInUserPriv = this.props.activeUser.has("priv") && this.props.activeUser.get("priv").toJS();
         // Check that we have access to update policies
         let accessError;
         try {
-            isTokenValidForAccess(signedInUser.priv, "userrepo.user", "setpolicies");
+            isTokenValidForAccess(signedInUserPriv, "userrepo.user", "setpolicies");
         } catch (error) {
             accessError = error.message;
         }
@@ -148,8 +146,7 @@ UserUpdatePolicies.propTypes = {
     pathname: React.PropTypes.string.isRequired,
     breadcrumbs: React.PropTypes.array.isRequired,
     controls: React.PropTypes.array.isRequired,
-    onSave: React.PropTypes.func,
-    onCancel: React.PropTypes.func
+    activeUser: ImmutablePropTypes.map.isRequired
 };
 
 UserUpdatePolicies.contextTypes = {

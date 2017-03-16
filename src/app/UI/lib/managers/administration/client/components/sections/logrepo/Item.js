@@ -20,9 +20,9 @@ class Item extends LightComponent {
                 <div className={this.props.theme.container}>
                     <Row>
                         <Col xs={12} md={5} className={this.props.theme.panel}>
-                            <div className={this.props.theme.tags}>
+                            <Row className={this.props.theme.row}>
                                 <Tags list={this.props.item.tags} />
-                            </div>
+                            </Row>
                             <h6 className={this.props.theme.title}>Properties</h6>
                             <table className={this.props.theme.properties}>
                                 <tbody>

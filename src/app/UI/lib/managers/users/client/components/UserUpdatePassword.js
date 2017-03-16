@@ -1,5 +1,6 @@
 
 import React from "react";
+import ImmutablePropTypes from "react-immutable-proptypes";
 import LightComponent from "ui-lib/light_component";
 import Input from "react-toolbox/lib/input";
 import {
@@ -7,7 +8,6 @@ import {
     Section as TASection,
     utils as tautils
 } from "ui-components/type_admin";
-import ActiveUser from "ui-observables/active_user";
 import { setPassword } from "ui-lib/auth";
 
 class UserUpdatePassword extends LightComponent {
@@ -35,18 +35,12 @@ class UserUpdatePassword extends LightComponent {
             }
         };
 
-        this.state = Object.assign({
-            activeUser: ActiveUser.instance.user.getValue()
-        }, tautils.createStateProperties(this, this.itemProperties));
-    }
-
-    componentDidMount() {
-        this.addDisposable(ActiveUser.instance.user.subscribe((activeUser) => this.setState({ activeUser })));
+        this.state = tautils.createStateProperties(this, this.itemProperties);
     }
 
     async _onConfirm() {
         const data = tautils.serialize(this.state, this.itemProperties);
-        await setPassword(this.state.activeUser.get("id"), data.oldPassword, data.newPassword1);
+        await setPassword(this.props.activeUser.get("id"), data.oldPassword, data.newPassword1);
     }
 
     async _onCancel() {
@@ -63,7 +57,7 @@ class UserUpdatePassword extends LightComponent {
     render() {
         this.log("render", this.props, this.state);
 
-        const user = this.state.activeUser.toJS();
+        const user = this.props.activeUser.toJS();
         // Check that we have navigated to correct parent
         const isCorrectParent = this.props.parentItems.some((item) => item._id === user.id);
 
@@ -125,8 +119,7 @@ UserUpdatePassword.propTypes = {
     pathname: React.PropTypes.string.isRequired,
     breadcrumbs: React.PropTypes.array.isRequired,
     controls: React.PropTypes.array.isRequired,
-    onSave: React.PropTypes.func,
-    onCancel: React.PropTypes.func
+    activeUser: ImmutablePropTypes.map.isRequired
 };
 
 UserUpdatePassword.contextTypes = {

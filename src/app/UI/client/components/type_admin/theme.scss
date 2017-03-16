@@ -2,6 +2,7 @@
 @import "react-toolbox/components/colors";
 @import "react-toolbox/components/globals";
 @import "react-toolbox/components/mixins";
+@import "~ui-styles/colors";
 
 .pager {
     margin-left: auto;
@@ -34,21 +35,26 @@
             }
         }
 
-        .tags, .actions {
+        .row, .actions {
             margin-bottom: $layout-gutter-width-sm;
         }
 
         .properties {
             width: 100%;
             font-size: $font-size-small;
+            border-spacing: 0;
             margin-bottom: $layout-gutter-width-sm;
 
             tbody tr:nth-child(odd) {
-                background-color: $palette-grey-100;
+                background-color: $palette-indigo-50;
+            }
+
+            tr {
+                border-spacing: 0;
             }
 
             td {
-                padding: $unit;
+                padding: $unit $unit * 1.6;
                 // Make <Link> left aligned within property table
                 a {
                     display: inline;
@@ -57,10 +63,12 @@
 
             td:first-child {
                 font-weight: $font-weight-semi-bold;
+                white-space: nowrap;
             }
 
             td:last-child {
                 color: $color-text-secondary;
+                width: 100%;
             }
 
             td.monospace {
@@ -139,6 +147,20 @@
         .monospaceInput {
             .inputElement {
                 font-family: "Roboto Mono";
+            }
+        }
+    }
+
+    .editTags {
+        .delTags {
+            .tag {
+                background-color: $cf-color-remove;
+            }
+        }
+
+        .addTags {
+            .tag {
+                background-color: $cf-color-add;
             }
         }
     }

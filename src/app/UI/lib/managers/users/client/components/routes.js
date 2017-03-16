@@ -2,7 +2,8 @@
 import React from "react";
 import { Route } from "react-router";
 import {
-    View as TAView
+    View as TAView,
+    EditTags as TAEditTags
 } from "ui-components/type_admin";
 import UserList from "./UserList";
 import UserItem from "./UserItem";
@@ -38,6 +39,12 @@ const routes = [
                 Action={UserUpdatePolicies}
                 label="Update Policies"
             />
+            <Route
+                path="tags"
+                component={TAView}
+                Action={TAEditTags}
+                type="userrepo.user"
+            />
         </Route>
     </Route>,
     <Route
@@ -53,7 +60,14 @@ const routes = [
             component={TAView}
             Item={TeamItem}
             type="userrepo.team"
-        />
+        >
+            <Route
+                path="tags"
+                component={TAView}
+                Action={TAEditTags}
+                type="userrepo.team"
+            />
+        </Route>
     </Route>
 ];
 

@@ -4,7 +4,8 @@ import { Route } from "react-router";
 import {
     View as TAView,
     Edit as TAEdit,
-    Remove as TARemove
+    Remove as TARemove,
+    EditTags as TAEditTags
 } from "ui-components/type_admin";
 import List from "./List";
 import Item from "./Item";
@@ -40,6 +41,12 @@ const routes = (
                 path="remove"
                 component={TARemove}
                 Remove={Remove}
+            />
+            <Route
+                path="tags"
+                component={TAView}
+                Action={TAEditTags}
+                type="exec.slave"
             />
         </Route>
     </Route>

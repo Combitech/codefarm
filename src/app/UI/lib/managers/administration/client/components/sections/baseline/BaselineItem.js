@@ -101,9 +101,7 @@ class BaselineItem extends LightComponent {
                             ) : (
                                 <Row>
                                     <Col xs={12} md={5} className={this.props.theme.panel}>
-                                        <div className={this.props.theme.tags}>
-                                            <Tags list={this.props.item.tags} />
-                                        </div>
+                                        <Tags list={this.props.item.tags} />
                                         <pre>
                                             {JSON.stringify(this.props.item, null, 2)}
                                             {JSON.stringify(itemExt, null, 2)}
