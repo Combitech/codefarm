@@ -42,9 +42,6 @@ class Item extends LightComponent {
                 <div className={this.props.theme.container}>
                     <Row>
                         <Col xs={12} md={5} className={this.props.theme.panel}>
-                            <Row className={this.props.theme.row}>
-                                <Tags list={this.props.item.tags} />
-                            </Row>
                             {this.props.item.collectors.map((collector) => (
                                 <div key={collector.name}>
                                     <h6 className={this.props.theme.title}>
@@ -67,6 +64,12 @@ class Item extends LightComponent {
                                             <tr>
                                                 <td>Latest</td>
                                                 <td>{collector.latest ? "Yes" : "No"}</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Tags</td>
+                                                <td>
+                                                    <Tags list={this.props.item.tags} />
+                                                </td>
                                             </tr>
                                         </tbody>
                                     </table>

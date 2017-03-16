@@ -14,6 +14,9 @@ import { isTokenValidForAccess } from "auth/lib/util";
 import Notification from "ui-observables/notification";
 import TypeItem from "ui-observables/type_item";
 import { States as ObservableDataStates } from "ui-lib/observable_data";
+import arrayToSentence from "array-to-sentence";
+
+const VALID_TAG_REGEX = /^[\w:\.]+$/;
 
 class EditTags extends LightComponent {
     constructor(props) {
@@ -139,8 +142,10 @@ class EditTags extends LightComponent {
 
     _confirmAllowed() {
         const hasUpdates = this.state.addTags.length > 0 || this.state.delTags.length > 0;
+        const allTagsValid = this.state.addTags.every((tag) => this._isTagValid(tag)) &&
+            this.state.delTags.every((tag) => this._isTagValid(tag));
 
-        return !!this.state.item && hasUpdates;
+        return !!this.state.item && hasUpdates && allTagsValid;
     }
 
     _getParentItem(props = null) {
@@ -196,6 +201,10 @@ class EditTags extends LightComponent {
         this.setState(newState);
     }
 
+    _isTagValid(tag) {
+        return VALID_TAG_REGEX.test(tag);
+    }
+
     render() {
         this.log("render", this.props, this.state);
 
@@ -216,6 +225,14 @@ class EditTags extends LightComponent {
             isTokenValidForAccess(signedInUserPriv, type, "tag");
         } catch (error) {
             accessError = error.message;
+        }
+
+        const invalidTags = this.state.tags.filter((tag) => !this._isTagValid(tag));
+        let tagsErrorMessage = "";
+        if (invalidTags.length === 1) {
+            tagsErrorMessage = `Tag ${arrayToSentence(invalidTags)} has invalid format`;
+        } else if (invalidTags.length > 1) {
+            tagsErrorMessage = `Tags ${arrayToSentence(invalidTags, { separator: "; " })} has invalid format`;
         }
 
         return (
@@ -242,6 +259,7 @@ class EditTags extends LightComponent {
                                 onChange={(tags) => this._changeTags(tags)}
                                 source={this.state.tags.concat(this.state.delTags)}
                                 value={this.state.tags}
+                                error={tagsErrorMessage}
                             />
 
                             <div className={`${this.props.theme.panel} ${this.props.theme.editTags}`}>

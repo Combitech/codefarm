@@ -55,6 +55,12 @@ class Item extends LightComponent {
                                             />
                                         </td>
                                     </tr>
+                                    <tr>
+                                        <td>Tags</td>
+                                        <td>
+                                            <Tags list={this.props.item.tags} />
+                                        </td>
+                                    </tr>
                                 </tbody>
                             </table>
                         </Col>

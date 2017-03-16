@@ -59,7 +59,7 @@ class Item extends LightComponent {
                 <div className={this.props.theme.container}>
                     <Row>
                         <Col xs={12} md={12} className={this.props.theme.panel}>
-                            <Row className={this.props.theme.row}>
+                            <Row>
                                 <Tags list={this.props.item.tags} />
                             </Row>
                             <p>

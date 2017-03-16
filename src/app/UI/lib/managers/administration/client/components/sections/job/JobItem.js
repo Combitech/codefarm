@@ -212,13 +212,6 @@ class Item extends LightComponent {
             >
                 <div className={this.props.theme.container}>
                     <Row>
-                        <Col className={this.props.theme.panel}>
-                            <Row className={this.props.theme.row}>
-                                <Tags list={this.props.item.tags} />
-                            </Row>
-                        </Col>
-                    </Row>
-                    <Row>
                         <Col xs={12} md={5} className={this.props.theme.panel}>
                             <h6 className={this.props.theme.title}>Properties</h6>
                             <table className={this.props.theme.properties}>
@@ -267,6 +260,12 @@ class Item extends LightComponent {
                                     <tr>
                                         <td>Saved</td>
                                         <td>{item.saved}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Tags</td>
+                                        <td>
+                                            <Tags list={this.props.item.tags} />
+                                        </td>
                                     </tr>
                                 </tbody>
                             </table>
