@@ -17,13 +17,6 @@ ENV appRoot ${farmerHome}/codefarm
 
 RUN groupadd --system $user && useradd --system --create-home --gid $user $user
 
-# Install yarn (lock version to 0.19.1 due to bug in later versions. Confirmed in 0.20.3)
-RUN apt-get clean && apt-get update && apt-get install -y --no-install-recommends apt-transport-https && \
-  curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - && \
-  echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list && \
-  apt-get update && apt-get install -y --no-install-recommends yarn=0.19.1-1 && \
-  rm -rf /var/lib/apt/lists/*
-
 USER ${user}
 
 ENV DISABLE_LINK_LIBS "npm installation disabled"
