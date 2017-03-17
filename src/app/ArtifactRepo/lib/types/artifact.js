@@ -58,6 +58,10 @@ class Artifact extends Type {
          * B) No version requested
          *   => Set version to next version related to preceeding version
          *   => Add _id of the preceeding version to parentIds
+         *
+         * Note! There exists problems concerning mutual exclusion with
+         * this solution that have been addressed by synchronizing
+         * Artifacts#_create. See explanation in Artifacts#constructor.
          */
         if (this.state === STATE.NO_VERSION) {
             const repository = await Repository.findOne({ _id: this.repository });

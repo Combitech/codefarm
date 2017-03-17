@@ -12,6 +12,7 @@ const { mochaPatch } = require("testsupport");
 const getPort = require("get-port");
 const { ServiceMgr } = require("service");
 const Main = require("../lib/main");
+const version = require("version");
 
 mochaPatch();
 
@@ -532,6 +533,35 @@ describe("ArtifactRepo", () => {
                     "Requested version 8.0.0 smaller than latest 9.0.1"
                 );
             }
+        });
+
+        it("shall calculate version correctly for simultaneous add of artifacts", async () => {
+            const createJobs = [];
+            for (let i = 0; i < 20; i++) {
+                const createJob = rp({
+                    method: "POST",
+                    url: `${baseUrl}/artifact`,
+                    json: true,
+                    body: {
+                        name: "artSim1",
+                        repository: repo1Id
+                    }
+                });
+                createJobs.push(createJob);
+            }
+            const results = await Promise.all(createJobs);
+            const versions = [];
+            for (const res of results) {
+                assert.strictEqual(res.result, "success");
+                versions.push(res.data.version);
+            }
+
+
+            // Sort and remove duplicates from versions
+            const versionGen = version.create("default");
+            versions.sort((a, b) => versionGen.compare(a, b));
+            const expectedVersions = versions.map((ver, index) => `0.0.${index + 1}`);
+            assert.deepEqual(versions, expectedVersions);
         });
     });
 

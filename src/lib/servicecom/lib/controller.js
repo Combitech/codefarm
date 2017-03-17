@@ -22,6 +22,14 @@ class Controller {
         this.routes = [];
         this.methods = {};
 
+        this._setupDefaultOperations();
+    }
+
+    /** Child class may override _setupDefaultOperations to customize
+     * behaviour.
+     * @return {undefined}
+     */
+    _setupDefaultOperations() {
         this._addList(this._list);
         this._addCreate(this._create);
         this._addGet(this._get);
