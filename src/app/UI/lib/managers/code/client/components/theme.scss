@@ -144,6 +144,10 @@
     font-family: "Roboto Mono";
 }
 
+.revisionContainer {
+    margin-bottom: $layout-gutter-width * 2;
+}
+
 .revisionList {
     width: 100%;
     font-size: 1.3rem;
@@ -172,12 +176,24 @@
                 cursor: pointer;
                 color: $color-text-secondary;
 
-                &:nth-child(odd) {
-                    background-color: $palette-grey-50;
-                }
-
                 &:hover {
                     opacity: 0.8;
+                }
+
+                &:nth-child(odd) {
+                    background-color: $palette-indigo-50;
+                }
+
+                &.submitted {
+                    &:nth-child(odd) {
+                        background-color: $palette-amber-50;
+                    }
+                }
+
+                &.abandoned {
+                    &:nth-child(odd) {
+                        background-color: $palette-red-50;
+                    }
                 }
             }
         }

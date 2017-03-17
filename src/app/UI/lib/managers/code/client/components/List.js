@@ -1,271 +1,22 @@
 
 import React from "react";
-import ImmutablePropTypes from "react-immutable-proptypes";
 import LightComponent from "ui-lib/light_component";
 import Input from "react-toolbox/lib/input";
+import Dropdown from "react-toolbox/lib/dropdown";
 import {
-    Section as TASection,
-    LoadIndicator as TALoadIndicator,
-    ListPager as TAListPager
+    Section as TASection
 } from "ui-components/type_admin";
-import UserAvatar from "ui-components/user_avatar";
-import { Tab, Tabs } from "react-toolbox/lib/tabs";
-import { StatusIcon } from "ui-components/status";
 import theme from "./theme.scss";
-import RevisionListObservable from "../observables/paged_revision_list";
-import StepListObservable from "ui-observables/step_list";
-import DateTime from "ui-components/datetime";
-import { States as ObservableDataStates } from "ui-lib/observable_data";
 import LocationQuery from "ui-observables/location_query";
+import List from "./list/List";
+import stateVar from "ui-lib/state_var";
 
-class Header extends React.PureComponent {
-    render() {
-        return (
-            <tbody className={this.props.theme.header}>
-                <tr>
-                    <td className={this.props.theme.headerRev}>Rev</td>
-                    <td className={this.props.theme.headerTime}>Time</td>
-                    <td className={this.props.theme.headerAuthor}>Author</td>
-                    <td className={this.props.theme.headerComment}>Comment</td>
-                    {this.props.steps && this.props.steps.toJS().map((step) => {
-                        const ucname = step.name.replace(/[a-z]/g, "");
-
-                        return (
-                            <td
-                                key={step.name}
-                                className={this.props.theme.runColumn}
-                                title={step.name}
-                            >
-                                {ucname}
-                            </td>
-                        );
-                    })}
-                </tr>
-            </tbody>
-        );
-    }
-}
-
-Header.propTypes = {
-    steps: ImmutablePropTypes.list,
-    theme: React.PropTypes.object
-};
-
-class RevisionListComponent extends React.PureComponent {
-    render() {
-        return (
-            <table className={this.props.theme.revisionList}>
-                <Header
-                    theme={this.props.theme}
-                    steps={this.props.steps}
-                />
-                <tbody className={this.props.theme.list}>
-                    {this.props.children}
-                </tbody>
-            </table>
-        );
-    }
-}
-
-RevisionListComponent.propTypes = {
-    theme: React.PropTypes.object,
-    children: React.PropTypes.node,
-    steps: ImmutablePropTypes.list
-};
-
-class RevisionListItemComponent extends React.PureComponent {
-    render() {
-        const revision = this.props.item.toJS();
-        const latestPatch = revision.patches[revision.patches.length - 1];
-
-        return (
-            <tr
-                key={revision._id}
-                onClick={() => this.props.onClick(revision)}
-            >
-                <td className={this.props.theme.monospace}>
-                    {latestPatch.change.newrev.substr(0, 7)}
-                </td>
-                <td>
-                    <DateTime value={latestPatch.submitted} />
-                </td>
-                <td>
-                    <UserAvatar
-                        className={this.props.theme.avatar}
-                        userId={latestPatch.userRef ? latestPatch.userRef.id : false}
-                    />
-                    {latestPatch.name}
-                </td>
-                <td>{latestPatch.comment.split("\n", 1)[0]}</td>
-                {this.props.steps.toJS().map((step) => {
-                    // TODO: Clean this up!
-                    let status = "unknown";
-
-                    if (revision.tags.includes(`step:${step.name}:success`)) {
-                        status = "success";
-                    } else if (revision.tags.includes(`step:${step.name}:fail`)) {
-                        status = "fail";
-                    } else if (revision.tags.includes(`step:${step.name}:skip`)) {
-                        status = "skip";
-                    } else if (revision.tags.includes(`step:${step.name}:aborted`)) {
-                        status = "aborted";
-                    } else if (revision.refs.find((ref) => ref.name === step.name)) {
-                        status = "ongoing";
-                    }
-
-                    return (
-                        <td
-                            className={this.props.theme.runColumn}
-                            key={step.name}
-                            onClick={(event) => {
-                                event.stopPropagation();
-                                this.props.onClick(revision, step.name);
-                            }}
-                        >
-                            <StatusIcon
-                                className={this.props.theme.statusIcon}
-                                status={status}
-                                size={24}
-                            />
-                        </td>
-                    );
-                })}
-            </tr>
-        );
-    }
-}
-
-RevisionListItemComponent.propTypes = {
-    theme: React.PropTypes.object,
-    item: ImmutablePropTypes.map.isRequired,
-    steps: ImmutablePropTypes.list,
-    onClick: React.PropTypes.func
-};
-
-class RevisionList extends LightComponent {
-    constructor(props) {
-        super(props);
-
-        this.stepList = new StepListObservable({
-            flowId: "Flow1", // TODO
-            visible: true,
-            sortOn: "created",
-            sortDesc: false,
-            subscribe: false
-        });
-
-        this.revList = new RevisionListObservable({
-            repositoryId: this.props.repositoryId,
-            status: this.props.revisionStatus,
-            filter: props.filter,
-            limit: 10
-        });
-
-        this.state = {
-            revList: this.revList.value.getValue(),
-            revListState: this.revList.state.getValue(),
-            stepList: this.stepList.value.getValue(),
-            stepListState: this.stepList.state.getValue()
-        };
-    }
-
-    componentDidMount() {
-        this.log("componentDidMount");
-        this.addDisposable(this.stepList.start());
-        this.addDisposable(this.stepList.value.subscribe((stepList) => this.setState({ stepList })));
-        this.addDisposable(this.stepList.state.subscribe((stepListState) => this.setState({ stepListState })));
-
-        this.addDisposable(this.revList.start());
-        this.addDisposable(this.revList.value.subscribe((revList) => this.setState({ revList })));
-        this.addDisposable(this.revList.state.subscribe((revListState) => this.setState({ revListState })));
-    }
-
-    componentDidUpdate() {
-        this.log("componentDidUpdate");
-        /* If relative paging is used and current page has no next or previous
-         * page, then automatically navigate to last or first page.
-         */
-        const pagingInfo = this.revList.pagingInfo.getValue().toJS();
-        if (pagingInfo.isRelative) {
-            if (!pagingInfo.hasNextPage) {
-                this.log("setLastPage");
-                this.revList.setLastPage();
-            } else if (!pagingInfo.hasPrevPage) {
-                this.log("setFirstPage");
-                this.revList.setFirstPage();
-            }
-        }
-    }
-
-    componentWillReceiveProps(nextProps) {
-        this.log("componentWillReceiveProps");
-        if (nextProps.filter) {
-            this.revList.setOpts({ filter: nextProps.filter });
-        }
-    }
-
-    render() {
-        this.log("render", this.props, this.state);
-
-        let loadIndicator;
-        if (this.state.state === ObservableDataStates.LOADING) {
-            loadIndicator = (
-                <TALoadIndicator/>
-            );
-        }
-
-        return (
-            <div>
-                {loadIndicator}
-                <RevisionListComponent
-                    theme={this.props.theme}
-                    steps={this.state.stepList}
-                >
-                    {this.state.revList.map((item) => (
-                        <RevisionListItemComponent
-                            key={item.get("_id")}
-                            theme={this.props.theme}
-                            onClick={(revision, step) => {
-                                const pathname = `${this.props.pathname}/${revision._id}`;
-                                const query = {};
-
-                                if (step) {
-                                    query.step = step;
-                                }
-
-                                this.context.router.push({ pathname, query });
-                            }}
-                            item={item}
-                            steps={this.state.stepList}
-                        />
-                    ))}
-                </RevisionListComponent>
-                <TAListPager
-                    pagedList={this.revList}
-                    pagingInfo={this.revList.pagingInfo.getValue()}
-                />
-            </div>
-        );
-    }
-}
-
-RevisionList.propTypes = {
-    theme: React.PropTypes.object,
-    repositoryId: React.PropTypes.string.isRequired,
-    revisionStatus: React.PropTypes.string.isRequired,
-    filter: React.PropTypes.string,
-    pathname: React.PropTypes.string.isRequired
-};
-
-RevisionList.contextTypes = {
-    router: React.PropTypes.object.isRequired
-};
-
-class RevisionTabs extends LightComponent {
+class ListTabs extends LightComponent {
     constructor(props) {
         super(props);
 
         this.state = {
+            submittedExpanded: stateVar(this, "submittedExpanded", true),
             params: LocationQuery.instance.params.getValue(),
             filter: ""
         };
@@ -275,8 +26,17 @@ class RevisionTabs extends LightComponent {
         this.addDisposable(LocationQuery.instance.params.subscribe((params) => this.setState({ params })));
     }
 
+    setMode(mode) {
+        LocationQuery.instance.setParams({ mode });
+    }
+
     render() {
         this.log("render", this.props, this.state);
+
+        const modes = [
+            { value: null, label: "Show active" },
+            { value: "abandoned", label: "Show abandoned" }
+        ];
 
         const controls = this.props.controls.slice(0);
 
@@ -292,54 +52,72 @@ class RevisionTabs extends LightComponent {
             />
         ));
 
+        controls.push((
+            <Dropdown
+                key="mode"
+                className={this.props.theme.filterInput}
+                auto
+                source={modes}
+                value={this.state.params.get("mode") || null}
+                onChange={(value) => this.setMode(value)}
+              />
+      ));
+
         return (
             <TASection
                 controls={controls}
                 breadcrumbs={this.props.breadcrumbs}
             >
                 <div className={this.props.theme.container}>
-                    {this.props.item &&
-                        <Tabs
-                            index={parseInt(this.state.params.toJS().tabIndex || 0, 10)}
-                            onChange={(tabIndex) => LocationQuery.instance.setParams({ tabIndex })}
-                            fixed={true}
-                        >
-                            <Tab label="Submitted">
-                                <RevisionList
-                                    theme={theme}
-                                    repositoryId={this.props.item._id}
-                                    revisionStatus="submitted"
-                                    filter={this.state.filter}
-                                    pathname={this.props.pathname}
-                                />
-                            </Tab>
-                            <Tab label="Merged">
-                                <RevisionList
-                                    theme={theme}
-                                    repositoryId={this.props.item._id}
-                                    revisionStatus="merged"
-                                    filter={this.state.filter}
-                                    pathname={this.props.pathname}
-                                />
-                            </Tab>
-                            <Tab label="Abandoned">
-                                <RevisionList
-                                    theme={theme}
-                                    repositoryId={this.props.item._id}
-                                    revisionStatus="abandoned"
-                                    filter={this.state.filter}
-                                    pathname={this.props.pathname}
-                                />
-                            </Tab>
-                        </Tabs>
-                    }
+                    <Choose>
+                        <When condition={!this.state.params.get("mode")}>
+                            <div className={this.props.theme.sectionHeader}>
+                                Submitted
+                            </div>
+                            <List
+                                key={"submitted"}
+                                theme={theme}
+                                repositoryId={this.props.item._id}
+                                revisionStatus="submitted"
+                                filter={this.state.filter}
+                                pathname={this.props.pathname}
+                                limit={0}
+                            />
+                            <div className={this.props.theme.sectionHeader}>
+                                Merged
+                            </div>
+                            <List
+                                key={"merged"}
+                                theme={theme}
+                                repositoryId={this.props.item._id}
+                                revisionStatus="merged"
+                                filter={this.state.filter}
+                                pathname={this.props.pathname}
+                                limit={30}
+                            />
+                        </When>
+                        <When condition={this.state.params.get("mode") === "abandoned"}>
+                            <div className={this.props.theme.sectionHeader}>
+                                Abandoned
+                            </div>
+                            <List
+                                key={"abandoned"}
+                                theme={theme}
+                                repositoryId={this.props.item._id}
+                                revisionStatus="abandoned"
+                                filter={this.state.filter}
+                                pathname={this.props.pathname}
+                                limit={10}
+                            />
+                        </When>
+                    </Choose>
                 </div>
             </TASection>
         );
     }
 }
 
-RevisionTabs.propTypes = {
+ListTabs.propTypes = {
     theme: React.PropTypes.object,
     item: React.PropTypes.object,
     pathname: React.PropTypes.string.isRequired,
@@ -347,8 +125,8 @@ RevisionTabs.propTypes = {
     controls: React.PropTypes.array.isRequired
 };
 
-RevisionTabs.contextTypes = {
+ListTabs.contextTypes = {
     router: React.PropTypes.object.isRequired
 };
 
-export default RevisionTabs;
+export default ListTabs;
