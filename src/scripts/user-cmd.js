@@ -85,21 +85,21 @@ const run = async () => {
             result = await rp.patch({
                 url: `http://localhost:${configUserRepo.web.port}/user/${argv.id}`,
                 body: {
-                    aliases: {github: argv.githubalias}
+                    aliases: { github: argv.githubalias }
                 },
                 json: true
             });
 
             console.dir(result, { colors: true, depth: null });
         } catch (error) {
-            console.error("Failed to set policy for user", error.message);
+            console.error("Failed to set github alias for user", error.message);
         }
     }
 
     if (argv.policy.length > 0) {
         console.log(`Setting policies ${argv.policy.join(", ")} to user ${argv.id}`);
         try {
-            result = await rp.patch({
+            result = await rp.post({
                 url: `http://localhost:${configUserRepo.web.port}/user/${argv.id}/setpolicies`,
                 body: {
                     policies: argv.policy
