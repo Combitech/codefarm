@@ -76,7 +76,7 @@ class TypeList extends ObservableData {
                 [ opts.sortOn ]: opts.sortDesc ? -1 : 1
             }
         });
-        if (isNumeric(opts.limit)) {
+        if (isNumeric(opts.limit) && opts.limit > 0) {
             query.__options = Object.assign({}, query.__options, {
                 limit: opts.limit
             });
