@@ -9,8 +9,9 @@ const notification = require("./notification");
 let typeInstanceMaps = {};
 
 class Type {
-    constructor() {
+    constructor(version = 1) {
         this.type = this.constructor.getType();
+        this.typeVersion = version;
         this._id = uuid();
         this.created = new Date();
         this.saved = false;
@@ -36,11 +37,9 @@ class Type {
         const ref = {
             _ref: true,
             id: this._id,
-            type: this.constructor.getType()
+            type: this.constructor.getType(),
+            name: name
         };
-        if (name) {
-            ref.name = name;
-        }
 
         return ref;
     }
