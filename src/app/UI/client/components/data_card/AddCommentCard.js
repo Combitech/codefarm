@@ -8,54 +8,51 @@ import Input from "react-toolbox/lib/input";
 import ExpandableCard from "ui-components/expandable_card";
 import stateVar from "ui-lib/state_var";
 import moment from "moment";
+import ActiveUser from "ui-observables/active_user";
+import Notification from "ui-observables/notification";
 
 class AddCommentCard extends LightComponent {
     constructor(props) {
         super(props);
 
-        // this.user = new UserItem({
-        //     identifier: this.getLatestPatch(props).userId
-        // });
-
         this.state = {
             expanded: stateVar(this, "expanded", this.props.expanded),
-            comment: stateVar(this, "comment", "")
-            // user: this.user.value.getValue()
+            comment: stateVar(this, "comment", ""),
+            activeUser: ActiveUser.instance.user.getValue()
         };
     }
 
-    // componentDidMount() {
-    //     this.addDisposable(this.user.start());
-    //
-    //     this.addDisposable(this.user.value.subscribe((user) => this.setState({ user })));
-    // }
-    //
-    // componentWillReceiveProps(nextProps) {
-    //     this.user.setOpts({
-    //         identifier: this.getLatestPatch(nextProps).userId
-    //     });
-    // }
+    componentDidMount() {
+        this.addDisposable(ActiveUser.instance.user.subscribe((activeUser) => this.setState({ activeUser })));
+    }
 
     onComment() {
-        console.log("onComment", this.state.comment.value);
+        const signedInUser = this.state.activeUser.toJS();
+        console.log("onComment", this.state.comment.value, signedInUser);
         this.props.onComment({
-            // user: {
-            //     _ref: true,
-            //     name: "Someone", // TODO
-            //     type: "userrepo.user",
-            //     id: false
-            // },
+            user: {
+                _ref: true,
+                name: signedInUser.username,
+                type: "userrepo.user",
+                id: signedInUser.id
+            },
             time: moment.utc().format(),
             text: this.state.comment.value
         })
-        .then(() => this.state.comment.set(""))
+        .then(() => {
+            this.state.comment.set("");
+            Notification.instance.publish("Comment added successfully!");
+        })
         .catch((error) => {
+            Notification.instance.publish(`Failed to publish comment: ${error.message || error}`, "warning");
             console.error("comment failed", error);
         });
     }
 
     render() {
-        const user = null;// this.state.user.toJS()._id ? this.state.user.toJS() : null;
+        const signedInUser = this.state.activeUser.toJS();
+
+        const userCaption = signedInUser.username ? signedInUser.username : "Someone";
 
         return (
             <ExpandableCard
@@ -74,10 +71,10 @@ class AddCommentCard extends LightComponent {
                     avatar={(
                         <UserAvatar
                             className={this.props.theme.avatar}
-                            userId={user ? user._id : false}
+                            userId={signedInUser ? signedInUser.id : false}
                         />
                     )}
-                    title="Say something..."
+                    title={`${userCaption}, say something...`}
                 />
                 <Input
                     className={this.props.theme.input}

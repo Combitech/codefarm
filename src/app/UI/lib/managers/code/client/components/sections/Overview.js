@@ -38,7 +38,7 @@ class Overview extends LightComponent {
     }
 
     async onComment(comment) {
-        await api.type.action(this.props.item.type, this.props.item._id, "comment", comment);
+        await api.rest.action(this.props.item.type, this.props.item._id, "comment", comment);
     }
 
     render() {
@@ -61,7 +61,9 @@ class Overview extends LightComponent {
                 time: moment(comment.time).unix(),
                 item: comment,
                 Card: CommentCard,
-                props: {}
+                props: {
+                    expanded: true
+                }
             });
         }
 

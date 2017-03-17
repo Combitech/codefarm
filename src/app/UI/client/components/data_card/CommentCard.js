@@ -6,36 +6,42 @@ import UserAvatar from "ui-components/user_avatar";
 import DateTime from "ui-components/datetime";
 import ExpandableCard from "ui-components/expandable_card";
 import stateVar from "ui-lib/state_var";
-// import UserItem from "ui-observables/user_item";
+import UserItem from "ui-observables/user_item";
 
 class CommentCard extends LightComponent {
     constructor(props) {
         super(props);
 
-        // this.user = new UserItem({
-        //     identifier: this.getLatestPatch(props).userId
-        // });
+        this.user = new UserItem({
+            identifier: (props.item.user && props.item.user.id) || false
+        });
 
         this.state = {
-            expanded: stateVar(this, "expanded", this.props.expanded)
-            // user: this.user.value.getValue()
+            expanded: stateVar(this, "expanded", props.expanded),
+            user: this.user.value.getValue()
         };
     }
 
-    // componentDidMount() {
-    //     this.addDisposable(this.user.start());
-    //
-    //     this.addDisposable(this.user.value.subscribe((user) => this.setState({ user })));
-    // }
-    //
-    // componentWillReceiveProps(nextProps) {
-    //     this.user.setOpts({
-    //         identifier: this.getLatestPatch(nextProps).userId
-    //     });
-    // }
+    componentDidMount() {
+        this.addDisposable(this.user.start());
+
+        this.addDisposable(this.user.value.subscribe((user) => this.setState({ user })));
+    }
+
+    componentWillReceiveProps(nextProps) {
+        this.user.setOpts({
+            identifier: (nextProps.item.user && nextProps.item.user.id) || false
+        });
+    }
 
     render() {
-        const user = null;// this.state.user.toJS()._id ? this.state.user.toJS() : null;
+        const user = this.state.user.toJS();
+
+        let userCaption = "Someone";
+        if (user.name) {
+            const emailStr = user.email && user.email.length > 0 ? ` <${user.email[0]}>` : "";
+            userCaption = `${user.name}${emailStr}`;
+        }
 
         return (
             <ExpandableCard
@@ -50,7 +56,7 @@ class CommentCard extends LightComponent {
                             userId={user ? user._id : false}
                         />
                     )}
-                    title={`${user ? user.name : "Someone"} said...`}
+                    title={`${userCaption} said...`}
                     subtitle={(
                         <DateTime
                             value={this.props.item.time}
@@ -60,9 +66,9 @@ class CommentCard extends LightComponent {
                 />
                 <If condition={this.state.expanded.value}>
                     <CardText>
-                        <span className={this.props.theme.item}>
+                        <pre className={this.props.theme.item}>
                             {this.props.item.text}
-                        </span>
+                        </pre>
                     </CardText>
                 </If>
             </ExpandableCard>
