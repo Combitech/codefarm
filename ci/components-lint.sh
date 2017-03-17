@@ -53,7 +53,10 @@ for target in ${targets[@]}; do
   subJobName="${target}_lint"
   subJobId=$($CLI -q '$._id' --format values create_subjob test "${subJobName}" ongoing)
 
-  yarn lint || result=1
+  yarn lint | tee ${subJobName}.log
+  result=${PIPESTATUS[0]}
+
+  $CLI upload_log -t ${subJobName}_log ${subJobName}.log ${subJobName}.log
 
   stopTime=$(($(date +%s%N)/1000000))
   testDuration=`expr $stopTime - $startTime`
