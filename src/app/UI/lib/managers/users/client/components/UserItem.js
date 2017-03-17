@@ -73,6 +73,9 @@ class Item extends LightComponent {
             );
         }
 
+        const aliases = Object.keys(this.props.item.aliases || {})
+            .map((key) => `${key}: ${this.props.item.aliases[key]}`);
+
         return (
             <div>
                 <TASection
@@ -96,6 +99,12 @@ class Item extends LightComponent {
                                         <tr>
                                             <td>Emails</td>
                                             <td>{this.props.item.email.join(", ")}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Aliases</td>
+                                            <td>
+                                                <Tags list={aliases} />
+                                            </td>
                                         </tr>
                                         <tr>
                                             <td>Phone</td>
