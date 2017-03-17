@@ -72,9 +72,9 @@ class Main extends Service {
 
         await ServiceProxy.instance.start();
         this.addDisposable(ServiceProxy.instance);
-        ServiceProxy.instance.addProxyRoute("get", "userrepo", "useravatar", "avatar");
-        ServiceProxy.instance.addProxyRoute("get", "userrepo", "teamavatar", "avatar");
-        ServiceProxy.instance.addProxyRoute("get", "logrepo", "log", "download");
+        ServiceProxy.instance.addProxyRoute("get", "read", "userrepo.useravatar", "avatar");
+        ServiceProxy.instance.addProxyRoute("get", "read", "userrepo.teamavatar", "avatar");
+        ServiceProxy.instance.addProxyRoute("get", "read", "logrepo.log", "download");
 
         for (const Api of Apis) {
             await Api.instance.start();

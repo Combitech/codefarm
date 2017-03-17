@@ -192,10 +192,11 @@ class Web extends AsyncEventEmitter {
         }
         const cookieName = authParams.jwtCookieName;
         request.session.user = {};
-        if (request.headers.cookie && request.headers.cookie.indexOf(cookieName) !== -1) {
+        const cookies = request.headers.cookie;
+        if (cookies && cookies.indexOf(cookieName) !== -1) {
             let token;
             try {
-                token = cookie.parse(request.headers.cookie)[cookieName];
+                token = cookie.parse(cookies)[cookieName];
             } catch (e) {
             }
             if (token) {
