@@ -2,7 +2,6 @@
 import React from "react";
 import AppBar from "react-toolbox/lib/app_bar";
 import { Button, IconButton } from "react-toolbox/lib/button";
-import Switch from "react-toolbox/lib/switch";
 import { Menu, MenuItem, MenuDivider } from "react-toolbox/lib/menu";
 import LightComponent from "ui-lib/light_component";
 import { CodeFarmIcon } from "ui-components/app_icons";
@@ -15,8 +14,7 @@ class AppTopBar extends LightComponent {
 
         this.state = {
             activeUser: ActiveUser.instance.user.getValue(),
-            userMenuOpen: false,
-            loginEnabled: true
+            userMenuOpen: false
         };
     }
 
@@ -41,13 +39,7 @@ class AppTopBar extends LightComponent {
     }
 
     render() {
-        let activeUser = this.state.activeUser.toJS();
-        if (!this.state.loginEnabled) {
-            activeUser = {
-                userLoggedIn: true,
-                username: "Unkown user"
-            };
-        }
+        const activeUser = this.state.activeUser.toJS();
 
         let rightMenu;
         if (activeUser.userLoggedIn) {
@@ -146,12 +138,6 @@ class AppTopBar extends LightComponent {
                         {this.props.children}
                     </div>
                 }
-                <Switch
-                    className={this.props.theme.topRightButton}
-                    label="Sign in enabled"
-                    checked={this.state.loginEnabled}
-                    onChange={(loginEnabled) => this.setState({ loginEnabled })}
-                />
                 {rightMenu}
             </AppBar>
         );

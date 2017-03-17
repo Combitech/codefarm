@@ -54,11 +54,6 @@ const isTokenValidForAccess = (tokenDataOrPrivilegeArray, type, access = "read",
         debug: false
     }, opts);
 
-    // TODO: The following code allows unauthorized access. Remove when deployed...
-    if (!tokenDataOrPrivilegeArray) {
-        return true;
-    }
-
     // Privileges are in format "acc1,acc2:service.type"
     let privileges = [];
     if (tokenDataOrPrivilegeArray instanceof Array) {

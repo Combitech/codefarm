@@ -176,7 +176,8 @@ class ServiceComBus extends AsyncEventEmitter {
             request: {
                 _id: this.msgbus.constructor.generateId(),
                 time: moment().utc().format(),
-                token: opts.token || this.config.token, // Use configured token if none specified
+                // Use configured token if none specified
+                token: opts.hasOwnProperty("token") ? opts.token : this.config.token,
                 type: "request",
                 data: data,
                 timeout: opts.timeout,
