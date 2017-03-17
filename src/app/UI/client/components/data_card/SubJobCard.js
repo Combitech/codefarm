@@ -43,7 +43,7 @@ class SubJobCard extends LightComponent {
                         />
                     )}
                 />
-                {this.state.expanded.value && (
+                <If condition={this.state.expanded.value}>
                     <table className={this.props.theme.table}>
                         <tbody>
                             <tr>
@@ -78,22 +78,24 @@ class SubJobCard extends LightComponent {
                                     />
                                 </td>
                             </tr>
-                            {this.props.item.finished && (
+                            <If condition={this.props.item.finished}>
                                 <tr>
                                     <td>Duration</td>
                                     <td>
                                         {moment.duration(moment(this.props.item.finished).diff(this.props.item.started)).humanize()}
                                     </td>
                                 </tr>
-                            )}
-                            {this.props.item.result && Object.keys(this.props.item.result).map((key) => (
-                                <tr key={key}>
-                                    <td>{key}</td>
-                                    <td>
-                                        {this.props.item.result[key]}
-                                    </td>
-                                </tr>
-                            ))}
+                            </If>
+                            <If condition={this.props.item.result}>
+                                <For each="key" of={Object.keys(this.props.item.result)}>
+                                    <tr key={key}>
+                                        <td>{key}</td>
+                                        <td>
+                                            {this.props.item.result[key]}
+                                        </td>
+                                    </tr>
+                                </For>
+                            </If>
                             <tr>
                                 <td>Tags</td>
                                 <td>
@@ -102,7 +104,7 @@ class SubJobCard extends LightComponent {
                             </tr>
                         </tbody>
                     </table>
-                )}
+                </If>
             </ExpandableCard>
         );
     }

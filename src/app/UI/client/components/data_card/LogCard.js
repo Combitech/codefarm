@@ -74,19 +74,19 @@ class LogCard extends LightComponent {
                     )}
                 />
                 <CardText>
-                    {(lines.length && lines[0].offset > 0) && (
+                    <If condition={lines.length > 0 && lines[0].offset > 0}>
                         <div className={this.props.theme.centeredButtons}>
                             <Button
                                 label="Show 10 more lines"
                                 onClick={() => this.onMoreLines()}
                             />
                         </div>
-                    )}
+                    </If>
                     <span className={this.props.theme.log}>
                         {lines.map((i) => i.line).join("\n")}
                     </span>
                 </CardText>
-                {this.state.expanded.value && (
+                <If condition={this.state.expanded.value}>
                     <table className={this.props.theme.table}>
                         <tbody>
                             <tr>
@@ -140,7 +140,7 @@ class LogCard extends LightComponent {
                             </tr>
                         </tbody>
                     </table>
-                )}
+                </If>
             </ExpandableCard>
         );
     }

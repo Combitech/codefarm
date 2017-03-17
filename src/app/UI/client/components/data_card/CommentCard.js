@@ -58,13 +58,13 @@ class CommentCard extends LightComponent {
                         />
                     )}
                 />
-                {this.state.expanded.value && (
+                <If condition={this.state.expanded.value}>
                     <CardText>
                         <span className={this.props.theme.item}>
                             {this.props.item.text}
                         </span>
                     </CardText>
-                )}
+                </If>
             </ExpandableCard>
         );
     }

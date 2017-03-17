@@ -79,15 +79,15 @@ class AddCommentCard extends LightComponent {
                     )}
                     title="Say something..."
                 />
-                    <Input
-                        className={this.props.theme.input}
-                        type="text"
-                        placeholder="Write comment here..."
-                        name="comment"
-                        multiline={true}
-                        value={this.state.comment.value}
-                        onChange={this.state.comment.set}
-                    />
+                <Input
+                    className={this.props.theme.input}
+                    type="text"
+                    placeholder="Write comment here..."
+                    name="comment"
+                    multiline={true}
+                    value={this.state.comment.value}
+                    onChange={this.state.comment.set}
+                />
             </ExpandableCard>
         );
     }

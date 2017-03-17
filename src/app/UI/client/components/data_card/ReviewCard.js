@@ -71,7 +71,7 @@ class ReviewCard extends LightComponent {
                         />
                     )}
                 />
-                {this.state.expanded.value && (
+                <If condition={this.state.expanded.value}>
                     <table className={this.props.theme.table}>
                         <tbody>
                             <tr>
@@ -100,7 +100,7 @@ class ReviewCard extends LightComponent {
                             </tr>
                         </tbody>
                     </table>
-                )}
+                </If>
             </ExpandableCard>
         );
     }
