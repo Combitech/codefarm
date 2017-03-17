@@ -57,7 +57,7 @@ class Auth {
         return privileges;
     }
 
-    async login(emailOrId, password) {
+    async login(emailOrId, password, opts = {}) {
         if (typeof emailOrId !== "string") {
             throw new Error("emailOrId required");
         }
@@ -93,11 +93,11 @@ class Auth {
         if (authenticated) {
             const user = users[0];
             const priv = await this._getUserPrivileges(user);
-            const tokenData = {
+            const tokenData = Object.assign({
                 id: user._id,
                 username: user.name,
                 priv
-            };
+            }, opts);
             const tokenOpts = {
                 expiresIn: TOKEN_EXPIRES_IN
             };

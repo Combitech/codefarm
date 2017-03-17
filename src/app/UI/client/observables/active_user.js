@@ -2,7 +2,7 @@
 import Immutable from "immutable";
 import Rx from "rxjs";
 import singleton from "singleton";
-import api from "api.io/api.io-client";
+import { whoami } from "ui-lib/auth";
 
 let instanceCounter = 0;
 
@@ -51,7 +51,7 @@ class ActiveUser {
      * @return {undefined}
      */
     async _sync() {
-        const response = await api.auth.whoami();
+        const response = await whoami();
         if (response.success) {
             this.setUser(response.user);
         } else {

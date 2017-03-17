@@ -21,11 +21,12 @@ class Page extends LightComponent {
         this.log("render", this.props);
 
         const userLoggedIn = this.state.activeUser.get("userLoggedIn");
+        const isGuestUser = this.state.activeUser.get("isGuestUser");
 
         return (
             <div className={this.props.theme.content}>
                 <Choose>
-                    <When condition={ userLoggedIn }>
+                    <When condition={ userLoggedIn && !isGuestUser }>
                         <SignOutForm
                             theme={this.props.theme}
                             userId={this.state.activeUser.get("_id")}

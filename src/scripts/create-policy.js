@@ -73,6 +73,10 @@ const templates = {
         "create,update:user.policy",
         "verify,setonline:exec.slave"
     ],
+    guest: [
+        "read:*",
+        "create:dataresolve.data"
+    ],
     usr: [
         "read,comment:*",
         "create:dataresolve.data",

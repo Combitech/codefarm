@@ -41,72 +41,72 @@ class AppTopBar extends LightComponent {
     render() {
         const activeUser = this.state.activeUser.toJS();
 
-        let rightMenu;
-        if (activeUser.userLoggedIn) {
-            rightMenu = (
-                <div className={this.props.theme.iconMenu}>
-                    <Button
-                        className={this.props.theme.topRightButton}
-                        onClick={() => this._toggleUserMenu()}
-                        flat={true}
-                        label={activeUser.username}
-                        icon={
-                            <UserAvatar
-                                className={this.props.theme.userAvatar}
-                                userId={activeUser.id}
-                            />
-                        }
-                    />
-                    <Menu
-                        active={this.state.userMenuOpen}
-                        position="auto"
-                        onHide={() => this._hideUserMenu()}
-                        onSelect={this.onClick.bind(this)}
-                    >
-                        <MenuItem
-                            value="/admin"
-                            caption="Administration"
+        const rightMenu = (
+            <Choose>
+                <When condition={ activeUser.userLoggedIn && !activeUser.isGuestUser }>
+                    <div className={this.props.theme.iconMenu}>
+                        <Button
+                            className={this.props.theme.topRightButton}
+                            onClick={() => this._toggleUserMenu()}
+                            flat={true}
+                            label={activeUser.username}
+                            icon={
+                                <UserAvatar
+                                    className={this.props.theme.userAvatar}
+                                    userId={activeUser.id}
+                                />
+                            }
                         />
-                        <MenuItem
-                            value="/management"
-                            caption="Management"
-                        />
-                        <MenuItem
-                            value="/notifications"
-                            caption="Notifications"
-                        />
-                        {activeUser.id &&
+                        <Menu
+                            active={this.state.userMenuOpen}
+                            position="auto"
+                            onHide={() => this._hideUserMenu()}
+                            onSelect={this.onClick.bind(this)}
+                        >
                             <MenuItem
-                                value={`/collaborators/users/${activeUser.id}`}
-                                caption="User profile"
+                                value="/admin"
+                                caption="Administration"
                             />
-                        }
-                        <MenuItem
-                            value="/feedback"
-                            caption="Send feedback"
-                        />
-                        <MenuItem
-                            value="/help"
-                            caption="Help"
-                        />
-                        <MenuDivider />
-                        <MenuItem
-                            value="/signout"
-                            caption="Sign out"
-                        />
-                    </Menu>
-                </div>
-            );
-        } else {
-            rightMenu = (
-                <Button
-                    label="Sign in"
-                    className={this.props.theme.topRightButton}
-                    flat={true}
-                    onMouseUp={this.onClick.bind(this, "/signin")}
-                />
-            );
-        }
+                            <MenuItem
+                                value="/management"
+                                caption="Management"
+                            />
+                            <MenuItem
+                                value="/notifications"
+                                caption="Notifications"
+                            />
+                            <If condition={ activeUser.id }>
+                                <MenuItem
+                                    value={`/collaborators/users/${activeUser.id}`}
+                                    caption="User profile"
+                                />
+                            </If>
+                            <MenuItem
+                                value="/feedback"
+                                caption="Send feedback"
+                            />
+                            <MenuItem
+                                value="/help"
+                                caption="Help"
+                            />
+                            <MenuDivider />
+                            <MenuItem
+                                value="/signout"
+                                caption="Sign out"
+                            />
+                        </Menu>
+                    </div>
+                </When>
+                <Otherwise>
+                    <Button
+                        label="Sign in"
+                        className={this.props.theme.topRightButton}
+                        flat={true}
+                        onMouseUp={this.onClick.bind(this, "/signin")}
+                    />
+                </Otherwise>
+            </Choose>
+        );
 
         return (
             <AppBar

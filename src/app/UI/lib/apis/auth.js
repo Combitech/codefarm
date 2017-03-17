@@ -5,10 +5,10 @@ const singleton = require("singleton");
 const AuthMgr = require("../managers/auth");
 
 const authApiExports = api.register("auth", {
-    login: api.export(async (session, email, password) => {
+    _login: async (session, emailOrId, password, opts) => {
         let result;
         try {
-            result = await AuthMgr.instance.login(email, password);
+            result = await AuthMgr.instance.login(emailOrId, password, opts);
             if (result.success) {
                 // Ask client to add cookie...
                 Object.assign(result, {
@@ -40,7 +40,10 @@ const authApiExports = api.register("auth", {
         }
 
         return result;
-    }),
+    },
+    login: api.export(async (session, emailOrId, password) =>
+        authApiExports._login(session, emailOrId, password)
+    ),
     logout: api.export(async (session) => {
         let result = {
             success: false,
@@ -76,6 +79,15 @@ const authApiExports = api.register("auth", {
                 success: true,
                 user: session.user.tokenData
             };
+        } else {
+            // No previous session, login as guest user
+            // TODO: Move guest user id and password to config
+            result = await authApiExports._login(session, "guest", "guestguest", {
+                isGuestUser: true
+            });
+            if (result.success) {
+                result.user.isGuestUser = true;
+            }
         }
 
         return result;
