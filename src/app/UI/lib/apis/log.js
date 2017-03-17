@@ -3,10 +3,16 @@
 const api = require("api.io");
 const { LogClient } = require("loglib");
 const singleton = require("singleton");
+const { isTokenValidForAccess } = require("auth");
+
+const isSessionValidForReadingLogs = (session) => {
+    const tokenData = session.user && session.user.tokenData;
+    isTokenValidForAccess(tokenData.priv, "logrepo.log", "read");
+};
 
 const logApiExports = api.register("log", {
     subscribe: api.export(async (session, id) => {
-        // TODO: Check token: const token = session.user && session.user.token;
+        isSessionValidForReadingLogs(session);
 
         const subscription = await LogClient.instance.subscribe(id, async (line) => {
             logApiExports.emit("line", { id: id, line: line });
@@ -17,6 +23,8 @@ const logApiExports = api.register("log", {
         return subscription;
     }),
     unsubscribe: api.export(async (session, subscription) => {
+        isSessionValidForReadingLogs(session);
+
         session.logSubscriptions = session.logSubscriptions.filter((s) => s !== subscription);
 
         await LogClient.instance.unsubscribe(subscription);
