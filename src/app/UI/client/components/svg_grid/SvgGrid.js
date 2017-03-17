@@ -208,7 +208,10 @@ class SvgGrid extends LightComponent {
         .map((item) => {
             const info = getItemInfo(item.props.column, item.props.row, item.props.columnSpan, item.props.rowSpan);
 
-            const border = item.props.border ? (<rect x={0} y={0} width={sizes.gridSize * info.columnSpan} height={sizes.gridSize * info.rowSpan} className={this.props.theme.gridBox} />) : null;
+            let border;
+            if (item.props.border) {
+                border = (<rect x={0} y={0} width={sizes.gridSize * info.columnSpan} height={sizes.gridSize * info.rowSpan} className={this.props.theme.gridBox} />);
+            }
 
             return (
                 <svg

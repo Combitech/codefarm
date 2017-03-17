@@ -94,21 +94,24 @@ class BaselineItem extends LightComponent {
                                 flows={flows.data}
                                 FlowComponent={Flow}
                             />
-                        {step ? (
-                                <Row>
-                                    {`Selected ${step}`}
-                                </Row>
-                            ) : (
-                                <Row>
-                                    <Col xs={12} md={5} className={this.props.theme.panel}>
-                                        <Tags list={this.props.item.tags} />
-                                        <pre>
-                                            {JSON.stringify(this.props.item, null, 2)}
-                                            {JSON.stringify(itemExt, null, 2)}
-                                        </pre>
-                                    </Col>
-                                </Row>
-                            )}
+                            <Choose>
+                                <When condition={ step }>
+                                    <Row>
+                                        {`Selected ${step}`}
+                                    </Row>
+                                </When>
+                                <Otherwise>
+                                    <Row>
+                                        <Col xs={12} md={5} className={this.props.theme.panel}>
+                                            <Tags list={this.props.item.tags} />
+                                            <pre>
+                                                {JSON.stringify(this.props.item, null, 2)}
+                                                {JSON.stringify(itemExt, null, 2)}
+                                            </pre>
+                                        </Col>
+                                    </Row>
+                                </Otherwise>
+                            </Choose>
                         </div>
                     }
                 </TASection>

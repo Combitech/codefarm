@@ -114,27 +114,30 @@ class UserUpdatePolicies extends LightComponent {
                 breadcrumbs={this.props.breadcrumbs}
                 controls={this.props.controls}
             >
-                {accessError ? (
-                    <div>{accessError}</div>
-                ) : (user && (
-                    <TAForm
-                        confirmAllowed={this._confirmAllowed()}
-                        confirmText={"Update policies"}
-                        primaryText={`Update policies for ${user.name}`}
-                        onConfirm={() => this._onConfirm()}
-                        onCancel={() => this._onCancel()}
-                    >
-                        <Autocomplete
-                            selectedPosition="below"
-                            allowCreate={false}
-                            label="Policies"
-                            disabled={!this.itemProperties.policies.editable}
-                            onChange={this.state.policies.set}
-                            source={availablePolicies}
-                            value={this.state.policies.value}
-                        />
-                    </TAForm>
-                ))}
+                <Choose>
+                    <When condition={ accessError }>
+                        <div>{accessError}</div>
+                    </When>
+                    <When condition={ user }>
+                        <TAForm
+                            confirmAllowed={this._confirmAllowed()}
+                            confirmText={"Update policies"}
+                            primaryText={`Update policies for ${user.name}`}
+                            onConfirm={() => this._onConfirm()}
+                            onCancel={() => this._onCancel()}
+                        >
+                            <Autocomplete
+                                selectedPosition="below"
+                                allowCreate={false}
+                                label="Policies"
+                                disabled={!this.itemProperties.policies.editable}
+                                onChange={this.state.policies.set}
+                                source={availablePolicies}
+                                value={this.state.policies.value}
+                            />
+                        </TAForm>
+                    </When>
+                </Choose>
             </TASection>
         );
     }

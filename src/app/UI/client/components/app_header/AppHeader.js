@@ -30,16 +30,19 @@ class AppHeader extends React.Component {
 
         return (
             <div className={this.props.theme.appHeader}>
-                {typeof this.props.icon === "string" ? (
-                    <FontIcon
-                        className={this.props.theme.appIcon}
-                        value={this.props.icon}
-                    />
-                ) : (
-                    <div className={this.props.theme.appIcon}>
-                        {this.props.icon}
-                    </div>
-                )}
+                <Choose>
+                    <When condition={ typeof this.props.icon === "string" }>
+                        <FontIcon
+                            className={this.props.theme.appIcon}
+                            value={this.props.icon}
+                        />
+                    </When>
+                    <Otherwise>
+                        <div className={this.props.theme.appIcon}>
+                            {this.props.icon}
+                        </div>
+                    </Otherwise>
+                </Choose>
                 <h1>{this.props.primaryText}</h1>
                 <h2>{this.props.secondaryText}</h2>
                 {children}

@@ -57,31 +57,34 @@ class UserAddKey extends LightComponent {
                 breadcrumbs={this.props.breadcrumbs}
                 controls={this.props.controls}
             >
-                {isCorrectParent ? (
-                    <TAForm
-                        confirmAllowed={this._confirmAllowed()}
-                        confirmText={"Add key"}
-                        primaryText={`Add public SSH key for user ${user.username}`}
-                        secondaryText={"Public SSH keys are used for authenticating users connecting to CodeFarm SSH servers."}
-                        onConfirm={() => this._onConfirm()}
-                        onCancel={() => this._onCancel()}
-                    >
-                        <Input
-                            type="text"
-                            label="SSH Public Key"
-                            name="key"
-                            floating={true}
-                            required={true}
-                            multiline={true}
-                            rows={10}
-                            value={this.state.key}
-                            onChange={(key) => this.setState({ key })}
-                            hint="Paste SSH public key here..."
-                        />
-                    </TAForm>
-                ) : (
-                    <div>User is not signed in!</div>
-                )}
+                <Choose>
+                    <When condition={ isCorrectParent }>
+                        <TAForm
+                            confirmAllowed={this._confirmAllowed()}
+                            confirmText={"Add key"}
+                            primaryText={`Add public SSH key for user ${user.username}`}
+                            secondaryText={"Public SSH keys are used for authenticating users connecting to CodeFarm SSH servers."}
+                            onConfirm={() => this._onConfirm()}
+                            onCancel={() => this._onCancel()}
+                        >
+                            <Input
+                                type="text"
+                                label="SSH Public Key"
+                                name="key"
+                                floating={true}
+                                required={true}
+                                multiline={true}
+                                rows={10}
+                                value={this.state.key}
+                                onChange={(key) => this.setState({ key })}
+                                hint="Paste SSH public key here..."
+                            />
+                        </TAForm>
+                    </When>
+                    <Otherwise>
+                        <div>User is not signed in!</div>
+                    </Otherwise>
+                </Choose>
             </TASection>
         );
     }

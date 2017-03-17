@@ -24,15 +24,18 @@ class Page extends LightComponent {
 
         return (
             <div className={this.props.theme.content}>
-                {userLoggedIn ? (
-                    <SignOutForm
-                        theme={this.props.theme}
-                        userId={this.state.activeUser.get("_id")}
-                        userName={this.state.activeUser.get("username")}
-                    />
-                ) : (
-                    <SignInForm theme={this.props.theme} />
-                )}
+                <Choose>
+                    <When condition={ userLoggedIn }>
+                        <SignOutForm
+                            theme={this.props.theme}
+                            userId={this.state.activeUser.get("_id")}
+                            userName={this.state.activeUser.get("username")}
+                        />
+                    </When>
+                    <Otherwise>
+                        <SignInForm theme={this.props.theme} />
+                    </Otherwise>
+                </Choose>
             </div>
         );
     }

@@ -240,52 +240,55 @@ class EditTags extends LightComponent {
                 breadcrumbs={this.props.breadcrumbs}
                 controls={this.props.controls}
             >
-                {accessError ? (
-                    <div>{accessError}</div>
-                ) : (this.state.tags && (
-                    <div className={this.props.theme.container}>
-                        <TAForm
-                            confirmAllowed={this._confirmAllowed()}
-                            confirmText={"Apply changes"}
-                            primaryText={"Update tags"}
-                            secondaryText={`Type ${type} with id ${item.get("_id")}`}
-                            onConfirm={() => this._onConfirm()}
-                            onCancel={() => this._onCancel()}
-                        >
-                            <Autocomplete
-                                selectedPosition="below"
-                                allowCreate={true}
-                                label="Tags"
-                                onChange={(tags) => this._changeTags(tags)}
-                                source={this.state.tags.concat(this.state.delTags)}
-                                value={this.state.tags}
-                                error={tagsErrorMessage}
-                            />
+                <Choose>
+                    <When condition={ accessError }>
+                        <div>{accessError}</div>
+                    </When>
+                    <When condition={ this.state.tags }>
+                        <div className={this.props.theme.container}>
+                            <TAForm
+                                confirmAllowed={this._confirmAllowed()}
+                                confirmText={"Apply changes"}
+                                primaryText={"Update tags"}
+                                secondaryText={`Type ${type} with id ${item.get("_id")}`}
+                                onConfirm={() => this._onConfirm()}
+                                onCancel={() => this._onCancel()}
+                            >
+                                <Autocomplete
+                                    selectedPosition="below"
+                                    allowCreate={true}
+                                    label="Tags"
+                                    onChange={(tags) => this._changeTags(tags)}
+                                    source={this.state.tags.concat(this.state.delTags)}
+                                    value={this.state.tags}
+                                    error={tagsErrorMessage}
+                                />
 
-                            <div className={`${this.props.theme.panel} ${this.props.theme.editTags}`}>
-                                <div className={this.props.theme.subtitle}>
-                                    Pending changes
+                                <div className={`${this.props.theme.panel} ${this.props.theme.editTags}`}>
+                                    <div className={this.props.theme.subtitle}>
+                                        Pending changes
+                                    </div>
+                                    <table className={this.props.theme.properties}>
+                                        <tbody>
+                                            <tr className={this.props.theme.addTags}>
+                                                <td>Add</td>
+                                                <td>
+                                                    <Tags theme={this.props.theme} list={this.state.addTags} />
+                                                </td>
+                                            </tr>
+                                            <tr className={this.props.theme.delTags}>
+                                                <td>Remove</td>
+                                                <td>
+                                                    <Tags theme={this.props.theme} list={this.state.delTags} />
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
                                 </div>
-                                <table className={this.props.theme.properties}>
-                                    <tbody>
-                                        <tr className={this.props.theme.addTags}>
-                                            <td>Add</td>
-                                            <td>
-                                                <Tags theme={this.props.theme} list={this.state.addTags} />
-                                            </td>
-                                        </tr>
-                                        <tr className={this.props.theme.delTags}>
-                                            <td>Remove</td>
-                                            <td>
-                                                <Tags theme={this.props.theme} list={this.state.delTags} />
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </TAForm>
-                    </div>
-                ))}
+                            </TAForm>
+                        </div>
+                    </When>
+                </Choose>
             </TASection>
         );
     }

@@ -66,48 +66,51 @@ class UserUpdatePassword extends LightComponent {
                 breadcrumbs={this.props.breadcrumbs}
                 controls={this.props.controls}
             >
-                {isCorrectParent ? (
-                    <TAForm
-                        confirmAllowed={this._confirmAllowed()}
-                        confirmText={"Update password"}
-                        primaryText={`Update password for ${user.username}`}
-                        onConfirm={() => this._onConfirm()}
-                        onCancel={() => this._onCancel()}
-                    >
-                        <Input
-                            type="password"
-                            label="Current password"
-                            name="oldPassword"
-                            floating={true}
-                            required={this.itemProperties.oldPassword.required()}
-                            disabled={!this.itemProperties.oldPassword.editable}
-                            value={this.state.oldPassword.value}
-                            onChange={this.state.oldPassword.set}
-                        />
-                        <Input
-                            type="password"
-                            label="New password"
-                            name="newPassword1"
-                            floating={true}
-                            required={this.itemProperties.newPassword1.required()}
-                            disabled={!this.itemProperties.newPassword1.editable}
-                            value={this.state.newPassword1.value}
-                            onChange={this.state.newPassword1.set}
-                        />
-                        <Input
-                            type="password"
-                            label="New password again"
-                            name="newPassword2"
-                            floating={true}
-                            required={this.itemProperties.newPassword2.required()}
-                            disabled={!this.itemProperties.newPassword2.editable}
-                            value={this.state.newPassword2.value}
-                            onChange={this.state.newPassword2.set}
-                        />
-                    </TAForm>
-                ) : (
-                    <div>User is not signed in!</div>
-                )}
+                <Choose>
+                    <When condition={ isCorrectParent }>
+                        <TAForm
+                            confirmAllowed={this._confirmAllowed()}
+                            confirmText={"Update password"}
+                            primaryText={`Update password for ${user.username}`}
+                            onConfirm={() => this._onConfirm()}
+                            onCancel={() => this._onCancel()}
+                        >
+                            <Input
+                                type="password"
+                                label="Current password"
+                                name="oldPassword"
+                                floating={true}
+                                required={this.itemProperties.oldPassword.required()}
+                                disabled={!this.itemProperties.oldPassword.editable}
+                                value={this.state.oldPassword.value}
+                                onChange={this.state.oldPassword.set}
+                            />
+                            <Input
+                                type="password"
+                                label="New password"
+                                name="newPassword1"
+                                floating={true}
+                                required={this.itemProperties.newPassword1.required()}
+                                disabled={!this.itemProperties.newPassword1.editable}
+                                value={this.state.newPassword1.value}
+                                onChange={this.state.newPassword1.set}
+                            />
+                            <Input
+                                type="password"
+                                label="New password again"
+                                name="newPassword2"
+                                floating={true}
+                                required={this.itemProperties.newPassword2.required()}
+                                disabled={!this.itemProperties.newPassword2.editable}
+                                value={this.state.newPassword2.value}
+                                onChange={this.state.newPassword2.set}
+                            />
+                        </TAForm>
+                    </When>
+                    <Otherwise>
+                        <div>User is not signed in!</div>
+                    </Otherwise>
+                </Choose>
             </TASection>
         );
     }
