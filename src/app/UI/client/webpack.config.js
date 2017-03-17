@@ -54,6 +54,7 @@ module.exports = function(options) {
                             require.resolve("babel-preset-react")
                         ],
                         plugins: [
+                            require.resolve("jsx-control-statements"),
                             [ require.resolve("babel-plugin-transform-async-to-module-method"), {
                                 "module": "bluebird",
                                 "method": "coroutine"

@@ -43,7 +43,7 @@ class JobCard extends LightComponent {
                         />
                     )}
                 />
-                {this.state.expanded.value && (
+                <If condition={this.state.expanded.value}>
                     <table className={this.props.theme.table}>
                         <tbody>
                             <tr>
@@ -100,22 +100,22 @@ class JobCard extends LightComponent {
                                     />
                                 </td>
                             </tr>
-                            {this.props.item.finished && (
+                            <If condition={this.props.item.finished}>
                                 <tr>
                                     <td>Duration</td>
                                     <td>
                                         {moment.duration(moment(this.props.item.finished).diff(this.props.item.started)).humanize()}
                                     </td>
                                 </tr>
-                            )}
-                            {this.props.item.slaveId && (
+                            </If>
+                            <If condition={this.props.item.slaveId}>
                                 <tr>
                                     <td>Executed on slave</td>
                                     <td className={this.props.theme.monospace}>
                                         {this.props.item.slaveId}
                                     </td>
                                 </tr>
-                            )}
+                            </If>
                             <tr>
                                 <td>Tags</td>
                                 <td>
@@ -124,7 +124,7 @@ class JobCard extends LightComponent {
                             </tr>
                         </tbody>
                     </table>
-                )}
+                </If>
             </ExpandableCard>
         );
     }

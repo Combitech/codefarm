@@ -47,7 +47,7 @@ class ArtifactCard extends LightComponent {
                         />
                     )}
                 />
-                {this.state.expanded.value && (
+                <If condition={this.state.expanded.value}>
                     <table className={this.props.theme.table}>
                         <tbody>
                             <tr>
@@ -79,14 +79,14 @@ class ArtifactCard extends LightComponent {
                                 <td>Mimetype</td>
                                 <td>{this.props.item.fileMeta.mimeType}</td>
                             </tr>
-                            {Object.keys(this.props.item.fileMeta.hashes).map((key) => (
+                            <For each="key" of={Object.keys(this.props.item.fileMeta.hashes)}>
                                 <tr key={key}>
                                     <td>{key}</td>
                                     <td className={this.props.theme.monospace}>
                                         {this.props.item.fileMeta.hashes[key]}
                                     </td>
                                 </tr>
-                            ))}
+                            </For>
                             <tr>
                                 <td>Tags</td>
                                 <td>
@@ -95,7 +95,7 @@ class ArtifactCard extends LightComponent {
                             </tr>
                         </tbody>
                     </table>
-                )}
+                </If>
             </ExpandableCard>
         );
     }

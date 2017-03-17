@@ -89,7 +89,7 @@ class RevisionCard extends LightComponent {
                         {patch.comment}
                     </span>
                 </CardText>
-                {this.state.expanded.value && (
+                <If condition={this.state.expanded.value}>
                     <table className={this.props.theme.table}>
                         <tbody>
                             <tr>
@@ -104,15 +104,15 @@ class RevisionCard extends LightComponent {
                                     {this.props.item.repository}
                                 </td>
                             </tr>
-                            {this.props.patchIndex < 0 && (
+                            <If condition={this.props.patchIndex < 0}>
                                 <tr>
                                     <td>Patches</td>
                                     <td>
                                         {this.props.item.patches.length}
                                     </td>
                                 </tr>
-                            )}
-                            {this.props.patchIndex >= 0 && (
+                            </If>
+                            <If condition={this.props.patchIndex >= 0}>
                                 <tr>
                                     <td>Patch</td>
                                     <td>
@@ -121,7 +121,7 @@ class RevisionCard extends LightComponent {
                                         {this.props.item.patches.length}
                                     </td>
                                 </tr>
-                            )}
+                            </If>
                             <tr>
                                 <td>Refname</td>
                                 <td className={this.props.theme.monospace}>
@@ -148,7 +148,7 @@ class RevisionCard extends LightComponent {
                             </tr>
                         </tbody>
                     </table>
-                )}
+                </If>
             </ExpandableCard>
         );
     }
