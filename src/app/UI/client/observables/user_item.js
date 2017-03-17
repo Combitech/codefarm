@@ -10,12 +10,7 @@ class UserItem extends TypeList {
         }
 
         const createQuery = (identifier) => (
-            {
-                $or: [
-                    { _id: identifier },
-                    { email: identifier }
-                ]
-            }
+            { _id: identifier }
         );
 
         const defaultOpts = {

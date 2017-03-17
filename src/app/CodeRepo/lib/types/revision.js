@@ -184,7 +184,7 @@ class Revision extends Type {
         let ref = false;
 
         if (!query || typeof query !== "object") {
-            ServiceMgr.instance.log("error", `Invalid query '${query}' (expected query object)`);
+            ServiceMgr.instance.log("error", `Invalid user matching query '${query}' (expected query object)`);
 
             return false;
         }
@@ -207,7 +207,7 @@ class Revision extends Type {
                 ServiceMgr.instance.log("error", `Found ${users.length} users matching query '${JSON.stringify(query)}'`);
             }
         } catch (error) {
-            ServiceMgr.instance.log("error", `Error when executing query '${JSON.stringify(query)}'`, error);
+            ServiceMgr.instance.log("error", `Error while finding user matching query '${JSON.stringify(query)}'`, error);
         }
 
         return ref;

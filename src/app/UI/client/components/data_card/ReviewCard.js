@@ -30,7 +30,7 @@ class ReviewCard extends LightComponent {
 
     componentWillReceiveProps(nextProps) {
         this.user.setOpts({
-            identifier: nextProps.item.userRef ? nextProps.item.userRef.id : nextProps.item.userEmail
+            identifier: nextProps.item.userRef ? nextProps.item.userRef.id : nextProps.item.alias
         });
     }
 
