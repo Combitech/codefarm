@@ -80,9 +80,6 @@ class Overview extends LightComponent {
         });
 
         this.props.item.reviews
-            // Filter out reviews without author (email)
-            // TODO: Remove filter once we are sure Email is resolved correctly
-            .filter((review) => review.userEmail)
             .forEach((review, reviewIndex) => {
                 list.push({
                     id: `review-${reviewIndex}`,

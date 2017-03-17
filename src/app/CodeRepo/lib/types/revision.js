@@ -58,7 +58,8 @@ class Revision extends Type {
             });
         }
 
-        patch.userRef = await revision._getUserRef(patch.email);
+        const query = { email: patch.email };
+        patch.userRef = await revision.getUserRef(query);
         revision.patches.push(patch);
 
         // If we get a new patch we should restart the flow and thus need
@@ -103,7 +104,8 @@ class Revision extends Type {
         this.tags.push(REVISION_STATUS.MERGED);
 
         if (patch) {
-            patch.userRef = await this._getUserRef(patch.email);
+            const query = { email: patch.email };
+            patch.userRef = await this.getUserRef(query);
             this.patches.push(patch);
         }
 
@@ -133,12 +135,17 @@ class Revision extends Type {
         await this.save();
     }
 
-    async addReview(userEmail, state) {
-        const userRef = await this._getUserRef(userEmail);
+    // userRef if existing, otherwise use alias
+    async addReview(userRef, alias, state) {
+        if (!userRef && !alias) {
+            throw new Error("userRef or alias expected");
+        }
+
         // Modify previous review for user
         const review = this.reviews.find(
-            (r) => (userRef && r.userRef) ? r.userRef.id === userRef.id : r.userEmail === userEmail
+            (r) => (userRef && r.userRef) ? r.userRef.id === userRef.id : r.alias === alias
         );
+
         const time = new Date();
         if (review) {
             review.state = state;
@@ -148,7 +155,7 @@ class Revision extends Type {
                 created: time,
                 updated: time,
                 userRef,
-                userEmail,
+                alias,
                 state
             });
         }
@@ -173,21 +180,18 @@ class Revision extends Type {
         await this.save();
     }
 
-    async _getUserRef(userEmail) {
+    async getUserRef(query) {
         let ref = false;
 
-        if (typeof userEmail !== "string" ||
-            (typeof userEmail === "string" && userEmail.length === 0)) {
-            ServiceMgr.instance.log("error", `Can't get user ref for user with illegal email ${JSON.stringify(userEmail)}`);
+        if (!query || typeof query !== "object") {
+            ServiceMgr.instance.log("error", `Invalid user matching query '${query}' (expected query object)`);
 
-            return ref;
+            return false;
         }
 
         try {
             const client = ServiceComBus.instance.getClient("userrepo");
-            const users = await client.list("user", {
-                email: userEmail
-            });
+            const users = await client.list("user", query);
             if (!(users instanceof Array)) {
                 throw new Error(`Expected array result, got data: ${JSON.stringify(users)}`);
             }
@@ -198,12 +202,12 @@ class Revision extends Type {
                     _ref: true
                 };
             } else if (users.length === 0) {
-                ServiceMgr.instance.log("info", `Found no user with email ${userEmail}`);
+                ServiceMgr.instance.log("info", `Found no user matching query '${JSON.stringify(query)}'`);
             } else {
-                ServiceMgr.instance.log("error", `Found ${users.length} users with email ${userEmail}`);
+                ServiceMgr.instance.log("error", `Found ${users.length} users matching query '${JSON.stringify(query)}'`);
             }
         } catch (error) {
-            ServiceMgr.instance.log("error", `Can't get user ref for user with email ${userEmail}`, error);
+            ServiceMgr.instance.log("error", `Error while finding user matching query '${JSON.stringify(query)}'`, error);
         }
 
         return ref;

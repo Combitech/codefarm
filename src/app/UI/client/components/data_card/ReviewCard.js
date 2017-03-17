@@ -14,7 +14,7 @@ class ReviewCard extends LightComponent {
         super(props);
 
         this.user = new UserItem({
-            identifier: props.item.userRef ? props.item.userRef.id : props.item.userEmail
+            identifier: props.item.userRef ? props.item.userRef.id : props.item.alias
         });
 
         this.state = {
@@ -30,7 +30,7 @@ class ReviewCard extends LightComponent {
 
     componentWillReceiveProps(nextProps) {
         this.user.setOpts({
-            identifier: nextProps.item.userRef ? nextProps.item.userRef.id : nextProps.item.userEmail
+            identifier: nextProps.item.userRef ? nextProps.item.userRef.id : nextProps.item.alias
         });
     }
 

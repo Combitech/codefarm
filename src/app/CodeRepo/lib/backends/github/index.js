@@ -298,19 +298,23 @@ class GithubBackend extends AsyncEventEmitter {
         ServiceMgr.instance.log("verbose", `Review ${event.review.state} for ${event.pull_request.id}`);
 
         const revision = await this._getRevision(event.pull_request.id.toString());
-        const user = await this._getUserByGithubLogin(event.review.user.login);
-        const email = user ? user.email : false;
-        if (email) {
-            ServiceMgr.instance.log("verbose", `Reviewer '${event.review.user.login}' resolved to '${user.id}' ('${email}')`);
+        const query = { "aliases.github": event.review.user.login };
+        const alias = event.review.user.login;
+        const userRef = await revision.getUserRef(query);
+
+        if (!userRef) {
+            ServiceMgr.instance.log("info", `Failed to resolve reviewer github login '${alias}' to user`);
+        } else {
+            ServiceMgr.instance.log("verbose", `Reviewer github login '${alias}' resolved to user '${userRef.id}'`);
         }
 
         const state = event.review.state;
         if (state === "commented") {
-            await revision.addReview(email, this.Revision.ReviewState.NEUTRAL);
+            await revision.addReview(userRef, alias, this.Revision.ReviewState.NEUTRAL);
         } else if (state === "changes_requested") {
-            await revision.addReview(email, this.Revision.ReviewState.REJECTED);
+            await revision.addReview(userRef, alias, this.Revision.ReviewState.REJECTED);
         } else if (state === "approved") {
-            await revision.addReview(email, this.Revision.ReviewState.APPROVED);
+            await revision.addReview(userRef, alias, this.Revision.ReviewState.APPROVED);
         } else {
             ServiceMgr.instance.log("verbose", `unknown review state ${state} on ${revision._id}`);
         }
