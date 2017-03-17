@@ -136,6 +136,7 @@ describe("A Service", () => {
         olddata: null,
         newdata: {
             type: `${testInfo.name}.state`,
+            typeVersion: 1,
             tags: [],
             refs: [],
             comments: [],
