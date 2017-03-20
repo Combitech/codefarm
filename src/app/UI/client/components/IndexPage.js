@@ -27,7 +27,7 @@ class IndexPage extends LightComponent {
         });
 
         this.artifacts = new TypeList({
-            type: "coderepo.revision",
+            type: "artifactrepo.artifact",
             query: { state: "commited" },
             sortOn: "created",
             limit: 10
