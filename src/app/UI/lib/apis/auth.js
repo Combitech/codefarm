@@ -4,6 +4,8 @@ const api = require("api.io");
 const singleton = require("singleton");
 const AuthMgr = require("../managers/auth");
 
+let config;
+
 const authApiExports = api.register("auth", {
     _login: async (session, emailOrId, password, opts) => {
         let result;
@@ -79,12 +81,15 @@ const authApiExports = api.register("auth", {
                 success: true,
                 user: session.user.tokenData
             };
-        } else {
+        } else if (config && config.guestUser) {
             // No previous session, login as guest user
-            // TODO: Move guest user id and password to config
-            result = await authApiExports._login(session, "guest", "guestguest", {
-                isGuestUser: true
-            });
+            result = await authApiExports._login(
+                session,
+                config.guestUser.id,
+                config.guestUser.password, {
+                    isGuestUser: true
+                }
+            );
             if (result.success) {
                 result.user.isGuestUser = true;
             }
@@ -99,10 +104,17 @@ class AuthApi {
         this.exports = authApiExports;
     }
 
-    async start() {
+    async start(uiConfig) {
+        config = {};
+        try {
+            config.guestUser = Object.assign({}, uiConfig.web.auth.guestUser);
+        } catch (error) {
+            // Ignore if config option doesn't exist...
+        }
     }
 
     async dispose() {
+        config = null;
     }
 }
 

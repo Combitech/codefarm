@@ -42,6 +42,10 @@
     "ui": {
         "web": {
             "auth": {
+                "guestUser": {
+                    "id": "guest",
+                    "password": "guestguest"
+                },
                 "jwtCookieName": "codefarm/jwt/token"
             },
             "port": 19898
