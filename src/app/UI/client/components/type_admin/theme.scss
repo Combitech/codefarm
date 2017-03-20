@@ -115,6 +115,12 @@
         margin-left: $layout-gutter-width;
     }
 
+    .dropdown {
+        float: right;
+        margin-left: $layout-gutter-width;
+        margin-top: -2 * $unit;
+    }
+
     .filterInput {
         float: right;
         width: $baseline-grid * 30;

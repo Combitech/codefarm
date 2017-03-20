@@ -127,6 +127,12 @@ class Type {
         return false;
     }
 
+    static async distinct(field, query = {}) {
+        const db = await this._getDb();
+
+        return await db.distinct(this.typeName, field, query);
+    }
+
     static async findMany(query, options) {
         const db = await this._getDb();
         const list = await db.find(this.typeName, query, options);
