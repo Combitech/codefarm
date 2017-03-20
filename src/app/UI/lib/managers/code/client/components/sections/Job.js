@@ -15,8 +15,7 @@ class Job extends LightComponent {
         super(props);
 
         this.state = {
-            tabIndex: stateVar(this, "tabIndex", 0),
-            showJobId: stateVar(this, "showJobId", false)
+            tabIndex: stateVar(this, "tabIndex", 0)
         };
     }
 
@@ -159,7 +158,6 @@ class Job extends LightComponent {
 Job.propTypes = {
     theme: React.PropTypes.object,
     item: React.PropTypes.object.isRequired,
-    itemExt: React.PropTypes.object.isRequired,
     job: React.PropTypes.object
 };
 

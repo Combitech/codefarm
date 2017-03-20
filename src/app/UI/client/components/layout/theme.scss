@@ -1,0 +1,48 @@
+
+@import "react-toolbox/components/colors";
+@import "react-toolbox/components/globals";
+@import "~ui-styles/colors";
+
+.container {
+    padding: $layout-gutter-width-sm * 2;
+    padding-top: 0;
+    color: $color-text;
+}
+
+.header {
+    margin-bottom: $layout-gutter-width-sm;
+    color: #ddd;
+    text-transform: uppercase;
+    font-weight: $font-weight-bold;
+    font-size: $font-size-big * 2;
+}
+
+.row {
+    margin-right: -$layout-gutter-width-sm;
+    margin-left: -$layout-gutter-width-sm;
+}
+
+.column {
+    padding-right: $layout-gutter-width-sm;
+    padding-left: $layout-gutter-width-sm;
+}
+
+.section {
+    margin-bottom: $layout-gutter-width * 2;
+}
+
+.loading {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    opacity: 0.5;
+    z-index: 999;
+    text-align: center;
+    padding: $layout-gutter-width * 2;
+
+    .progressBar {
+        z-index: 1000;
+    }
+}

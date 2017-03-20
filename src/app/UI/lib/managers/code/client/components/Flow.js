@@ -5,9 +5,7 @@ import { JobFlow, StepStatus } from "ui-components/flow";
 import { States as ObservableDataStates } from "ui-lib/observable_data";
 import { ensureArray } from "misc";
 import StepListObservable from "ui-observables/step_list";
-import {
-    LoadIndicator as TALoadIndicator
-} from "ui-components/type_admin";
+import { Loading } from "ui-components/layout";
 
 class FlowComponent extends LightComponent {
     constructor(props) {
@@ -42,11 +40,7 @@ class FlowComponent extends LightComponent {
         this.log("render", this.props, this.state);
 
         if (this.state.state === ObservableDataStates.LOADING) {
-            return (
-                <TALoadIndicator
-                    theme={this.props.theme}
-                />
-            );
+            return (<Loading />);
         }
 
         const firstStep = {

@@ -15,6 +15,7 @@ export const FLOW = "CFFlow";
 export const JOB_FLOW = "CFJobFlow";
 export const FLOWS = "CFFlows";
 export const HIDDEN_TEXT = "CFHiddenText";
+export const LAYOUT = "CFLayout";
 export const LOG_VIEWER = "CFLogViewer";
 export const STATUS = "CFStatus";
 export const TYPE_ADMIN = "CFTypeAdmin";

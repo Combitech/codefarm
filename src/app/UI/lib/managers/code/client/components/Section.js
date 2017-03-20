@@ -3,7 +3,7 @@ import React from "react";
 import LightComponent from "ui-lib/light_component";
 import OverviewSection from "./sections/Overview";
 import JobSection from "./sections/Job";
-import NoJobSection from "./sections/NoJob";
+import StepSection from "./sections/Step";
 import moment from "moment";
 
 class Section extends LightComponent {
@@ -27,7 +27,6 @@ class Section extends LightComponent {
                         <JobSection
                             theme={this.props.theme}
                             item={this.props.item}
-                            itemExt={this.props.itemExt}
                             jobItem={job}
                         />
                     );
@@ -35,10 +34,9 @@ class Section extends LightComponent {
             }
 
             return (
-                <NoJobSection
+                <StepSection
                     theme={this.props.theme}
                     item={this.props.item}
-                    itemExt={this.props.itemExt}
                     step={this.props.step}
                 />
             );

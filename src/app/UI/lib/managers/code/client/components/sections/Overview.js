@@ -2,7 +2,7 @@
 import React from "react";
 import Immutable from "immutable";
 import LightComponent from "ui-lib/light_component";
-import { Row, Col } from "react-flexbox-grid";
+import { Row, Column, Header } from "ui-components/layout";
 import moment from "moment";
 import api from "api.io/api.io-client";
 import stateVar from "ui-lib/state_var";
@@ -127,23 +127,21 @@ class Overview extends LightComponent {
         }
 
         return (
-            <div>
-                <Row className={this.props.theme.row}>
-                    <Col xs={12} md={6} className={this.props.theme.col}>
-                        <h5 className={this.props.theme.sectionHeader}>Revision</h5>
-                        <RevisionCard
-                            theme={this.props.theme}
-                            item={this.props.item}
-                            expanded={true}
-                            expandable={false}
-                        />
-                    </Col>
-                    <Col xs={12} md={6} className={this.props.theme.col}>
-                        <h5 className={this.props.theme.sectionHeader}>Events</h5>
-                        <CardList list={Immutable.fromJS(list)} />
-                    </Col>
-                </Row>
-            </div>
+            <Row>
+                <Column xs={12} md={6}>
+                    <Header label="Revision" />
+                    <RevisionCard
+                        theme={this.props.theme}
+                        item={this.props.item}
+                        expanded={true}
+                        expandable={false}
+                    />
+                </Column>
+                <Column xs={12} md={6}>
+                    <Header label="Events" />
+                    <CardList list={Immutable.fromJS(list)} />
+                </Column>
+            </Row>
         );
     }
 }

@@ -6,12 +6,12 @@ import { Flows } from "ui-components/flow";
 import Flow from "./Flow";
 import Section from "./Section";
 import {
-    Section as TASection,
-    LoadIndicator as TALoadIndicator
+    Section as TASection
 } from "ui-components/type_admin";
 import ExtendedItem from "ui-observables/extended_item";
 import FlowList from "ui-observables/flow_list";
 import LocationQuery from "ui-observables/location_query";
+import { Loading } from "ui-components/layout";
 
 class Item extends LightComponent {
     constructor(props) {
@@ -60,26 +60,18 @@ class Item extends LightComponent {
     render() {
         this.log("render", this.props, this.state);
 
-        let loadIndicator;
-        if (this.state.itemExtState === ObservableDataStates.LOADING || this.state.flowsState === ObservableDataStates.LOADING) {
-            loadIndicator = (
-                <TALoadIndicator
-                    theme={this.props.theme}
-                />
-            );
-        }
-
+        const loading = this.state.itemExtState === ObservableDataStates.LOADING || this.state.flowsState === ObservableDataStates.LOADING;
         const flows = this.state.flows.toJS();
         const itemExt = this.state.itemExt.get("_id") ? this.state.itemExt.toJS() : false;
 
         return (
             <div>
-                {loadIndicator}
+                <Loading show={loading} />
                 <TASection
                     controls={this.props.controls}
                     breadcrumbs={this.props.breadcrumbs}
                 >
-                    {itemExt &&
+                    <If condition={itemExt}>
                         <div className={this.props.theme.container}>
                             <Flows
                                 theme={this.props.theme}
@@ -99,7 +91,7 @@ class Item extends LightComponent {
                                 step={this.state.params.toJS().step || ""}
                             />
                         </div>
-                    }
+                    </If>
                 </TASection>
             </div>
         );

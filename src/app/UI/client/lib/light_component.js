@@ -76,7 +76,7 @@ class LightComponent extends React.PureComponent {
 
 LightComponent.propTypes = {
     routes: React.PropTypes.array,
-    route: React.PropTypes.string,
+    route: React.PropTypes.any,
     params: React.PropTypes.object
 };
 
