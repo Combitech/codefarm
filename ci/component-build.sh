@@ -55,11 +55,13 @@ result=0
 pushd ${gitroot}/src/app/${target}
   echo "Running install on ${target}"
 
-  result=0
   subJobName="${target}_build_${mode}"
   subJobId=$($CLI -q '$._id' --format values create_subjob build "${subJobName}" ongoing)
 
-  yarn install ${installFlag} || result=1
+  yarn install ${installFlag} |& tee ${subJobName}.log
+  result=${PIPESTATUS[0]}
+
+  $CLI upload_log ${PWD}/${subJobName}.log ${subJobName}.log
 
   stopTime=$(($(date +%s%N)/1000000))
   testDuration=`expr $stopTime - $startTime`
@@ -82,7 +84,10 @@ if [[ "${target}" == "UI" && "${mode}" == "rel" ]]; then
     subJobName="${component}_compile_client_build_${mode}"
     subJobId=$($CLI -q '$._id' --format values create_subjob build "${subJobName}" ongoing)
 
-    yarn compile-client --production || result=1
+    yarn compile-client --production |& tee ${subJobName}.log
+    result=${PIPESTATUS[0]}
+
+    $CLI upload_log ${PWD}/${subJobName}.log ${subJobName}.log
 
     stopTime=$(($(date +%s%N)/1000000))
     testDuration=`expr $stopTime - $startTime`
@@ -105,7 +110,10 @@ if [[ "${target}" == "Exec" && "${mode}" == "rel" ]]; then
     subJobName="${component}_compile_build_${mode}"
     subJobId=$($CLI -q '$._id' --format values create_subjob build "${subJobName}" ongoing)
 
-    yarn compile --production || result=1
+    yarn compile --production |& tee ${subJobName}.log
+    result=${PIPESTATUS[0]}
+
+    $CLI upload_log ${PWD}/${subJobName}.log ${subJobName}.log
 
     stopTime=$(($(date +%s%N)/1000000))
     testDuration=`expr $stopTime - $startTime`

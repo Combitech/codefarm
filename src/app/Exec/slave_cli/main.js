@@ -109,7 +109,7 @@ module.exports = {
                 if (data.type === "response") {
                     responseData = data.data;
                 } else if (data.type === "error") {
-                    throw new Error(`Command error respose "${data.msg}", data=${JSON.stringify(data)}`);
+                    throw new Error(`Command error response "${data.msg}", data=${JSON.stringify(data)}`);
                 } else {
                     throw new Error(`Command not OK, data=${JSON.stringify(data)}`);
                 }
