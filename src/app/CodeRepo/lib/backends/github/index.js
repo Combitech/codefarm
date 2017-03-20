@@ -188,30 +188,16 @@ class GithubBackend extends AsyncEventEmitter {
         ServiceMgr.instance.log("debug", JSON.stringify(event, null, 2));
     }
 
-    async _onPullRequestOpen(event) {
-        ServiceMgr.instance.log("verbose", "pull_request_open received");
-        ServiceMgr.instance.log("debug", JSON.stringify(event, null, 2));
-
-        const repository = await this._getRepo(event.repository.name);
-        const patch = await this._createPatch(event, repository._id);
-
-        const revision = await this.Revision.allocate(repository._id, event.pull_request.id.toString(), patch);
-
-        // Check if title contains SKIP_REVIEW and if so set the review:skip tag
-        const commit = await this._getCommit(event.repository.name, event.pull_request.head.sha);
-        if (commit.commit.message.indexOf("SKIP_REVIEW") !== -1) {
-            await revision.skipReview();
-        }
-    }
-
+    // This will handle both pull request open and update
     async _onPullRequestUpdate(event) {
-        ServiceMgr.instance.log("verbose", "pull_request_update received");
+        const action = event.action === "opened" ? "open" : "update";
+        ServiceMgr.instance.log("verbose", `pull_request_${action} received`);
         ServiceMgr.instance.log("debug", JSON.stringify(event, null, 2));
 
         const repository = await this._getRepo(event.repository.name);
         const patch = await this._createPatch(event, repository._id);
 
-        // This will create a new patch on existing revision
+        // This will create a new revision or patch on existing revision
         const revision = await this.Revision.allocate(repository._id, event.pull_request.id.toString(), patch);
 
         // Check if title contains SKIP_REVIEW and if so set the review:skip tag
@@ -322,7 +308,7 @@ class GithubBackend extends AsyncEventEmitter {
 
     async _startMonitorEventStream() {
         this.githubEmitter.addListener("ping", this._onPing.bind(this));
-        this.githubEmitter.addListener("pull_request_opened", this._onPullRequestOpen.bind(this));
+        this.githubEmitter.addListener("pull_request_opened", this._onPullRequestUpdate.bind(this));
         this.githubEmitter.addListener("pull_request_updated", this._onPullRequestUpdate.bind(this));
         this.githubEmitter.addListener("pull_request_closed", this._onPullRequestClose.bind(this));
         this.githubEmitter.addListener("pull_request_review", this._onPullRequestReview.bind(this));
