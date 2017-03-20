@@ -4,16 +4,19 @@ import { setCookie } from "./cookie";
 import ActiveUser from "ui-observables/active_user";
 import Notification from "ui-observables/notification";
 
+const setCookies = (cookieList) => {
+    if (cookieList) {
+        for (const cookie of cookieList) {
+            setCookie(cookie.name, cookie.value, cookie.opts);
+        }
+    }
+};
+
 const signin = async (email, password, debug = false) => {
     const response = await api.auth.login(email, password);
     debug && console.log("Sign in response", response);
     if (response.success) {
-        // Set cookie
-        if (response.setCookies) {
-            for (const cookie of response.setCookies) {
-                setCookie(cookie.name, cookie.value, cookie.opts);
-            }
-        }
+        setCookies(response.setCookies);
         ActiveUser.instance.setUser(response.user);
         Notification.instance.publish(`Welcome ${response.user.username}!`);
     } else {
@@ -45,9 +48,19 @@ const signout = async (debug = false) => {
     return response;
 };
 
-const whoami = async(debug = false) => {
+const whoami = async(isInitialSync = false, debug = false) => {
     const response = await api.auth.whoami();
     debug && console.log("whoami response", response);
+
+    if (isInitialSync) {
+        if (response.success) {
+            setCookies(response.setCookies);
+            Notification.instance.publish(`Welcome ${response.user.username}!`);
+        } else {
+            const msg = response.message ? `Sign in failed: ${response.message}` : "Sign in failed";
+            Notification.instance.publish(msg, "warning");
+        }
+    }
 
     return response;
 };

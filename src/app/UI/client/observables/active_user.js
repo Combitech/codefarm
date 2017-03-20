@@ -51,7 +51,7 @@ class ActiveUser {
      * @return {undefined}
      */
     async _sync() {
-        const response = await whoami();
+        const response = await whoami(true);
         if (response.success) {
             this.setUser(response.user);
         } else {
