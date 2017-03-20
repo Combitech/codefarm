@@ -103,16 +103,18 @@ class ListTabs extends LightComponent {
             />
         ));
 
-        controls.push((
-            <Dropdown
-                key="flows"
-                className={this.props.theme.dropdown}
-                auto
-                source={this.state.flows.toJS().map((flowId) => ({ label: flowId, value: flowId }))}
-                value={this.steps.opts.getValue().toJS().flowId}
-                onChange={(flowId) => this.steps.setOpts({ flowId })}
-              />
-        ));
+        if (this.state.flows.size > 1) {
+            controls.push((
+                <Dropdown
+                    key="flows"
+                    className={this.props.theme.dropdown}
+                    auto
+                    source={this.state.flows.toJS().map((flowId) => ({ label: flowId, value: flowId }))}
+                    value={this.steps.opts.getValue().toJS().flowId}
+                    onChange={(flowId) => this.steps.setOpts({ flowId })}
+                  />
+            ));
+        }
 
         return (
             <TASection
