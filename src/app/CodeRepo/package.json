@@ -14,7 +14,7 @@
     "start-dev": "node --harmony_async_await . --bus amqp://localhost/codefarm",
     "start-rel": "npm run start-dev",
     "stop": "../../bs/stop.sh",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "mocha --harmony_async_await --recursive",
     "lint": "git ls-files \"*.js\" | xargs eslint",
     "install": "if [ -n \"$gitroot\" ]; then $gitroot/src/bs/linklibs.sh; else ../../bs/linklibs.sh; fi",
     "deepinstall": "if [ -n \"$gitroot\" ]; then FORCE_INSTALL_LIBS=1 $gitroot/src/bs/linklibs.sh; else FORCE_INSTALL_LIBS=1 ../../bs/linklibs.sh; fi"
@@ -35,7 +35,8 @@
     "ssh",
     "web",
     "backend",
-    "servicecom"
+    "servicecom",
+    "testsupport"
   ],
   "dependencies": {
     "fs-extra-promise": "^0.4.1",
@@ -49,6 +50,8 @@
   },
   "devDependencies": {
     "babel-eslint": "^7.1.0",
-    "eslint": "^3.7.0"
+    "eslint": "^3.7.0",
+    "mocha": "^3.2.0",
+    "chai": "^3.5.0"
   }
 }
