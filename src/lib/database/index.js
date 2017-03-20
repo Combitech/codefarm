@@ -56,6 +56,10 @@ class Database extends ProviderClient {
         return this.db.collection(collection).createIndexes(indexes);
     }
 
+    distinct(collection, field, query = {}) {
+        return this.db.collection(collection).distinct(field, query);
+    }
+
     find(collection, query = {}, options = {}) {
         let cursor = this.db.collection(collection).find(query);
 
