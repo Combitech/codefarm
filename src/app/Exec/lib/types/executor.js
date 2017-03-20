@@ -31,6 +31,9 @@ const DETACH_REASON = {
 
 const ATTACH_TIMEOUT_MS = 10000;
 
+// Windows requires .bat file extension to run as batch-file
+const REMOTE_SCRIPT_FILENAME = "exe.bat";
+
 class Executor extends Type {
     constructor(data) {
         super();
@@ -190,7 +193,7 @@ class Executor extends Type {
     }
 
     async _uploadScript(script) {
-        const remoteScriptPath = path.join(this.workspace, "exe");
+        const remoteScriptPath = path.join(this.workspace, REMOTE_SCRIPT_FILENAME);
 
         await this._logln(`Uploading script file, ${remoteScriptPath}`);
         try {
@@ -226,7 +229,7 @@ class Executor extends Type {
 
     async _executeScript(jobInfo) {
         const env = this.getEnv(jobInfo);
-        const remoteScriptPath = path.join(this.workspace, "exe");
+        const remoteScriptPath = path.join(this.workspace, REMOTE_SCRIPT_FILENAME);
 
         await this._logln(`Executing script file, ${remoteScriptPath}`);
         this.__com.sendCommand("execute", { script: remoteScriptPath, env: env, data: jobInfo, id: this.jobId });

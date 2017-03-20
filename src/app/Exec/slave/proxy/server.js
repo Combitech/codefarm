@@ -29,6 +29,7 @@ class Server extends AsyncEventEmitter {
 
     write(data) {
         if (this.rl) {
+            this._log(`Data to server: ${data}`);
             console.log(data);
         } else {
             this._log(`Got write with nowhere to write: ${data}`);

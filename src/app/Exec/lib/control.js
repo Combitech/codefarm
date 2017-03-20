@@ -417,11 +417,7 @@ class Control {
                 // All slaves have their ID as a tag... This will match a specific slave
                 criteria: `${slave._id}`,
                 requeueOnFailure: false,
-                script: `#!/bin/bash
-                    echo "My job is to verify slave ${slave._id}"
-                    echo "Job id: $CF_JOB_ID"
-                    echo "Job name: $CF_JOB_NAME"
-                `,
+                script: `echo My job is to verify slave ${slave._id}`,
                 baseline: {
                     _id: "dummy-baseline-1",
                     name: `Dummy baseline to verify slave ${slave._id}`,

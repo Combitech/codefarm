@@ -33,6 +33,8 @@ class Executor extends AsyncEventEmitter {
                 cwd: path.dirname(script),
                 env: Object.assign({}, process.env, env),
                 detached: true,
+                // Execution within shell is required on windows to execute batch-files
+                shell: true,
                 stdio: [ "pipe", "pipe", "pipe" ]
             });
 

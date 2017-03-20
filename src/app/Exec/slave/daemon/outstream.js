@@ -16,6 +16,7 @@ class OutStream extends AsyncEventEmitter {
 
     async write(data) {
         this._log(`Add to buffer: ${JSON.stringify(data)}`);
+        data._src = "daemon";
         this.buffer.push(data);
 
         await this._flush();
