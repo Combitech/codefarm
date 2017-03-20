@@ -56,7 +56,7 @@ for target in ${targets[@]}; do
   yarn lint |& tee ${subJobName}.log
   result=${PIPESTATUS[0]}
 
-  $CLI upload_log ${subJobName}.log ${subJobName}.log
+  $CLI upload_log ${PWD}/${subJobName}.log ${subJobName}.log
 
   stopTime=$(($(date +%s%N)/1000000))
   testDuration=`expr $stopTime - $startTime`
