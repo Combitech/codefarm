@@ -14,7 +14,7 @@ describe("GithubBackend", () => {
     after(async () => {
     });
 
-    describe("Setup repo", async () => {
+    describe("Dummy test", async () => {
         it("", async () => {
             assert(true);
         });
