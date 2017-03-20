@@ -1,7 +1,7 @@
 
 import React from "react";
-import Immutable from "immutable";
 import moment from "moment";
+import Immutable from "immutable";
 import LightComponent from "ui-lib/light_component";
 import { CardList, SubJobCard } from "ui-components/data_card";
 import SubJobs from "../../../observables/subjob_list";
@@ -15,8 +15,7 @@ class SubJobTab extends LightComponent {
         });
 
         this.state = {
-            subjobs: this.subjobs.value.getValue(),
-            state: this.subjobs.state.getValue()
+            subjobs: this.subjobs.value.getValue()
         };
     }
 
@@ -24,7 +23,6 @@ class SubJobTab extends LightComponent {
         this.addDisposable(this.subjobs.start());
 
         this.addDisposable(this.subjobs.value.subscribe((subjobs) => this.setState({ subjobs })));
-        this.addDisposable(this.subjobs.state.subscribe((state) => this.setState({ state })));
     }
 
     componentWillReceiveProps(nextProps) {
@@ -34,22 +32,16 @@ class SubJobTab extends LightComponent {
     }
 
     render() {
-        const list = [];
-
-        for (const subjob of this.state.subjobs.toJS()) {
-            list.push({
-                id: subjob._id,
-                time: moment(subjob.finished ? subjob.finished : subjob.created).unix(),
-                item: subjob,
-                Card: SubJobCard,
-                props: {}
-            });
-        }
+        const list = this.state.subjobs.map((subjob) => Immutable.fromJS({
+            id: subjob.get("_id"),
+            time: moment(subjob.get("finished") ? subjob.get("finished") : subjob.get("created")).unix(),
+            item: subjob.toJS(),
+            Card: SubJobCard,
+            props: {}
+        }));
 
         return (
-            <div className={this.props.theme.section}>
-                <CardList list={Immutable.fromJS(list)} />
-            </div>
+            <CardList list={list} />
         );
     }
 }

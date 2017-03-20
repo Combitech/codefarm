@@ -1,8 +1,9 @@
 
 import React from "react";
-import Immutable from "immutable";
 import moment from "moment";
+import Immutable from "immutable";
 import LightComponent from "ui-lib/light_component";
+import { Row, Column, Header } from "ui-components/layout";
 import { CardList, ArtifactCard, RevisionCard } from "ui-components/data_card";
 import Artifacts from "../../../observables/artifact_list";
 import Revisions from "../../../observables/revision_list";
@@ -44,30 +45,33 @@ class OutputTab extends LightComponent {
     }
 
     render() {
-        const list = [];
+        const artifacts = this.state.artifacts.map((artifact) => Immutable.fromJS({
+            id: artifact.get("_id"),
+            time: moment(artifact.get("created")).unix(),
+            item: artifact.toJS(),
+            Card: ArtifactCard,
+            props: {}
+        }));
 
-        for (const artifact of this.state.artifacts.toJS()) {
-            list.push({
-                id: artifact._id,
-                time: moment(artifact.created).unix(),
-                item: artifact,
-                Card: ArtifactCard,
-                props: {}
-            });
-        }
-
-        for (const revision of this.state.revisions.toJS()) {
-            list.push({
-                id: revision._id,
-                time: 0,
-                item: revision,
-                Card: RevisionCard,
-                props: {}
-            });
-        }
+        const revisions = this.state.revisions.map((revision) => Immutable.fromJS({
+            id: revision.get("_id"),
+            time: 0,
+            item: revision.toJS(),
+            Card: RevisionCard,
+            props: {}
+        }));
 
         return (
-            <CardList list={Immutable.fromJS(list)} />
+            <Row>
+                <Column xs={12} md={6}>
+                    <Header label="Artifacts" />
+                    <CardList list={artifacts} />
+                </Column>
+                <Column xs={12} md={6}>
+                    <Header label="Revisions" />
+                    <CardList list={revisions} />
+                </Column>
+            </Row>
         );
     }
 }

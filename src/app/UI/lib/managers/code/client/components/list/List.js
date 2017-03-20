@@ -3,9 +3,9 @@ import React from "react";
 import LightComponent from "ui-lib/light_component";
 import ImmutablePropTypes from "react-immutable-proptypes";
 import {
-    LoadIndicator as TALoadIndicator,
     ListPager as TAListPager
 } from "ui-components/type_admin";
+import { Loading } from "ui-components/layout";
 import PagedRevisionListObservable from "../../observables/paged_revision_list";
 import RevisionListObservable from "../../observables/revision_list";
 import { States as ObservableDataStates } from "ui-lib/observable_data";
@@ -72,10 +72,7 @@ class List extends LightComponent {
 
         return (
             <div className={this.props.theme.revisionContainer}>
-                <If condition={this.state.state === ObservableDataStates.LOADING}>
-                    <TALoadIndicator/>
-                </If>
-
+                <Loading show={this.state.state === ObservableDataStates.LOADING}/>
                 <Table
                     theme={this.props.theme}
                     steps={this.props.steps}

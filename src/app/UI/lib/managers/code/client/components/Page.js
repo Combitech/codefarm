@@ -2,11 +2,9 @@
 import React from "react";
 import { AppMenu } from "ui-components/app_menu";
 import LightComponent from "ui-lib/light_component";
-import {
-    LoadIndicator as TALoadIndicator
-} from "ui-components/type_admin";
 import CodeRepositories from "../observables/code_repositories";
 import { States as ObservableDataStates } from "ui-lib/observable_data";
+import { Loading } from "ui-components/layout";
 
 class Page extends LightComponent {
     constructor(props) {
@@ -29,15 +27,7 @@ class Page extends LightComponent {
     render() {
         this.log("render", this.props, this.state);
 
-        let loadIndicator;
-        if (this.state.state === ObservableDataStates.LOADING) {
-            loadIndicator = (
-                <TALoadIndicator/>
-            );
-        }
-
         const pathname = this.getPathname();
-
         const items = this.state.list.toJS().map((item) => {
             const pn = `${pathname}/${item._id}`;
             const active = this.context.router.location.pathname.startsWith(pn);
@@ -51,7 +41,7 @@ class Page extends LightComponent {
 
         return (
             <div>
-                {loadIndicator}
+                <Loading show={this.state.state === ObservableDataStates.LOADING} />
                 <AppMenu
                     primaryText="Repositories"
                     icon="code"

@@ -1,48 +1,45 @@
 
 import React from "react";
 import LightComponent from "ui-lib/light_component";
-import { Row, Col } from "react-flexbox-grid";
 import BaselineContentList from "./BaselineContentList";
 import CommentList from "./CommentList";
 import { JobCard } from "ui-components/data_card";
+import { Row, Column, Header, Section } from "ui-components/layout";
 
 class JobTab extends LightComponent {
     render() {
         this.log("render", this.props, this.state);
 
         return (
-            <Row className={this.props.theme.row}>
-                <Col xs={12} md={6} className={this.props.theme.col}>
-                    <h5 className={this.props.theme.sectionHeader}>Properties</h5>
-                    <div className={this.props.theme.section}>
+            <Row>
+                <Column xs={12} md={6}>
+                    <Section>
+                        <Header label="Properties" />
                         <JobCard
                             item={this.props.job}
                             expanded={true}
                             expandable={false}
                         />
-                    </div>
-
-                    <h5 className={this.props.theme.sectionHeader}>Comments</h5>
-                    <div className={this.props.theme.section}>
+                    </Section>
+                    <Section>
+                        <Header label="Comments" />
                         <CommentList
                             theme={this.props.theme}
                             item={this.props.job}
                         />
-                    </div>
-                </Col>
-                <Col xs={12} md={6} className={this.props.theme.col}>
-                    <h5 className={this.props.theme.sectionHeader}>In this run</h5>
-                    <div className={this.props.theme.section}>
-                        <BaselineContentList
-                            theme={this.props.theme}
-                            baselineRef={{
-                                _ref: true,
-                                id: this.props.job.baseline._id,
-                                type: this.props.job.baseline.type
-                            }}
-                        />
-                    </div>
-                </Col>
+                    </Section>
+                </Column>
+                <Column xs={12} md={6}>
+                    <Header label="In this run" />
+                    <BaselineContentList
+                        theme={this.props.theme}
+                        baselineRef={{
+                            _ref: true,
+                            id: this.props.job.baseline._id,
+                            type: this.props.job.baseline.type
+                        }}
+                    />
+                </Column>
             </Row>
         );
     }

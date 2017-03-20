@@ -12,6 +12,7 @@ import AddCommentCard from "./AddCommentCard";
 import ReviewCard from "./ReviewCard";
 import ArtifactCard from "./ArtifactCard";
 import LogCard from "./LogCard";
+import StepResultCard from "./StepResultCard";
 
 const ThemedCardList = themr(DATA_CARD, theme)(CardList);
 const ThemedRevisionCard = themr(DATA_CARD, theme)(RevisionCard);
@@ -22,6 +23,7 @@ const ThemedAddCommentCard = themr(DATA_CARD, theme)(AddCommentCard);
 const ThemedReviewCard = themr(DATA_CARD, theme)(ReviewCard);
 const ThemedArtifactCard = themr(DATA_CARD, theme)(ArtifactCard);
 const ThemedLogCard = themr(DATA_CARD, theme)(LogCard);
+const ThemedStepResultCard = themr(DATA_CARD, theme)(StepResultCard);
 
 export { ThemedCardList as CardList };
 export { ThemedRevisionCard as RevisionCard };
@@ -32,3 +34,4 @@ export { ThemedAddCommentCard as AddCommentCard };
 export { ThemedReviewCard as ReviewCard };
 export { ThemedArtifactCard as ArtifactCard };
 export { ThemedLogCard as LogCard };
+export { ThemedStepResultCard as StepResultCard };
