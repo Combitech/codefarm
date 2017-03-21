@@ -42,7 +42,6 @@ class Main extends Service {
             this.statesControllerInstance
         ]);
 
-        console.log(this.config);
         await BackendProxy.instance.start(this.config.backends, Repository, Revision, this.config.backendsConfig);
         this.addDisposable(BackendProxy.instance);
 
