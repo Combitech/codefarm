@@ -43,7 +43,6 @@
     "fs-extra-promise": "^0.4.1",
     "git-list-pack": "^0.0.10",
     "koa-bodyparser": "^2.3.0",
-    "koa-router": "^5.4.0",
     "koa2": "^2.0.0-alpha.7",
     "moment": "^2.16.0",
     "request": "^2.79.0",
@@ -54,6 +53,8 @@
     "babel-eslint": "^7.1.0",
     "chai": "^3.5.0",
     "eslint": "^3.7.0",
-    "mocha": "^3.2.0"
+    "mocha": "^3.2.0",
+    "get-port": "^3.0.0",
+    "koa-router": "^5.4.0"
   }
 }
