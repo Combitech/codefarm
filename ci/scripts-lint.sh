@@ -37,7 +37,7 @@ pushd ${gitroot}/src/scripts
 
   result=0
   subJobName="scripts_lint"
-  subJobId=$($CLI -q '$._id' --format values create_subjob lint "${subJobName}" ongoing)
+  subJobId=$($CLI -q '$._id' --format values create_subjob build "${subJobName}" ongoing)
 
   yarn lint |& tee ${subJobName}.log
   result=${PIPESTATUS[0]}
