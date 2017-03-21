@@ -32,7 +32,7 @@ const DETACH_REASON = {
 const ATTACH_TIMEOUT_MS = 10000;
 
 // Windows requires .bat file extension to run as batch-file
-const REMOTE_SCRIPT_FILENAME = "exe.bat";
+const REMOTE_SCRIPT_FILENAME = "job.cmd";
 const REMOTE_SLAVE_SCRIPT = "slave.js";
 
 const PATH_TYPE = {
