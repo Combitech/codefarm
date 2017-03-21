@@ -5,7 +5,9 @@
 @import "~ui-styles/colors";
 
 .appMenu {
-    background-color: $cf-color-pane-background;
+    background: $cf-color-pane-background;
+    background: linear-gradient(to bottom, $cf-color-pane-background 0%, $cf-color-pane-background2 100%);
+
     color: $cf-color-pane-text;
     position: fixed;
     top: 0;
@@ -17,10 +19,12 @@
     overflow: auto;
 
     h1 {
-        font-size: 3.6rem;
-        font-weight: $font-weight-thin;
+        opacity: 0.8;
+        font-size: 3.2rem;
+        font-weight: $font-weight-bold;
         color: $cf-color-pane-text;
         margin-bottom: $layout-gutter-width;
+        text-transform: uppercase;
     }
 
     .menuItem {
@@ -31,8 +35,8 @@
         text-transform: none;
         font-size: $font-size-normal;
         font-weight: $font-weight-normal;
-        border-left: 3px solid transparent;
-        margin-left: -3px;
+        border-left: 6px solid transparent;
+        padding-left: -6px;
         transition-timing-function: $animation-curve-default;
         transition-duration: $animation-duration;
         transition-property: border-left-color;
@@ -46,7 +50,7 @@
     }
 
     .appIcon {
-        font-size: $layout-gutter-width * 6;
+        font-size: $layout-gutter-width * 8;
         position: absolute;
         bottom: $baseline-grid * 2;
         right: $baseline-grid * 2;

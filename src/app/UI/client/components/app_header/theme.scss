@@ -5,7 +5,9 @@
 @import "~ui-styles/colors";
 
 .appHeader {
-    background-color: $cf-color-pane-background;
+    background: $cf-color-pane-background;
+    background: linear-gradient(to bottom, $cf-color-pane-background 0%, $cf-color-pane-background2 100%);
+    
     color: $cf-color-pane-text;
     text-align: center;
     position: relative;
