@@ -1,6 +1,5 @@
 "use strict";
 
-const path = require("path");
 const yargs = require("yargs");
 const rp = require("request-promise");
 const config = require("./config.json");
@@ -44,7 +43,7 @@ const getPort = (serviceId) => {
     }
 
     return config[serviceId].web.port;
-}
+};
 
 const getState = async (port) => {
     console.log("Command: Query");
@@ -71,7 +70,7 @@ const restart = async (port) => {
     console.dir(result, { colors: true, depth: null });
 
     return result;
-}
+};
 
 const buildGraph = (status) => {
     const g = {
@@ -83,7 +82,6 @@ const buildGraph = (status) => {
         for (const serviceId of Object.keys(status)) {
             const serviceState = status[serviceId].stateResult[0];
             const uses = serviceState.uses;
-            const provides = serviceState.provides;
             const state = serviceState.state;
             const node = {
                 id: serviceId,
@@ -116,7 +114,7 @@ const buildGraph = (status) => {
             if (!node) {
                 node = {
                     id: targetId,
-                    state: "not_created",
+                    state: "not_created"
                 };
                 g.nodes.push(node);
             }
@@ -135,12 +133,12 @@ const generateDotGraph = (g) => {
     }
 
     dot += "}\n";
+
     return dot;
-}
+};
 
 const run = async () => {
-    const serviceId = argv.service;
-    const services = argv.service === SERVICE_WILDCARD ? Object.keys(config) : [argv.service];
+    const services = argv.service === SERVICE_WILDCARD ? Object.keys(config) : [ argv.service ];
 
     const status = {};
     for (const serviceId of services) {
@@ -169,7 +167,7 @@ const run = async () => {
         console.log("dot graph:");
         console.log(dot);
     }
-}
+};
 
 run()
 .catch((error) => {

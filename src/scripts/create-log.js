@@ -2,7 +2,6 @@
 
 const fs = require("fs-extra-promise");
 const yargs = require("yargs");
-const path = require("path");
 const rp = require("request-promise");
 const { logrepo: configLogRepo } = require("./config.json");
 
@@ -28,13 +27,13 @@ const argv = yargs
     describe: "Logfile to upload",
     type: "string",
     requiresArg: true,
-    default: undefined
+    default: null
 })
 .argv;
 
 const run = async () => {
     const baseUrl = `http://localhost:${configLogRepo.web.port}`;
-    console.log(`Adding a new log`);
+    console.log("Adding a new log");
     const result = await rp.post({
         url: `${baseUrl}/log`,
         body: {
@@ -56,8 +55,10 @@ const run = async () => {
                 logfile: fs.createReadStream(argv.file)
             }
         });
+
+        console.dir(uploadResult, { colors: true, depth: null });
     }
-}
+};
 
 run()
 .catch((error) => {

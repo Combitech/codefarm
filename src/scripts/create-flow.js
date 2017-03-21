@@ -1,12 +1,10 @@
 "use strict";
 
-const fs = require("fs");
-const path = require("path");
 const rp = require("request-promise");
 const { flowctrl: configFlowCtrl } = require("./config.json");
 
 const run = async () => {
-    console.log(`Adding a new flow`);
+    console.log("Adding a new flow");
     const result = await rp.post({
         url: `http://localhost:${configFlowCtrl.web.port}/flow`,
         body: {
@@ -17,7 +15,7 @@ const run = async () => {
     });
 
     console.dir(result, { colors: true, depth: null });
-}
+};
 
 run()
 .catch((error) => {

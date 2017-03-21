@@ -1,7 +1,5 @@
 "use strict";
 
-const fs = require("fs");
-const path = require("path");
 const yargs = require("yargs");
 const rp = require("request-promise");
 const { coderepo: configCodeRepo } = require("./config.json");
@@ -26,7 +24,7 @@ const argv = yargs
 .argv;
 
 const run = async () => {
-    console.log(`Adding a new repository`);
+    console.log("Adding a new repository");
     const data = {
         _id: argv.name,
         backend: argv.backend
@@ -38,7 +36,7 @@ const run = async () => {
     });
 
     console.dir(result, { colors: true, depth: null });
-}
+};
 
 run()
 .catch((error) => {

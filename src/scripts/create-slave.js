@@ -6,7 +6,7 @@ const rp = require("request-promise");
 const { exec: configExec } = require("./config.json");
 
 const run = async () => {
-    console.log(`Adding a new slave`);
+    console.log("Adding a new slave");
     const result = await rp.post({
         url: `http://localhost:${configExec.web.port}/slave`,
         body: {
@@ -21,7 +21,7 @@ const run = async () => {
     await fs.ensureDirAsync("/tmp/workspaces");
 
     console.dir(result, { colors: true, depth: null });
-}
+};
 
 run()
 .catch((error) => {

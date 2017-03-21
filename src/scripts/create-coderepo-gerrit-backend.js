@@ -1,6 +1,5 @@
 "use strict";
 
-const fs = require("fs-extra-promise");
 const yargs = require("yargs");
 const path = require("path");
 const rp = require("request-promise");
@@ -51,7 +50,7 @@ const run = async () => {
     });
 
     console.dir(result, { colors: true, depth: null });
-}
+};
 
 run()
 .catch((error) => {

@@ -1,8 +1,6 @@
 "use strict";
 
-const fs = require("fs-extra-promise");
 const yargs = require("yargs");
-const path = require("path");
 const rp = require("request-promise");
 const { coderepo: config } = require("./config.json");
 

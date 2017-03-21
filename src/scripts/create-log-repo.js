@@ -1,8 +1,6 @@
 "use strict";
 
-const fs = require("fs");
 const yargs = require("yargs");
-const path = require("path");
 const rp = require("request-promise");
 const { logrepo: configLogRepo } = require("./config.json");
 
@@ -26,7 +24,7 @@ const argv = yargs
 .argv;
 
 const run = async () => {
-    console.log(`Adding a new artifact repository`);
+    console.log("Adding a new artifact repository");
     const result = await rp.post({
         url: `http://localhost:${configLogRepo.web.port}/repository`,
         body: {
@@ -37,7 +35,7 @@ const run = async () => {
     });
 
     console.dir(result, { colors: true, depth: null });
-}
+};
 
 run()
 .catch((error) => {
