@@ -28,7 +28,7 @@ const commands = [
     require("./commands/load_file")
 ];
 
-const DEFAULT_SOCKET_TIMEOUT = 5000;
+const DEFAULT_SOCKET_TIMEOUT = 10000;
 const DEFAULT_OUTPUT_FORMAT = "json";
 const DEFAULT_QUERY_ENGINE = "jsonpath";
 

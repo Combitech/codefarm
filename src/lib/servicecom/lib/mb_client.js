@@ -1,6 +1,6 @@
 "use strict";
 
-const DEFAULT_TIMEOUT_MS = 1000 * 10;
+const DEFAULT_TIMEOUT_MS = 1000 * 20;
 
 class MbClient {
     constructor(serviceName, msgbus) {
