@@ -2,7 +2,6 @@
 
 const fs = require("fs-extra-promise");
 const yargs = require("yargs");
-const path = require("path");
 const rp = require("request-promise");
 const { artifactrepo: configArtifactRepo } = require("./config.json");
 
@@ -28,20 +27,20 @@ const argv = yargs
     describe: "Explicit artifact version",
     type: "string",
     requiresArg: true,
-    default: undefined
+    default: null
 })
 .option("f", {
     alias: "file",
     describe: "File to upload",
     type: "string",
     requiresArg: true,
-    default: undefined
+    default: null
 })
 .argv;
 
 const run = async () => {
     const baseUrl = `http://localhost:${configArtifactRepo.web.port}`;
-    console.log(`Adding a new artifact repository`);
+    console.log("Adding a new artifact repository");
     const result = await rp.post({
         url: `${baseUrl}/artifact`,
         body: {
@@ -65,8 +64,10 @@ const run = async () => {
                 artifact: new Buffer(artifactContent)
             }
         });
+
+        console.dir(uploadResult, { colors: true, depth: null });
     }
-}
+};
 
 run()
 .catch((error) => {

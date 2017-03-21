@@ -2,7 +2,6 @@
 
 const fs = require("fs-extra-promise");
 const yargs = require("yargs");
-const path = require("path");
 const rp = require("request-promise");
 const { exec: config } = require("./config.json");
 
@@ -66,17 +65,17 @@ const argv = yargs
 
 const run = async () => {
     const baseUrl = `http://localhost:${config.web.port}`;
-    console.log(`Job command`);
+    console.log("Job command");
     let getJob = true;
 
     if (argv.create) {
         getJob = false;
         const scriptContent = await fs.readFileAsync(argv.script);
         if (!argv.criteria) {
-            throw "--criteria required if create"
+            throw Error("--criteria required if create");
         }
         if (!argv.script) {
-            throw "--script required if create"
+            throw Error("--script required if create");
         }
         const result = await rp.post({
             url: `${baseUrl}/job`,
@@ -109,12 +108,12 @@ const run = async () => {
             console.log(`Get job ${argv.id}`);
             url = url.concat(`/${argv.id}`);
         } else {
-            console.log(`List jobs`);
+            console.log("List jobs");
         }
         const result = await rp.get({ url: url, json: true });
         console.dir(result, { colors: true, depth: null });
     }
-}
+};
 
 run()
 .catch((error) => {

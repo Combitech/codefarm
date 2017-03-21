@@ -1,6 +1,5 @@
 "use strict";
 
-const fs = require("fs-extra-promise");
 const yargs = require("yargs");
 const path = require("path");
 const rp = require("request-promise");
@@ -34,7 +33,7 @@ const argv = yargs
 
 const run = async () => {
     console.log(`Adding backend ${argv.id}`);
-    let result = await rp.post({
+    const result = await rp.post({
         url: `http://localhost:${configLogRepo.web.port}/backend`,
         body: {
             _id: argv.id,
@@ -45,7 +44,7 @@ const run = async () => {
     });
 
     console.dir(result, { colors: true, depth: null });
-}
+};
 
 run()
 .catch((error) => {

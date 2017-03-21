@@ -1,12 +1,10 @@
 "use strict";
 
-const fs = require("fs");
-const path = require("path");
 const rp = require("request-promise");
 const { baselinegen: configBaselineGen } = require("./config.json");
 
 const run = async () => {
-    console.log(`Adding a new baseline specification`);
+    console.log("Adding a new baseline specification");
     const result = await rp.post({
         url: `http://localhost:${configBaselineGen.web.port}/specification`,
         body: {
@@ -25,7 +23,7 @@ const run = async () => {
     });
 
     console.dir(result, { colors: true, depth: null });
-}
+};
 
 run()
 .catch((error) => {

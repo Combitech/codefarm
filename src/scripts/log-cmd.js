@@ -2,7 +2,6 @@
 
 const fs = require("fs-extra-promise");
 const yargs = require("yargs");
-const path = require("path");
 const rp = require("request-promise");
 const { logrepo: configLogRepo } = require("./config.json");
 
@@ -19,7 +18,7 @@ const argv = yargs
     alias: "file",
     describe: "Path to store downloaded logfile",
     type: "string",
-    default: undefined
+    default: null
 })
 .argv;
 
@@ -34,12 +33,14 @@ const run = async () => {
             console.log("Download done.");
         });
         const result = await rp.get({
-            url: `${baseUrl}/log/${id}/download`,
+            url: `${baseUrl}/log/${id}/download`
         })
         .on("error", (err) => {
             console.log(err);
         })
         .pipe(writeStream);
+
+        console.dir(result, { colors: true, depth: null });
     } else if (!argv.file) {
         console.log(`Get log ${JSON.stringify(argv.id)}`);
         if (argv.id.length === 0) {
@@ -53,7 +54,7 @@ const run = async () => {
         });
         console.log(result);
     }
-}
+};
 
 run()
 .catch((error) => {
