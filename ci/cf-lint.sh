@@ -28,5 +28,7 @@ $gitroot/ci/cf-build.sh dev
 
 echo "Now I will lint libs"
 $gitroot/ci/libs-lint.sh ${CLIARG} all
+echo "Now I will lint scripts"
+$gitroot/ci/scripts-lint.sh ${CLIARG}
 echo "Now I will lint components"
 $gitroot/ci/components-lint.sh ${CLIARG} all
