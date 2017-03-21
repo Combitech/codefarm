@@ -3,35 +3,19 @@ import React from "react";
 import ImmutablePropTypes from "react-immutable-proptypes";
 import UserAvatar from "ui-components/user_avatar";
 import { StatusIcon } from "ui-components/status";
+import statuslib from "ui-lib/statuslib";
 import DateTime from "ui-components/datetime";
 
 class Row extends React.PureComponent {
     render() {
-        const revision = this.props.item.toJS();
-        const latestPatch = revision.patches[revision.patches.length - 1];
-        const className = this.props.theme[revision.status];
-        const status = (step) => {
-            if (revision.tags.includes(`step:${step.name}:success`)) {
-                return "success";
-            } else if (revision.tags.includes(`step:${step.name}:fail`)) {
-                return "fail";
-            } else if (revision.tags.includes(`step:${step.name}:skip`)) {
-                return "skip";
-            } else if (revision.tags.includes(`step:${step.name}:aborted`)) {
-                return "aborted";
-            } else if (revision.refs.find((ref) => ref.name === step.name)) {
-                return "ongoing";
-            }
-
-            return "unknown";
-        };
-
+        const item = this.props.item.toJS();
+        const latestPatch = item.patches[item.patches.length - 1];
 
         return (
             <tr
-                key={revision._id}
-                onClick={() => this.props.onClick(revision)}
-                className={className}
+                key={item._id}
+                onClick={() => this.props.onClick(item)}
+                className={this.props.theme[item.status]}
             >
                 <td className={this.props.theme.monospace}>
                     {latestPatch.change.newrev.substr(0, 7)}
@@ -53,12 +37,12 @@ class Row extends React.PureComponent {
                         key={step.name}
                         onClick={(event) => {
                             event.stopPropagation();
-                            this.props.onClick(revision, step.name);
+                            this.props.onClick(item, step.name);
                         }}
                     >
                         <StatusIcon
                             className={this.props.theme.statusIcon}
-                            status={status(step)}
+                            status={statuslib.guess(item, step.name)}
                             size={24}
                         />
                     </td>

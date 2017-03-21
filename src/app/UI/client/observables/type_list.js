@@ -93,7 +93,7 @@ class TypeList extends ObservableData {
 
     async _fetch(opts, query) {
         // Fetch one more item if trackMoreData
-        const trackMoreData = isNumeric(opts.limit) && opts.trackMoreData;
+        const trackMoreData = isNumeric(opts.limit) && opts.limit > 0 && opts.trackMoreData;
         if (trackMoreData) {
             query.__options = Object.assign({}, query.__options, {
                 limit: opts.limit + 1
@@ -174,7 +174,7 @@ class TypeList extends ObservableData {
         };
 
         const addItemToList = (list, itemToAdd) => {
-            if (isNumeric(opts.limit) && list.size > 0) {
+            if (isNumeric(opts.limit) && opts.limit > 0 && list.size > 0) {
                 // Assume list is sorted, find insertion index
                 const insertIdx = list.findIndex((item) => sortListFunc(item, itemToAdd) > 0);
                 if (insertIdx >= 0 && insertIdx < list.size) {

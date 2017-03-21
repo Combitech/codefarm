@@ -12,6 +12,7 @@ import theme from "./theme.scss";
 import LocationQuery from "ui-observables/location_query";
 import List from "./list/List";
 import FlowList from "../observables/flow_list";
+import RevisionList from "../observables/paged_revision_list";
 import { Container, Header } from "ui-components/layout";
 import { CodeRepositoryCard } from "ui-components/data_card";
 
@@ -124,8 +125,11 @@ class ListTabs extends LightComponent {
                             <List
                                 key={"abandoned"}
                                 theme={theme}
-                                repositoryId={this.props.item._id}
-                                revisionStatus="abandoned"
+                                ObservableList={RevisionList}
+                                query={{
+                                    repository: this.props.item._id,
+                                    status: "abandoned"
+                                }}
                                 filter={this.state.filter}
                                 pathname={this.props.pathname}
                                 limit={10}
@@ -137,11 +141,13 @@ class ListTabs extends LightComponent {
                             <List
                                 key={"submitted"}
                                 theme={theme}
-                                repositoryId={this.props.item._id}
-                                revisionStatus="submitted"
+                                ObservableList={RevisionList}
+                                query={{
+                                    repository: this.props.item._id,
+                                    status: "submitted"
+                                }}
                                 filter={this.state.filter}
                                 pathname={this.props.pathname}
-                                limit={0}
                                 steps={this.state.steps}
                             />
 
@@ -149,8 +155,11 @@ class ListTabs extends LightComponent {
                             <List
                                 key={"merged"}
                                 theme={theme}
-                                repositoryId={this.props.item._id}
-                                revisionStatus="merged"
+                                ObservableList={RevisionList}
+                                query={{
+                                    repository: this.props.item._id,
+                                    status: "merged"
+                                }}
                                 filter={this.state.filter}
                                 pathname={this.props.pathname}
                                 limit={30}
