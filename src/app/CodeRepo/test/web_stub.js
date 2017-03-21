@@ -71,8 +71,8 @@ class WebStub {
     }
 }
 
-/*
 ghs = singleton(WebStub);
+/*
 ghs.instance.addAccepted("GET", "/user/repos", 200, { result: "OK" });
 ghs.instance.start();
 */
