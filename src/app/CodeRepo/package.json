@@ -36,7 +36,8 @@
     "web",
     "backend",
     "servicecom",
-    "testsupport"
+    "testsupport",
+    "singleton"
   ],
   "dependencies": {
     "fs-extra-promise": "^0.4.1",
@@ -50,8 +51,10 @@
   },
   "devDependencies": {
     "babel-eslint": "^7.1.0",
+    "chai": "^3.5.0",
     "eslint": "^3.7.0",
     "mocha": "^3.2.0",
-    "chai": "^3.5.0"
+    "get-port": "^3.0.0",
+    "koa-router": "^5.4.0"
   }
 }

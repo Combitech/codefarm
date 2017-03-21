@@ -1,8 +1,6 @@
 "use strict";
 
-const fs = require("fs-extra-promise");
 const yargs = require("yargs");
-const path = require("path");
 const rp = require("request-promise");
 const { coderepo: configCodeRepo } = require("./config.json");
 
@@ -28,10 +26,10 @@ const argv = yargs
     type: "string",
     requiresArg: true
 })
-.option("target", {
-    describe: "Is target organization?",
+.option("isOrganization", {
+    describe: "Is target organization",
     type: "boolean",
-    requiresArg: true
+    default: false
 })
 .option("username", {
     describe: "GitHub username to authenticate as",
@@ -64,8 +62,8 @@ const run = async () => {
         body: {
             _id: argv.id,
             backendType: argv.type,
-            target: target,
-            isOrganization: isOrganization,
+            target: argv.target,
+            isOrganization: argv.isOrganization,
             authUser: argv.username,
             authToken: argv.token,
             webhookURL: argv.webhookURL,
@@ -73,9 +71,8 @@ const run = async () => {
         },
         json: true
     });
-
     console.dir(result, { colors: true, depth: null });
-}
+};
 
 run()
 .catch((error) => {
