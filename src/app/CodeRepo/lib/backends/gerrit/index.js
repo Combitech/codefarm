@@ -12,10 +12,6 @@ const log = require("log");
 const { AsyncEventEmitter } = require("emitter");
 const GerritEventEmitter = require("./gerrit_event_emitter");
 
-
-const DEFAULT_GERRIT_PORT = 29418;
-const DEFAULT_GERRIT_TIMEOUT = 60 * 1000;
-
 /*
 Note that localhost below needs to be changed to the host where
 gerrit is running!
@@ -59,13 +55,15 @@ To get started with client side:
 */
 
 class GerritBackend extends AsyncEventEmitter {
-    constructor(id, backend, Repository, Revision) {
+    constructor(id, backend, Repository, Revision, backendsConfig) {
         super();
         this.id = id;
         this.backend = backend;
         this.locks = {};
         this.Repository = Repository;
         this.Revision = Revision;
+        this.defaultPort = backendsConfig.gerrit.defaultPort;
+        this.defaultTimeoutMs = backendsConfig.gerrit.defaultTimeoutMs;
         this.gerritEmitter = new GerritEventEmitter();
 
         this.__ssh = new SshClient();
@@ -76,7 +74,7 @@ class GerritBackend extends AsyncEventEmitter {
         const privateKey = await fs.readFileAsync(this.backend.privateKeyPath);
         const params = {
             host: info.hostname,
-            port: info.port || DEFAULT_GERRIT_PORT,
+            port: info.port || this.defaultPort,
             username: info.auth || process.env.USER,
             privateKey: privateKey
         };
@@ -287,7 +285,7 @@ class GerritBackend extends AsyncEventEmitter {
 
             await asyncWithTmo(
                 revisionMergedPromise,
-                DEFAULT_GERRIT_TIMEOUT,
+                this.defaultTimeoutMs,
                 new Error(`Timeout while waiting for merge of revision ${revision._id} to complete`)
             );
         } catch (error) {

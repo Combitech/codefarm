@@ -27,6 +27,16 @@
     "coderepo": {
         "web": {
             "port": 19393
+        },
+        "backendsConfig": {
+            "github": {
+                "baseUrl": "https://github.com",
+                "apiBaseUrl": "https://api.github.com"
+            },
+            "gerrit": {
+                "defaultPort": 29418,
+                "defaultTimeoutMs": 60000
+            }
         }
     },
     "artifactrepo": {

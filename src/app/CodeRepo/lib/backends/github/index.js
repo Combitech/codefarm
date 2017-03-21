@@ -7,9 +7,6 @@ const moment = require("moment");
 const { AsyncEventEmitter } = require("emitter");
 const GithubEventEmitter = require("./github_event_emitter");
 
-const GITHUB_API_BASE = "https://api.github.com";
-const GITHUB_BASE = "https://github.com";
-
 /*
 To get started with github:
 1. Create a new user to use as integrator for the user/organization.
@@ -49,14 +46,15 @@ Example configuration:
 */
 
 class GithubBackend extends AsyncEventEmitter {
-    constructor(id, backend, Repository, Revision) {
+    constructor(id, backend, Repository, Revision, backendsConfig) {
         super();
         this.id = id;
         this.backend = backend;
         this.locks = {};
         this.Repository = Repository;
         this.Revision = Revision;
-
+        this.baseUrl = backendsConfig.github.baseUrl;
+        this.apiBaseUrl = backendsConfig.github.apiBaseUrl;
         this.githubEmitter = new GithubEventEmitter();
     }
 
@@ -157,7 +155,7 @@ class GithubBackend extends AsyncEventEmitter {
     }
 
     async _getCommit(repositoryName, commitSha) {
-        const url = `${GITHUB_API_BASE}/repos/${this.backend.target}/${repositoryName}/commits/${commitSha}`;
+        const url = `${this.apiBaseUrl}/repos/${this.backend.target}/${repositoryName}/commits/${commitSha}`;
         try {
             return await this._sendRequest(url, {}, "GET");
         } catch (err) {
@@ -168,7 +166,7 @@ class GithubBackend extends AsyncEventEmitter {
     }
 
     async _getPullRequestMergeSha(repositoryName, pullReqNumber) {
-        const uri = `${GITHUB_API_BASE}/repos/${this.backend.target}/${repositoryName}/issues/${pullReqNumber}/events`;
+        const uri = `${this.apiBaseUrl}/repos/${this.backend.target}/${repositoryName}/issues/${pullReqNumber}/events`;
         try {
             const events = await this._sendRequest(uri, {}, "GET");
             for (const event of events) {
@@ -319,7 +317,7 @@ class GithubBackend extends AsyncEventEmitter {
 
     async _createWebHook(repository) {
         ServiceMgr.instance.log("verbose", `Creating GitHub webhooks on ${repository._id}`);
-        const uri = `${GITHUB_API_BASE}/repos/${this.backend.target}/${repository._id}/hooks`;
+        const uri = `${this.apiBaseUrl}/repos/${this.backend.target}/${repository._id}/hooks`;
         const data = {
             "name": "web",
             "active": true,
@@ -356,9 +354,9 @@ class GithubBackend extends AsyncEventEmitter {
 
         let uri;
         if (this.backend.isOrganization) {
-            uri = `${GITHUB_API_BASE}/orgs/${this.backend.target}/repos`;
+            uri = `${this.apiBaseUrl}/orgs/${this.backend.target}/repos`;
         } else {
-            uri = `${GITHUB_API_BASE}/user/repos`;
+            uri = `${this.apiBaseUrl}/user/repos`;
         }
         const data = {
             "name": repository._id,
@@ -392,7 +390,7 @@ class GithubBackend extends AsyncEventEmitter {
         const pullreqnr = revision.patches[revision.patches.length - 1].pullreqnr;
         ServiceMgr.instance.log("verbose", `GitHub merge pull request ${pullreqnr} in ${repository._id}`);
         const patch = revision.patches[revision.patches.length - 1];
-        const uri = `${GITHUB_API_BASE}/repos/${this.backend.target}/${repository._id}/pulls/${pullreqnr}/merge`;
+        const uri = `${this.apiBaseUrl}/repos/${this.backend.target}/${repository._id}/pulls/${pullreqnr}/merge`;
         const data = {
             "sha": patch.change.newrev,
             "merge_method": "squash"
@@ -410,7 +408,7 @@ class GithubBackend extends AsyncEventEmitter {
     }
 
     async getUri(backend, repository) {
-        return `${GITHUB_BASE}/${this.backend.target}/${repository._id}.git`;
+        return `${this.baseUrl}/${this.backend.target}/${repository._id}.git`;
     }
 
 
@@ -421,7 +419,7 @@ class GithubBackend extends AsyncEventEmitter {
     async remove(repository) {
         ServiceMgr.instance.log("verbose", `Deleting GitHub repo ${repository._id}`);
         try {
-            await this._sendRequest(`${GITHUB_API_BASE}/repos/${this.backend.target}/${repository._id}`, {}, "DELETE");
+            await this._sendRequest(`${this.apiBaseUrl}/repos/${this.backend.target}/${repository._id}`, {}, "DELETE");
         } catch (err) {
             ServiceMgr.instance.log("verbose", `Error deleting GitHub repo ${repository._id}: ${err.message}`);
         }
