@@ -543,7 +543,7 @@ class Executor extends Type {
 
     async downloadFileAsStream(remotePath) {
         const pathModule = getPathModule(remotePath);
-        const remoteAbsPath = pathModule(remotePath) ? remotePath : path.join(this.workspace, remotePath);
+        const remoteAbsPath = pathModule.isAbsolute(remotePath) ? remotePath : path.join(this.workspace, remotePath);
 
         await this._logln(`Downloading file, ${remoteAbsPath}`);
         const fileStream = this.__ssh.getRemoteReadStream(remoteAbsPath);
