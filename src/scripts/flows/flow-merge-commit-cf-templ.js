@@ -11,15 +11,13 @@ module.exports = async (argv) => {
         limit = 1,
         name = "commits",
         collectType = "coderepo.revision"
-    ) => {
-        return {
-            name: name,
-            collectType: collectType,
-            criteria: criteria,
-            limit: limit,
-            latest: false
-        };
-    };
+    ) => ({
+        name: name,
+        collectType: collectType,
+        criteria: criteria,
+        limit: limit,
+        latest: false
+    });
 
     const defaultBlSpec = (
         name,
@@ -30,29 +28,27 @@ module.exports = async (argv) => {
         visible = true,
         workspaceName = "",
         workspaceCleanup = "keep"
-    ) => {
-        return {
-            name: name,
-            flow: {
-                _ref: true,
-                id: argv.id,
-                type: "flowctrl.flow"
-            },
-            concurrency: 1,
-            baseline: {
-                _ref: true,
-                id: name, // Use baseline with same name as step
-                type: "baselinegen.specification"
-            },
-            criteria: slaveCriteria,
-            script: script,
-            tagScript: tagScript,
-            parentStepNames: parentStepNames,
-            visible: visible,
-            workspaceName: workspaceName,
-            workspaceCleanup: workspaceCleanup
-        };
-    };
+    ) => ({
+        name: name,
+        flow: {
+            _ref: true,
+            id: argv.id,
+            type: "flowctrl.flow"
+        },
+        concurrency: 1,
+        baseline: {
+            _ref: true,
+            id: name, // Use baseline with same name as step
+            type: "baselinegen.specification"
+        },
+        criteria: slaveCriteria,
+        script: script,
+        tagScript: tagScript,
+        parentStepNames: parentStepNames,
+        visible: visible,
+        workspaceName: workspaceName,
+        workspaceCleanup: workspaceCleanup
+    });
 
     const tagBlSpec = (
         name,
@@ -119,10 +115,10 @@ module.exports = async (argv) => {
     const testScript = `
         #!/bin/bash -e
         /home/farmer/codefarm/ci/cf-clone-checkout.sh
-        CLI=${PWD}/cli.js
+        CLI=$\{PWD\}/cli.js
         pushd codefarm
-        /home/farmer/codefarm/ci/cf-build.sh -C ${CLI}
-        /home/farmer/codefarm/ci/cf-test.sh -C ${CLI}
+        /home/farmer/codefarm/ci/cf-build.sh -C $\{CLI\}
+        /home/farmer/codefarm/ci/cf-test.sh -C $\{CLI\}
         popd
         exit 0
     `;
@@ -130,9 +126,9 @@ module.exports = async (argv) => {
     const lintScript = `
         #!/bin/bash -e
         /home/farmer/codefarm/ci/cf-clone-checkout.sh
-        CLI=${PWD}/cli.js
+        CLI=$\{PWD\}/cli.js
         pushd codefarm
-        /home/farmer/codefarm/ci/cf-lint.sh -C ${CLI}
+        /home/farmer/codefarm/ci/cf-lint.sh -C $\{CLI\}
         popd
         exit 0
     `;
