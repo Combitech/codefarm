@@ -6,37 +6,32 @@ import {
     ListPager as TAListPager
 } from "ui-components/type_admin";
 import { Loading } from "ui-components/layout";
-import PagedRevisionListObservable from "../../observables/paged_revision_list";
-import RevisionListObservable from "../../observables/revision_list";
 import { States as ObservableDataStates } from "ui-lib/observable_data";
-import Table from "./Table";
 import Row from "./Row";
+import Header from "./Header";
 
 class List extends LightComponent {
     constructor(props) {
         super(props);
 
-        const ListObservable = props.limit > 0 ? PagedRevisionListObservable : RevisionListObservable;
-
-        this.revList = new ListObservable({
-            repositoryId: props.repositoryId,
-            status: props.revisionStatus,
+        this.items = new this.props.ObservableList({
+            query: props.query,
             filter: props.filter,
             limit: props.limit
         });
 
         this.state = {
-            revList: this.revList.value.getValue(),
-            revListState: this.revList.state.getValue()
+            items: this.items.value.getValue(),
+            itemsState: this.items.state.getValue()
         };
     }
 
     componentDidMount() {
         this.log("componentDidMount");
 
-        this.addDisposable(this.revList.start());
-        this.addDisposable(this.revList.value.subscribe((revList) => this.setState({ revList })));
-        this.addDisposable(this.revList.state.subscribe((revListState) => this.setState({ revListState })));
+        this.addDisposable(this.items.start());
+        this.addDisposable(this.items.value.subscribe((items) => this.setState({ items })));
+        this.addDisposable(this.items.state.subscribe((itemsState) => this.setState({ itemsState })));
     }
 
     componentDidUpdate() {
@@ -46,14 +41,15 @@ class List extends LightComponent {
             /* If relative paging is used and current page has no next or previous
              * page, then automatically navigate to last or first page.
              */
-            const pagingInfo = this.revList.pagingInfo.getValue().toJS();
+            const pagingInfo = this.items.pagingInfo.getValue().toJS();
+
             if (pagingInfo.isRelative) {
                 if (!pagingInfo.hasNextPage) {
                     this.log("setLastPage");
-                    this.revList.setLastPage();
+                    this.items.setLastPage();
                 } else if (!pagingInfo.hasPrevPage) {
                     this.log("setFirstPage");
-                    this.revList.setFirstPage();
+                    this.items.setFirstPage();
                 }
             }
         }
@@ -63,43 +59,46 @@ class List extends LightComponent {
         this.log("componentWillReceiveProps");
 
         if (nextProps.filter) {
-            this.revList.setOpts({ filter: nextProps.filter });
+            this.items.setOpts({ filter: nextProps.filter });
         }
+    }
+
+    gotoStep(item, step) {
+        this.context.router.push({
+            pathname: `${this.props.pathname}/${item._id}`,
+            query: step ? { step } : {}
+        });
     }
 
     render() {
         this.log("render", this.props, this.state);
 
         return (
-            <div className={this.props.theme.revisionContainer}>
+            <div className={this.props.theme.listContainer}>
                 <Loading show={this.state.state === ObservableDataStates.LOADING}/>
-                <Table
-                    theme={this.props.theme}
-                    steps={this.props.steps}
-                >
-                    {this.state.revList.map((item) => (
-                        <Row
-                            key={item.get("_id")}
+                <table className={this.props.theme.table}>
+                    <tbody className={this.props.theme.header}>
+                        <Header
                             theme={this.props.theme}
-                            onClick={(revision, step) => {
-                                const pathname = `${this.props.pathname}/${revision._id}`;
-                                const query = {};
-
-                                if (step) {
-                                    query.step = step;
-                                }
-
-                                this.context.router.push({ pathname, query });
-                            }}
-                            item={item}
                             steps={this.props.steps}
                         />
-                    ))}
-                </Table>
+                    </tbody>
+                    <tbody className={this.props.theme.list}>
+                        <For each="item" of={this.state.items}>
+                            <Row
+                                key={item.get("_id")}
+                                theme={this.props.theme}
+                                onClick={(item, step) => this.gotoStep(item, step)}
+                                item={item}
+                                steps={this.props.steps}
+                            />
+                        </For>
+                    </tbody>
+                </table>
                 <If condition={this.props.limit > 0}>
                     <TAListPager
-                        pagedList={this.revList}
-                        pagingInfo={this.revList.pagingInfo.getValue()}
+                        pagedList={this.items}
+                        pagingInfo={this.items.pagingInfo.getValue()}
                     />
                 </If>
             </div>
@@ -108,17 +107,17 @@ class List extends LightComponent {
 }
 
 List.defaultProps = {
-    limit: 10
+    limit: 0
 };
 
 List.propTypes = {
     theme: React.PropTypes.object,
-    repositoryId: React.PropTypes.string.isRequired,
-    revisionStatus: React.PropTypes.string.isRequired,
+    query: React.PropTypes.object.isRequired,
     filter: React.PropTypes.string,
     pathname: React.PropTypes.string.isRequired,
     limit: React.PropTypes.number,
-    steps: ImmutablePropTypes.list
+    steps: ImmutablePropTypes.list,
+    ObservableList: React.PropTypes.func.isRequired
 };
 
 List.contextTypes = {

@@ -6,35 +6,15 @@ import { Row, Column, Header } from "ui-components/layout";
 import moment from "moment";
 import api from "api.io/api.io-client";
 import stateVar from "ui-lib/state_var";
-import BaselineList from "../../observables/baseline_list";
-import { CardList, RevisionCard, AddCommentCard, CommentCard, ReviewCard, JobCard } from "ui-components/data_card";
+import { CardList, RevisionCard, AddCommentCard, CommentCard, ReviewCard, JobCard, TypeCard } from "ui-components/data_card";
 
 class Overview extends LightComponent {
     constructor(props) {
         super(props);
 
-        this.baselines = new BaselineList({
-            type: props.item.type,
-            id: props.item._id
-        });
-
         this.state = {
-            comment: stateVar(this, "comment", ""),
-            baselines: this.baselines.value.getValue()
+            comment: stateVar(this, "comment", "")
         };
-    }
-
-    componentDidMount() {
-        this.addDisposable(this.baselines.start());
-
-        this.addDisposable(this.baselines.value.subscribe((baselines) => this.setState({ baselines })));
-    }
-
-    componentWillReceiveProps(nextProps) {
-        this.baselines.setOpts({
-            id: nextProps.item._id,
-            type: nextProps.item.type
-        });
     }
 
     async onComment(comment) {
@@ -67,20 +47,22 @@ class Overview extends LightComponent {
             });
         }
 
-        this.props.item.patches.forEach((patch, patchIndex) => {
-            list.push({
-                id: `${this.props.item._id}-${patchIndex}`,
-                time: moment(patch.submitted).unix(),
-                item: this.props.item,
-                Card: RevisionCard,
-                props: {
-                    patchIndex: patchIndex
-                }
+        if (this.props.item.hasOwnProperty("patches")) {
+            this.props.item.patches.forEach((patch, patchIndex) => {
+                list.push({
+                    id: `${this.props.item._id}-${patchIndex}`,
+                    time: moment(patch.submitted).unix(),
+                    item: this.props.item,
+                    Card: RevisionCard,
+                    props: {
+                        patchIndex: patchIndex
+                    }
+                });
             });
-        });
+        }
 
-        this.props.item.reviews
-            .forEach((review, reviewIndex) => {
+        if (this.props.item.hasOwnProperty("reviews")) {
+            this.props.item.reviews.forEach((review, reviewIndex) => {
                 list.push({
                     id: `review-${reviewIndex}`,
                     time: moment(review.updated).unix(),
@@ -89,27 +71,7 @@ class Overview extends LightComponent {
                     props: {}
                 });
             });
-
-        // for (const baseline of this.state.baselines.toJS()) {
-        //     const time = moment(baseline.created);
-        //
-        //     list.push({
-        //         timestamp: time.unix(),
-        //         id: `baseline-${baseline._id}`,
-        //         avatar: (
-        //             <img
-        //                 className={this.props.theme.icon}
-        //                 src={icons.baseline}
-        //             />
-        //         ),
-        //         time: time,
-        //         title: `Qualified for baseline ${baseline.name} `,
-        //         description: `${baseline._id}`,
-        //         details: {
-        //             content: baseline.content
-        //         }
-        //     });
-        // }
+        }
 
         const jobs = this.props.itemExt.data.refs
         .filter((ref) => ref.data && ref.data.type === "exec.job")
@@ -121,16 +83,15 @@ class Overview extends LightComponent {
                 time: moment(job.finished ? job.finished : job.saved).unix(),
                 item: job,
                 Card: JobCard,
-                props: {
-                }
+                props: {}
             });
         }
 
         return (
             <Row>
                 <Column xs={12} md={6}>
-                    <Header label="Revision" />
-                    <RevisionCard
+                    <Header label={this.props.label} />
+                    <TypeCard
                         item={this.props.item}
                         expanded={true}
                         expandable={false}
@@ -148,7 +109,8 @@ class Overview extends LightComponent {
 Overview.propTypes = {
     theme: React.PropTypes.object,
     item: React.PropTypes.object.isRequired,
-    itemExt: React.PropTypes.object.isRequired
+    itemExt: React.PropTypes.object.isRequired,
+    label: React.PropTypes.string.isRequired
 };
 
 export default Overview;
