@@ -54,6 +54,8 @@ To get started with client side:
   ssh -p 29418 $USER@localhost gerrit review `git rev-parse HEAD` --code-review '+2' --submit
 */
 
+const GERRIT_COMMIT_MSG_FILE_NAME = "/COMMIT_MSG";
+
 class GerritBackend extends AsyncEventEmitter {
     constructor(id, backend, Repository, Revision, backendsConfig) {
         super();
@@ -140,6 +142,42 @@ class GerritBackend extends AsyncEventEmitter {
         });
     }
 
+    async _getPatchSetsInfo(changeId) {
+        const { exitCode, outLines, errLines } = await this._execGerritCommandReadOutput(
+            `query --patch-sets --format JSON --files -- ${changeId}`
+        );
+
+        if (exitCode !== 0) {
+            throw new Error(`Gerrit command failed with exit code ${exitCode}. stderr=${errLines.join("\n")}`);
+        }
+
+        return JSON.parse(outLines[0]);
+    }
+
+    async _getPatchSetFiles(changeId, patchSetNr) {
+        const patchesInfo = await this._getPatchSetsInfo(changeId);
+        const currentPatchInfo = patchesInfo.patchSets.find((item) => item.number === patchSetNr);
+        const changeUrl = patchesInfo.url;
+        // TODO: Is change url always /#/c/CHANGE_ID
+        // Transform gerrithost:port/CHANGE_ID to gerrithost:port/#/c/CHANGE_ID
+        const patchSetUrl = changeUrl.replace(/(.*)\/(\d+)$/, "$1/#/c/$2");
+        const files = [];
+        for (const file of currentPatchInfo.files) {
+            if (file.file === GERRIT_COMMIT_MSG_FILE_NAME) {
+                // Skip commit message file
+                continue;
+            }
+            files.push({
+                name: file.file,
+                status: file.type.toLowerCase(),
+                url: `${patchSetUrl}/${patchSetNr}/${file.file}`,
+                download: ""
+            });
+        }
+
+        return files;
+    }
+
     async _onPatchsetCreated(event) {
         const changeId = event.changeKey.id;
         const repositoryId = event.project;
@@ -156,9 +194,16 @@ class GerritBackend extends AsyncEventEmitter {
                     oldrev: event.patchSet.parents[0],
                     newrev: event.patchSet.revision,
                     refname: event.patchSet.ref, // Use event.refName all the time instead?
-                    files: [] // TODO: Get files diff use github format
+                    files: []
                 }
             };
+
+            try {
+                const currentPatchNr = event.patchSet.number;
+                patch.change.files = await this._getPatchSetFiles(changeId, currentPatchNr);
+            } catch (error) {
+                log.error(`Gerrit backend failed to set files for change ${changeId} at patchset-created:`, error);
+            }
 
             await this.Revision.allocate(repository._id, changeId, patch);
             log.info(`Gerrit event allocated revision ${changeId}`);
@@ -183,9 +228,17 @@ class GerritBackend extends AsyncEventEmitter {
                         oldrev: event.patchSet.parents[0],
                         newrev: event.newRev,
                         refname: event.refName,
-                        files: [] // TODO: Get files diff use github format
+                        files: []
                     }
                 };
+
+                try {
+                    const currentPatchNr = event.patchSet.number;
+                    patch.change.files = await this._getPatchSetFiles(changeId, currentPatchNr);
+                } catch (error) {
+                    log.error(`Gerrit backend failed to set files for change ${changeId} at change-merged:`, error);
+                }
+
                 await revision.setMerged(patch);
                 await this.emit("revision.merged", revision);
                 log.info(`Gerrit event merged revision ${changeId}`);
