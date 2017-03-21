@@ -21,7 +21,7 @@ class RevisionCard extends LightComponent {
         });
 
         this.state = {
-            expanded: stateVar(this, "expanded", this.props.expanded),
+            expanded: stateVar(this, "expanded", props.expanded),
             user: this.user.value.getValue()
         };
     }

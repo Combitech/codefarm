@@ -90,7 +90,7 @@ class IndexPage extends LightComponent {
                     secondaryText="Grow your software, herd your revisions..."
                     icon={icon}
                 />
-            <Row style={{ margin: 16, marginTop: 32 }}>
+                <Row style={{ margin: 16, marginTop: 32 }}>
                     <Column xs={12} md={4}>
                         <Header label="Welcome" />
                         <p>
