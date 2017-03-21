@@ -41,13 +41,17 @@ class SshClient {
 
     _getSftp() {
         return new Promise((resolve, reject) => {
-            this.client.sftp((error, sftp) => {
+            const ret = this.client.sftp((error, sftp) => {
                 if (error) {
                     return reject(error);
                 }
 
                 resolve(sftp);
             });
+
+            if (!ret) {
+                reject(new Error("Wait until continue event"));
+            }
         });
     }
 

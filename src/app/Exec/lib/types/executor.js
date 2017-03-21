@@ -33,6 +33,30 @@ const ATTACH_TIMEOUT_MS = 10000;
 
 // Windows requires .bat file extension to run as batch-file
 const REMOTE_SCRIPT_FILENAME = "exe.bat";
+const REMOTE_SLAVE_SCRIPT = "slave.js";
+
+const PATH_TYPE = {
+    WIN32: "WIN32",
+    POSIX: "POSIX"
+};
+
+const getPathType = (pathStr) => {
+    // Check if path seems to be windows-style; [ "c:\", "/c:/", "c:/" ]
+    if (pathStr.match(/^\/?\w\:[\\\/]/)) {
+        return PATH_TYPE.WIN32;
+    }
+
+    return PATH_TYPE.POSIX;
+};
+
+const getPathModule = (pathStr) => {
+    const pathType = getPathType(pathStr);
+    if (pathType === PATH_TYPE.WIN32) {
+        return path.win32;
+    }
+
+    return path.posix;
+};
 
 class Executor extends Type {
     constructor(data) {
@@ -148,7 +172,9 @@ class Executor extends Type {
             username: info.auth || process.env.USER,
             privateKey: privateKey,
             useSftp: true
-        }, () => {});
+        }, async (error) => {
+            await this._logln(`SSH error: ${JSON.stringify(error, null, 2)}`, LEVEL.ERROR);
+        });
     }
 
     async _ensureWorkspace() {
@@ -172,9 +198,9 @@ class Executor extends Type {
 
     async _uploadSlave() {
         const files = {
-            "slave.js": {
-                localPath: path.join(__dirname, "..", "..", "build", "slave.js"),
-                remotePath: path.join(this.workspace, "slave.js")
+            [ REMOTE_SLAVE_SCRIPT ]: {
+                localPath: path.join(__dirname, "..", "..", "build", REMOTE_SLAVE_SCRIPT),
+                remotePath: path.join(this.workspace, REMOTE_SLAVE_SCRIPT)
             },
             "cli.js": {
                 localPath: path.join(__dirname, "..", "..", "build", "cli.js"),
@@ -236,8 +262,8 @@ class Executor extends Type {
     }
 
     async _executeSlave() {
-        const remoteSlavePath = path.join(this.workspace, "slave.js");
-        const command = `node --harmony_async_await ${remoteSlavePath} client ${this.workspace} ${this.port}`;
+        const remoteScriptPath = path.join(this.workspace, REMOTE_SLAVE_SCRIPT);
+        const command = `node --harmony_async_await ${remoteScriptPath} client ${this.workspace} ${this.port}`;
 
         await this._logln(`Executing slave command, ${command}`);
 
@@ -285,6 +311,10 @@ class Executor extends Type {
         const workspaceName = job.workspaceName || `job-${this.jobName.replace(/ /g, "_")}-${this.jobId}`;
         this.uri = slave.uri;
         this.workspace = path.join(pathname, `slave-${this.slaveId}`, workspaceName);
+        if (getPathType(this.workspace) === PATH_TYPE.WIN32) {
+            // Remove leading / for windows slaves
+            this.workspace = this.workspace.replace(/^\//, "");
+        }
         this.privateKeyPath = slave.privateKeyPath;
 
         try {
@@ -512,7 +542,8 @@ class Executor extends Type {
     }
 
     async downloadFileAsStream(remotePath) {
-        const remoteAbsPath = path.isAbsolute(remotePath) ? remotePath : path.join(this.workspace, remotePath);
+        const pathModule = getPathModule(remotePath);
+        const remoteAbsPath = pathModule(remotePath) ? remotePath : path.join(this.workspace, remotePath);
 
         await this._logln(`Downloading file, ${remoteAbsPath}`);
         const fileStream = this.__ssh.getRemoteReadStream(remoteAbsPath);

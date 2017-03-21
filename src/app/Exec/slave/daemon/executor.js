@@ -30,7 +30,7 @@ class Executor extends AsyncEventEmitter {
 
             this._log(`Executing ${script} with env ${JSON.stringify(env)}`);
             this.process = spawn(script, [], {
-                cwd: path.dirname(script),
+                cwd: cwd,
                 env: Object.assign({}, process.env, env),
                 detached: true,
                 // Execution within shell is required on windows to execute batch-files
