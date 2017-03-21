@@ -17,10 +17,10 @@ const argv = yargs
     default: path.join(__dirname, "config.json")
 })
 .option("s", {
-    alias: "service",
-    describe: "Target service (specify \"all\" to target all services)",
-    type: "string",
-    default: "all"
+    alias: "services",
+    describe: "Target service(s) (specify \"all\" to target all services)",
+    type: "array",
+    default: [ "all" ]
 })
 .option("mgmtCfgUri", {
     describe: "Mgmt config HTTP REST interface",
@@ -41,6 +41,10 @@ const argv = yargs
     describe: "UI Basic Auth password",
     type: "string",
     default: null
+})
+.option("loglevel", {
+    describe: "Set new log level",
+    type: "string"
 })
 .argv;
 
@@ -80,14 +84,26 @@ const run = async () => {
         });
     }
 
-    if (argv.service === "all") {
-        for (const cfgKey of Object.keys(cfg)) {
-            await createConfig(cfgKey, cfg[cfgKey]);
+    // Expand services
+    if (argv.services.length === 1 && argv.services[0] === "all") {
+        argv.services = Object.keys(cfg);
+    }
+
+    for (const service of argv.services) {
+        if (!(service in cfg)) {
+            console.error(`Cannot find service ${service} in config`);
+
+            return;
         }
-    } else if (argv.service in cfg) {
-        await createConfig(argv.service, cfg[argv.service]);
-    } else {
-        console.error(`Cannot find service ${argv.service} in config`);
+    }
+
+    for (const service of argv.services) {
+        if (argv.loglevel) {
+            cfg[service] = Object.assign({}, cfg[service], {
+                level: argv.loglevel });
+        }
+
+        await createConfig(service, cfg[service]);
     }
 };
 
