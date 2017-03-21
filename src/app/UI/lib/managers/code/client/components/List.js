@@ -11,9 +11,9 @@ import {
 import theme from "./theme.scss";
 import LocationQuery from "ui-observables/location_query";
 import List from "./list/List";
-import stateVar from "ui-lib/state_var";
 import FlowList from "../observables/flow_list";
 import { Container, Header } from "ui-components/layout";
+import { CodeRepositoryCard } from "ui-components/data_card";
 
 class ListTabs extends LightComponent {
     constructor(props) {
@@ -32,7 +32,6 @@ class ListTabs extends LightComponent {
         });
 
         this.state = {
-            submittedExpanded: stateVar(this, "submittedExpanded", true),
             params: LocationQuery.instance.params.getValue(),
             filter: "",
             steps: this.steps.value.getValue(),
@@ -56,8 +55,8 @@ class ListTabs extends LightComponent {
         this.addDisposable(LocationQuery.instance.params.subscribe((params) => this.setState({ params })));
     }
 
-    setMode(mode) {
-        LocationQuery.instance.setParams({ mode });
+    setView(view) {
+        LocationQuery.instance.setParams({ view });
     }
 
     render() {
@@ -67,16 +66,17 @@ class ListTabs extends LightComponent {
 
         controls.push((
             <IconMenu
-                key="mode"
+                key="view"
                 className={this.props.theme.button}
                 icon="more_vert"
                 menuRipple={true}
                 selectable={true}
-                selected={this.state.params.get("mode") || null}
-                onSelect={(value) => this.setMode(value)}
+                selected={this.state.params.get("view") || null}
+                onSelect={(value) => this.setView(value)}
             >
                 <MenuItem value={null} caption="Show active" />
                 <MenuItem value="abandoned" caption="Show abandoned" />
+                <MenuItem value="info" caption="Show information" />
             </IconMenu>
         ));
 
@@ -112,7 +112,27 @@ class ListTabs extends LightComponent {
             >
                 <Container>
                     <Choose>
-                        <When condition={!this.state.params.get("mode")}>
+                        <When condition={this.state.params.get("view") === "info"}>
+                            <CodeRepositoryCard
+                                item={this.props.item}
+                                expanded={true}
+                                expandable={false}
+                            />
+                        </When>
+                        <When condition={this.state.params.get("view") === "abandoned"}>
+                            <Header label="Abandoned" />
+                            <List
+                                key={"abandoned"}
+                                theme={theme}
+                                repositoryId={this.props.item._id}
+                                revisionStatus="abandoned"
+                                filter={this.state.filter}
+                                pathname={this.props.pathname}
+                                limit={10}
+                                steps={this.state.steps}
+                            />
+                        </When>
+                        <Otherwise>
                             <Header label="Submitted" />
                             <List
                                 key={"submitted"}
@@ -136,20 +156,7 @@ class ListTabs extends LightComponent {
                                 limit={30}
                                 steps={this.state.steps}
                             />
-                        </When>
-                        <When condition={this.state.params.get("mode") === "abandoned"}>
-                            <Header label="Abandoned" />
-                            <List
-                                key={"abandoned"}
-                                theme={theme}
-                                repositoryId={this.props.item._id}
-                                revisionStatus="abandoned"
-                                filter={this.state.filter}
-                                pathname={this.props.pathname}
-                                limit={10}
-                                steps={this.state.steps}
-                            />
-                        </When>
+                        </Otherwise>
                     </Choose>
                 </Container>
             </TASection>

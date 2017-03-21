@@ -131,7 +131,6 @@ class Overview extends LightComponent {
                 <Column xs={12} md={6}>
                     <Header label="Revision" />
                     <RevisionCard
-                        theme={this.props.theme}
                         item={this.props.item}
                         expanded={true}
                         expandable={false}
