@@ -4,7 +4,7 @@ import LightComponent from "ui-lib/light_component";
 import { ListItem } from "react-toolbox/lib/list";
 import { ListItemIcon } from "ui-components/type_admin";
 
-class ArtifactListItem extends LightComponent {
+class JobListItem extends LightComponent {
     render() {
         this.log("render", this.props, this.state);
 
@@ -32,11 +32,11 @@ class ArtifactListItem extends LightComponent {
     }
 }
 
-ArtifactListItem.propTypes = {
+JobListItem.propTypes = {
     theme: React.PropTypes.object,
     item: React.PropTypes.object.isRequired,
     itemContext: React.PropTypes.array,
     onClick: React.PropTypes.func
 };
 
-export default ArtifactListItem;
+export default JobListItem;

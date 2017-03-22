@@ -2,6 +2,7 @@
 import React from "react";
 import LightComponent from "ui-lib/light_component";
 import { CardTitle, CardText } from "react-toolbox/lib/card";
+import FontIcon from "react-toolbox/lib/font_icon";
 import UserAvatar from "ui-components/user_avatar";
 import DateTime from "ui-components/datetime";
 import Tags from "ui-components/tags";
@@ -10,6 +11,16 @@ import stateVar from "ui-lib/state_var";
 import CodeRepoAndBackend from "ui-observables/code_repo_and_backend";
 import { StringUtil } from "misc";
 import UserName from "ui-components/user_name";
+
+const FILE_STATUS_ICON = {
+    added: "add",
+    modified: "create",
+    deleted: "remove",
+    renamed: "forward",
+    copied: "content_copy",
+    rewrite: "create", // rewrite is a bigger change than modified
+    "undefined": "help_outline"
+};
 
 class RevisionCard extends LightComponent {
     constructor(props) {
@@ -190,17 +201,21 @@ class RevisionCard extends LightComponent {
                                 <td className={this.props.theme.monospace}>
                                     <If condition={ patch.change.files }>
                                         {patch.change.files.map((item) => (
-                                            <div key={item.name}>
+                                            <div
+                                                key={item.name}
+                                                className={this.props.theme.fileListItem}
+                                            >
+                                                <FontIcon
+                                                    value={FILE_STATUS_ICON[item.status]}
+                                                    className={this.props.theme.fileListItemIcon}
+                                                />
                                                 <a
-                                                    className={this.props.theme.link}
+                                                    className={`${this.props.theme.link} ${this.props.theme.fileListItemLink}`}
                                                     href={item.url}
                                                     target="_blank"
                                                 >
                                                     {item.name}
                                                 </a>
-                                                <span className={this.props.theme.floatRight}>
-                                                    {item.status}
-                                                </span>
                                             </div>
                                         ))}
                                     </If>

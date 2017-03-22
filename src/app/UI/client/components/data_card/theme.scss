@@ -2,6 +2,7 @@
 @import "react-toolbox/components/colors";
 @import "react-toolbox/components/globals";
 @import "~ui-styles/colors";
+@import "~ui-styles/common";
 
 .card {
     margin-bottom: $layout-gutter-width-sm;
@@ -24,6 +25,18 @@
     font-family: "Roboto Mono";
 }
 
+.fileListItem {
+    display: block;
+}
+
+.fileListItemIcon[data-react-toolbox="font-icon"] {
+    font-size: $font-size-normal;
+    display: inline-block;
+    margin-right: 0.6 * $unit;
+    // Centered vertically, cannot use vertical-align since display is block
+    vertical-align: middle;
+}
+
 .link {
     cursor: pointer;
 
@@ -34,6 +47,10 @@
     &:hover {
         color: $cf-color-selected;
     }
+}
+
+.fileListItemLink {
+    vertical-align: middle;
 }
 
 .floatRight {
