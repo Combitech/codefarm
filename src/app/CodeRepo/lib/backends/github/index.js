@@ -107,7 +107,8 @@ class GithubBackend extends AsyncEventEmitter {
                 oldrev: event.pull_request.base.sha,
                 newrev: changeSha,
                 refname: event.pull_request.head.ref,
-                url: event.pull_request.html_url,
+                commitUrl: commit.html_url,
+                reviewUrl: event.pull_request.html_url,
                 files: commit ? commit.files.map((file) => ({
                     name: file.filename,
                     status: file.status,
@@ -262,7 +263,8 @@ class GithubBackend extends AsyncEventEmitter {
                     oldrev: null, // TODO: set this
                     newrev: commit.id,
                     refname: event.ref,
-                    url: info.html_url,
+                    commitUrl: info.html_url,
+                    reviewUrl: "",
                     files: info ? info.files.map((file) => ({
                         name: file.filename,
                         status: file.status,

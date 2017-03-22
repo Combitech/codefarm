@@ -201,7 +201,8 @@ class GerritBackend extends AsyncEventEmitter {
                     oldrev: event.patchSet.parents[0],
                     newrev: event.patchSet.revision,
                     refname: event.patchSet.ref, // Use event.refName all the time instead?
-                    url: "",
+                    commitUrl: "",
+                    reviewUrl: "",
                     files: []
                 }
             };
@@ -209,7 +210,7 @@ class GerritBackend extends AsyncEventEmitter {
             try {
                 const currentPatchNr = event.patchSet.number;
                 const patchesInfo = await this._getPatchSetsInfo(changeId);
-                patch.change.url = this._getChangePatchSetUrl(patchesInfo, currentPatchNr);
+                patch.change.reviewUrl = this._getChangePatchSetUrl(patchesInfo, currentPatchNr);
                 patch.change.files = this._getPatchSetFiles(patchesInfo, currentPatchNr);
             } catch (error) {
                 log.error(`Gerrit backend failed to set files for change ${changeId} at patchset-created:`, error);
@@ -238,7 +239,8 @@ class GerritBackend extends AsyncEventEmitter {
                         oldrev: event.patchSet.parents[0],
                         newrev: event.newRev,
                         refname: event.refName,
-                        url: "",
+                        commitUrl: "",
+                        reviewUrl: "",
                         files: []
                     }
                 };
@@ -246,7 +248,7 @@ class GerritBackend extends AsyncEventEmitter {
                 try {
                     const currentPatchNr = event.patchSet.number;
                     const patchesInfo = await this._getPatchSetsInfo(changeId);
-                    patch.change.url = this._getChangePatchSetUrl(patchesInfo, currentPatchNr);
+                    patch.change.reviewUrl = this._getChangePatchSetUrl(patchesInfo, currentPatchNr);
                     patch.change.files = this._getPatchSetFiles(patchesInfo, currentPatchNr);
                 } catch (error) {
                     log.error(`Gerrit backend failed to set files for change ${changeId} at change-merged:`, error);

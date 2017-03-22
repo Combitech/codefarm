@@ -60,24 +60,29 @@ class RevisionCard extends LightComponent {
         return props.item.patches[this.props.patchIndex];
     }
 
-    _getSourceLinkLabel() {
+    _getSourceLinkLabels() {
         const backendType = this.state.repoBackend.has("backendType") ? this.state.repoBackend.get("backendType") : false;
-        let label = "Version control revision";
+        const labels = {
+            review: "Revision review",
+            commit: "Revision"
+        };
         switch (backendType) {
         case "gerrit":
-            label = "Gerrit change";
+            labels.review = "Gerrit change";
+            labels.commit = "Gerrit commit";
             break;
         case "github":
-            label = "Github pull request";
+            labels.review = "Github pull request";
+            labels.commit = "Github commit";
             break;
         }
 
-        return label;
+        return labels;
     }
 
     render() {
         const patch = this._getLatestPatch(this.props);
-        const sourceLinkLabel = this._getSourceLinkLabel();
+        const sourceLinkLabels = this._getSourceLinkLabels();
         const name = this.state.user.get("name", patch.name);
 
         const title = () => {
@@ -134,14 +139,27 @@ class RevisionCard extends LightComponent {
                             <tr>
                                 <td>Source</td>
                                 <td>
-                                    <If condition={ patch.change.url }>
-                                        <a
-                                            className={this.props.theme.link}
-                                            href={patch.change.url}
-                                            target="_blank"
-                                        >
-                                            {sourceLinkLabel}
-                                        </a>
+                                    <If condition={ patch.change.reviewUrl }>
+                                        <div>
+                                            <a
+                                                className={this.props.theme.link}
+                                                href={patch.change.reviewUrl}
+                                                target="_blank"
+                                            >
+                                                {sourceLinkLabels.review}
+                                            </a>
+                                        </div>
+                                    </If>
+                                    <If condition={ patch.change.commitUrl }>
+                                        <div>
+                                            <a
+                                                className={this.props.theme.link}
+                                                href={patch.change.commitUrl}
+                                                target="_blank"
+                                            >
+                                                {sourceLinkLabels.commit}
+                                            </a>
+                                        </div>
                                     </If>
                                 </td>
                             </tr>
