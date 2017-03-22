@@ -13,7 +13,7 @@ const { ServiceMgr } = require("service");
 
 mochaPatch();
 
-describe("GithubBackend", () => {
+describe("CodeRepo", () => {
     let testInfo;
     let main;
     let baseUrl;
@@ -119,7 +119,7 @@ describe("GithubBackend", () => {
         assert.property(data, "saved");
     };
 
-    describe("Backends", async () => {
+    describe("Basic backend tests", async () => {
         it("shall get empty backend list", async () => {
             const backends = await rp({
                 url: `${baseUrl}/backend`,

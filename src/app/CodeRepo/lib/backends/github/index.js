@@ -55,7 +55,9 @@ class GithubBackend extends AsyncEventEmitter {
         this.Revision = Revision;
         this.baseUrl = backendsConfig.github.baseUrl;
         this.apiBaseUrl = backendsConfig.github.apiBaseUrl;
-        this.githubEmitter = new GithubEventEmitter();
+        this.githubEmitter = new GithubEventEmitter(
+            ServiceMgr.instance.log.bind(ServiceMgr.instance)
+        );
     }
 
     async start() {
