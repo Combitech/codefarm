@@ -1,15 +1,16 @@
 "use strict";
 
-const { ServiceMgr } = require("service");
 const Koa = require("koa2");
 const bodyParser = require("koa-bodyparser");
 const { synchronize } = require("misc");
 const { AsyncEventEmitter } = require("emitter");
 
 class GithubEventEmitter extends AsyncEventEmitter {
-    constructor() {
+    constructor(log = false) {
         super();
 
+        // Ignore logs if no log function set
+        this.log = typeof log === "function" ? log : () => null;
         synchronize(this, "emit");
     }
 
@@ -42,8 +43,7 @@ class GithubEventEmitter extends AsyncEventEmitter {
                         break;
 
                     default:
-                        ServiceMgr.instance.log("verbose", "unknown pull-request event received");
-                        ServiceMgr.instance.log("verbose", JSON.stringify(body, null, 2));
+                        await this.emit("pull_request_unknown", body);
                     }
                     break;
 
@@ -56,10 +56,12 @@ class GithubEventEmitter extends AsyncEventEmitter {
                     break;
 
                 default:
-                    ServiceMgr.instance.log("verbose", `unknown event ${header["x-github-event"]} received`);
-                    ServiceMgr.instance.log("verbose", JSON.stringify(body, null, 2));
+                    await this.emit("unknown_event", { type: header["x-github-event"], body: body });
                 }
+            } else {
+                await this.emit("malformed_event", { header: header, body: body });
             }
+
             ctx.response.status = 200;
         });
 
@@ -75,7 +77,7 @@ class GithubEventEmitter extends AsyncEventEmitter {
     }
 
     async teardownWebServer() {
-        ServiceMgr.instance.log("verbose", "Tearing down web hook server");
+        this.log("verbose", "Tearing down web hook server");
         this.server.close();
     }
 
