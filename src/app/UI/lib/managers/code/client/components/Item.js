@@ -3,9 +3,7 @@ import React from "react";
 import LightComponent from "ui-lib/light_component";
 import { Follow } from "ui-components/follow";
 import { Container } from "ui-components/layout";
-import {
-    Section as TASection
-} from "ui-components/type_admin";
+import { Section as TASection } from "ui-components/type_admin";
 
 class Item extends LightComponent {
     render() {

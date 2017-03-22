@@ -8,7 +8,7 @@ import Link from "react-toolbox/lib/link";
 import { Tab, Tabs } from "react-toolbox/lib/tabs";
 import { Row, Col } from "react-flexbox-grid";
 import LogListItem from "./LogListItem";
-import ArtifactListItem from "ui-mgr/artifacts/client/components/ListItem";
+import ArtifactListItem from "./JobListItem";
 import SubJobListItem from "./SubJobListItem";
 import api from "api.io/api.io-client";
 import {

@@ -2,75 +2,72 @@
 import React from "react";
 import LightComponent from "ui-lib/light_component";
 import Input from "react-toolbox/lib/input";
-import {
-    Section as TASection,
-    LoadIndicator as TALoadIndicator,
-    ListComponent as TAListComponent,
-    ListPager as TAListPager
-} from "ui-components/type_admin";
-import ArtifactListItem from "./ListItem";
-import ArtifactListObservable from "../observables/artifact_list";
-import { States as ObservableDataStates } from "ui-lib/observable_data";
+import Dropdown from "react-toolbox/lib/dropdown";
+import { IconMenu, MenuItem } from "react-toolbox/lib/menu";
+import { Container } from "ui-components/layout";
+import { ArtifactRepositoryCard } from "ui-components/data_card";
+import { Section as TASection } from "ui-components/type_admin";
+import { List } from "ui-components/follow";
+import RowComponent from "./list/Row";
+import HeaderComponent from "./list/Header";
+import LocationQuery from "ui-observables/location_query";
+import FlowList from "ui-observables/artifact_repository_flows";
+import ArtifactList from "ui-observables/paged_artifact_list";
 
-class List extends LightComponent {
+class ListTabs extends LightComponent {
     constructor(props) {
         super(props);
 
-        this.artifactList = new ArtifactListObservable({
-            repositoryId: props.item._id,
-            limit: 5
+        this.flows = new FlowList({
+            repositoryId: this.props.item._id
         });
 
         this.state = {
-            list: this.artifactList.value.getValue(),
-            state: this.artifactList.state.getValue()
+            params: LocationQuery.instance.params.getValue(),
+            filter: "",
+            flows: this.flows.value.getValue(),
+            flowId: ""
         };
     }
 
     componentDidMount() {
-        this.log("componentDidMount");
-        this.addDisposable(this.artifactList.start());
-        this.addDisposable(this.artifactList.value.subscribe((list) => this.setState({ list })));
-        this.addDisposable(this.artifactList.state.subscribe((state) => this.setState({ state })));
-    }
+        this.addDisposable(this.flows.start());
+        this.addDisposable(this.flows.value.subscribe((flows) => {
+            const state = { flows };
 
-    componentWillReceiveProps(nextProps) {
-        this.log("componentWillReceiveProps");
-        if (nextProps.item) {
-            this.artifactList.setOpts({
-                repositoryId: nextProps.item._id
-            });
-        }
-    }
-
-    componentDidUpdate() {
-        this.log("componentDidUpdate");
-        /* If relative paging is used and current page has no next or previous
-         * page, then automatically navigate to last or first page.
-         */
-        const pagingInfo = this.artifactList.pagingInfo.getValue().toJS();
-        if (pagingInfo.isRelative) {
-            if (!pagingInfo.hasNextPage) {
-                this.log("setLastPage");
-                this.artifactList.setLastPage();
-            } else if (!pagingInfo.hasPrevPage) {
-                this.log("setFirstPage");
-                this.artifactList.setFirstPage();
+            if (!this.state.flowId && flows.first()) {
+                state.flowId = flows.first();
             }
-        }
+
+            this.setState(state);
+        }));
+
+        this.addDisposable(LocationQuery.instance.params.subscribe((params) => this.setState({ params })));
+    }
+
+    setView(view) {
+        LocationQuery.instance.setParams({ view });
     }
 
     render() {
         this.log("render", this.props, this.state);
 
-        let loadIndicator;
-        if (this.state.state === ObservableDataStates.LOADING) {
-            loadIndicator = (
-                <TALoadIndicator/>
-            );
-        }
-
         const controls = this.props.controls.slice(0);
+
+        controls.push((
+            <IconMenu
+                key="view"
+                className={this.props.theme.button}
+                icon="more_vert"
+                menuRipple={true}
+                selectable={true}
+                selected={this.state.params.get("view") || null}
+                onSelect={(value) => this.setView(value)}
+            >
+                <MenuItem value={null} caption="Show list" />
+                <MenuItem value="info" caption="Show information" />
+            </IconMenu>
+        ));
 
         controls.push((
             <Input
@@ -79,41 +76,60 @@ class List extends LightComponent {
                 type="text"
                 label="Filter list"
                 name="filter"
-                value={this.artifactList.opts.getValue().get("filter")}
-                onChange={(value) => this.artifactList.setOpts({ filter: value })}
+                value={this.state.filter}
+                onChange={(value) => this.setState({ filter: value })}
             />
         ));
+
+        if (this.state.flows.size > 1) {
+            controls.push((
+                <Dropdown
+                    key="flows"
+                    className={this.props.theme.dropdown}
+                    auto
+                    source={this.state.flows.toJS().map((flowId) => ({ label: flowId, value: flowId }))}
+                    value={this.state.flowId}
+                    onChange={(flowId) => this.setState({ flowId })}
+                  />
+            ));
+        }
 
         return (
             <TASection
                 controls={controls}
                 breadcrumbs={this.props.breadcrumbs}
             >
-                {loadIndicator}
-                <TAListComponent>
-                    {this.state.list.toJS().map((item) => (
-                        <ArtifactListItem
-                            key={item._id}
-                            theme={this.props.theme}
-                            onClick={() => {
-                                this.context.router.push({
-                                    pathname: `${this.props.pathname}/${item._id}`
-                                });
-                            }}
-                            item={item}
-                        />
-                    ))}
-                </TAListComponent>
-                <TAListPager
-                    pagedList={this.artifactList}
-                    pagingInfo={this.artifactList.pagingInfo.getValue()}
-                />
+                <Container>
+                    <Choose>
+                        <When condition={this.state.params.get("view") === "info"}>
+                            <ArtifactRepositoryCard
+                                item={this.props.item}
+                                expanded={true}
+                                expandable={false}
+                            />
+                        </When>
+                        <Otherwise>
+                            <List
+                                key={"list"}
+                                ObservableList={ArtifactList}
+                                HeaderComponent={HeaderComponent}
+                                RowComponent={RowComponent}
+                                query={{
+                                    repository: this.props.item._id
+                                }}
+                                flowId={this.state.flowId}
+                                filter={this.state.filter}
+                                pathname={this.props.pathname}
+                            />
+                        </Otherwise>
+                    </Choose>
+                </Container>
             </TASection>
         );
     }
 }
 
-List.propTypes = {
+ListTabs.propTypes = {
     theme: React.PropTypes.object,
     item: React.PropTypes.object,
     pathname: React.PropTypes.string.isRequired,
@@ -121,8 +137,8 @@ List.propTypes = {
     controls: React.PropTypes.array.isRequired
 };
 
-List.contextTypes = {
+ListTabs.contextTypes = {
     router: React.PropTypes.object.isRequired
 };
 
-export default List;
+export default ListTabs;
