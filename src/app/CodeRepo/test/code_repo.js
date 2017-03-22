@@ -3,6 +3,8 @@
 /* global describe it before after */
 
 const { assert } = require("chai");
+const path = require("path");
+const fs = require("fs-extra-promise");
 const getPort = require("get-port");
 const { mochaPatch } = require("testsupport");
 const Main = require("../lib/main");
@@ -15,11 +17,25 @@ describe("GithubBackend", () => {
     let testInfo;
     let main;
     let baseUrl;
+    let testTmpDir;
+    let tmpPrivateKeyFile;
 
     let addBackend;
     let deleteBackend;
 
     before(async () => {
+        process.on("uncaughtException", (error) => {
+            console.error("Uncaught exception", error);
+            assert(false, `Uncaught exception, error: ${error.message}`);
+        });
+        process.on("unhandledRejection", (error, promise) => {
+            console.error("Unhandled promise rejection", error);
+            console.error("Promise", promise);
+            assert(false, `Unhandled promise rejection, error: ${error.message}`);
+        });
+        testTmpDir = await fs.mkdtempAsync(path.join(__dirname, "tmp-"));
+        tmpPrivateKeyFile = path.join(testTmpDir, "privateKey");
+        await fs.writeFileAsync(tmpPrivateKeyFile, "dummy private key");
         testInfo = {
             name: "coderepo",
             version: "0.0.1",
@@ -44,10 +60,13 @@ describe("GithubBackend", () => {
                     github: {
                         baseUrl: "http://localhost",
                         apiBaseUrl: "http://localhost"
+                    },
+                    gerrit: {
+                        defaultPort: 29418,
+                        defaultTimeoutMs: 10 * 1000
                     }
                 }
             },
-
             gitHubBackend: {
                 _id: "GitHubBackend1",
                 backendType: "github",
@@ -62,7 +81,7 @@ describe("GithubBackend", () => {
                 _id: "GerritBackend1",
                 backendType: "gerrit",
                 uri: "dummyUri1",
-                privateKeyPath: "dummyPath1"
+                privateKeyPath: tmpPrivateKeyFile
             },
             unknownTypeBackend: {
                 _id: "UnknownTypeBackend1",
@@ -88,6 +107,8 @@ describe("GithubBackend", () => {
     });
 
     after(async () => {
+        await fs.removeAsync(tmpPrivateKeyFile);
+        await fs.removeAsync(testTmpDir);
     });
 
     const assertBackendData = (data, expId) => {

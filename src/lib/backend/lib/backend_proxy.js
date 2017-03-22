@@ -35,7 +35,12 @@ class BackendProxy {
         );
 
         log.info(`Starting backend ${backend._id} of type ${typeName}`);
-        await this.backends[backend._id].start();
+        try {
+            await this.backends[backend._id].start();
+        } catch (error) {
+            log.error(`Error starting backend ${backend._id} of type ${typeName}`, error);
+            throw error;
+        }
     }
 
     async _updateBackend(backend) {
@@ -82,7 +87,7 @@ class BackendProxy {
         const backends = await this.BackendType.findMany();
         if (backends) {
             for (const backend of backends) {
-                this._addBackend(backend);
+                await this._addBackend(backend);
             }
         }
 
