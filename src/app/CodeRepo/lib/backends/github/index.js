@@ -98,6 +98,22 @@ class GithubBackend extends AsyncEventEmitter {
         const name = commit ? commit.commit.author.name : event.pull_request.user.login;
 
         ServiceMgr.instance.log("verbose", `Creating new patch for pull request ${event.pull_request.number} (${changeSha})`);
+        const reviewUrl = event.pull_request.html_url;
+
+        const files = commit ? commit.files.map((file) => ({
+            name: file.filename,
+            status: file.status,
+            url: "",
+            download: file.raw_url
+        })) : [];
+
+        // The github url to a specific diff inside of a pull-request looks like
+        // the github pull request url followed by /files#diff-FILE_INDEX where
+        // FILE_INDEX is the 0-based index of the file within the sorted file list.
+        const fileNames = files.map((item) => item.name).sort();
+        files.forEach((file) =>
+            file.url = `${reviewUrl}/files#diff-${fileNames.indexOf(file)}`
+        );
 
         return {
             email: commit ? commit.commit.author.email : false,
@@ -110,13 +126,8 @@ class GithubBackend extends AsyncEventEmitter {
                 newrev: changeSha,
                 refname: event.pull_request.head.ref,
                 commitUrl: commit.html_url,
-                reviewUrl: event.pull_request.html_url,
-                files: commit ? commit.files.map((file) => ({
-                    name: file.filename,
-                    status: file.status,
-                    url: file.blob_url,
-                    download: file.raw_url
-                })) : []
+                reviewUrl,
+                files
             }
         };
     }
@@ -254,6 +265,22 @@ class GithubBackend extends AsyncEventEmitter {
         let revision = null;
         for (const commit of event.commits) {
             const info = await this._getCommit(event.repository.name, commit.id);
+            const commitUrl = info.html_url;
+
+            const files = info ? info.files.map((file) => ({
+                name: file.filename,
+                status: file.status,
+                url: "",
+                download: file.raw_url
+            })) : [];
+
+            // The github url to a specific diff inside of a pull-request looks like
+            // the github commit url followed by /files#diff-FILE_INDEX where
+            // FILE_INDEX is the 0-based index of the file within the sorted file list.
+            const fileNames = files.map((item) => item.name).sort();
+            files.forEach((file) =>
+                file.url = `${commitUrl}#diff-${fileNames.indexOf(file)}`
+            );
 
             const patch = {
                 email: commit.author.email,
@@ -265,14 +292,9 @@ class GithubBackend extends AsyncEventEmitter {
                     oldrev: null, // TODO: set this
                     newrev: commit.id,
                     refname: event.ref,
-                    commitUrl: info.html_url,
+                    commitUrl,
                     reviewUrl: "",
-                    files: info ? info.files.map((file) => ({
-                        name: file.filename,
-                        status: file.status,
-                        url: file.blob_url,
-                        download: file.raw_url
-                    })) : []
+                    files
                 }
             };
 
