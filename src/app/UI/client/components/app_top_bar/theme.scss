@@ -1,10 +1,12 @@
 
 @import "react-toolbox/components/colors";
 @import "react-toolbox/components/globals";
+@import "~ui-styles/colors";
 
 .topBar {
-    background-color: $color-white;
-    color: $color-black;
+    background-color: $cf-color-topbar-background;
+    background: linear-gradient(to bottom, $cf-color-topbar-background 0%, $cf-color-topbar-background2 100%);
+    color: $color-white;
 
     .iconMenu {
         margin-left: auto;
@@ -13,6 +15,7 @@
 
     .topRightButton {
         margin-left: auto;
+        text-transform: none !important;
     }
 
     .userAvatar {

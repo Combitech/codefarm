@@ -23,7 +23,7 @@ class Page extends LightComponent {
             <div>
                 <AppMenu
                     primaryText="Management"
-                    icon="build"
+                    icon="/Cheser/256x256/apps/utilities-system-monitor.png"
                     items={items}
                 />
                 <div className={this.props.theme.content}>

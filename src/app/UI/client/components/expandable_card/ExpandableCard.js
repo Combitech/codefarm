@@ -10,7 +10,6 @@ class ExpandableCard extends LightComponent {
         return (
             <Card
                 className={`${this.props.theme.expandableCard} ${this.props.className}`}
-                raised
             >
                 {this.props.children}
                 {this.props.expandable && (

@@ -81,7 +81,7 @@ class Follow extends LightComponent {
                         itemExt={itemExt}
                         pathname={this.props.pathname}
                         step={this.state.params.toJS().step || ""}
-                        label="Revision"
+                        label={this.props.label}
                     />
                 </If>
             </div>
@@ -92,7 +92,8 @@ class Follow extends LightComponent {
 Follow.propTypes = {
     theme: React.PropTypes.object,
     item: React.PropTypes.object.isRequired,
-    pathname: React.PropTypes.string.isRequired
+    pathname: React.PropTypes.string.isRequired,
+    label: React.PropTypes.string.isRequired
 };
 
 export default Follow;

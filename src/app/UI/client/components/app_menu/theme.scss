@@ -14,29 +14,41 @@
     left: 0;
     bottom: 0;
     width: $baseline-grid * 40;
-    padding: $layout-gutter-width;
     margin-top: $standard-increment-desktop;
+    border-right: 1px solid $cf-color-pane-border;
     overflow: auto;
 
-    h1 {
-        opacity: 0.8;
-        font-size: 3.2rem;
-        font-weight: $font-weight-bold;
-        color: $cf-color-pane-text;
-        margin-bottom: $layout-gutter-width;
-        text-transform: uppercase;
+    .header {
+        background-color: $cf-color-pane-header-background;
+        padding: $layout-gutter-width;
+        margin-bottom: $unit;
+        text-align: center;
+
+        .headerText {
+            color: $cf-color-pane-header-text;
+            font-size: $baseline-grid * 4;
+            font-weight: $font-weight-bold;
+            text-transform: uppercase;
+        }
+
+        .headerImage {
+            width: $baseline-grid * 16;
+            height: $baseline-grid * 16;
+            margin-bottom: $layout-gutter-width-sm;
+        }
     }
 
     .menuItem {
         display: block;
         width: 100%;
+        height: auto;
         text-align: left;
         color: $cf-color-pane-text !important;
         text-transform: none;
         font-size: $font-size-normal;
         font-weight: $font-weight-normal;
-        border-left: 6px solid transparent;
-        padding-left: -6px;
+        border-right: 6px solid transparent;
+        padding: $unit $layout-gutter-width;
         transition-timing-function: $animation-curve-default;
         transition-duration: $animation-duration;
         transition-property: border-left-color;
@@ -45,19 +57,7 @@
     .menuItemActive {
         @extend .menuItem;
 
-        border-left-color: $cf-color-selected;
+        border-right-color: $cf-color-selected;
         border-radius: 0;
     }
-
-    .appIcon {
-        font-size: $layout-gutter-width * 8;
-        position: absolute;
-        bottom: $baseline-grid * 2;
-        right: $baseline-grid * 2;
-        color: $cf-color-pane-text;
-        transform: rotate(5deg);
-        opacity: 0.5;
-    }
-
-
 }
