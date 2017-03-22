@@ -70,16 +70,22 @@ class FsBackend {
 
         await fs.mkdirsAsync(artifactDir);
 
-        const result = {
+        const writeStream = fs.createWriteStream(artifactFilePath);
+
+        await new Promise((resolve, reject) => {
+            fileStream
+                .pipe(writeStream)
+                .on("finish", resolve)
+                .on("error", (error) => {
+                    // Manually close write-stream on error
+                    writeStream.end();
+                    reject(error);
+                });
+        });
+
+        return {
             storagePath: artifactFilePath
         };
-
-        return new Promise((resolve, reject) => {
-            fileStream
-                .pipe(fs.createWriteStream(artifactFilePath))
-                .on("finish", () => resolve(result))
-                .on("error", reject);
-        });
     }
 
     async getArtifactReadStream(repository, artifact) {

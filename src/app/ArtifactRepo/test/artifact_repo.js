@@ -383,6 +383,7 @@ describe("ArtifactRepo", () => {
 
             assert.strictEqual(result.result, "success");
             assert.strictEqual(result.data.state, "commited");
+            console.log("_TMP_DBG_PRINT_ data=", JSON.stringify(result.data, null, 2));
             assert.strictEqual(result.data.fileMeta.size, artifactContent.length);
 
             // Check hashes
