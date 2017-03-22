@@ -17,6 +17,7 @@ const REVISION_STATUS = {
     MERGED: "merged",
     ABANDONED: "abandoned"
 };
+
 class Revision extends Type {
     constructor(data) {
         super();

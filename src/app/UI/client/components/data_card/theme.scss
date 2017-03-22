@@ -27,8 +27,21 @@
 .link {
     cursor: pointer;
 
+    &:link, &:visited {
+        color: $color-text-secondary;
+    }
+
     &:hover {
         color: $cf-color-selected;
+    }
+}
+
+.floatRight {
+    float: right;
+    font-size: $font-size-small * 0.9;
+
+    span {
+        font-family: "Roboto Mono";
     }
 }
 

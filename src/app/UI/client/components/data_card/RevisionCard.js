@@ -8,38 +8,51 @@ import Tags from "ui-components/tags";
 import ExpandableCard from "ui-components/expandable_card";
 import stateVar from "ui-lib/state_var";
 import UserItem from "ui-observables/user_item";
+import CodeRepoAndBackend from "ui-observables/code_repo_and_backend";
 import { StringUtil } from "misc";
 
 class RevisionCard extends LightComponent {
     constructor(props) {
         super(props);
 
-        const patch = this.getLatestPatch(props);
+        const patch = this._getLatestPatch(props);
 
         this.user = new UserItem({
             identifier: patch.userRef ? patch.userRef.id : patch.email
         });
 
+        this.repoAndBackend = new CodeRepoAndBackend({
+            repoId: props.item && props.item.repository
+        });
+
         this.state = {
             expanded: stateVar(this, "expanded", props.expanded),
-            user: this.user.value.getValue()
+            user: this.user.value.getValue(),
+            repoBackend: this.repoAndBackend.backend.getValue()
         };
     }
 
     componentDidMount() {
         this.addDisposable(this.user.start());
         this.addDisposable(this.user.value.subscribe((user) => this.setState({ user })));
+
+        this.addDisposable(this.repoAndBackend.start());
+        this.addDisposable(this.repoAndBackend.backend.subscribe((repoBackend) => this.setState({ repoBackend })));
     }
 
     componentWillReceiveProps(nextProps) {
-        const patch = this.getLatestPatch(nextProps);
+        const patch = this._getLatestPatch(nextProps);
 
         this.user.setOpts({
             identifier: patch.userRef ? patch.userRef.id : patch.email
         });
+
+        this.repoAndBackend.setOpts({
+            repoId: nextProps.item && nextProps.item.repository
+        });
     }
 
-    getLatestPatch(props) {
+    _getLatestPatch(props) {
         if (this.props.patchIndex < 0) {
             return props.item.patches[props.item.patches.length + this.props.patchIndex];
         }
@@ -47,11 +60,30 @@ class RevisionCard extends LightComponent {
         return props.item.patches[this.props.patchIndex];
     }
 
+    _getSourceLinkLabel() {
+        const backendType = this.state.repoBackend.has("backendType") ? this.state.repoBackend.get("backendType") : false;
+        let label = "Version control revision";
+        switch (backendType) {
+        case "git":
+            label = "Git commit";
+            break;
+        case "gerrit":
+            label = "Gerrit change";
+            break;
+        case "github":
+            label = "Github pull request";
+            break;
+        }
+
+        return label;
+    }
+
     render() {
-        const patch = this.getLatestPatch(this.props);
+        const patch = this._getLatestPatch(this.props);
         const name = this.state.user.get("name", patch.name);
         const emails = this.state.user.get("email");
         const email = emails ? emails.first() : patch.email;
+        const sourceLinkLabel = this._getSourceLinkLabel();
 
         const title = () => {
             if (this.props.patchIndex < 0) {
@@ -104,6 +136,20 @@ class RevisionCard extends LightComponent {
                                     {this.props.item.repository}
                                 </td>
                             </tr>
+                            <tr>
+                                <td>Source</td>
+                                <td>
+                                    <If condition={ patch.change.url }>
+                                        <a
+                                            className={this.props.theme.link}
+                                            href={patch.change.url}
+                                            target="_blank"
+                                        >
+                                            {sourceLinkLabel}
+                                        </a>
+                                    </If>
+                                </td>
+                            </tr>
                             <If condition={this.props.patchIndex < 0}>
                                 <tr>
                                     <td>Patches</td>
@@ -138,6 +184,27 @@ class RevisionCard extends LightComponent {
                                 <td>Previous SHA1</td>
                                 <td className={this.props.theme.monospace}>
                                     {patch.change.oldrev}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Files</td>
+                                <td className={this.props.theme.monospace}>
+                                    <If condition={ patch.change.files }>
+                                        {patch.change.files.map((item) => (
+                                            <div key={item.name}>
+                                                <a
+                                                    className={this.props.theme.link}
+                                                    href={item.url}
+                                                    target="_blank"
+                                                >
+                                                    {item.name}
+                                                </a>
+                                                <span className={this.props.theme.floatRight}>
+                                                    {item.status}
+                                                </span>
+                                            </div>
+                                        ))}
+                                    </If>
                                 </td>
                             </tr>
                             <tr>

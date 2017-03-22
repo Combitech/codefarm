@@ -154,13 +154,20 @@ class GerritBackend extends AsyncEventEmitter {
         return JSON.parse(outLines[0]);
     }
 
-    async _getPatchSetFiles(changeId, patchSetNr) {
-        const patchesInfo = await this._getPatchSetsInfo(changeId);
-        const currentPatchInfo = patchesInfo.patchSets.find((item) => item.number === patchSetNr);
-        const changeUrl = patchesInfo.url;
+    _getChangePatchSetUrl(patchesInfo, patchSetNr = false) {
         // TODO: Is change url always /#/c/CHANGE_ID
         // Transform gerrithost:port/CHANGE_ID to gerrithost:port/#/c/CHANGE_ID
-        const patchSetUrl = changeUrl.replace(/(.*)\/(\d+)$/, "$1/#/c/$2");
+        let changeUrl = patchesInfo.url.replace(/(.*)\/(\d+)$/, "$1/#/c/$2");
+        if (patchSetNr) {
+            changeUrl = `${changeUrl}/${patchSetNr}`;
+        }
+
+        return changeUrl;
+    }
+
+    _getPatchSetFiles(patchesInfo, patchSetNr) {
+        const currentPatchInfo = patchesInfo.patchSets.find((item) => item.number === patchSetNr);
+        const patchSetUrl = this._getChangePatchSetUrl(patchesInfo, patchSetNr);
         const files = [];
         for (const file of currentPatchInfo.files) {
             if (file.file === GERRIT_COMMIT_MSG_FILE_NAME) {
@@ -170,7 +177,7 @@ class GerritBackend extends AsyncEventEmitter {
             files.push({
                 name: file.file,
                 status: file.type.toLowerCase(),
-                url: `${patchSetUrl}/${patchSetNr}/${file.file}`,
+                url: `${patchSetUrl}/${file.file}`,
                 download: ""
             });
         }
@@ -194,13 +201,16 @@ class GerritBackend extends AsyncEventEmitter {
                     oldrev: event.patchSet.parents[0],
                     newrev: event.patchSet.revision,
                     refname: event.patchSet.ref, // Use event.refName all the time instead?
+                    url: "",
                     files: []
                 }
             };
 
             try {
                 const currentPatchNr = event.patchSet.number;
-                patch.change.files = await this._getPatchSetFiles(changeId, currentPatchNr);
+                const patchesInfo = await this._getPatchSetsInfo(changeId);
+                patch.change.url = this._getChangePatchSetUrl(patchesInfo, currentPatchNr);
+                patch.change.files = this._getPatchSetFiles(patchesInfo, currentPatchNr);
             } catch (error) {
                 log.error(`Gerrit backend failed to set files for change ${changeId} at patchset-created:`, error);
             }
@@ -228,13 +238,16 @@ class GerritBackend extends AsyncEventEmitter {
                         oldrev: event.patchSet.parents[0],
                         newrev: event.newRev,
                         refname: event.refName,
+                        url: "",
                         files: []
                     }
                 };
 
                 try {
                     const currentPatchNr = event.patchSet.number;
-                    patch.change.files = await this._getPatchSetFiles(changeId, currentPatchNr);
+                    const patchesInfo = await this._getPatchSetsInfo(changeId);
+                    patch.change.url = this._getChangePatchSetUrl(patchesInfo, currentPatchNr);
+                    patch.change.files = this._getPatchSetFiles(patchesInfo, currentPatchNr);
                 } catch (error) {
                     log.error(`Gerrit backend failed to set files for change ${changeId} at change-merged:`, error);
                 }
