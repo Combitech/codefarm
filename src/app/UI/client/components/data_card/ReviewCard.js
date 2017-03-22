@@ -6,47 +6,27 @@ import UserAvatar from "ui-components/user_avatar";
 import DateTime from "ui-components/datetime";
 import ExpandableCard from "ui-components/expandable_card";
 import stateVar from "ui-lib/state_var";
-import UserItem from "ui-observables/user_item";
 import { StringUtil } from "misc";
+import UserName from "ui-components/user_name";
 
 class ReviewCard extends LightComponent {
     constructor(props) {
         super(props);
 
-        this.user = new UserItem({
-            identifier: props.item.userRef ? props.item.userRef.id : props.item.alias
-        });
-
         this.state = {
-            expanded: stateVar(this, "expanded", this.props.expanded),
-            user: this.user.value.getValue()
+            expanded: stateVar(this, "expanded", this.props.expanded)
         };
-    }
-
-    componentDidMount() {
-        this.addDisposable(this.user.start());
-        this.addDisposable(this.user.value.subscribe((user) => this.setState({ user })));
-    }
-
-    componentWillReceiveProps(nextProps) {
-        this.user.setOpts({
-            identifier: nextProps.item.userRef ? nextProps.item.userRef.id : nextProps.item.alias
-        });
     }
 
     render() {
         const review = this.props.item;
-        const name = this.state.user.get("name", "Someone");
 
-        const title = () => {
-            if (review.state === "approved") {
-                return `Approved by ${name}`;
-            } else if (review.state === "rejected") {
-                return `Rejected by ${name}`;
-            }
-
-            return `Reviewed by ${name}`;
-        };
+        let titlePrefix = "Reviewed by";
+        if (review.state === "approved") {
+            titlePrefix = "Approved by";
+        } else if (review.state === "rejected") {
+            titlePrefix = "Rejected by";
+        }
 
         return (
             <ExpandableCard
@@ -61,7 +41,13 @@ class ReviewCard extends LightComponent {
                             userId={review.userRef.id}
                         />
                     )}
-                    title={title()}
+                    title={(
+                        <UserName
+                            userId={review.userRef.id}
+                            notFoundText={review.alias}
+                            prefixText={titlePrefix}
+                        />
+                    )}
                     subtitle={(
                         <DateTime
                             value={review.updated}

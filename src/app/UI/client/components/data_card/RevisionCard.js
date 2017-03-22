@@ -7,19 +7,13 @@ import DateTime from "ui-components/datetime";
 import Tags from "ui-components/tags";
 import ExpandableCard from "ui-components/expandable_card";
 import stateVar from "ui-lib/state_var";
-import UserItem from "ui-observables/user_item";
 import CodeRepoAndBackend from "ui-observables/code_repo_and_backend";
 import { StringUtil } from "misc";
+import UserName from "ui-components/user_name";
 
 class RevisionCard extends LightComponent {
     constructor(props) {
         super(props);
-
-        const patch = this._getLatestPatch(props);
-
-        this.user = new UserItem({
-            identifier: patch.userRef ? patch.userRef.id : patch.email
-        });
 
         this.repoAndBackend = new CodeRepoAndBackend({
             repoId: props.item && props.item.repository
@@ -27,26 +21,16 @@ class RevisionCard extends LightComponent {
 
         this.state = {
             expanded: stateVar(this, "expanded", props.expanded),
-            user: this.user.value.getValue(),
             repoBackend: this.repoAndBackend.backend.getValue()
         };
     }
 
     componentDidMount() {
-        this.addDisposable(this.user.start());
-        this.addDisposable(this.user.value.subscribe((user) => this.setState({ user })));
-
         this.addDisposable(this.repoAndBackend.start());
         this.addDisposable(this.repoAndBackend.backend.subscribe((repoBackend) => this.setState({ repoBackend })));
     }
 
     componentWillReceiveProps(nextProps) {
-        const patch = this._getLatestPatch(nextProps);
-
-        this.user.setOpts({
-            identifier: patch.userRef ? patch.userRef.id : patch.email
-        });
-
         this.repoAndBackend.setOpts({
             repoId: nextProps.item && nextProps.item.repository
         });
@@ -83,17 +67,13 @@ class RevisionCard extends LightComponent {
     render() {
         const patch = this._getLatestPatch(this.props);
         const sourceLinkLabels = this._getSourceLinkLabels();
-        const name = this.state.user.get("name", patch.name);
 
-        const title = () => {
-            if (this.props.patchIndex < 0) {
-                return `Revision by ${name}`;
-            } else if (this.props.patchIndex === this.props.item.patches.length - 1 && this.props.item.status === "merged") {
-                return `Merged by ${name}`;
-            }
-
-            return `Submitted by ${name}`;
-        };
+        let titlePrefix = "Submitted by";
+        if (this.props.patchIndex < 0) {
+            titlePrefix = "Revision by";
+        } else if (this.props.patchIndex === this.props.item.patches.length - 1 && this.props.item.status === "merged") {
+            titlePrefix = "Merged by";
+        }
 
         return (
             <ExpandableCard
@@ -108,7 +88,13 @@ class RevisionCard extends LightComponent {
                             userId={patch.userRef.id}
                         />
                     )}
-                    title={title()}
+                    title={(
+                        <UserName
+                            userId={patch.userRef.id}
+                            notFoundText={patch.name}
+                            prefixText={titlePrefix}
+                        />
+                    )}
                     subtitle={(
                         <DateTime
                             value={patch.submitted}

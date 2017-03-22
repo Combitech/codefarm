@@ -6,43 +6,18 @@ import UserAvatar from "ui-components/user_avatar";
 import DateTime from "ui-components/datetime";
 import ExpandableCard from "ui-components/expandable_card";
 import stateVar from "ui-lib/state_var";
-import UserItem from "ui-observables/user_item";
+import UserName from "ui-components/user_name";
 
 class CommentCard extends LightComponent {
     constructor(props) {
         super(props);
 
-        this.user = new UserItem({
-            identifier: (props.item.user && props.item.user.id) || false
-        });
-
         this.state = {
-            expanded: stateVar(this, "expanded", props.expanded),
-            user: this.user.value.getValue()
+            expanded: stateVar(this, "expanded", props.expanded)
         };
     }
 
-    componentDidMount() {
-        this.addDisposable(this.user.start());
-
-        this.addDisposable(this.user.value.subscribe((user) => this.setState({ user })));
-    }
-
-    componentWillReceiveProps(nextProps) {
-        this.user.setOpts({
-            identifier: (nextProps.item.user && nextProps.item.user.id) || false
-        });
-    }
-
     render() {
-        const user = this.state.user.toJS();
-
-        let userCaption = "Someone";
-        if (user.name) {
-            const emailStr = user.email && user.email.length > 0 ? ` <${user.email[0]}>` : "";
-            userCaption = `${user.name}${emailStr}`;
-        }
-
         return (
             <ExpandableCard
                 className={this.props.theme.card}
@@ -53,10 +28,16 @@ class CommentCard extends LightComponent {
                     avatar={(
                         <UserAvatar
                             className={this.props.theme.avatar}
-                            userId={user ? user._id : false}
+                            userId={this.props.item.user ? this.props.item.user.id : false}
                         />
                     )}
-                    title={`${userCaption} said...`}
+                    title={(
+                        <UserName
+                            userId={this.props.item.user ? this.props.item.user.id : false}
+                            notFoundText="Someone"
+                            suffixText="said..."
+                        />
+                    )}
                     subtitle={(
                         <DateTime
                             value={this.props.item.time}
