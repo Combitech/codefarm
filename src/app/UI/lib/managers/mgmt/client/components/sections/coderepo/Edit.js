@@ -12,7 +12,6 @@ import {
 } from "ui-components/type_admin";
 
 const BACKEND_TYPE = {
-    GIT: "git",
     GERRIT: "gerrit",
     GITHUB: "github"
 };
@@ -36,16 +35,6 @@ class Edit extends LightComponent {
                 editable: false,
                 required: () => true,
                 defaultValue: BACKEND_TYPE.GERRIT
-            },
-            "path": {
-                editable: true,
-                required: () => this.state.backendType.value === BACKEND_TYPE.GIT,
-                defaultValue: ""
-            },
-            "port": {
-                editable: true,
-                required: () => this.state.backendType.value === BACKEND_TYPE.GIT,
-                defaultValue: 44675
             },
             "uri": {
                 editable: true,
@@ -94,7 +83,6 @@ class Edit extends LightComponent {
 
     getBackendTypes() {
         return [
-            { value: BACKEND_TYPE.GIT, label: "Local Git" },
             { value: BACKEND_TYPE.GERRIT, label: "Gerrit" },
             { value: BACKEND_TYPE.GITHUB, label: "GitHub" }
         ];
@@ -143,30 +131,6 @@ class Edit extends LightComponent {
                         source={backendTypes}
                         value={this.state.backendType.value}
                     />
-                    {this.state.backendType.value === BACKEND_TYPE.GIT &&
-                        <div>
-                            <Input
-                                type="number"
-                                label="Port to listen for GIT clients on"
-                                name="port"
-                                floating={true}
-                                required={this.itemProperties.port.required()}
-                                disabled={this.props.item && !this.itemProperties.port.editable}
-                                value={this.state.port.value}
-                                onChange={this.state.port.set}
-                            />
-                            <Input
-                                type="text"
-                                label="Path to store repositories"
-                                name="path"
-                                floating={true}
-                                required={this.itemProperties.path.required()}
-                                disabled={this.props.item && !this.itemProperties.path.editable}
-                                value={this.state.path.value}
-                                onChange={this.state.path.set}
-                            />
-                        </div>
-                    }
                     {this.state.backendType.value === BACKEND_TYPE.GERRIT &&
                         <div>
                             <Input

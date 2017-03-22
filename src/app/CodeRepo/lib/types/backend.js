@@ -48,16 +48,6 @@ class Backend extends Type {
             assertType(data.backendType, "data.backendType", "string");
 
             switch (data.backendType) {
-            case "git":
-                if (data.port) {
-                    data.port = parseInt(data.port, 10);
-                }
-                assertType(data.path, "data.path", "string");
-                assertType(data.port, "data.port", "number");
-                if (isNaN(data.port)) {
-                    throw new Error("port must be a number");
-                }
-                break;
             case "gerrit":
                 assertType(data.uri, "data.uri", "string");
                 assertType(data.privateKeyPath, "data.privateKeyPath", "string");

@@ -64,9 +64,6 @@ class RevisionCard extends LightComponent {
         const backendType = this.state.repoBackend.has("backendType") ? this.state.repoBackend.get("backendType") : false;
         let label = "Version control revision";
         switch (backendType) {
-        case "git":
-            label = "Git commit";
-            break;
         case "gerrit":
             label = "Gerrit change";
             break;

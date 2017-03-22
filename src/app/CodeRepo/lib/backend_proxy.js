@@ -1,13 +1,11 @@
 "use strict";
 
 const { BackendProxy: BackendProxyBase } = require("backend");
-const GitBackend = require("./backends/git/index");
 const GerritBackend = require("./backends/gerrit/index");
 const GithubBackend = require("./backends/github/index");
 const Backend = require("./types/backend");
 
 const BackendTypes = {
-    git: GitBackend,
     gerrit: GerritBackend,
     github: GithubBackend
 };
