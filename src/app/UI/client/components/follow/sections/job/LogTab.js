@@ -4,8 +4,7 @@ import moment from "moment";
 import Immutable from "immutable";
 import LightComponent from "ui-lib/light_component";
 import { CardList, LogCard } from "ui-components/data_card";
-
-import Logs from "../../observables/log_list";
+import Logs from "ui-observables/log_list";
 
 class LogTab extends LightComponent {
     constructor(props) {

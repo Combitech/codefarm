@@ -5,9 +5,8 @@ import Immutable from "immutable";
 import LightComponent from "ui-lib/light_component";
 import { Row, Column, Header } from "ui-components/layout";
 import { CardList, ArtifactCard, RevisionCard } from "ui-components/data_card";
-
-import Artifacts from "../../observables/artifact_list";
-import Revisions from "../../observables/revision_list";
+import Artifacts from "ui-observables/artifact_list";
+import Revisions from "ui-observables/revision_list";
 
 class OutputTab extends LightComponent {
     constructor(props) {

@@ -10,8 +10,6 @@ class List extends LightComponent {
     constructor(props) {
         super(props);
 
-        console.log("construct", props);
-
         this.steps = new StepListObservable({
             flowId: this.props.flowId,
             visible: true,
@@ -87,6 +85,8 @@ class List extends LightComponent {
     render() {
         this.log("render", this.props, this.state);
 
+        const steps = this.state.steps; // TODO: Sort these in the flow order
+
         return (
             <div className={this.props.theme.listContainer}>
                 <Loading show={this.state.state === ObservableDataStates.LOADING}/>
@@ -94,7 +94,7 @@ class List extends LightComponent {
                     <tbody className={this.props.theme.header}>
                         <this.props.HeaderComponent
                             theme={this.props.theme}
-                            steps={this.state.steps}
+                            steps={steps}
                         />
                     </tbody>
                     <tbody className={this.props.theme.list}>
@@ -104,7 +104,7 @@ class List extends LightComponent {
                                 theme={this.props.theme}
                                 onClick={(item, step) => this.gotoStep(item, step)}
                                 item={item}
-                                steps={this.state.steps}
+                                steps={steps}
                             />
                         </For>
                     </tbody>
