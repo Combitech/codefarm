@@ -28,7 +28,7 @@ class ArtifactRepositoryCard extends LightComponent {
                     avatar={(
                         <UserAvatar
                             className={this.props.theme.avatar}
-                            defaultUrl="/Cheser/48x48/mimetypes/x-package-repository.png"
+                            defaultUrl="/Cheser/48x48/apps/system-software-install.png"
                         />
                     )}
                     title={this.props.item._id}

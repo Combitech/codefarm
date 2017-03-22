@@ -43,8 +43,8 @@ class Page extends LightComponent {
             <div>
                 <Loading show={this.state.state === ObservableDataStates.LOADING} />
                 <AppMenu
-                    primaryText="Repositories"
-                    icon="code"
+                    primaryText="Code Revisions"
+                    icon="/Cheser/256x256/devices/drive-multidisk.png"
                     items={items}
                 />
                 <div className={this.props.theme.content}>

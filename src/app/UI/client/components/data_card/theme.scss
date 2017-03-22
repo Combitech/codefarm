@@ -90,7 +90,7 @@
     border-spacing: 0;
 
     tbody tr:nth-child(odd) {
-        background-color: $palette-indigo-50;
+        background-color: $cf-color-table-row-odd;
     }
 
     tr {

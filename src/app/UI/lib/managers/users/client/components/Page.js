@@ -24,7 +24,7 @@ class Page extends LightComponent {
             <div>
                 <AppMenu
                     primaryText="Collaborators"
-                    icon="group"
+                    icon="/Cheser/256x256/apps/system-users.png"
                     items={items}
                 />
                 <div className={this.props.theme.content}>

@@ -6,7 +6,7 @@ $tag-base-padding: $unit / 2;
 $tag-base-border-radius: $tag-base-padding;
 
 .tagBase {
-    background-color: $cf-color-pane-background;
+    background-color: $cf-color-tags;
     color: $color-white;
     padding: $tag-base-padding $unit;
     border-radius: $tag-base-border-radius;
@@ -17,4 +17,8 @@ $tag-base-border-radius: $tag-base-padding;
     max-width: 100%;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+body {
+    background-color: $cf-color-background; 
 }

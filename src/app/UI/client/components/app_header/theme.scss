@@ -7,24 +7,25 @@
 .appHeader {
     background: $cf-color-pane-background;
     background: linear-gradient(to bottom, $cf-color-pane-background 0%, $cf-color-pane-background2 100%);
-    
+
     color: $cf-color-pane-text;
     text-align: center;
     position: relative;
     padding: $layout-gutter-width * 4;
     margin-top: $standard-increment-desktop;
+    border-bottom: 1px solid $cf-color-pane-border;
 
     h1 {
         font-size: 5.6rem;
         font-weight: $font-weight-thin;
-        color: $cf-color-pane-text;
+        color: $cf-color-pane-header-text;
         margin-bottom: $baseline-grid;
     }
 
     h2 {
         font-size: 24px;
         font-weight: $font-weight-thin;
-        color: white;
+        color: $cf-color-pane-header-text;
     }
 
     .appIcon {
@@ -32,7 +33,7 @@
         position: absolute;
         bottom: $baseline-grid;
         right: $baseline-grid * 3;
-        color: $cf-color-pane-text;
+        color: $cf-color-pane-header-text;
         transform: rotate(5deg);
         opacity: 0.5;
     }

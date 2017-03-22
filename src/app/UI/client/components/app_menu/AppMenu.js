@@ -1,6 +1,5 @@
 
 import React from "react";
-import FontIcon from "react-toolbox/lib/font_icon";
 import { Button } from "react-toolbox/lib/button";
 
 class AppMenu extends React.Component {
@@ -25,11 +24,15 @@ class AppMenu extends React.Component {
     render() {
         return (
             <div className={this.props.theme.appMenu}>
-                <FontIcon
-                    className={this.props.theme.appIcon}
-                    value={this.props.icon}
-                />
-                <h1>{this.props.primaryText}</h1>
+                <div className={this.props.theme.header}>
+                    <img
+                        className={this.props.theme.headerImage}
+                        src={this.props.icon}
+                    />
+                    <div className={this.props.theme.headerText}>
+                        {this.props.primaryText}
+                    </div>
+                </div>
 
                 {this.props.items.map((item) => {
                     let className = this.props.theme.menuItem;

@@ -49,6 +49,7 @@ class AppTopBar extends LightComponent {
                             className={this.props.theme.topRightButton}
                             onClick={() => this._toggleUserMenu()}
                             flat={true}
+                            inverse={true}
                             label={activeUser.username}
                             icon={
                                 <UserAvatar
@@ -102,6 +103,7 @@ class AppTopBar extends LightComponent {
                         label="Sign in"
                         className={this.props.theme.topRightButton}
                         flat={true}
+                        inverse={true}
                         onMouseUp={this.onClick.bind(this, "/signin")}
                     />
                 </Otherwise>
@@ -114,6 +116,7 @@ class AppTopBar extends LightComponent {
                 fixed={true}
             >
                 <IconButton
+                    inverse={true}
                     className={this.props.theme.iconButton}
                     icon={(<CodeFarmIcon width={24} height={24} />)}
                     onMouseUp={this.onClick.bind(this, "/")}
@@ -123,16 +126,19 @@ class AppTopBar extends LightComponent {
                         <Button
                             label="Code Revisions"
                             flat={true}
+                            inverse={true}
                             onMouseUp={this.onClick.bind(this, "/code")}
                         />
                         <Button
                             label="Artifacts"
                             flat={true}
+                            inverse={true}
                             onMouseUp={this.onClick.bind(this, "/artifacts")}
                         />
                         <Button
                             label="Collaborators"
                             flat={true}
+                            inverse={true}
                             onMouseUp={this.onClick.bind(this, "/collaborators")}
                         />
                         {this.props.children}

@@ -18,6 +18,7 @@ class Item extends LightComponent {
                     <Follow
                         item={this.props.item}
                         pathname={this.props.pathname}
+                        label="Revision"
                     />
             </Container>
             </TASection>

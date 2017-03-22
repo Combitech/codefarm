@@ -11,7 +11,7 @@ class AppNotificationsPage extends LightComponent {
             <div>
                 <AppMenu
                     primaryText="Notifications"
-                    icon="message"
+                    icon="/Cheser/256x256/status/user-status-pending.png"
                     items={[]}
                 />
                 <div className={this.props.theme.content}>

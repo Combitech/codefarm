@@ -44,7 +44,7 @@ class Page extends LightComponent {
                 <Loading show={this.state.state === ObservableDataStates.LOADING} />
                 <AppMenu
                     primaryText="Artifacts"
-                    icon="extension"
+                    icon="/Cheser/256x256/apps/system-software-install.png"
                     items={items}
                 />
                 <div className={this.props.theme.content}>
