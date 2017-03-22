@@ -1,0 +1,124 @@
+
+@import "react-toolbox/components/colors";
+@import "react-toolbox/components/globals";
+@import "~ui-styles/colors";
+
+.monospace {
+    font-family: "Roboto Mono";
+}
+
+.listContainer {
+    margin-bottom: $layout-gutter-width * 2;
+}
+
+.table {
+    width: 100%;
+    font-size: 1.3rem;
+    margin-bottom: $layout-gutter-width-sm;
+    margin-left: -$unit;
+    margin-right: -$unit;
+    border-spacing: 0;
+
+    tbody {
+        &.header {
+            font-weight: $font-weight-semi-bold;
+        }
+
+        &.title {
+            td {
+                padding-top: $layout-gutter-width * 2;
+            }
+
+            &:first-child td {
+                padding-top: 0;
+            }
+        }
+
+        &.list {
+            tr {
+                cursor: pointer;
+                color: $color-text-secondary;
+
+                &:hover {
+                    opacity: 0.8;
+                }
+
+                &:nth-child(odd) {
+                    background-color: $palette-indigo-50;
+                }
+
+                &.submitted {
+                    &:nth-child(odd) {
+                        background-color: $palette-amber-50;
+                    }
+                }
+
+                &.abandoned {
+                    &:nth-child(odd) {
+                        background-color: $palette-red-50;
+                    }
+                }
+            }
+        }
+    }
+
+    td {
+        padding: $unit / 2 $unit;
+        // Make <Link> left aligned within property table
+        a {
+            display: inline;
+        }
+
+        &.monospace {
+            font-family: "Roboto Mono";
+        }
+
+        &.runColumn {
+            text-align: center;
+            width: $unit;
+        }
+
+        @for $i from 1 through 30 {
+            &.header#{$i} {
+                width: $unit * $i;
+            }
+        }
+
+        .avatar {
+            width: $unit * 2;
+            height: $unit * 2;
+            margin-right: $unit / 2;
+        }
+    }
+
+    tr {
+        border-spacing: 0;
+    }
+}
+
+.statusIcon {
+    vertical-align: middle;
+}
+
+.jobTable {
+    width: 100%;
+
+    th.subjobColumn {
+    }
+
+    th.runColumn {
+        width: 50px;
+    }
+
+    td {
+        padding: $unit / 2;
+    }
+
+    tbody tr:nth-child(odd) {
+        background-color: $palette-grey-100;
+    }
+
+    .runColumn {
+        text-align: center;
+    }
+}

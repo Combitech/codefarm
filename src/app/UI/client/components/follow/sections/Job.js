@@ -1,10 +1,8 @@
 
 import React from "react";
 import LightComponent from "ui-lib/light_component";
-// import { StatusIcon } from "ui-components/status";
-import { Tab, Tabs } from "react-toolbox/lib/tabs";
 import stateVar from "ui-lib/state_var";
-
+import { Tab, Tabs } from "react-toolbox/lib/tabs";
 import OutputTab from "./job/OutputTab";
 import JobTab from "./job/JobTab";
 import SubJobTab from "./job/SubJobTab";

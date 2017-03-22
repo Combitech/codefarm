@@ -1,10 +1,10 @@
 
 import React from "react";
-import { AppMenu } from "ui-components/app_menu";
-import LightComponent from "ui-lib/light_component";
-import CodeRepositories from "../observables/code_repositories";
 import { States as ObservableDataStates } from "ui-lib/observable_data";
+import LightComponent from "ui-lib/light_component";
+import { AppMenu } from "ui-components/app_menu";
 import { Loading } from "ui-components/layout";
+import CodeRepositories from "ui-observables/code_repositories";
 
 class Page extends LightComponent {
     constructor(props) {

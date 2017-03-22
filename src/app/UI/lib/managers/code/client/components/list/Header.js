@@ -6,10 +6,10 @@ class Header extends React.PureComponent {
     render() {
         return (
             <tr>
-                <td className={this.props.theme.headerRev}>Rev</td>
-                <td className={this.props.theme.headerTime}>Time</td>
-                <td className={this.props.theme.headerAuthor}>Author</td>
-                <td className={this.props.theme.headerComment}>Comment</td>
+                <td className={this.props.theme.header10}>Rev</td>
+                <td className={this.props.theme.header17}>Time</td>
+                <td className={this.props.theme.header30}>Author</td>
+                <td className={this.props.theme.header}>Comment</td>
                 <If condition={this.props.steps}>
                     <For each="step" of={this.props.steps.toJS()}>
                         <td

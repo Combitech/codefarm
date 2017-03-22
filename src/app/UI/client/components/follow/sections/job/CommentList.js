@@ -1,10 +1,10 @@
 
 import React from "react";
 import Immutable from "immutable";
-import LightComponent from "ui-lib/light_component";
 import moment from "moment";
 import api from "api.io/api.io-client";
 import stateVar from "ui-lib/state_var";
+import LightComponent from "ui-lib/light_component";
 import { CardList, CommentCard, AddCommentCard } from "ui-components/data_card";
 
 class CommentList extends LightComponent {

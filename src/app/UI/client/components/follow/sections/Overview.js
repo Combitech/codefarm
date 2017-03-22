@@ -1,11 +1,11 @@
 
 import React from "react";
 import Immutable from "immutable";
-import LightComponent from "ui-lib/light_component";
-import { Row, Column, Header } from "ui-components/layout";
 import moment from "moment";
 import api from "api.io/api.io-client";
 import stateVar from "ui-lib/state_var";
+import LightComponent from "ui-lib/light_component";
+import { Row, Column, Header } from "ui-components/layout";
 import { CardList, RevisionCard, AddCommentCard, CommentCard, ReviewCard, JobCard, TypeCard } from "ui-components/data_card";
 
 class Overview extends LightComponent {

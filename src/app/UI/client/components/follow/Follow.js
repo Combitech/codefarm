@@ -2,13 +2,13 @@
 import React from "react";
 import LightComponent from "ui-lib/light_component";
 import { States as ObservableDataStates } from "ui-lib/observable_data";
-import { Flows } from "ui-components/flow";
-import Flow from "./Flow";
-import Section from "./Section";
 import ExtendedItem from "ui-observables/extended_item";
 import FlowList from "ui-observables/flow_list";
 import LocationQuery from "ui-observables/location_query";
+import { Flows } from "ui-components/flow";
 import { Loading } from "ui-components/layout";
+import Flow from "./Flow";
+import Section from "./Section";
 
 class Follow extends LightComponent {
     constructor(props) {

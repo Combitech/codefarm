@@ -5,7 +5,8 @@ import LightComponent from "ui-lib/light_component";
 import { States as ObservableDataStates } from "ui-lib/observable_data";
 import { Loading } from "ui-components/layout";
 import { CardList, RevisionCard, ArtifactCard } from "ui-components/data_card";
-import BaselineItem from "../../../observables/baseline_item";
+
+import BaselineItem from "../../observables/baseline_item";
 
 const cards = {
     "coderepo.revision": RevisionCard,

@@ -77,19 +77,17 @@ class RevisionCard extends LightComponent {
 
     render() {
         const patch = this._getLatestPatch(this.props);
-        const name = this.state.user.get("name", patch.name);
-        const emails = this.state.user.get("email");
-        const email = emails ? emails.first() : patch.email;
         const sourceLinkLabel = this._getSourceLinkLabel();
+        const name = this.state.user.get("name", patch.name);
 
         const title = () => {
             if (this.props.patchIndex < 0) {
-                return `${name} <${email}>`;
+                return `Revision by ${name}`;
             } else if (this.props.patchIndex === this.props.item.patches.length - 1 && this.props.item.status === "merged") {
-                return `Merged by ${name} <${email}>`;
+                return `Merged by ${name}`;
             }
 
-            return `Submitted by ${name} <${email}>`;
+            return `Submitted by ${name}`;
         };
 
         return (

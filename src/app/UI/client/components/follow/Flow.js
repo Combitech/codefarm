@@ -1,10 +1,10 @@
 
 import React from "react";
-import LightComponent from "ui-lib/light_component";
-import { JobFlow, StepStatus } from "ui-components/flow";
-import { States as ObservableDataStates } from "ui-lib/observable_data";
 import { ensureArray } from "misc";
+import LightComponent from "ui-lib/light_component";
+import { States as ObservableDataStates } from "ui-lib/observable_data";
 import StepListObservable from "ui-observables/step_list";
+import { JobFlow, StepStatus } from "ui-components/flow";
 import { Loading } from "ui-components/layout";
 
 class FlowComponent extends LightComponent {

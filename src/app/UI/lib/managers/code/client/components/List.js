@@ -4,17 +4,15 @@ import LightComponent from "ui-lib/light_component";
 import Input from "react-toolbox/lib/input";
 import Dropdown from "react-toolbox/lib/dropdown";
 import { IconMenu, MenuItem } from "react-toolbox/lib/menu";
-import StepListObservable from "ui-observables/step_list";
-import {
-    Section as TASection
-} from "ui-components/type_admin";
-import theme from "./theme.scss";
-import LocationQuery from "ui-observables/location_query";
-import List from "./list/List";
-import FlowList from "../observables/flow_list";
-import RevisionList from "../observables/paged_revision_list";
 import { Container, Header } from "ui-components/layout";
 import { CodeRepositoryCard } from "ui-components/data_card";
+import { Section as TASection } from "ui-components/type_admin";
+import { List } from "ui-components/follow";
+import RowComponent from "./list/Row";
+import HeaderComponent from "./list/Header";
+import LocationQuery from "ui-observables/location_query";
+import FlowList from "ui-observables/code_repository_flows";
+import RevisionList from "ui-observables/paged_revision_list";
 
 class ListTabs extends LightComponent {
     constructor(props) {
@@ -24,34 +22,25 @@ class ListTabs extends LightComponent {
             repositoryId: this.props.item._id
         });
 
-        this.steps = new StepListObservable({
-            flowId: "",
-            visible: true,
-            sortOn: "created",
-            sortDesc: false,
-            subscribe: false
-        });
-
         this.state = {
             params: LocationQuery.instance.params.getValue(),
             filter: "",
-            steps: this.steps.value.getValue(),
-            flows: this.flows.value.getValue()
+            flows: this.flows.value.getValue(),
+            flowId: ""
         };
     }
 
     componentDidMount() {
         this.addDisposable(this.flows.start());
         this.addDisposable(this.flows.value.subscribe((flows) => {
-            if (this.steps.opts.getValue().toJS().flowId === "") {
-                this.steps.setOpts({ flowId: flows.toJS()[0] || "" });
+            const state = { flows };
+
+            if (!this.state.flowId && flows.first()) {
+                state.flowId = flows.first();
             }
 
-            this.setState({ flows });
+            this.setState(state);
         }));
-
-        this.addDisposable(this.steps.start());
-        this.addDisposable(this.steps.value.subscribe((steps) => this.setState({ steps })));
 
         this.addDisposable(LocationQuery.instance.params.subscribe((params) => this.setState({ params })));
     }
@@ -100,8 +89,8 @@ class ListTabs extends LightComponent {
                     className={this.props.theme.dropdown}
                     auto
                     source={this.state.flows.toJS().map((flowId) => ({ label: flowId, value: flowId }))}
-                    value={this.steps.opts.getValue().toJS().flowId}
-                    onChange={(flowId) => this.steps.setOpts({ flowId })}
+                    value={this.state.flowId}
+                    onChange={(flowId) => this.setState({ flowId })}
                   />
             ));
         }
@@ -124,46 +113,49 @@ class ListTabs extends LightComponent {
                             <Header label="Abandoned" />
                             <List
                                 key={"abandoned"}
-                                theme={theme}
                                 ObservableList={RevisionList}
+                                HeaderComponent={HeaderComponent}
+                                RowComponent={RowComponent}
                                 query={{
                                     repository: this.props.item._id,
                                     status: "abandoned"
                                 }}
+                                flowId={this.state.flowId}
                                 filter={this.state.filter}
                                 pathname={this.props.pathname}
                                 limit={10}
-                                steps={this.state.steps}
                             />
                         </When>
                         <Otherwise>
                             <Header label="Submitted" />
                             <List
                                 key={"submitted"}
-                                theme={theme}
                                 ObservableList={RevisionList}
+                                HeaderComponent={HeaderComponent}
+                                RowComponent={RowComponent}
                                 query={{
                                     repository: this.props.item._id,
                                     status: "submitted"
                                 }}
+                                flowId={this.state.flowId}
                                 filter={this.state.filter}
                                 pathname={this.props.pathname}
-                                steps={this.state.steps}
                             />
 
                             <Header label="Merged" />
                             <List
                                 key={"merged"}
-                                theme={theme}
                                 ObservableList={RevisionList}
+                                HeaderComponent={HeaderComponent}
+                                RowComponent={RowComponent}
                                 query={{
                                     repository: this.props.item._id,
                                     status: "merged"
                                 }}
+                                flowId={this.state.flowId}
                                 filter={this.state.filter}
                                 pathname={this.props.pathname}
                                 limit={30}
-                                steps={this.state.steps}
                             />
                         </Otherwise>
                     </Choose>

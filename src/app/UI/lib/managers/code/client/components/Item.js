@@ -1,7 +1,8 @@
 
 import React from "react";
 import LightComponent from "ui-lib/light_component";
-import Follow from "./Follow";
+import { Follow } from "ui-components/follow";
+import { Container } from "ui-components/layout";
 import {
     Section as TASection
 } from "ui-components/type_admin";
@@ -15,11 +16,12 @@ class Item extends LightComponent {
                 controls={this.props.controls}
                 breadcrumbs={this.props.breadcrumbs}
             >
-                <Follow
-                    theme={this.props.theme}
-                    item={this.props.item}
-                    pathname={this.props.pathname}
-                />
+                <Container>
+                    <Follow
+                        item={this.props.item}
+                        pathname={this.props.pathname}
+                    />
+            </Container>
             </TASection>
         );
     }

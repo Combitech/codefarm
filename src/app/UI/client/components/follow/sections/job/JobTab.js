@@ -1,10 +1,10 @@
 
 import React from "react";
 import LightComponent from "ui-lib/light_component";
-import BaselineContentList from "./BaselineContentList";
-import CommentList from "./CommentList";
 import { JobCard } from "ui-components/data_card";
 import { Row, Column, Header, Section } from "ui-components/layout";
+import BaselineContentList from "./BaselineContentList";
+import CommentList from "./CommentList";
 
 class JobTab extends LightComponent {
     render() {

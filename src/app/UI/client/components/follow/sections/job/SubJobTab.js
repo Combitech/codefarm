@@ -4,7 +4,7 @@ import moment from "moment";
 import Immutable from "immutable";
 import LightComponent from "ui-lib/light_component";
 import { CardList, SubJobCard } from "ui-components/data_card";
-import SubJobs from "../../../observables/subjob_list";
+import SubJobs from "../../observables/subjob_list";
 
 class SubJobTab extends LightComponent {
     constructor(props) {

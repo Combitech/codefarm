@@ -79,14 +79,16 @@ class ArtifactCard extends LightComponent {
                                 <td>Mimetype</td>
                                 <td>{this.props.item.fileMeta.mimeType}</td>
                             </tr>
-                            <For each="key" of={Object.keys(this.props.item.fileMeta.hashes)}>
-                                <tr key={key}>
-                                    <td>{key}</td>
-                                    <td className={this.props.theme.monospace}>
-                                        {this.props.item.fileMeta.hashes[key]}
-                                    </td>
-                                </tr>
-                            </For>
+                            <If condition={this.props.item.fileMeta.hasOwnProperty("hashes")}>
+                                <For each="key" of={Object.keys(this.props.item.fileMeta.hashes)}>
+                                    <tr key={key}>
+                                        <td>{key}</td>
+                                        <td className={this.props.theme.monospace}>
+                                            {this.props.item.fileMeta.hashes[key]}
+                                        </td>
+                                    </tr>
+                                </For>
+                            </If>
                             <tr>
                                 <td>Tags</td>
                                 <td>

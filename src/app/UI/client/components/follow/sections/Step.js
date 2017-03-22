@@ -4,7 +4,6 @@ import statuslib from "ui-lib/statuslib";
 import { Header } from "ui-components/layout";
 import { StepResultCard } from "ui-components/data_card";
 
-
 class Step extends React.PureComponent {
     render() {
         const item = {

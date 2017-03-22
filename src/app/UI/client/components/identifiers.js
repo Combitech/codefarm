@@ -12,6 +12,7 @@ export const EXPANDABLE_CARD = "CFExpandableCard";
 export const COLLABORATOR_AVATAR = "CFCollaboratorAvatar";
 export const BREADCRUMBS = "CFBreadcrumbs";
 export const FLOW = "CFFlow";
+export const FOLLOW = "CFFollow";
 export const JOB_FLOW = "CFJobFlow";
 export const FLOWS = "CFFlows";
 export const HIDDEN_TEXT = "CFHiddenText";

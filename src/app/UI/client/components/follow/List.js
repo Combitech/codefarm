@@ -1,18 +1,24 @@
 
 import React from "react";
 import LightComponent from "ui-lib/light_component";
-import ImmutablePropTypes from "react-immutable-proptypes";
-import {
-    ListPager as TAListPager
-} from "ui-components/type_admin";
-import { Loading } from "ui-components/layout";
 import { States as ObservableDataStates } from "ui-lib/observable_data";
-import Row from "./Row";
-import Header from "./Header";
+import { ListPager } from "ui-components/type_admin";
+import { Loading } from "ui-components/layout";
+import StepListObservable from "ui-observables/step_list";
 
 class List extends LightComponent {
     constructor(props) {
         super(props);
+
+        console.log("construct", props);
+
+        this.steps = new StepListObservable({
+            flowId: this.props.flowId,
+            visible: true,
+            sortOn: "created",
+            sortDesc: false,
+            subscribe: false
+        });
 
         this.items = new this.props.ObservableList({
             query: props.query,
@@ -21,6 +27,7 @@ class List extends LightComponent {
         });
 
         this.state = {
+            steps: this.steps.value.getValue(),
             items: this.items.value.getValue(),
             itemsState: this.items.state.getValue()
         };
@@ -32,6 +39,21 @@ class List extends LightComponent {
         this.addDisposable(this.items.start());
         this.addDisposable(this.items.value.subscribe((items) => this.setState({ items })));
         this.addDisposable(this.items.state.subscribe((itemsState) => this.setState({ itemsState })));
+
+        this.addDisposable(this.steps.start());
+        this.addDisposable(this.steps.value.subscribe((steps) => this.setState({ steps })));
+    }
+
+    componentWillReceiveProps(nextProps) {
+        this.log("componentWillReceiveProps");
+
+        if (nextProps.flowId !== this.props.flowId) {
+            this.steps.setOpts({ flowId: nextProps.flowId });
+        }
+
+        if (nextProps.filter !== this.props.filter) {
+            this.items.setOpts({ filter: nextProps.filter });
+        }
     }
 
     componentDidUpdate() {
@@ -55,14 +77,6 @@ class List extends LightComponent {
         }
     }
 
-    componentWillReceiveProps(nextProps) {
-        this.log("componentWillReceiveProps");
-
-        if (nextProps.filter) {
-            this.items.setOpts({ filter: nextProps.filter });
-        }
-    }
-
     gotoStep(item, step) {
         this.context.router.push({
             pathname: `${this.props.pathname}/${item._id}`,
@@ -78,25 +92,25 @@ class List extends LightComponent {
                 <Loading show={this.state.state === ObservableDataStates.LOADING}/>
                 <table className={this.props.theme.table}>
                     <tbody className={this.props.theme.header}>
-                        <Header
+                        <this.props.HeaderComponent
                             theme={this.props.theme}
-                            steps={this.props.steps}
+                            steps={this.state.steps}
                         />
                     </tbody>
                     <tbody className={this.props.theme.list}>
                         <For each="item" of={this.state.items}>
-                            <Row
+                            <this.props.RowComponent
                                 key={item.get("_id")}
                                 theme={this.props.theme}
                                 onClick={(item, step) => this.gotoStep(item, step)}
                                 item={item}
-                                steps={this.props.steps}
+                                steps={this.state.steps}
                             />
                         </For>
                     </tbody>
                 </table>
                 <If condition={this.props.limit > 0}>
-                    <TAListPager
+                    <ListPager
                         pagedList={this.items}
                         pagingInfo={this.items.pagingInfo.getValue()}
                     />
@@ -116,8 +130,10 @@ List.propTypes = {
     filter: React.PropTypes.string,
     pathname: React.PropTypes.string.isRequired,
     limit: React.PropTypes.number,
-    steps: ImmutablePropTypes.list,
-    ObservableList: React.PropTypes.func.isRequired
+    ObservableList: React.PropTypes.func.isRequired,
+    RowComponent: React.PropTypes.func.isRequired,
+    HeaderComponent: React.PropTypes.func.isRequired,
+    flowId: React.PropTypes.string.isRequired
 };
 
 List.contextTypes = {
