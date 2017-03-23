@@ -739,9 +739,9 @@ mocha@^3.1.0:
     mkdirp "0.5.1"
     supports-color "3.1.2"
 
-mongo-mock@^2.1.1:
-  version "2.1.1"
-  resolved "https://registry.yarnpkg.com/mongo-mock/-/mongo-mock-2.1.1.tgz#0cfd1145f498bbbf5e99c3abe3118a03793f3171"
+mongo-mock@^2.4.0:
+  version "2.4.0"
+  resolved "https://registry.yarnpkg.com/mongo-mock/-/mongo-mock-2.4.0.tgz#b14c726f811b7fafece4fe54db8bef8682e8aa78"
   dependencies:
     bson-objectid "^1.1.4"
     debug "^2.1.3"
