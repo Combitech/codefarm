@@ -12,15 +12,18 @@ import CodeFarmIcon from "./ic_codefarm_black_48px.svg";
 import GerritDiffyIcon from "./diffymute.svg";
 
 import GitHubMarkerIcon from "./GitHubMarkerIcon";
-import RepoBackendIcon from "./RepoBackendIcon";
+import CodeRepoBackendIcon from "./CodeRepoBackendIcon";
+import ArtifactRepoBackendIcon from "./ArtifactRepoBackendIcon";
 
 const ThemedGitHubMarkerIcon = themr(APP_ICON, theme)(GitHubMarkerIcon);
-const ThemedRepoBackendIcon = themr(APP_ICON, theme)(RepoBackendIcon);
+const ThemedCodeRepoBackendIcon = themr(APP_ICON, theme)(CodeRepoBackendIcon);
+const ThemedArtifactRepoBackendIcon = themr(APP_ICON, theme)(ArtifactRepoBackendIcon);
 
 export {
     IconStyler,
     CodeFarmIcon,
     GerritDiffyIcon,
     ThemedGitHubMarkerIcon as GitHubMarkerIcon,
-    ThemedRepoBackendIcon as RepoBackendIcon
+    ThemedCodeRepoBackendIcon as CodeRepoBackendIcon,
+    ThemedArtifactRepoBackendIcon as ArtifactRepoBackendIcon
 };

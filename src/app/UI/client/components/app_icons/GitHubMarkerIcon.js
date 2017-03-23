@@ -11,7 +11,6 @@ class GitHubMarkerIcon extends React.PureComponent {
         if (this.props.className) {
             classNames.push(this.props.className);
         }
-        console.log("class", classNames);
 
         return (
             <img

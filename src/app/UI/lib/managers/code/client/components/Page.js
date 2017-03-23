@@ -4,7 +4,7 @@ import { States as ObservableDataStates } from "ui-lib/observable_data";
 import LightComponent from "ui-lib/light_component";
 import { AppMenu } from "ui-components/app_menu";
 import { Loading } from "ui-components/layout";
-import { RepoBackendIcon } from "ui-components/app_icons";
+import { CodeRepoBackendIcon } from "ui-components/app_icons";
 import CodeRepositories from "ui-observables/code_repositories";
 
 class Page extends LightComponent {
@@ -38,7 +38,7 @@ class Page extends LightComponent {
                 pathname: pn,
                 active: active,
                 icon: (
-                    <RepoBackendIcon
+                    <CodeRepoBackendIcon
                         repoId={item._id}
                         theme={this.props.theme}
                     />

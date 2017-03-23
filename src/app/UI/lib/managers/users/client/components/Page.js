@@ -16,13 +16,15 @@ class Page extends LightComponent {
             return {
                 label: route.label,
                 pathname: pn,
-                active: active
+                active: active,
+                icon: route.icon
             };
         });
 
         return (
             <div>
                 <AppMenu
+                    theme={this.props.theme}
                     primaryText="Collaborators"
                     icon="/Cheser/256x256/apps/system-users.png"
                     items={items}

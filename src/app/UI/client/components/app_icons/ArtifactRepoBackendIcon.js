@@ -1,15 +1,14 @@
 
 import React from "react";
 import LightComponent from "ui-lib/light_component";
-import GerritDiffyIcon from "./diffymute.svg";
-import GitHubMarkerIcon from "./GitHubMarkerIcon";
-import CodeRepoAndBackend from "ui-observables/code_repo_and_backend";
+import CodeFarmIcon from "./ic_codefarm_black_48px.svg";
+import ArtifactRepoAndBackend from "ui-observables/artifact_repo_and_backend";
 
-class RepoBackendIcon extends LightComponent {
+class ArtifactRepoBackendIcon extends LightComponent {
     constructor(props) {
         super(props);
 
-        this.repoAndBackend = new CodeRepoAndBackend({
+        this.repoAndBackend = new ArtifactRepoAndBackend({
             repoId: props.repoId || false
         });
 
@@ -45,16 +44,9 @@ class RepoBackendIcon extends LightComponent {
         let icon = (
             <div className={classNames.join(" ")} />
         );
-        if (backendType === "github") {
+        if (backendType === "fs") {
             icon = (
-                <GitHubMarkerIcon
-                    theme={this.props.theme}
-                    className={classNames.join(" ")}
-                />
-            );
-        } else if (backendType === "gerrit") {
-            icon = (
-                <GerritDiffyIcon className={classNames.join(" ")} />
+                <CodeFarmIcon className={classNames.join(" ")} />
             );
         }
 
@@ -62,10 +54,10 @@ class RepoBackendIcon extends LightComponent {
     }
 }
 
-RepoBackendIcon.propTypes = {
+ArtifactRepoBackendIcon.propTypes = {
     theme: React.PropTypes.object,
     repoId: React.PropTypes.string,
     backendType: React.PropTypes.string
 };
 
-export default RepoBackendIcon;
+export default ArtifactRepoBackendIcon;

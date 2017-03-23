@@ -12,7 +12,7 @@ import stateVar from "ui-lib/state_var";
 import CodeRepoAndBackend from "ui-observables/code_repo_and_backend";
 import { StringUtil } from "misc";
 import UserName from "ui-components/user_name";
-import { RepoBackendIcon } from "ui-components/app_icons";
+import { CodeRepoBackendIcon } from "ui-components/app_icons";
 
 const FILE_STATUS_ICON = {
     added: "add",
@@ -81,7 +81,7 @@ class RevisionCard extends LightComponent {
         const backendType = this.state.repoBackend.has("backendType") ? this.state.repoBackend.get("backendType") : "";
         const sourceLinkLabels = this._getSourceLinkLabels(backendType);
         const repoBackendIcon = (
-            <RepoBackendIcon
+            <CodeRepoBackendIcon
                 backendType={backendType}
                 theme={this.props.theme}
             />

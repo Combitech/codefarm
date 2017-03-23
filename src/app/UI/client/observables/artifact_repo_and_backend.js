@@ -1,21 +1,21 @@
 
 import TypeItemResolveRef from "ui-observables/type_item_resolve_ref";
 
-/** CodeRepoAndBackend fetches a coderepo repository and the backend data
+/** ArtifactRepoAndBackend fetches a coderepo repository and the backend data
  * associated with that repository.
- * The repository is accessible via CodeRepoAndBackend#value and the
- * backend is accessible via CodeRepoBackend#bakend.
+ * The repository is accessible via ArtifactRepoAndBackend#value and the
+ * backend is accessible via ArtifactRepoAndBackend#bakend.
  */
-class CodeRepoAndBackend extends TypeItemResolveRef {
+class ArtifactRepoAndBackend extends TypeItemResolveRef {
     constructor(initialOpts, debug = false) {
         if (typeof initialOpts.repoId !== "string" && initialOpts.repoId !== false) {
             throw new Error("repoId must be set to a string or false in the initial opts");
         }
 
         const defaultOpts = {
-            type: "coderepo.repository",
+            type: "artifactrepo.repository",
             id: initialOpts.repoId || false,
-            refType: "coderepo.backend",
+            refType: "artifactrepo.backend",
             refIdPath: "backend",
             subscribe: false,
             refSubscribe: false
@@ -39,4 +39,4 @@ class CodeRepoAndBackend extends TypeItemResolveRef {
     }
 }
 
-export default CodeRepoAndBackend;
+export default ArtifactRepoAndBackend;

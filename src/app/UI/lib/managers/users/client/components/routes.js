@@ -21,6 +21,7 @@ const routes = [
         List={UserList}
         type="userrepo.user"
         label="Users"
+        icon="person"
     >
         <Route
             path=":_id"
@@ -61,6 +62,7 @@ const routes = [
         List={TeamList}
         type="userrepo.team"
         label="Teams"
+        icon="group"
     >
         <Route
             path=":_id"
