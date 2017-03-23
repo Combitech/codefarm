@@ -11,6 +11,9 @@
     .iconMenu {
         margin-left: auto;
         position: relative;
+        .menuContainer {
+            position: relative;
+        }
     }
 
     .topRightButton {

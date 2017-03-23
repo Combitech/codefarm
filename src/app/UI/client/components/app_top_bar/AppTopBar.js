@@ -58,44 +58,53 @@ class AppTopBar extends LightComponent {
                                 />
                             }
                         />
-                        <Menu
-                            active={this.state.userMenuOpen}
-                            position="auto"
-                            onHide={() => this._hideUserMenu()}
-                            onSelect={this.onClick.bind(this)}
-                        >
-                            <MenuItem
-                                value="/admin"
-                                caption="Administration"
-                            />
-                            <MenuItem
-                                value="/management"
-                                caption="Management"
-                            />
-                            <MenuItem
-                                value="/notifications"
-                                caption="Notifications"
-                            />
-                            <If condition={ activeUser.id }>
+                        <div className={this.props.theme.menuContainer}>
+                            <Menu
+                                active={this.state.userMenuOpen}
+                                position="auto"
+                                onHide={() => this._hideUserMenu()}
+                                onSelect={this.onClick.bind(this)}
+                            >
                                 <MenuItem
-                                    value={`/collaborators/users/${activeUser.id}`}
-                                    caption="User profile"
+                                    icon="build"
+                                    value="/admin"
+                                    caption="Administration"
                                 />
-                            </If>
-                            <MenuItem
-                                value="/feedback"
-                                caption="Send feedback"
-                            />
-                            <MenuItem
-                                value="/help"
-                                caption="Help"
-                            />
-                            <MenuDivider />
-                            <MenuItem
-                                value="/signout"
-                                caption="Sign out"
-                            />
-                        </Menu>
+                                <MenuItem
+                                    icon="track_changes"
+                                    value="/management"
+                                    caption="Management"
+                                />
+                                <MenuItem
+                                    icon="sms"
+                                    value="/notifications"
+                                    caption="Notifications"
+                                />
+                                <If condition={ activeUser.id }>
+                                    <MenuItem
+                                        icon="person"
+                                        value={`/collaborators/users/${activeUser.id}`}
+                                        caption="User profile"
+                                    />
+                                </If>
+                                <MenuItem
+                                    icon="feedback"
+                                    value="/feedback"
+                                    caption="Send feedback"
+                                />
+                                <MenuItem
+                                    icon="help"
+                                    value="/help"
+                                    caption="Help"
+                                />
+                                <MenuDivider />
+                                <MenuItem
+                                    icon="exit_to_app"
+                                    value="/signout"
+                                    caption="Sign out"
+                                />
+                            </Menu>
+                        </div>
                     </div>
                 </When>
                 <Otherwise>
