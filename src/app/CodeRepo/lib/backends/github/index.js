@@ -112,7 +112,7 @@ class GithubBackend extends AsyncEventEmitter {
         // FILE_INDEX is the 0-based index of the file within the sorted file list.
         const fileNames = files.map((item) => item.name).sort();
         files.forEach((file) =>
-            file.url = `${reviewUrl}/files#diff-${fileNames.indexOf(file)}`
+            file.url = `${reviewUrl}/files#diff-${fileNames.indexOf(file.name)}`
         );
 
         return {
@@ -279,7 +279,7 @@ class GithubBackend extends AsyncEventEmitter {
             // FILE_INDEX is the 0-based index of the file within the sorted file list.
             const fileNames = files.map((item) => item.name).sort();
             files.forEach((file) =>
-                file.url = `${commitUrl}#diff-${fileNames.indexOf(file)}`
+                file.url = `${commitUrl}#diff-${fileNames.indexOf(file.name)}`
             );
 
             const patch = {
