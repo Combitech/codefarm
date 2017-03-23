@@ -25,9 +25,9 @@
     "string-argv": "0.0.2"
   },
   "devDependencies": {
-    "babel-eslint": "^7.1.0",
+    "babel-eslint": "^7.2.0",
     "chai": "^3.5.0",
-    "eslint": "^3.17.1",
+    "eslint": "^3.18.0",
     "mocha": "^3.1.0"
   }
 }

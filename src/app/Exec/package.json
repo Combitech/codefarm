@@ -42,23 +42,23 @@
   ],
   "dependencies": {
     "async-busboy": "^0.3.3",
-    "babel-eslint": "^7.1.0",
+    "babel-eslint": "^7.2.0",
     "bluebird": "^3.5.0",
     "commander": "^2.9.0",
     "fs-extra-promise": "^0.4.1",
-    "get-port": "^2.1.0",
+    "get-port": "^3.0.0",
     "jsonpath-plus": "^0.16.0",
-    "moment": "^2.17.1",
+    "moment": "^2.18.1",
     "request": "^2.81.0",
-    "source-map-support": "^0.4.12",
-    "webpack": "^2.2.1",
+    "source-map-support": "^0.4.14",
+    "webpack": "^2.3.1",
     "webpack-async-await": "^1.1.0",
     "yargs": "^7.0.2"
   },
   "devDependencies": {
     "chai": "^3.5.0",
-    "eslint": "^3.17.1",
+    "eslint": "^3.18.0",
     "mocha": "^3.1.0",
-    "request-promise": "^4.1.1"
+    "request-promise": "^4.2.0"
   }
 }

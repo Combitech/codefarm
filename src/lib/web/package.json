@@ -26,19 +26,19 @@
     "cookie": "^0.3.1",
     "koa": "^2.2.0",
     "koa-basic-auth": "^2.0.0",
-    "koa-bodyparser": "^4.1.0",
+    "koa-bodyparser": "^4.2.0",
     "koa-compress": "^2.0.0",
     "koa-conditional-get": "^2.0.0",
     "koa-etag": "^3.0.0",
-    "koa-jwt": "^3.0.0",
+    "koa-jwt": "^3.0.1",
     "koa-route": "^3.2.0",
     "koa-send": "^3.2.0",
     "koa-static": "^3.0.0"
   },
   "devDependencies": {
-    "babel-eslint": "^7.1.0",
+    "babel-eslint": "^7.2.0",
     "chai": "^3.5.0",
-    "eslint": "^3.17.1",
+    "eslint": "^3.18.0",
     "mocha": "^3.1.0"
   }
 }

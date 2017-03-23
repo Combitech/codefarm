@@ -28,16 +28,16 @@
     "singleton"
   ],
   "dependencies": {
-    "moment": "^2.17.1",
+    "moment": "^2.18.1",
     "request": "^2.81.0",
-    "request-promise": "^4.1.1",
+    "request-promise": "^4.2.0",
     "uuid": "^3.0.1"
   },
   "devDependencies": {
-    "babel-eslint": "^7.1.0",
+    "babel-eslint": "^7.2.0",
     "chai": "^3.5.0",
-    "eslint": "^3.17.1",
-    "get-port": "^2.1.0",
+    "eslint": "^3.18.0",
+    "get-port": "^3.0.0",
     "mocha": "^3.1.0"
   }
 }

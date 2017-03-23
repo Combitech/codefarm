@@ -41,19 +41,19 @@
   ],
   "dependencies": {
     "async-busboy": "^0.3.3",
-    "digest-stream": "^1.0.1",
+    "digest-stream": "^2.0.0",
     "fs-extra-promise": "^0.4.1",
     "git-list-pack": "0.0.10",
-    "moment": "^2.16.0",
-    "yargs": "^6.3.0"
+    "moment": "^2.18.1",
+    "yargs": "^7.0.2"
   },
   "devDependencies": {
-    "babel-eslint": "^7.1.0",
+    "babel-eslint": "^7.2.0",
     "chai": "^3.5.0",
-    "eslint": "^3.7.0",
-    "get-port": "^2.1.0",
+    "eslint": "^3.18.0",
+    "get-port": "^3.0.0",
     "mocha": "^3.1.2",
-    "request": "^2.78.0",
-    "request-promise": "^4.1.1"
+    "request": "^2.81.0",
+    "request-promise": "^4.2.0"
   }
 }

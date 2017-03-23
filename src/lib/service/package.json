@@ -32,16 +32,16 @@
     "deep-diff": "^0.3.4",
     "es6-error": "^4.0.0",
     "request": "^2.81.0",
-    "request-promise": "^4.1.1",
+    "request-promise": "^4.2.0",
     "winston": "^2.2.0"
   },
   "devDependencies": {
-    "babel-eslint": "^7.1.0",
+    "babel-eslint": "^7.2.0",
     "chai": "^3.5.0",
     "chai-spies": "^0.7.1",
     "deep-assign": "^2.0.0",
-    "eslint": "^3.17.1",
+    "eslint": "^3.18.0",
     "mocha": "^3.1.0",
-    "sinon": "^1.17.6"
+    "sinon": "^2.1.0"
   }
 }
