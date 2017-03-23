@@ -18,6 +18,7 @@ const routes = (
         List={List}
         type="logrepo.backend"
         label="Log Repository Backends"
+        icon="storage"
     >
         <Route
             path="create"

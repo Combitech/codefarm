@@ -18,6 +18,7 @@ const routes = (
         List={List}
         type="userrepo.backend"
         label="User Repository Backends"
+        icon="group"
     >
         <Route
             path="create"

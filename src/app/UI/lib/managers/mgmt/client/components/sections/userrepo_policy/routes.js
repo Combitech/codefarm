@@ -18,6 +18,7 @@ const routes = (
         List={List}
         type="userrepo.policy"
         label="User Policies"
+        icon="security"
     >
         <Route
             path="create"

@@ -19,6 +19,7 @@ const routes = (
         List={List}
         type="exec.slave"
         label="Slaves"
+        icon="settings"
     >
         <Route
             path="create"

@@ -18,6 +18,7 @@ const routes = (
         List={List}
         type="logrepo.repository"
         label="Log Repositories"
+        icon="storage"
     >
         <Route
             path="create"

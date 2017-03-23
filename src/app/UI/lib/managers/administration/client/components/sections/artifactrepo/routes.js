@@ -18,6 +18,7 @@ const routes = (
         List={List}
         type="artifactrepo.repository"
         label="Artifact Repositories"
+        icon="storage"
     >
         <Route
             path="create"

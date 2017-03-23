@@ -19,6 +19,7 @@ const routes = (
         List={List}
         type="flowctrl.flow"
         label="Flows"
+        icon="timeline"
     >
         <Route
             path="create"

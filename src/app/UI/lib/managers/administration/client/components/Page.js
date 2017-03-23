@@ -16,7 +16,8 @@ class Page extends LightComponent {
             return {
                 label: route.label,
                 pathname: pn,
-                active: active
+                active: active,
+                icon: route.icon
             };
         });
 

@@ -3,9 +3,8 @@ import React from "react";
 import LightComponent from "ui-lib/light_component";
 import Entry from "./Entry";
 import ServiceMonitor from "./ServiceMonitor";
-import MonitorPage from "./MonitorPage";
 
-class Index extends LightComponent {
+class Page extends LightComponent {
     render() {
         this.log("indexLocal-RENDER", this.props);
 
@@ -21,11 +20,10 @@ class Index extends LightComponent {
     }
 }
 
-Index.propTypes = {
+Page.propTypes = {
     theme: React.PropTypes.object,
     children: React.PropTypes.node,
     route: React.PropTypes.object.isRequired
 };
 
-export default Index;
-export { MonitorPage };
+export default Page;

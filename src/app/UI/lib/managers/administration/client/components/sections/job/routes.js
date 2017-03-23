@@ -19,6 +19,7 @@ const routes = (
         List={List}
         type="exec.job"
         label="Jobs"
+        icon="assignment"
     >
         <Route
             path="create"

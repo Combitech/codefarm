@@ -18,6 +18,7 @@ const routes = (
         List={List}
         type="coderepo.repository"
         label="Code Repositories"
+        icon="storage"
     >
         <Route
             path="create"

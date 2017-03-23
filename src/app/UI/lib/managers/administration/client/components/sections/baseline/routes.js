@@ -19,6 +19,7 @@ const routes = (
         List={List}
         type="baselinegen.specification"
         label="Baselines"
+        icon="linear_scale"
     >
         <Route
             path="create"

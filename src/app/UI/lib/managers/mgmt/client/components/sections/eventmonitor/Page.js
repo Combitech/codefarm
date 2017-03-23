@@ -8,7 +8,7 @@ import EventMonitor from "./EventMonitor";
 
 const EVENT_HISTORY_LENGTH = 100;
 
-class Index extends LightComponent {
+class Page extends LightComponent {
     constructor(props) {
         super(props);
 
@@ -92,10 +92,10 @@ class Index extends LightComponent {
     }
 }
 
-Index.propTypes = {
+Page.propTypes = {
     theme: React.PropTypes.object,
     children: React.PropTypes.node,
     route: React.PropTypes.object.isRequired
 };
 
-export default Index;
+export default Page;
