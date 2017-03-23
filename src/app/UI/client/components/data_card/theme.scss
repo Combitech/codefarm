@@ -8,13 +8,23 @@
     margin-bottom: $layout-gutter-width-sm;
 }
 
-.comment {
+.commentBase {
     font-size: $font-size-small;
     font-family: "Roboto Mono";
     color: $color-text-secondary;
+}
+
+// Comment is used for commit messages and user comments
+.comment {
+    @extend .commentBase;
     white-space: pre;
     overflow: hidden;
     text-overflow: ellipsis;
+
+    &LineWrap {
+        @extend .commentBase;
+        white-space: pre-wrap;
+    }
 }
 
 .input {
