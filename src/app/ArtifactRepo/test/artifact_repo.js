@@ -96,7 +96,6 @@ describe("ArtifactRepo", () => {
     };
 
     const addRepo = async (data) => {
-        console.log("addRepo", data.backend);
         const result = await rp({
             method: "POST",
             url: `${baseUrl}/repository`,

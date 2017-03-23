@@ -47,7 +47,10 @@ class RepoBackendIcon extends LightComponent {
         );
         if (backendType === "github") {
             icon = (
-                <GitHubMarkerIcon className={classNames.join(" ")} />
+                <GitHubMarkerIcon
+                    theme={this.props.theme}
+                    className={classNames.join(" ")}
+                />
             );
         } else if (backendType === "gerrit") {
             icon = (

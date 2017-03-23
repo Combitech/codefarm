@@ -23,7 +23,7 @@ class GitHubMarkerIcon extends React.PureComponent {
 }
 
 GitHubMarkerIcon.propTypes = {
-    theme: React.PropTypes.object,
+    theme: React.PropTypes.object.isRequired,
     className: React.PropTypes.string
 };
 
