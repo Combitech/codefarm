@@ -1,15 +1,16 @@
 
 import React from "react";
 import LightComponent from "ui-lib/light_component";
-import { GitHubMarkerIcon, GerritDiffyIcon } from "ui-components/app_icons";
+import GerritDiffyIcon from "./diffymute.svg";
+import GitHubMarkerIcon from "./GitHubMarkerIcon";
 import CodeRepoAndBackend from "ui-observables/code_repo_and_backend";
 
-class RepoIcon extends LightComponent {
+class RepoBackendIcon extends LightComponent {
     constructor(props) {
         super(props);
 
         this.repoAndBackend = new CodeRepoAndBackend({
-            repoId: props.repoId
+            repoId: props.repoId || false
         });
 
         this.state = {
@@ -24,25 +25,33 @@ class RepoIcon extends LightComponent {
 
     componentWillReceiveProps(nextProps) {
         this.repoAndBackend.setOpts({
-            repoId: nextProps.repoId
+            repoId: nextProps.repoId || false
         });
     }
 
     render() {
         this.log("render", this.props, this.state);
 
-        const backendType = this.state.repoBackend.get("backendType", false);
+        let backendType = this.props.backendType;
+        if (!backendType) {
+            backendType = this.state.repoBackend.get("backendType", false);
+        }
+
+        const classNames = [
+            this.props.theme.appIcon,
+            this.props.theme.repoBackendIcon
+        ];
 
         let icon = (
-            <div className={this.props.theme.repoIcon} />
+            <div className={classNames.join(" ")} />
         );
         if (backendType === "github") {
             icon = (
-                <GitHubMarkerIcon className={this.props.theme.repoIcon} />
+                <GitHubMarkerIcon className={classNames.join(" ")} />
             );
         } else if (backendType === "gerrit") {
             icon = (
-                <GerritDiffyIcon className={this.props.theme.repoIcon} />
+                <GerritDiffyIcon className={classNames.join(" ")} />
             );
         }
 
@@ -50,9 +59,10 @@ class RepoIcon extends LightComponent {
     }
 }
 
-RepoIcon.propTypes = {
+RepoBackendIcon.propTypes = {
     theme: React.PropTypes.object,
-    repoId: React.PropTypes.string.isRequired
+    repoId: React.PropTypes.string,
+    backendType: React.PropTypes.string
 };
 
-export default RepoIcon;
+export default RepoBackendIcon;

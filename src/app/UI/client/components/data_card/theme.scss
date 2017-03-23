@@ -63,6 +63,10 @@
     vertical-align: middle;
 }
 
+.linkButton {
+    margin-right: $layout-gutter-width-sm;
+}
+
 .floatRight {
     float: right;
     font-size: $font-size-small * 0.9;
@@ -94,6 +98,15 @@
     height: 40px;
 }
 
+.repoBackendIcon {
+    width: $unit * 2.4;
+    height: $unit * 2.4;
+}
+
+.repoBackendIconContainer {
+    margin-right: $unit;
+}
+
 .table {
     width: 100%;
     font-size: $font-size-small;
@@ -118,4 +131,10 @@
     td:last-child {
         color: $color-text-secondary;
     }
+
+}
+
+// Override react-toolbux button styles
+.button .icon[data-react-toolbox="font-icon"] {
+    vertical-align: middle;
 }

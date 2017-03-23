@@ -12,11 +12,15 @@ import CodeFarmIcon from "./ic_codefarm_black_48px.svg";
 import GerritDiffyIcon from "./diffymute.svg";
 
 import GitHubMarkerIcon from "./GitHubMarkerIcon";
+import RepoBackendIcon from "./RepoBackendIcon";
+
 const ThemedGitHubMarkerIcon = themr(APP_ICON, theme)(GitHubMarkerIcon);
+const ThemedRepoBackendIcon = themr(APP_ICON, theme)(RepoBackendIcon);
 
 export {
     IconStyler,
     CodeFarmIcon,
     GerritDiffyIcon,
-    ThemedGitHubMarkerIcon as GitHubMarkerIcon
+    ThemedGitHubMarkerIcon as GitHubMarkerIcon,
+    ThemedRepoBackendIcon as RepoBackendIcon
 };

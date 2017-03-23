@@ -2,6 +2,7 @@
 import React from "react";
 import LightComponent from "ui-lib/light_component";
 import { CardTitle, CardText } from "react-toolbox/lib/card";
+import { Button } from "react-toolbox/lib/button";
 import FontIcon from "react-toolbox/lib/font_icon";
 import UserAvatar from "ui-components/user_avatar";
 import DateTime from "ui-components/datetime";
@@ -11,6 +12,7 @@ import stateVar from "ui-lib/state_var";
 import CodeRepoAndBackend from "ui-observables/code_repo_and_backend";
 import { StringUtil } from "misc";
 import UserName from "ui-components/user_name";
+import { RepoBackendIcon } from "ui-components/app_icons";
 
 const FILE_STATUS_ICON = {
     added: "add",
@@ -55,8 +57,7 @@ class RevisionCard extends LightComponent {
         return props.item.patches[this.props.patchIndex];
     }
 
-    _getSourceLinkLabels() {
-        const backendType = this.state.repoBackend.has("backendType") ? this.state.repoBackend.get("backendType") : false;
+    _getSourceLinkLabels(backendType) {
         const labels = {
             review: "Revision review",
             commit: "Revision"
@@ -77,7 +78,14 @@ class RevisionCard extends LightComponent {
 
     render() {
         const patch = this._getLatestPatch(this.props);
-        const sourceLinkLabels = this._getSourceLinkLabels();
+        const backendType = this.state.repoBackend.has("backendType") ? this.state.repoBackend.get("backendType") : "";
+        const sourceLinkLabels = this._getSourceLinkLabels(backendType);
+        const repoBackendIcon = (
+            <RepoBackendIcon
+                backendType={backendType}
+                theme={this.props.theme}
+            />
+        );
 
         let titlePrefix = "Submitted by";
         if (this.props.patchIndex < 0) {
@@ -130,33 +138,36 @@ class RevisionCard extends LightComponent {
                             <tr>
                                 <td>Repository</td>
                                 <td>
+                                    <span className={this.props.theme.repoBackendIconContainer}>
+                                        {repoBackendIcon}
+                                    </span>
                                     {this.props.item.repository}
                                 </td>
                             </tr>
                             <tr>
-                                <td>Source</td>
+                                <td>Links</td>
                                 <td>
                                     <If condition={ patch.change.reviewUrl }>
-                                        <div>
-                                            <a
-                                                className={this.props.theme.link}
-                                                href={patch.change.reviewUrl}
-                                                target="_blank"
-                                            >
-                                                {sourceLinkLabels.review}
-                                            </a>
-                                        </div>
+                                        <Button
+                                            theme={this.props.theme}
+                                            className={this.props.theme.linkButton}
+                                            raised={true}
+                                            label={sourceLinkLabels.review}
+                                            icon={repoBackendIcon}
+                                            href={patch.change.reviewUrl}
+                                            target="_blank"
+                                        />
                                     </If>
                                     <If condition={ patch.change.commitUrl }>
-                                        <div>
-                                            <a
-                                                className={this.props.theme.link}
-                                                href={patch.change.commitUrl}
-                                                target="_blank"
-                                            >
-                                                {sourceLinkLabels.commit}
-                                            </a>
-                                        </div>
+                                        <Button
+                                            theme={this.props.theme}
+                                            className={this.props.theme.linkButton}
+                                            raised={true}
+                                            label={sourceLinkLabels.commit}
+                                            icon={repoBackendIcon}
+                                            href={patch.change.commitUrl}
+                                            target="_blank"
+                                        />
                                     </If>
                                 </td>
                             </tr>

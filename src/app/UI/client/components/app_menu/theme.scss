@@ -62,7 +62,7 @@
     }
 
     // Override react-toolbux button styles
-    .button .icon {
+    .button .icon[data-react-toolbox="font-icon"] {
         vertical-align: middle;
     }
     .button {
