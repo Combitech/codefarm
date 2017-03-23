@@ -59,13 +59,18 @@ const pathFromArray = (arr) => arr.join("/");
  * fromType("exec.slave", obj, [ "slaveId" ]) returns "/admin/slaves/${obj.slaveId}"
  * @param {String} typeName Typename in format "service.type"
  * @param {Object} item Instance to extract properties from
+ * @param {Object} [opts] Options
+ * @param {Boolean} [opts.debug] Debug enabled. Default is false.
  * @return {String} Pathname
  */
-const fromType = (typeName, item) => {
+const fromType = (typeName, item, opts = {}) => {
+    opts = Object.assign({
+        debug: false
+    }, opts);
     const templatePath = findPath(typeName);
     const path = fillTemplatePath(templatePath, item);
     const pathStr = pathFromArray(path);
-    console.log(`pathBuilder.fromType: ${typeName} -> ${pathFromArray(templatePath)} -> ${pathStr}`);
+    opts.debug && console.log(`pathBuilder.fromType: ${typeName} -> ${pathFromArray(templatePath)} -> ${pathStr}`);
 
     return pathStr;
 };
