@@ -63,6 +63,7 @@
     "flexboxgrid": "^6.3.1",
     "font-roboto-local": "^1.0.1",
     "fs-extra-promise": "^0.4.1",
+    "img-loader": "^2.0.0",
     "immutability-helper": "^2.1.0",
     "immutable": "^3.8.1",
     "jsx-control-statements": "^3.1.5",

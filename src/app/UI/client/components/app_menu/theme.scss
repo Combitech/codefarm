@@ -60,4 +60,12 @@
         border-right-color: $cf-color-selected;
         border-radius: 0;
     }
+
+    // Override react-toolbux button styles
+    .button .icon {
+        vertical-align: middle;
+    }
+    .button {
+        vertical-align: middle;
+    }
 }

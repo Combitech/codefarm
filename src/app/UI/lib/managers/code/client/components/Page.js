@@ -4,6 +4,7 @@ import { States as ObservableDataStates } from "ui-lib/observable_data";
 import LightComponent from "ui-lib/light_component";
 import { AppMenu } from "ui-components/app_menu";
 import { Loading } from "ui-components/layout";
+import RepoIcon from "./RepoIcon";
 import CodeRepositories from "ui-observables/code_repositories";
 
 class Page extends LightComponent {
@@ -35,7 +36,13 @@ class Page extends LightComponent {
             return {
                 label: item._id,
                 pathname: pn,
-                active: active
+                active: active,
+                icon: (
+                    <RepoIcon
+                        repoId={item._id}
+                        theme={this.props.theme}
+                    />
+                )
             };
         });
 

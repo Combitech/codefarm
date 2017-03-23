@@ -167,6 +167,21 @@ module.exports = function(options) {
                             }
                         }
                     ]
+                },
+                {
+                    test: /\.png$/,
+                    use: [
+                        {
+                            loader: "url-loader",
+                            options: {
+                            }
+                        },
+                        {
+                            loader: "img-loader",
+                            options: {
+                            }
+                        }
+                    ]
                 }
             ]
         },

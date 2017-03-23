@@ -44,6 +44,8 @@ class AppMenu extends React.Component {
                     return (
                         <Button
                             key={item.pathname}
+                            theme={this.props.theme}
+                            icon={item.icon}
                             className={className}
                             label={item.label}
                             flat={true}

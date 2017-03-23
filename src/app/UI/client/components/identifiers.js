@@ -5,6 +5,7 @@ export const APP_TABS = "CFAppTabs";
 export const APP_MENU = "CFAppMenu";
 export const APP_TOP_BAR = "CFAppTopBar";
 export const APP_NOTIFICATION = "CFAppNotification";
+export const APP_ICON = "CFAppIcon";
 export const CONFIRM_DIALOG = "CFConfirmDialog";
 export const DATA_CARD = "CFDataCard";
 export const DATE_TIME = "CFDateTime";
