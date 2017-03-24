@@ -142,7 +142,7 @@ class RevisionCard extends LightComponent {
                     )}
                 />
                 <CardText>
-                    <span className={this.props.theme.comment}>
+                    <span className={this.props.theme.commentLineWrap}>
                         {patch.comment}
                     </span>
                 </CardText>
