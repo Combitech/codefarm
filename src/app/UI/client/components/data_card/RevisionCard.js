@@ -2,7 +2,7 @@
 import React from "react";
 import LightComponent from "ui-lib/light_component";
 import { CardTitle, CardText } from "react-toolbox/lib/card";
-import { Button } from "react-toolbox/lib/button";
+import { Button, IconButton } from "react-toolbox/lib/button";
 import FontIcon from "react-toolbox/lib/font_icon";
 import UserAvatar from "ui-components/user_avatar";
 import DateTime from "ui-components/datetime";
@@ -13,6 +13,7 @@ import CodeRepoAndBackend from "ui-observables/code_repo_and_backend";
 import { StringUtil } from "misc";
 import UserName from "ui-components/user_name";
 import { CodeRepoBackendIcon } from "ui-components/app_icons";
+import * as pathBuilder from "ui-lib/path_builder";
 
 const FILE_STATUS_ICON = {
     added: "add",
@@ -94,6 +95,22 @@ class RevisionCard extends LightComponent {
             titlePrefix = "Merged by";
         }
 
+        // Instantiate link button if not already on link destination
+        const myRevisionPath = pathBuilder.fromType("coderepo.revision", this.props.item);
+        let openRevisionLinkButton;
+        if (!this.context.router.isActive(myRevisionPath)) {
+            openRevisionLinkButton = (
+                <IconButton
+                    icon="open_in_browser"
+                    onClick={() => {
+                        this.context.router.push({
+                            pathname: myRevisionPath
+                        });
+                    }}
+                />
+            );
+        }
+
         return (
             <ExpandableCard
                 className={this.props.theme.card}
@@ -108,11 +125,14 @@ class RevisionCard extends LightComponent {
                         />
                     )}
                     title={(
-                        <UserName
-                            userId={patch.userRef.id}
-                            notFoundText={patch.name}
-                            prefixText={titlePrefix}
-                        />
+                        <div>
+                            <UserName
+                                userId={patch.userRef.id}
+                                notFoundText={patch.name}
+                                prefixText={titlePrefix}
+                            />
+                            {openRevisionLinkButton}
+                        </div>
                     )}
                     subtitle={(
                         <DateTime
@@ -258,6 +278,10 @@ RevisionCard.propTypes = {
     patchIndex: React.PropTypes.number,
     expanded: React.PropTypes.bool,
     expandable: React.PropTypes.bool
+};
+
+RevisionCard.contextTypes = {
+    router: React.PropTypes.object.isRequired
 };
 
 export default RevisionCard;
