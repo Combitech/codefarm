@@ -8,6 +8,7 @@ import Tags from "ui-components/tags";
 import ExpandableCard from "ui-components/expandable_card";
 import stateVar from "ui-lib/state_var";
 import RepositoryUri from "ui-observables/repository_uri";
+import { CodeRepoBackendIcon } from "ui-components/app_icons";
 
 class CodeRepositoryCard extends LightComponent {
     constructor(props) {
@@ -62,6 +63,12 @@ class CodeRepositoryCard extends LightComponent {
                             <tr>
                                 <td>Backend</td>
                                 <td>
+                                    <span className={this.props.theme.repoBackendIconContainer}>
+                                        <CodeRepoBackendIcon
+                                            repoId={this.props.item._id}
+                                            theme={this.props.theme}
+                                        />
+                                    </span>
                                     {this.props.item.backend}
                                 </td>
                             </tr>

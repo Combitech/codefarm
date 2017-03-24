@@ -74,7 +74,7 @@ class ReviewCard extends LightComponent {
                                 </td>
                             </tr>
                             <tr>
-                                <td>Updated at</td>
+                                <td>Updated&nbsp;at</td>
                                 <td>
                                     <DateTime
                                         value={review.updated}

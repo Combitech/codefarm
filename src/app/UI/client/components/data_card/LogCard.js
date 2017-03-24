@@ -90,7 +90,7 @@ class LogCard extends LightComponent {
                                 <td>{this.props.item.fileMeta.mimeType}</td>
                             </tr>
                             <tr>
-                                <td>Created at</td>
+                                <td>Created&nbsp;at</td>
                                 <td>
                                     <DateTime
                                         value={this.props.item.created}

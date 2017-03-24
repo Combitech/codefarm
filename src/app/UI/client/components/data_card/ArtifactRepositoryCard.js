@@ -7,6 +7,7 @@ import DateTime from "ui-components/datetime";
 import Tags from "ui-components/tags";
 import ExpandableCard from "ui-components/expandable_card";
 import stateVar from "ui-lib/state_var";
+import { ArtifactRepoBackendIcon } from "ui-components/app_icons";
 
 class ArtifactRepositoryCard extends LightComponent {
     constructor(props) {
@@ -45,6 +46,12 @@ class ArtifactRepositoryCard extends LightComponent {
                             <tr>
                                 <td>Backend</td>
                                 <td>
+                                    <span className={this.props.theme.repoBackendIconContainer}>
+                                        <ArtifactRepoBackendIcon
+                                            repoId={this.props.item._id}
+                                            theme={this.props.theme}
+                                        />
+                                    </span>
                                     {this.props.item.backend}
                                 </td>
                             </tr>

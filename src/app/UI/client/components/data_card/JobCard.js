@@ -47,7 +47,7 @@ class JobCard extends LightComponent {
                     <table className={this.props.theme.table}>
                         <tbody>
                             <tr>
-                                <td>Job name</td>
+                                <td>Job&nbsp;name</td>
                                 <td>
                                     <span className={this.props.theme.monospace}>
                                         {this.props.item.name}
@@ -60,7 +60,7 @@ class JobCard extends LightComponent {
                                 </td>
                             </tr>
                             <tr>
-                                <td>Baseline name</td>
+                                <td>Baseline&nbsp;name</td>
                                 <td>
                                     <span className={this.props.theme.monospace}>
                                         {this.props.item.baseline.name}
@@ -73,7 +73,7 @@ class JobCard extends LightComponent {
                                 </td>
                             </tr>
                             <tr>
-                                <td>Created at</td>
+                                <td>Created&nbsp;at</td>
                                 <td>
                                     <DateTime
                                         value={this.props.item.created}
@@ -82,7 +82,7 @@ class JobCard extends LightComponent {
                                 </td>
                             </tr>
                             <tr>
-                                <td>Started at</td>
+                                <td>Started&nbsp;at</td>
                                 <td>
                                     <DateTime
                                         value={this.props.item.started}
@@ -91,7 +91,7 @@ class JobCard extends LightComponent {
                                 </td>
                             </tr>
                             <tr>
-                                <td>Finished at</td>
+                                <td>Finished&nbsp;at</td>
                                 <td>
                                     <DateTime
                                         value={this.props.item.finished}

@@ -60,7 +60,7 @@ class SubJobCard extends LightComponent {
                                 </td>
                             </tr>
                             <tr>
-                                <td>Started at</td>
+                                <td>Started&nbsp;at</td>
                                 <td>
                                     <DateTime
                                         value={this.props.item.created}
@@ -69,7 +69,7 @@ class SubJobCard extends LightComponent {
                                 </td>
                             </tr>
                             <tr>
-                                <td>Finished at</td>
+                                <td>Finished&nbsp;at</td>
                                 <td>
                                     <DateTime
                                         value={this.props.item.finished}
