@@ -139,7 +139,7 @@ describe("A Service", () => {
             typeVersion: 1,
             tags: [],
             refs: [],
-            comments: [],
+            commentRefs: [],
             saved: false,
             name: testInfo.name,
             state: "CONNECTED",
