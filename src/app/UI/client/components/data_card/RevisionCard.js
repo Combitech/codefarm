@@ -8,6 +8,7 @@ import UserAvatar from "ui-components/user_avatar";
 import DateTime from "ui-components/datetime";
 import Tags from "ui-components/tags";
 import ExpandableCard from "ui-components/expandable_card";
+import AppPager from "ui-components/app_pager";
 import stateVar from "ui-lib/state_var";
 import CodeRepoAndBackend from "ui-observables/code_repo_and_backend";
 import { StringUtil } from "misc";
@@ -35,6 +36,7 @@ class RevisionCard extends LightComponent {
 
         this.state = {
             expanded: stateVar(this, "expanded", props.expanded),
+            pageIndex: stateVar(this, "pageIndex", false),
             repoBackend: this.repoAndBackend.backend.getValue()
         };
     }
@@ -50,12 +52,13 @@ class RevisionCard extends LightComponent {
         });
     }
 
-    _getLatestPatch(props) {
-        if (this.props.patchIndex < 0) {
-            return props.item.patches[props.item.patches.length + this.props.patchIndex];
+    _getCurrentPatch() {
+        const patchIndex = this.state.pageIndex.value !== false ? this.state.pageIndex.value : this.props.patchIndex;
+        if (patchIndex < 0) {
+            return this.props.item.patches[this.props.item.patches.length + patchIndex];
         }
 
-        return props.item.patches[this.props.patchIndex];
+        return this.props.item.patches[patchIndex];
     }
 
     _getSourceLinkLabels(backendType) {
@@ -78,7 +81,7 @@ class RevisionCard extends LightComponent {
     }
 
     render() {
-        const patch = this._getLatestPatch(this.props);
+        const patch = this._getCurrentPatch();
         const backendType = this.state.repoBackend.has("backendType") ? this.state.repoBackend.get("backendType") : "";
         const sourceLinkLabels = this._getSourceLinkLabels(backendType);
         const repoBackendIcon = (
@@ -107,6 +110,18 @@ class RevisionCard extends LightComponent {
                             pathname: myRevisionPath
                         });
                     }}
+                />
+            );
+        }
+
+        let patchPager;
+        if (this.props.patchIndex < 0) {
+            patchPager = (
+                <AppPager
+                    theme={this.props.theme}
+                    pageIndex={this.state.pageIndex}
+                    numPages={this.props.item.patches.length}
+                    initialPageIndex={this.props.item.patches.length + this.props.patchIndex}
                 />
             );
         }
@@ -191,24 +206,31 @@ class RevisionCard extends LightComponent {
                                     </If>
                                 </td>
                             </tr>
-                            <If condition={this.props.patchIndex < 0}>
-                                <tr>
-                                    <td>Patches</td>
-                                    <td>
-                                        {this.props.item.patches.length}
-                                    </td>
-                                </tr>
-                            </If>
-                            <If condition={this.props.patchIndex >= 0}>
-                                <tr>
-                                    <td>Patch</td>
-                                    <td>
-                                        {this.props.patchIndex + 1}
-                                        <span> of </span>
-                                        {this.props.item.patches.length}
-                                    </td>
-                                </tr>
-                            </If>
+                            <Choose>
+                                <When condition={this.props.patchIndex >= 0}>
+                                    <tr>
+                                        <td>Patch</td>
+                                        <td>
+                                            {this.props.patchIndex + 1}
+                                            <span> of </span>
+                                            {this.props.item.patches.length}
+                                        </td>
+                                    </tr>
+                                </When>
+                                <Otherwise>
+                                    <tr>
+                                        <td>Patch</td>
+                                        <td>
+                                            {(this.state.pageIndex.value !== false
+                                                ? this.state.pageIndex.value
+                                                : (this.props.item.patches.length + this.props.patchIndex)
+                                             ) + 1}
+                                            <span> of </span>
+                                            {this.props.item.patches.length}
+                                        </td>
+                                    </tr>
+                                </Otherwise>
+                            </Choose>
                             <tr>
                                 <td>Refname</td>
                                 <td className={this.props.theme.monospace}>
@@ -260,6 +282,11 @@ class RevisionCard extends LightComponent {
                             </tr>
                         </tbody>
                     </table>
+                    <If condition={patchPager}>
+                        <CardText>
+                            {patchPager}
+                        </CardText>
+                    </If>
                 </If>
             </ExpandableCard>
         );
