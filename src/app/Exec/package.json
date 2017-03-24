@@ -41,8 +41,8 @@
     "singleton"
   ],
   "dependencies": {
-    "async-busboy": "^0.3.3",
-    "babel-eslint": "^7.2.0",
+    "async-busboy": "^0.3.4",
+    "babel-eslint": "^7.2.1",
     "bluebird": "^3.5.0",
     "commander": "^2.9.0",
     "fs-extra-promise": "^0.4.1",

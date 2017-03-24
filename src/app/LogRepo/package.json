@@ -40,7 +40,7 @@
     "loglib"
   ],
   "dependencies": {
-    "async-busboy": "^0.3.3",
+    "async-busboy": "^0.3.4",
     "fs-extra-promise": "^0.4.1",
     "read-last-lines": "^1.1.2",
     "yargs": "^7.0.2"
