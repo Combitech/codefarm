@@ -80,6 +80,7 @@ const templates = {
     usr: [
         "read,comment:*",
         "create:dataresolve.data",
+        "create,update:metadata.comment",
         "auth,setpassword,addkey:userrepo.user",
         "validate:artifactrepo.artifact"
     ]

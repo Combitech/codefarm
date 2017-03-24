@@ -31,7 +31,7 @@ class CommentCard extends LightComponent {
             avatar = (
                 <UserAvatar
                     className={this.props.theme.avatar}
-                    userId={this.props.item.user ? this.props.item.user.id : false}
+                    userId={this.props.item.sourceRef ? this.props.item.sourceRef.id : false}
                 />
             );
         } else if (this.props.item.sourceRef) {
