@@ -382,7 +382,17 @@ describe("ArtifactRepo", () => {
 
             assert.strictEqual(result.result, "success");
             assert.strictEqual(result.data.state, "commited");
-            console.log("_TMP_DBG_PRINT_ data=", JSON.stringify(result.data, null, 2));
+            // BEGIN: Debug printouts to track down intermittent error
+            console.log("_TMP_DBG_PRINT_ data", JSON.stringify(result.data, null, 2));
+            {
+                // Check that artifact file is created
+                const artifactRelPathParts = result.data._id.split("-");
+                const artifactPath = path.join(repo1Path, ...artifactRelPathParts);
+                console.log("_TMP_DBG_PRINT_ artifactPath", artifactPath);
+                const artifactExist = await fs.existsAsync(artifactPath);
+                console.log("_TMP_DBG_PRINT_ artifactExist", artifactExist);
+            }
+            // END: Debug printouts...
             assert.strictEqual(result.data.fileMeta.size, artifactContent.length);
 
             // Check hashes
