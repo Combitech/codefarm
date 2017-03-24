@@ -17,7 +17,7 @@ class Type {
         this.saved = false;
         this.tags = [];
         this.refs = [];
-        this.comments = [];
+        this.commentRefs = [];
 
         synchronize(this, "save");
         synchronize(this, "remove");
@@ -336,13 +336,22 @@ class Type {
         await notification.emit(`${this.constructor.typeName}.ref_added`, this, ref);
     }
 
-    async comment(comment) {
-        comment.id = uuid();
+    async comment(commentRef) {
+        // Check valid ref object
+        assertProp(commentRef, "id", true);
+        assertProp(commentRef, "type", true);
 
-        this.comments.push(comment);
+        if (!((typeof commentRef.id === "string") || (commentRef.id instanceof Array))) {
+            throw new Error("id must be an array or of type string");
+        }
+
+        assertType(commentRef.type, "type", "string");
+
+        commentRef._ref = true;
+        this.commentRefs.push(commentRef);
 
         await this.save();
-        await notification.emit(`${this.constructor.typeName}.commented`, this, comment);
+        await notification.emit(`${this.constructor.typeName}.commented`, this, commentRef);
     }
 
     async uncomment(id) {
@@ -350,16 +359,16 @@ class Type {
             throw new Error("Can not uncomment without id");
         }
 
-        const index = this.comments.findIndex((comment) => comment.id === id);
+        const index = this.commentRefs.findIndex((commentRef) => commentRef.id === id);
 
         if (index === -1) {
             return;
         }
 
-        const comment = this.comments.splice(index, 1)[0];
+        const commentRef = this.commentRefs.splice(index, 1)[0];
 
         await this.save();
-        await notification.emit(`${this.constructor.typeName}.uncommented`, this, comment);
+        await notification.emit(`${this.constructor.typeName}.uncommented`, this, commentRef);
     }
 }
 

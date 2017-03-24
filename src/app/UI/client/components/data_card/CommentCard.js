@@ -18,6 +18,34 @@ class CommentCard extends LightComponent {
     }
 
     render() {
+        let title;
+        let avatar;
+        if (this.props.item.sourceRef && this.props.item.sourceRef.type === "userrepo.user") {
+            title = (
+                <UserName
+                    userId={this.props.item.sourceRef ? this.props.item.sourceRef.id : false}
+                    notFoundText="Someone"
+                    suffixText="said..."
+                />
+            );
+            avatar = (
+                <UserAvatar
+                    className={this.props.theme.avatar}
+                    userId={this.props.item.user ? this.props.item.user.id : false}
+                />
+            );
+        } else if (this.props.item.sourceRef) {
+            title = (
+                <span>
+                    Type: {this.props.item.sourceRef.type} - id: {this.props.item.sourceRef.id}
+                </span>
+            );
+        } else {
+            title = (
+                <span>Unkown source</span>
+            );
+        }
+
         return (
             <ExpandableCard
                 className={this.props.theme.card}
@@ -25,22 +53,11 @@ class CommentCard extends LightComponent {
                 expandable={this.props.expandable}
             >
                 <CardTitle
-                    avatar={(
-                        <UserAvatar
-                            className={this.props.theme.avatar}
-                            userId={this.props.item.user ? this.props.item.user.id : false}
-                        />
-                    )}
-                    title={(
-                        <UserName
-                            userId={this.props.item.user ? this.props.item.user.id : false}
-                            notFoundText="Someone"
-                            suffixText="said..."
-                        />
-                    )}
+                    avatar={avatar}
+                    title={title}
                     subtitle={(
                         <DateTime
-                            value={this.props.item.time}
+                            value={this.props.item.created}
                             niceDate={true}
                         />
                     )}

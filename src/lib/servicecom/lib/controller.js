@@ -428,11 +428,14 @@ class Controller {
     async _comment(ctx, id, data) {
         this._isAllowed(ctx, "comment");
 
-        !data.text && this._throw("No text supplied", 400);
-        !data.time && this._throw("No time supplied", 400);
+        !data.id && this._throw("No comment id supplied", 400);
 
         const obj = await this._getTypeInstance(id);
-        await obj.comment(data);
+        await obj.comment({
+            _ref: true,
+            id: data.id,
+            type: "metadata.comment"
+        });
 
         return obj.serialize();
     }

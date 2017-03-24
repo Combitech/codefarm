@@ -3,22 +3,26 @@ import React from "react";
 import Immutable from "immutable";
 import moment from "moment";
 import api from "api.io/api.io-client";
-import stateVar from "ui-lib/state_var";
 import LightComponent from "ui-lib/light_component";
 import { Row, Column, Header } from "ui-components/layout";
 import { CardList, RevisionCard, AddCommentCard, CommentCard, ReviewCard, JobCard, TypeCard } from "ui-components/data_card";
 
 class Overview extends LightComponent {
-    constructor(props) {
-        super(props);
-
-        this.state = {
-            comment: stateVar(this, "comment", "")
-        };
-    }
-
     async onComment(comment) {
-        await api.rest.action(this.props.item.type, this.props.item._id, "comment", comment);
+        comment.targetRef = {
+            _ref: true,
+            id: this.props.item._id,
+            type: this.props.item.type
+        };
+        const createdComment = await api.rest.post("metadata.comment", comment);
+        if (createdComment) {
+            const commentRef = {
+                _ref: true,
+                id: createdComment._id,
+                type: createdComment.type
+            };
+            await api.rest.action(this.props.item.type, this.props.item._id, "comment", commentRef);
+        }
     }
 
     render() {
@@ -35,10 +39,11 @@ class Overview extends LightComponent {
             }
         ];
 
-        for (const comment of this.props.item.comments) {
+        const comments = this.props.itemExt.data.commentRefs.map((ref) => ref.data);
+        for (const comment of comments) {
             list.push({
-                id: comment.time,
-                time: moment(comment.time).unix(),
+                id: comment.created,
+                time: moment(comment.created).unix(),
                 item: comment,
                 Card: CommentCard,
                 props: {

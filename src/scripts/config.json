@@ -1,22 +1,22 @@
 {
     "flowctrl": {
         "web": {
-            "port": "19191"
+            "port": 19191
         }
     },
     "baselinegen": {
         "web": {
-            "port": "19797"
+            "port": 19797
         }
     },
     "userrepo": {
         "web": {
-            "port": "19292"
+            "port": 19292
         }
     },
     "eventrepo": {
         "web": {
-            "port": "19090"
+            "port": 19090
         }
     },
     "logrepo": {
@@ -64,6 +64,11 @@
     "dataresolve": {
         "web": {
             "port": 18989
+        }
+    },
+    "metadata": {
+        "web": {
+            "port": 18888
         }
     }
 }

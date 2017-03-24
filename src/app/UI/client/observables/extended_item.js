@@ -1,6 +1,8 @@
 
 import DataResolve from "ui-observables/data_resolve";
 
+const DEFAULT_PATHS = [ "$.refs[*]" ];
+
 class ExtendedItem extends DataResolve {
     constructor(initialOpts) {
         if (typeof initialOpts.type !== "string") {
@@ -12,29 +14,32 @@ class ExtendedItem extends DataResolve {
             throw new Error("id must be set to a string or false in the initial opts");
         }
 
-        const createResolveOpts = (id, type) => (
+        if (initialOpts.hasOwnProperty("paths") && initialOpts.paths.constructor !== Array) {
+            throw new Error("paths must be set to an array in the initial opts if present");
+        }
+
+        const createResolveOpts = (id, type, paths = false) => (
             {
                 ref: {
                     id: id,
                     type: type
                 },
                 spec: {
-                    paths: [
-                        "$.refs[*]"
-                    ]
+                    paths: paths || DEFAULT_PATHS
                 }
             }
         );
 
         const defaultOpts = {
             resolver: "RefResolve",
-            opts: createResolveOpts(initialOpts.id, initialOpts.type)
+            opts: createResolveOpts(initialOpts.id, initialOpts.type, initialOpts.paths)
         };
 
         const opts = Object.assign({}, defaultOpts, initialOpts);
 
         delete opts.type;
         delete opts.id;
+        delete opts.paths;
 
         super(opts);
 
@@ -44,11 +49,18 @@ class ExtendedItem extends DataResolve {
     setOpts(opts) {
         const nextOpts = Object.assign({}, opts);
 
-        if (opts.id || opts.type) {
+        if (opts.id || opts.type || opts.paths) {
             delete nextOpts.id;
             delete nextOpts.type;
+            delete nextOpts.paths;
+            let paths = opts.paths;
+            if (!paths) {
+                // Use previous paths if not set now
+                const prevOpts = super.opts.getValue().get("opts", {}).toJS();
+                paths = prevOpts && prevOpts.spec && prevOpts.spec.paths;
+            }
 
-            nextOpts.opts = this._createResolveOpts(opts.id, opts.type);
+            nextOpts.opts = this._createResolveOpts(opts.id, opts.type, paths);
         }
 
         super.setOpts(nextOpts);

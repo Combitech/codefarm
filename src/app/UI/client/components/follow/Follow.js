@@ -16,7 +16,11 @@ class Follow extends LightComponent {
 
         this.itemExt = new ExtendedItem({
             id: props.item._id,
-            type: props.item.type
+            type: props.item.type,
+            paths: [
+                "$.refs[*]",
+                "$.commentRefs[*]"
+            ]
         });
 
         this.flows = new FlowList({
