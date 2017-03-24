@@ -7,7 +7,7 @@ const { synchronize } = require("misc");
 
 class Artifacts extends Controller {
     constructor() {
-        super(Artifact, [ "read", "create", "tag", "ref", "upload", "validate" ]);
+        super(Artifact, [ "read", "create", "tag", "ref", "upload", "validate", "comment" ]);
 
         this._addAction("upload", this._uploadArtifact, "Upload artifact");
         this._addAction("validate", this._validateArtifact, "Validate artifact");

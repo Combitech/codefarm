@@ -132,3 +132,12 @@ services:
             - mongo
             - rabbitmq
         network_mode: "host"
+    metadata:
+        build:
+            context: ../app/MetaData
+        image: codefarm/metadata:0.0.0
+        depends_on:
+            - appnodebase
+            - mongo
+            - rabbitmq
+        network_mode: "host"

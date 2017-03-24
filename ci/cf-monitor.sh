@@ -25,6 +25,7 @@ tmux split-window -h -c "$APP_DIR/LogRepo" 'bash --rcfile <(echo ". ~/.bashrc; p
 tmux split-window -v -c "$APP_DIR/ArtifactRepo" 'bash --rcfile <(echo ". ~/.bashrc; pm2 logs ArtifactRepo")'
 tmux split-window -h -c "$APP_DIR/UserRepo" 'bash --rcfile <(echo ". ~/.bashrc; pm2 logs UserRepo")'
 tmux split-window -v -c "$APP_DIR/CodeRepo" 'bash --rcfile <(echo ". ~/.bashrc; pm2 logs CodeRepo")'
+tmux split-window -h -c "$APP_DIR/MetaData" 'bash --rcfile <(echo ". ~/.bashrc; pm2 logs MetaData")'
 #tmux split-window -h -c "$SCRIPT_DIR/" 'bash --rcfile <(echo ". ~/.bashrc; docker-compose up mongo rabbitmq")'
 tmux select-layout -t "Static" tiled
 

@@ -7,7 +7,6 @@ import UserAvatar from "ui-components/user_avatar";
 import Input from "react-toolbox/lib/input";
 import ExpandableCard from "ui-components/expandable_card";
 import stateVar from "ui-lib/state_var";
-import moment from "moment";
 import ActiveUser from "ui-observables/active_user";
 import Notification from "ui-observables/notification";
 
@@ -28,15 +27,13 @@ class AddCommentCard extends LightComponent {
 
     onComment() {
         const signedInUser = this.state.activeUser.toJS();
-        console.log("onComment", this.state.comment.value, signedInUser);
         this.props.onComment({
-            user: {
+            sourceRef: {
                 _ref: true,
                 name: signedInUser.username,
                 type: "userrepo.user",
                 id: signedInUser.id
             },
-            time: moment.utc().format(),
             text: this.state.comment.value
         })
         .then(() => {
