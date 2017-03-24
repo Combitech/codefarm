@@ -72,6 +72,14 @@ class FsBackend {
 
         const writeStream = fs.createWriteStream(artifactFilePath);
 
+        // Wait until writeStream is open before piping data to it
+        // see http://stackoverflow.com/questions/12906694/fs-createwritestream-does-not-immediately-create-file
+        await new Promise((resolve, reject) => {
+            writeStream
+                .on("open", resolve)
+                .on("error", reject);
+        });
+
         await new Promise((resolve, reject) => {
             fileStream
                 .pipe(writeStream)
