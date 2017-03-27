@@ -20,10 +20,10 @@ class CommentCard extends LightComponent {
     render() {
         let title;
         let avatar;
-        if (this.props.item.sourceRef && this.props.item.sourceRef.type === "userrepo.user") {
+        if (this.props.item.creatorRef && this.props.item.creatorRef.type === "userrepo.user") {
             title = (
                 <UserName
-                    userId={this.props.item.sourceRef ? this.props.item.sourceRef.id : false}
+                    userId={this.props.item.creatorRef ? this.props.item.creatorRef.id : false}
                     notFoundText="Someone"
                     suffixText="said..."
                 />
@@ -31,13 +31,13 @@ class CommentCard extends LightComponent {
             avatar = (
                 <UserAvatar
                     className={this.props.theme.avatar}
-                    userId={this.props.item.sourceRef ? this.props.item.sourceRef.id : false}
+                    userId={this.props.item.creatorRef ? this.props.item.creatorRef.id : false}
                 />
             );
-        } else if (this.props.item.sourceRef) {
+        } else if (this.props.item.creatorRef) {
             title = (
                 <span>
-                    Type: {this.props.item.sourceRef.type} - id: {this.props.item.sourceRef.id}
+                    Type: {this.props.item.creatorRef.type} - id: {this.props.item.creatorRef.id}
                 </span>
             );
         } else {

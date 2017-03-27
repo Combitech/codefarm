@@ -28,7 +28,7 @@ class AddCommentCard extends LightComponent {
     onComment() {
         const signedInUser = this.state.activeUser.toJS();
         this.props.onComment({
-            sourceRef: {
+            creatorRef: {
                 _ref: true,
                 name: signedInUser.username,
                 type: "userrepo.user",

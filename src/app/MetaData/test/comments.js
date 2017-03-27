@@ -62,7 +62,7 @@ describe("MetaData", () => {
 
     const comment1 = {
         text: "Comment 1",
-        sourceRef: {
+        creatorRef: {
             _ref: true,
             id: "type1",
             type: "service1.type"
@@ -71,7 +71,7 @@ describe("MetaData", () => {
 
     const comment2 = {
         text: "Comment 2",
-        sourceRef: {
+        creatorRef: {
             _ref: true,
             id: "type1",
             type: "service1.type"
@@ -95,7 +95,7 @@ describe("MetaData", () => {
 
             assert.strictEqual(data.result, "success");
             assert.strictEqual(data.data.text, comment1.text);
-            assert.deepEqual(data.data.sourceRef, comment1.sourceRef);
+            assert.deepEqual(data.data.creatorRef, comment1.creatorRef);
             assert.strictEqual(data.data.targetRef, false);
             comment1Id = data.data._id;
         });
@@ -113,7 +113,7 @@ describe("MetaData", () => {
 
             assert.strictEqual(data.result, "success");
             assert.strictEqual(data.data.text, comment2.text);
-            assert.deepEqual(data.data.sourceRef, comment2.sourceRef);
+            assert.deepEqual(data.data.creatorRef, comment2.creatorRef);
             assert.deepEqual(data.data.targetRef, comment2.targetRef);
             comment2Id = data.data._id;
         });
@@ -129,7 +129,7 @@ describe("MetaData", () => {
         it("should not add comment without text", async () => {
             try {
                 await addComment({
-                    sourceRef: { _ref: true, id: "id1", type: "service.type" }
+                    creatorRef: { _ref: true, id: "id1", type: "service.type" }
                 });
                 assert(false, "Unexpected comment add");
             } catch (error) {

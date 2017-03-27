@@ -9,7 +9,7 @@ class Comment extends Type {
         super();
 
         this.text = false;
-        this.sourceRef = false;
+        this.creatorRef = false;
         this.targetRef = false;
 
         if (data) {
@@ -37,7 +37,7 @@ class Comment extends Type {
         assertProp(data, "_id", false);
         if (event === "create") {
             assertType(data.text, "data.text", "string");
-            assertType(data.sourceRef, "data.sourceRef", "ref");
+            assertType(data.creatorRef, "data.creatorRef", "ref");
             if (data.targetRef) {
                 assertType(data.targetRef, "data.targetRef", "ref");
             }
@@ -45,8 +45,8 @@ class Comment extends Type {
             if (data.text) {
                 assertType(data.text, "data.text", "string");
             }
-            if (data.sourceRef) {
-                assertType(data.sourceRef, "data.sourceRef", "ref");
+            if (data.creatorRef) {
+                assertType(data.creatorRef, "data.creatorRef", "ref");
             }
             if (data.targetRef) {
                 assertType(data.targetRef, "data.targetRef", "ref");
