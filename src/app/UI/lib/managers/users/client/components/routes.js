@@ -10,6 +10,7 @@ import UserItem from "./UserItem";
 import UserUpdatePassword from "./UserUpdatePassword";
 import UserAddKey from "./UserAddKey";
 import UserUpdatePolicies from "./UserUpdatePolicies";
+import UserUpdateTeams from "./UserUpdateTeams";
 import TeamList from "./TeamList";
 import TeamItem from "./TeamItem";
 
@@ -46,6 +47,12 @@ const routes = [
                 component={TAView}
                 Action={UserUpdatePolicies}
                 label="Update Policies"
+            />
+            <Route
+                path="updateteams"
+                component={TAView}
+                Action={UserUpdateTeams}
+                label="Update Teams"
             />
             <Route
                 path="tags"

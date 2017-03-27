@@ -189,6 +189,19 @@ class User extends Type {
 
         await this.save();
     }
+
+    async setTeams(teamIds) {
+        for (const teamId of teamIds) {
+            const exist = await Team.exist(teamId);
+            if (!exist) {
+                throw new Error(`Unknown team id ${teamId}`);
+            }
+        }
+
+        this.teams = teamIds;
+
+        await this.save();
+    }
 }
 
 module.exports = User;

@@ -62,6 +62,12 @@ class Item extends LightComponent {
             "setpolicies",
             { throwOnError: false }
         );
+        const isSetTeamsGranted = isTokenValidForAccess(
+            this.props.activeUser.has("priv") && this.props.activeUser.get("priv").toJS(),
+            "userrepo.user",
+            "setteams",
+            { throwOnError: false }
+        );
 
         const controls = this.props.controls.slice(0);
         controls.push((
@@ -93,6 +99,17 @@ class Item extends LightComponent {
                 label="Update policies"
                 onClick={() => this.context.router.push({
                     pathname: `${this.props.pathname}/updatepolicies`
+                })}
+            />
+        ));
+
+        controls.push((
+            <TAControlButton
+                disabled={!isSetTeamsGranted}
+                key="setteams"
+                label="Update teams"
+                onClick={() => this.context.router.push({
+                    pathname: `${this.props.pathname}/updateteams`
                 })}
             />
         ));

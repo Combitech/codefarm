@@ -6,11 +6,12 @@ const { assertType } = require("misc");
 
 class Users extends Controller {
     constructor() {
-        super(User, Controller.DEFAULT_SUPPORT.concat([ "auth", "setpassword", "setpolicies", "addkey", "keys" ]));
+        super(User, Controller.DEFAULT_SUPPORT.concat([ "auth", "setpassword", "setpolicies", "setteams", "addkey", "keys" ]));
 
         this._addAction("auth", this._authenticate);
         this._addAction("setpassword", this._setPassword);
         this._addAction("setpolicies", this._setPolicies);
+        this._addAction("setteams", this._setTeams);
         this._addAction("addkey", this._addKey);
         this._addGetter("keys", this._getKeys);
     }
@@ -56,6 +57,18 @@ class Users extends Controller {
         const obj = await this._getTypeInstance(id);
 
         await obj.setPolicies(data.policies);
+
+        return obj.serialize();
+    }
+
+    async _setTeams(ctx, id, data) {
+        this._isAllowed(ctx, "setteams");
+        assertType(data, "request body", "object");
+        assertType(data.teams, "teams", "array");
+
+        const obj = await this._getTypeInstance(id);
+
+        await obj.setTeams(data.teams);
 
         return obj.serialize();
     }
