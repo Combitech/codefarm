@@ -2,11 +2,12 @@
 /* global window */
 
 import React from "react";
+import Immutable from "immutable";
+import moment from "moment";
 import LightComponent from "ui-lib/light_component";
-import Tags from "ui-components/tags";
 import Link from "react-toolbox/lib/link";
 import { Tab, Tabs } from "react-toolbox/lib/tabs";
-import { Row, Col } from "react-flexbox-grid";
+import { Row, Column as Col, Header, Section } from "ui-components/layout";
 import LogListItem from "./LogListItem";
 import ArtifactListItem from "./JobListItem";
 import SubJobListItem from "./SubJobListItem";
@@ -16,23 +17,38 @@ import {
     List as TAList,
     ControlButton as TAControlButton
 } from "ui-components/type_admin";
+import { CardList, CommentCard, AddCommentCard, JobCard } from "ui-components/data_card";
+import CommentListObservable from "ui-observables/comment_list";
 import * as pathBuilder from "ui-lib/path_builder";
 import * as queryBuilder from "ui-lib/query_builder";
+import { createComment } from "ui-lib/comment";
 import Notification from "ui-observables/notification";
 
 class Item extends LightComponent {
     constructor(props) {
         super(props);
 
+        this.commentList = new CommentListObservable({
+            commentRefs: (props.item && props.item.commentRefs) || []
+        });
+
         this.state = {
             runId: false,
             runTabIndex: 0,
-            baselineCollectorIndex: 0
+            baselineCollectorIndex: 0,
+            comments: this.commentList.value.getValue()
         };
     }
 
-    _showMessage(msg, type = "accept") {
-        Notification.instance.publish(msg, type);
+    componentDidMount() {
+        this.addDisposable(this.commentList.start());
+        this.addDisposable(this.commentList.value.subscribe((comments) => this.setState({ comments })));
+    }
+
+    componentWillReceiveProps(nextProps) {
+        this.commentList.setOpts({
+            commentRefs: (nextProps.item && nextProps.item.commentRefs) || []
+        });
     }
 
     async _downloadLog(item) {
@@ -50,7 +66,11 @@ class Item extends LightComponent {
             "rerun"
         );
 
-        this._showMessage("Job re-run requested");
+        Notification.instance.publish("Job re-run requested");
+    }
+
+    async onComment(comment) {
+        await createComment(comment, this.props.item);
     }
 
     render() {
@@ -75,8 +95,8 @@ class Item extends LightComponent {
 
         if (item.baseline.content) {
             baselineContent = (
-                <div>
-                    <h6 className={this.props.theme.title}>Baseline</h6>
+                <Section>
+                    <Header label="Baseline" />
                     <table className={this.props.theme.properties}>
                         <tbody>
                             <tr>
@@ -108,14 +128,14 @@ class Item extends LightComponent {
                         </Tab>
                     ))}
                     </Tabs>
-                </div>
+                </Section>
             );
         }
 
         const lastRunId = item.lastRunId === false ? 0 : item.lastRunId;
         const runContent = (
-            <div>
-                <h6 className={this.props.theme.title}>Runs</h6>
+            <Section>
+                <Header label="Runs" />
                 <Tabs
                     index={this.state.runId === false ? lastRunId : this.state.runId}
                     onChange={(runId) => this.setState({ runId })}
@@ -202,8 +222,30 @@ class Item extends LightComponent {
                         </Tab>
                     ))}
                 </Tabs>
-            </div>
+            </Section>
         );
+
+        const commentCardList = [
+            {
+                id: "addcomment",
+                time: Number.MAX_SAFE_INTEGER,
+                Card: AddCommentCard,
+                props: {
+                    onComment: this.onComment.bind(this)
+                }
+            }
+        ];
+
+        this.state.comments.forEach((item) => {
+            const comment = item.toJS();
+            commentCardList.push({
+                id: comment.created,
+                time: moment(comment.created).unix(),
+                item: comment,
+                Card: CommentCard,
+                props: {}
+            });
+        });
 
         return (
             <TASection
@@ -213,62 +255,16 @@ class Item extends LightComponent {
                 <div className={this.props.theme.container}>
                     <Row>
                         <Col xs={12} md={5} className={this.props.theme.panel}>
-                            <h6 className={this.props.theme.title}>Properties</h6>
-                            <table className={this.props.theme.properties}>
-                                <tbody>
-                                    <tr>
-                                        <td>Name</td>
-                                        <td>{item.name}</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Criteria</td>
-                                        <td>{item.criteria}</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Slave Id</td>
-                                        <td>
-                                            <Link
-                                                label={ item.slaveId || "None" }
-                                                onClick={() => {
-                                                    this.context.router.push({
-                                                        pathname: pathBuilder.fromType("exec.slave", { _id: item.slaveId })
-                                                    });
-                                                }}
-                                            />
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>Workspace Name</td>
-                                        <td>{item.workspaceName ? item.workspaceName : "No name specified"}</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Workspace Cleanup Policy</td>
-                                        <td>{item.workspaceCleanup}</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Finished</td>
-                                        <td>{item.finished ? `at ${item.finished}` : "No"}</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Status</td>
-                                        <td>{item.status}</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Created</td>
-                                        <td>{item.created}</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Saved</td>
-                                        <td>{item.saved}</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Tags</td>
-                                        <td>
-                                            <Tags list={this.props.item.tags} />
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                            <Section>
+                                <Header label="Properties" />
+                                <JobCard
+                                    item={item}
+                                    expanded={true}
+                                    expandable={false}
+                                    showAdvanced={true}
+                                    linkSlave={true}
+                                />
+                            </Section>
                         </Col>
                         <Col xs={12} md={7} className={this.props.theme.panel}>
                             {baselineContent}
@@ -277,6 +273,11 @@ class Item extends LightComponent {
                     <Row>
                         <Col xs={12} className={this.props.theme.panel}>
                             {runContent}
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col xs={12} md={5} className={this.props.theme.panel}>
+                            <CardList list={Immutable.fromJS(commentCardList)} expanded />
                         </Col>
                     </Row>
                 </div>

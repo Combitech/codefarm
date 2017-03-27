@@ -2,6 +2,7 @@
 import React from "react";
 import moment from "moment";
 import LightComponent from "ui-lib/light_component";
+import Link from "react-toolbox/lib/link";
 import { CardTitle } from "react-toolbox/lib/card";
 import HiddenText from "ui-components/hidden_text";
 import DateTime from "ui-components/datetime";
@@ -10,6 +11,7 @@ import ExpandableCard from "ui-components/expandable_card";
 import { StatusIcon } from "ui-components/status";
 import stateVar from "ui-lib/state_var";
 import statusText from "ui-lib/status_text";
+import * as pathBuilder from "ui-lib/path_builder";
 
 class JobCard extends LightComponent {
     constructor(props) {
@@ -112,7 +114,22 @@ class JobCard extends LightComponent {
                                 <tr>
                                     <td>Executed on slave</td>
                                     <td className={this.props.theme.monospace}>
-                                        {this.props.item.slaveId}
+                                        <Choose>
+                                            <When condition={this.props.linkSlave}>
+                                                <Link
+                                                    theme={this.props.theme}
+                                                    label={ this.props.item.slaveId }
+                                                    onClick={() => {
+                                                        this.context.router.push({
+                                                            pathname: pathBuilder.fromType("exec.slave", { _id: this.props.item.slaveId })
+                                                        });
+                                                    }}
+                                                />
+                                            </When>
+                                            <Otherwise>
+                                                {this.props.item.slaveId}
+                                            </Otherwise>
+                                        </Choose>
                                     </td>
                                 </tr>
                             </If>
@@ -122,6 +139,25 @@ class JobCard extends LightComponent {
                                     <Tags list={this.props.item.tags} />
                                 </td>
                             </tr>
+                            <If condition={this.props.showAdvanced}>
+                                <tr>
+                                    <td>Workspace Name</td>
+                                    <td>
+                                        <Choose>
+                                            <When condition={this.props.item.workspaceName}>
+                                                {this.props.item.workspaceName}
+                                            </When>
+                                            <Otherwise>
+                                                No name specified
+                                            </Otherwise>
+                                        </Choose>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Workspace Cleanup Policy</td>
+                                    <td>{this.props.item.workspaceCleanup}</td>
+                                </tr>
+                            </If>
                         </tbody>
                     </table>
                 </If>
@@ -132,14 +168,22 @@ class JobCard extends LightComponent {
 
 JobCard.defaultProps = {
     expanded: false,
-    expandable: true
+    expandable: true,
+    showAdvanced: false,
+    linkSlave: false
 };
 
 JobCard.propTypes = {
     theme: React.PropTypes.object,
     item: React.PropTypes.object.isRequired,
     expanded: React.PropTypes.bool,
-    expandable: React.PropTypes.bool
+    expandable: React.PropTypes.bool,
+    showAdvanced: React.PropTypes.bool,
+    linkSlave: React.PropTypes.bool
+};
+
+JobCard.contextTypes = {
+    router: React.PropTypes.object.isRequired
 };
 
 export default JobCard;

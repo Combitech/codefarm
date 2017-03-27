@@ -47,8 +47,9 @@
     vertical-align: middle;
 }
 
-.link {
+.link, .link[data-react-toolbox="link"] {
     cursor: pointer;
+    display: inline-block;
 
     &:link, &:visited {
         color: $color-text-secondary;
