@@ -87,16 +87,30 @@ class FsBackend {
 
         await fs.mkdirsAsync(logDir);
 
-        const result = {
-            storagePath: logFilePath
-        };
+        const writeStream = fs.createWriteStream(logFilePath);
 
-        return new Promise((resolve, reject) => {
-            fileStream
-                .pipe(fs.createWriteStream(logFilePath))
-                .on("finish", () => resolve(result))
+        // Wait until writeStream is open before piping data to it
+        // see http://stackoverflow.com/questions/12906694/fs-createwritestream-does-not-immediately-create-file
+        await new Promise((resolve, reject) => {
+            writeStream
+                .on("open", resolve)
                 .on("error", reject);
         });
+
+        await new Promise((resolve, reject) => {
+            fileStream
+                .pipe(writeStream)
+                .on("finish", resolve)
+                .on("error", (error) => {
+                    // Manually close write-stream on error
+                    writeStream.end();
+                    reject(error);
+                });
+        });
+
+        return {
+            storagePath: logFilePath
+        };
     }
 
     async getLogReadStream(repository, log) {
