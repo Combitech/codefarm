@@ -8,7 +8,6 @@ import Input from "react-toolbox/lib/input";
 import ExpandableCard from "ui-components/expandable_card";
 import stateVar from "ui-lib/state_var";
 import ActiveUser from "ui-observables/active_user";
-import Notification from "ui-observables/notification";
 
 class AddCommentCard extends LightComponent {
     constructor(props) {
@@ -26,23 +25,11 @@ class AddCommentCard extends LightComponent {
     }
 
     onComment() {
-        const signedInUser = this.state.activeUser.toJS();
         this.props.onComment({
-            creatorRef: {
-                _ref: true,
-                name: signedInUser.username,
-                type: "userrepo.user",
-                id: signedInUser.id
-            },
             text: this.state.comment.value
         })
         .then(() => {
             this.state.comment.set("");
-            Notification.instance.publish("Comment added successfully!");
-        })
-        .catch((error) => {
-            Notification.instance.publish(`Failed to publish comment: ${error.message || error}`, "warning");
-            console.error("comment failed", error);
         });
     }
 

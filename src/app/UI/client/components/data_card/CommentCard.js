@@ -42,7 +42,7 @@ class CommentCard extends LightComponent {
             );
         } else {
             title = (
-                <span>Unkown source</span>
+                <span>Unkown creator</span>
             );
         }
 

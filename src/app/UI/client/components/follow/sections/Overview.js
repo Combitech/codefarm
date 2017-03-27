@@ -2,27 +2,38 @@
 import React from "react";
 import Immutable from "immutable";
 import moment from "moment";
-import api from "api.io/api.io-client";
 import LightComponent from "ui-lib/light_component";
 import { Row, Column, Header } from "ui-components/layout";
 import { CardList, RevisionCard, AddCommentCard, CommentCard, ReviewCard, JobCard, TypeCard } from "ui-components/data_card";
+import { createComment } from "ui-lib/comment";
+import CommentListObservable from "ui-observables/comment_list";
 
 class Overview extends LightComponent {
-    async onComment(comment) {
-        comment.targetRef = {
-            _ref: true,
-            id: this.props.item._id,
-            type: this.props.item.type
+    constructor(props) {
+        super(props);
+
+        this.commentList = new CommentListObservable({
+            commentRefs: (props.item && props.item.commentRefs) || []
+        });
+
+        this.state = {
+            comments: this.commentList.value.getValue()
         };
-        const createdComment = await api.rest.post("metadata.comment", comment);
-        if (createdComment) {
-            const commentRef = {
-                _ref: true,
-                id: createdComment._id,
-                type: createdComment.type
-            };
-            await api.rest.action(this.props.item.type, this.props.item._id, "comment", commentRef);
-        }
+    }
+
+    componentDidMount() {
+        this.addDisposable(this.commentList.start());
+        this.addDisposable(this.commentList.value.subscribe((comments) => this.setState({ comments })));
+    }
+
+    componentWillReceiveProps(nextProps) {
+        this.commentList.setOpts({
+            commentRefs: (nextProps.item && nextProps.item.commentRefs) || []
+        });
+    }
+
+    async onComment(comment) {
+        return createComment(comment, this.props.item);
     }
 
     render() {
@@ -39,8 +50,8 @@ class Overview extends LightComponent {
             }
         ];
 
-        const comments = this.props.itemExt.data.commentRefs.map((ref) => ref.data);
-        for (const comment of comments) {
+        this.state.comments.forEach((item) => {
+            const comment = item.toJS();
             list.push({
                 id: comment.created,
                 time: moment(comment.created).unix(),
@@ -50,7 +61,7 @@ class Overview extends LightComponent {
                     expanded: true
                 }
             });
-        }
+        });
 
         if (this.props.item.hasOwnProperty("patches")) {
             this.props.item.patches.forEach((patch, patchIndex) => {
