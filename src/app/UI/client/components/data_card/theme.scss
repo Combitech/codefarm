@@ -133,10 +133,16 @@
         color: $color-text-secondary;
         width: 100%;
     }
-
 }
 
 // Override react-toolbux button styles
 .button .icon[data-react-toolbox="font-icon"] {
     vertical-align: middle;
+}
+
+.currentUserLabel {
+    @extend .tagBase;
+    background-color: $color-accent;
+    vertical-align: middle;
+    margin-left: $unit;
 }

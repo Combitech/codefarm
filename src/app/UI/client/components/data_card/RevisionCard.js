@@ -99,15 +99,15 @@ class RevisionCard extends LightComponent {
         }
 
         // Instantiate link button if not already on link destination
-        const myRevisionPath = pathBuilder.fromType("coderepo.revision", this.props.item);
-        let openRevisionLinkButton;
-        if (!this.context.router.isActive(myRevisionPath)) {
-            openRevisionLinkButton = (
+        const myItemPath = pathBuilder.fromType("coderepo.revision", this.props.item);
+        let openItemLinkButton;
+        if (!this.context.router.isActive(myItemPath)) {
+            openItemLinkButton = (
                 <IconButton
                     icon="open_in_browser"
                     onClick={() => {
                         this.context.router.push({
-                            pathname: myRevisionPath
+                            pathname: myItemPath
                         });
                     }}
                 />
@@ -146,7 +146,7 @@ class RevisionCard extends LightComponent {
                                 notFoundText={patch.name}
                                 prefixText={titlePrefix}
                             />
-                            {openRevisionLinkButton}
+                            {openItemLinkButton}
                         </div>
                     )}
                     subtitle={(

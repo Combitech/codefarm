@@ -16,6 +16,9 @@ import LogCard from "./LogCard";
 import StepResultCard from "./StepResultCard";
 import CodeRepositoryCard from "./CodeRepositoryCard";
 import ArtifactRepositoryCard from "./ArtifactRepositoryCard";
+import UserCard from "./UserCard";
+import TeamCard from "./TeamCard";
+import PolicyCard from "./PolicyCard";
 
 const ThemedCardList = themr(DATA_CARD, theme)(CardList);
 const ThemedTypeCard = themr(DATA_CARD, theme)(TypeCard);
@@ -30,6 +33,9 @@ const ThemedLogCard = themr(DATA_CARD, theme)(LogCard);
 const ThemedStepResultCard = themr(DATA_CARD, theme)(StepResultCard);
 const ThemedCodeRepositoryCard = themr(DATA_CARD, theme)(CodeRepositoryCard);
 const ThemedArtifactRepositoryCard = themr(DATA_CARD, theme)(ArtifactRepositoryCard);
+const ThemedUserCard = themr(DATA_CARD, theme)(UserCard);
+const ThemedTeamCard = themr(DATA_CARD, theme)(TeamCard);
+const ThemedPolicyCard = themr(DATA_CARD, theme)(PolicyCard);
 
 export { ThemedCardList as CardList };
 export { ThemedTypeCard as TypeCard };
@@ -44,3 +50,6 @@ export { ThemedLogCard as LogCard };
 export { ThemedStepResultCard as StepResultCard };
 export { ThemedCodeRepositoryCard as CodeRepositoryCard };
 export { ThemedArtifactRepositoryCard as ArtifactRepositoryCard };
+export { ThemedUserCard as UserCard };
+export { ThemedTeamCard as TeamCard };
+export { ThemedPolicyCard as PolicyCard };

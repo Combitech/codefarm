@@ -1,24 +1,57 @@
 
 import React from "react";
 import ImmutablePropTypes from "react-immutable-proptypes";
-import { Row, Col } from "react-flexbox-grid";
 import LightComponent from "ui-lib/light_component";
 import {
     Section as TASection,
-    List as TAList,
     ControlButton as TAControlButton
 } from "ui-components/type_admin";
+import { Row, Column, Header, Section } from "ui-components/layout";
+import { UserCard, TeamCard, PolicyCard } from "ui-components/data_card";
 import CollaboratorAvatar from "ui-components/collaborator_avatar";
-import DateTime from "ui-components/datetime";
-import Tags from "ui-components/tags";
-import TeamListItem from "./TeamListItem";
-import PolicyListItem from "./PolicyListItem";
-import * as pathBuilder from "ui-lib/path_builder";
 import * as queryBuilder from "ui-lib/query_builder";
 import theme from "./theme.scss";
 import { isTokenValidForAccess } from "auth/lib/util";
+import TypeList from "ui-observables/type_list";
+import ResolveRefs from "ui-observables/resolve_refs";
 
 class Item extends LightComponent {
+    constructor(props) {
+        super(props);
+
+        this.teams = new TypeList({
+            query: this.props.item && this.props.item.teams ? queryBuilder.anyOf("_id", this.props.item.teams) : false,
+            type: "userrepo.team"
+        });
+
+        this.policies = new ResolveRefs({
+            type: "userrepo.policy",
+            refs: (this.props.item && this.props.item.policyRefs) || []
+        });
+
+        this.state = {
+            teams: this.teams.value.getValue(),
+            policies: this.policies.value.getValue()
+        };
+    }
+
+    componentDidMount() {
+        this.addDisposable(this.teams.start());
+        this.addDisposable(this.policies.start());
+
+        this.addDisposable(this.teams.value.subscribe((teams) => this.setState({ teams })));
+        this.addDisposable(this.policies.value.subscribe((policies) => this.setState({ policies })));
+    }
+
+    componentWillReceiveProps(nextProps) {
+        this.teams.setOpts({
+            query: nextProps.item && nextProps.item.teams ? queryBuilder.anyOf("_id", nextProps.item.teams) : false
+        });
+        this.policies.setOpts({
+            refs: (nextProps.item && nextProps.item.policyRefs) || []
+        });
+    }
+
     render() {
         this.log("render", this.props);
 
@@ -64,17 +97,33 @@ class Item extends LightComponent {
             />
         ));
 
-        let currentUserLabel;
-        if (isSignedInUser) {
-            currentUserLabel = (
-                <div className={this.props.theme.currentUserLabel}>
-                    Current user
-                </div>
-            );
-        }
+        const teamCards = [];
+        this.state.teams.forEach((item) => {
+            const team = item.toJS();
+            teamCards.push((
+                <TeamCard
+                    key={team._id}
+                    item={team}
+                    expandable={true}
+                    expanded={false}
+                    theme={this.props.theme}
+                />
+            ));
+        });
 
-        const aliases = Object.keys(this.props.item.aliases || {})
-            .map((key) => `${key}: ${this.props.item.aliases[key]}`);
+        const policyCards = [];
+        this.state.policies.forEach((item) => {
+            const policy = item.toJS();
+            policyCards.push((
+                <PolicyCard
+                    key={policy._id}
+                    item={policy}
+                    expandable={true}
+                    expanded={false}
+                    theme={this.props.theme}
+                />
+            ));
+        });
 
         return (
             <div>
@@ -84,97 +133,37 @@ class Item extends LightComponent {
                 >
                     <div className={this.props.theme.container}>
                         <Row>
-                            <Col xs={12} md={5} className={this.props.theme.panel}>
-                                <h6 className={this.props.theme.title}>Properties</h6>
-                                <table className={this.props.theme.properties}>
-                                    <tbody>
-                                        <tr>
-                                            <td>ID</td>
-                                            <td>{this.props.item._id}{currentUserLabel}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Name</td>
-                                            <td>{this.props.item.name}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Emails</td>
-                                            <td>{this.props.item.email.join(", ")}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Aliases</td>
-                                            <td>
-                                                <Tags list={aliases} />
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>Phone</td>
-                                            <td>{this.props.item.telephone}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Webpage</td>
-                                            <td>{this.props.item.webpage}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Public keys</td>
-                                            <td>{this.props.item.numKeys} uploaded</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Created</td>
-                                            <td>
-                                                <DateTime
-                                                    value={this.props.item.created}
-                                                    niceDate={true}
-                                                />
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>Modified</td>
-                                            <td>
-                                                <DateTime
-                                                    value={this.props.item.saved}
-                                                    niceDate={true}
-                                                />
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>Tags</td>
-                                            <td>
-                                                <Tags list={this.props.item.tags} />
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                                <h6 className={this.props.theme.title}>Teams</h6>
-                                <TAList
-                                    type="userrepo.team"
-                                    query={queryBuilder.anyOf("_id", this.props.item.teams)}
-                                    ListItemComponent={TeamListItem}
-                                    onSelect={(item) => {
-                                        this.context.router.push({
-                                            pathname: pathBuilder.fromType("userrepo.team", item)
-                                        });
-                                    }}
-                                />
-                            <h6 className={this.props.theme.title}>Granted access policies</h6>
-                                <TAList
-                                    type="userrepo.policy"
-                                    query={queryBuilder.anyOf("_id", this.props.item.policyRefs.map((ref) => ref.id))}
-                                    ListItemComponent={PolicyListItem}
-                                    onSelect={(item) => {
-                                        this.context.router.push({
-                                            pathname: pathBuilder.fromType("userrepo.policy", item)
-                                        });
-                                    }}
-                                />
-                            </Col>
-                            <Col xs={12} md={7} className={this.props.theme.panel}>
-                                <h6 className={this.props.theme.title}>Avatar</h6>
-                                <CollaboratorAvatar
-                                    id={this.props.item._id}
-                                    avatarType={"useravatar"}
-                                    className={theme.avatarLarge}
-                                />
-                            </Col>
+                            <Column xs={12} md={5}>
+                                <Section>
+                                    <Header label="Properties" />
+                                    <UserCard
+                                        theme={this.props.theme}
+                                        item={this.props.item}
+                                        expandable={false}
+                                        expanded={true}
+                                        showAdvanced={true}
+                                        isCurrentSignedInUser={isSignedInUser}
+                                    />
+                                </Section>
+                                <Section>
+                                    <Header label="Teams" />
+                                    {teamCards}
+                                </Section>
+                                <Section>
+                                    <Header label="Granted access policies" />
+                                    {policyCards}
+                                </Section>
+                            </Column>
+                            <Column xs={12} md={7}>
+                                <Section>
+                                    <Header label="Avatar" />
+                                    <CollaboratorAvatar
+                                        id={this.props.item._id}
+                                        avatarType={"useravatar"}
+                                        className={theme.avatarLarge}
+                                    />
+                                </Section>
+                            </Column>
                         </Row>
                     </div>
                 </TASection>

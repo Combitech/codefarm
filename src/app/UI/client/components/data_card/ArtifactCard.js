@@ -30,15 +30,15 @@ class ArtifactCard extends LightComponent {
         };
 
         // Instantiate link button if not already on link destination
-        const myArtitfactPath = pathBuilder.fromType("artifactrepo.artifact", this.props.item);
-        let openArtifactLinkButton;
-        if (!this.context.router.isActive(myArtitfactPath)) {
-            openArtifactLinkButton = (
+        const myItemPath = pathBuilder.fromType("artifactrepo.artifact", this.props.item);
+        let openItemLinkButton;
+        if (!this.context.router.isActive(myItemPath)) {
+            openItemLinkButton = (
                 <IconButton
                     icon="open_in_browser"
                     onClick={() => {
                         this.context.router.push({
-                            pathname: myArtitfactPath
+                            pathname: myItemPath
                         });
                     }}
                 />
@@ -63,7 +63,7 @@ class ArtifactCard extends LightComponent {
                             <span>
                                 {`${this.props.item.name} - ${this.props.item.version}`}
                             </span>
-                            {openArtifactLinkButton}
+                            {openItemLinkButton}
                         </div>
                     )}
                     subtitle={(

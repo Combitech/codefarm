@@ -28,6 +28,11 @@ const argv = yargs
     type: "array",
     default: []
 })
+.option("team", {
+    describe: "Team",
+    type: "array",
+    default: []
+})
 .option("key", {
     describe: "Public key",
     type: "string"
@@ -110,6 +115,23 @@ const run = async () => {
             console.dir(result, { colors: true, depth: null });
         } catch (error) {
             console.error("Failed to set policy for user", error.message);
+        }
+    }
+
+    if (argv.team.length > 0) {
+        console.log(`Setting teams ${argv.team.join(", ")} to user ${argv.id}`);
+        try {
+            result = await rp.patch({
+                url: `http://localhost:${configUserRepo.web.port}/user/${argv.id}`,
+                body: {
+                    teams: argv.team
+                },
+                json: true
+            });
+
+            console.dir(result, { colors: true, depth: null });
+        } catch (error) {
+            console.error("Failed to set teams for user", error.message);
         }
     }
 

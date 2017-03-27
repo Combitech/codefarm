@@ -254,7 +254,7 @@ class Item extends LightComponent {
             >
                 <div className={this.props.theme.container}>
                     <Row>
-                        <Col xs={12} md={5} className={this.props.theme.panel}>
+                        <Col xs={12} md={5}>
                             <Section>
                                 <Header label="Properties" />
                                 <JobCard
@@ -266,17 +266,17 @@ class Item extends LightComponent {
                                 />
                             </Section>
                         </Col>
-                        <Col xs={12} md={7} className={this.props.theme.panel}>
+                        <Col xs={12} md={7}>
                             {baselineContent}
                         </Col>
                     </Row>
                     <Row>
-                        <Col xs={12} className={this.props.theme.panel}>
+                        <Col xs={12}>
                             {runContent}
                         </Col>
                     </Row>
                     <Row>
-                        <Col xs={12} md={5} className={this.props.theme.panel}>
+                        <Col xs={12} md={5}>
                             <CardList list={Immutable.fromJS(commentCardList)} expanded />
                         </Col>
                     </Row>

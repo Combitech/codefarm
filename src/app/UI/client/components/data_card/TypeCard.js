@@ -6,6 +6,8 @@ import ArtifactCard from "./ArtifactCard";
 import JobCard from "./JobCard";
 import SubJobCard from "./SubJobCard";
 import LogCard from "./LogCard";
+import UserCard from "./UserCard";
+import TeamCard from "./TeamCard";
 
 const Cards = {
     "coderepo.revision": RevisionCard,
@@ -13,7 +15,9 @@ const Cards = {
     "artifactrepo.artifact": ArtifactCard,
     "exec.job": JobCard,
     "exec.subjob": SubJobCard,
-    "logrepo.log": LogCard
+    "logrepo.log": LogCard,
+    "userrepo.user": UserCard,
+    "userrepo.team": TeamCard
 };
 
 class TypeCard extends React.PureComponent {

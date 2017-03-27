@@ -1,22 +1,58 @@
 
 import React from "react";
-import Tags from "ui-components/tags";
-import { Row, Col } from "react-flexbox-grid";
 import LightComponent from "ui-lib/light_component";
 import {
-    Section as TASection,
-    List as TAList
+    Section as TASection
 } from "ui-components/type_admin";
-import UserListItem from "./UserListItem";
+import { Row, Column, Header, Section } from "ui-components/layout";
+import { TeamCard, UserCard } from "ui-components/data_card";
 import CollaboratorAvatar from "ui-components/collaborator_avatar";
-import * as pathBuilder from "ui-lib/path_builder";
 import theme from "./theme.scss";
+import TypeList from "ui-observables/type_list";
 
 class Item extends LightComponent {
+    constructor(props) {
+        super(props);
+
+        this.users = new TypeList({
+            query: this.props.item ? { teams: this.props.item._id } : false,
+            type: "userrepo.user"
+        });
+
+        this.state = {
+            users: this.users.value.getValue()
+        };
+    }
+
+    componentDidMount() {
+        this.addDisposable(this.users.start());
+        this.addDisposable(this.users.value.subscribe((users) => this.setState({ users })));
+    }
+
+    componentWillReceiveProps(nextProps) {
+        this.users.setOpts({
+            query: nextProps.item ? { teams: nextProps.item._id } : false
+        });
+    }
+
     render() {
         this.log("render", this.props);
 
         const controls = this.props.controls.slice(0);
+
+        const userCards = [];
+        this.state.users.forEach((item) => {
+            const user = item.toJS();
+            userCards.push((
+                <UserCard
+                    key={user._id}
+                    item={user}
+                    expandable={true}
+                    expanded={false}
+                    theme={this.props.theme}
+                />
+            ));
+        });
 
         return (
             <div>
@@ -26,62 +62,31 @@ class Item extends LightComponent {
                 >
                     <div className={this.props.theme.container}>
                         <Row>
-                            <Col xs={12} md={5} className={this.props.theme.panel}>
-                                <h6 className={this.props.theme.title}>Properties</h6>
-                                <table className={this.props.theme.properties}>
-                                    <tbody>
-                                        <tr>
-                                            <td>ID</td>
-                                            <td>{this.props.item._id}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Name</td>
-                                            <td>{this.props.item.name}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Email</td>
-                                            <td>{this.props.item.email}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Webpage</td>
-                                            <td>{this.props.item.webpage}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Created</td>
-                                            <td>{this.props.item.created}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Modified</td>
-                                            <td>{this.props.item.saved}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Tags</td>
-                                            <td>
-                                                <Tags list={this.props.item.tags} />
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                                <h6 className={this.props.theme.title}>Users</h6>
-                                <TAList
-                                    type="userrepo.user"
-                                    query={{ teams: this.props.item._id }}
-                                    ListItemComponent={UserListItem}
-                                    onSelect={(item) => {
-                                        this.context.router.push({
-                                            pathname: pathBuilder.fromType("userrepo.user", item)
-                                        });
-                                    }}
-                                />
-                            </Col>
-                            <Col xs={12} md={7} className={this.props.theme.panel}>
-                                <h6 className={this.props.theme.title}>Avatar</h6>
-                                <CollaboratorAvatar
-                                    id={this.props.item._id}
-                                    avatarType={"teamavatar"}
-                                    className={theme.avatarLarge}
-                                />
-                            </Col>
+                            <Column xs={12} md={5}>
+                                <Section>
+                                    <Header label="Properties" />
+                                    <TeamCard
+                                        theme={this.props.theme}
+                                        item={this.props.item}
+                                        expandable={false}
+                                        expanded={true}
+                                    />
+                                </Section>
+                                <Section>
+                                    <Header label="Users" />
+                                    {userCards}
+                                </Section>
+                            </Column>
+                            <Column xs={12} md={7}>
+                                <Section>
+                                    <Header label="Avatar" />
+                                    <CollaboratorAvatar
+                                        id={this.props.item._id}
+                                        avatarType={"teamavatar"}
+                                        className={theme.avatarLarge}
+                                    />
+                                </Section>
+                            </Column>
                         </Row>
                     </div>
                 </TASection>
