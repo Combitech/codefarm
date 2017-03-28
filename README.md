@@ -1,5 +1,5 @@
 # Code Farm
- 
+
 Code Farm is a generic Continous Integration (CI) system for executing CI flows.
 The system is deployed as a number of [micro-services](#micro-services) connected via RabbitMQ
 storing state in a MongoDB database.
@@ -7,7 +7,7 @@ storing state in a MongoDB database.
 The unique feature of Code Farm is a **developer centric view** where it's possible to
 track how a *code revision* or *artifact* has performed in different tests and/or builds.
 
-![Example CI Flow](http://yuml.me/diagram/scruffy/class/[Revision]-->[Gate], [Gate]-->[Test], [Gate]-->[Build])
+![Example CI Flow](http://yuml.me/diagram/scruffy/class/[Revision]-->[Gate],[Gate]-->[Test],[Gate]-->[Build])
 
 ## Micro-services
 Code Farm consists of the following services:
