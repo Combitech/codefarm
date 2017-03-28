@@ -13,27 +13,10 @@ import {
 import Notification from "ui-observables/notification";
 
 class Item extends LightComponent {
-    async _getArtifactRepoRestUrl() {
-        const response = await api.type.get("artifactrepo.state");
-
-        if (response.length !== 1) {
-            console.error("_getArtifactRepoRestUrl: Couldn't get artifactrepo rest uri, response=", response);
-
-            return false;
-        }
-
-        return response[0].provides.REST.uri;
-    }
-
     async onDownload(item) {
-        const repoUrl = await this._getArtifactRepoRestUrl();
-        if (repoUrl) {
-            const url = `${repoUrl}/artifact/${item._id}/download`;
-            console.log(`Download from ${url}`);
-
-            // Ugly way of downloading file from javascript...
-            window.location = url;
-        }
+        const url = `/artifactrepo/artifact/${item._id}/download`;
+        console.log(`Download from ${url}`);
+        window.open(url);
     }
 
     async onValidate(item) {

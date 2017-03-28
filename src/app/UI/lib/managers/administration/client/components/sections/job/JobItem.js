@@ -55,8 +55,7 @@ class Item extends LightComponent {
         const url = `/logrepo/log/${item._id}/download`;
         console.log(`Download from ${url}`);
 
-        // Ugly way of downloading file from javascript...
-        window.location = url;
+        window.open(url);
     }
 
     async onRerun() {
