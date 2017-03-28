@@ -25,28 +25,28 @@ module.exports = {
         const scriptServer = new ScriptServer("cmd", logfile, cliConfig.port);
         const executor = new Executor(logfile);
 
-        scriptServer.on("type_read", async (data) => {
-            await server.typeRead(data.typeName, data.id, data.getter);
+        scriptServer.on("type_read", async (data, contextId) => {
+            await server.typeRead(contextId, data.typeName, data.id, data.getter);
         });
 
-        scriptServer.on("type_create", async (data) => {
-            await server.typeCreate(data.typeName, data.data);
+        scriptServer.on("type_create", async (data, contextId) => {
+            await server.typeCreate(contextId, data.typeName, data.data);
         });
 
-        scriptServer.on("type_update", async (data) => {
-            await server.typeUpdate(data.typeName, data.id, data.data);
+        scriptServer.on("type_update", async (data, contextId) => {
+            await server.typeUpdate(contextId, data.typeName, data.id, data.data);
         });
 
-        scriptServer.on("type_action", async (data) => {
-            await server.typeAction(data.typeName, data.id, data.action, data.data);
+        scriptServer.on("type_action", async (data, contextId) => {
+            await server.typeAction(contextId, data.typeName, data.id, data.action, data.data);
         });
 
-        scriptServer.on("file_upload", async (data) => {
-            await server.fileUpload(data.kind, data.data);
+        scriptServer.on("file_upload", async (data, contextId) => {
+            await server.fileUpload(contextId, data.kind, data.data);
         });
 
-        scriptServer.on("revision_merge", async (data) => {
-            await server.revisionMerge(data.revisionId, data.data);
+        scriptServer.on("revision_merge", async (data, contextId) => {
+            await server.revisionMerge(contextId, data.revisionId, data.data);
         });
 
         server.on("abort", async () => {
@@ -65,45 +65,45 @@ module.exports = {
             await server.executing();
         });
 
-        server.on("notify_type_read", async (data) => {
-            log(`Server response: Read type ${data.type} with id ${data._id}`);
-            await scriptServer.response(data);
+        server.on("notify_type_read", async (data, contextId) => {
+            log(`Server response in context ${contextId}: Read type ${data.type} with id ${data._id}`);
+            await scriptServer.response(data, contextId);
             await scriptServer.end();
         });
 
-        server.on("notify_type_created", async (data) => {
-            log(`Server response: Created type ${data.type} with id ${data._id}`);
-            await scriptServer.response(data);
+        server.on("notify_type_created", async (data, contextId) => {
+            log(`Server response in context ${contextId}: Created type ${data.type} with id ${data._id}`);
+            await scriptServer.response(data, contextId);
             await scriptServer.end();
         });
 
-        server.on("notify_type_updated", async (data) => {
-            log(`Server response: Updated type ${data.type} with id ${data._id}`);
-            await scriptServer.response(data);
+        server.on("notify_type_updated", async (data, contextId) => {
+            log(`Server response in context ${contextId}: Updated type ${data.type} with id ${data._id}`);
+            await scriptServer.response(data, contextId);
             await scriptServer.end();
         });
 
-        server.on("notify_type_action_done", async (data) => {
-            log(`Server response: Type action done data=${data}`);
-            await scriptServer.response(data);
+        server.on("notify_type_action_done", async (data, contextId) => {
+            log(`Server response in context ${contextId}: Type action done data=${data}`);
+            await scriptServer.response(data, contextId);
             await scriptServer.end();
         });
 
-        server.on("notify_file_uploaded", async (data) => {
-            log(`Server response: Uploaded file to type ${data.type} with id ${data._id}`);
-            await scriptServer.response(data);
+        server.on("notify_file_uploaded", async (data, contextId) => {
+            log(`Server response in context ${contextId}: Uploaded file to type ${data.type} with id ${data._id}`);
+            await scriptServer.response(data, contextId);
             await scriptServer.end();
         });
 
-        server.on("notify_revision_merged", async (data) => {
-            log(`Server response: Merged revision ${data.type} with id ${data._id}`);
-            await scriptServer.response(data);
+        server.on("notify_revision_merged", async (data, contextId) => {
+            log(`Server response in context ${contextId}: Merged revision ${data.type} with id ${data._id}`);
+            await scriptServer.response(data, contextId);
             await scriptServer.end();
         });
 
-        server.on("notify_error", async (data) => {
-            log(`Server error response: ${JSON.stringify(data)}`);
-            await scriptServer.error("server_error", data);
+        server.on("notify_error", async (data, contextId) => {
+            log(`Server error response in context ${contextId}: ${JSON.stringify(data)}`);
+            await scriptServer.error("server_error", data, contextId);
             await scriptServer.end();
         });
 

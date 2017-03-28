@@ -121,17 +121,17 @@ class Control {
             return client[getter || "get"](typeName, id);
         };
 
-        notification.on("executor.type_read", async (executor, typeName, id, getter) => {
+        notification.on("executor.type_read", async (contextId, executor, typeName, id, getter) => {
             try {
                 const obj = await readType(typeName, id, getter);
-                await executor.notifyInfo("type_read", obj);
+                await executor.notifyInfo("type_read", contextId, obj);
             } catch (error) {
                 ServiceMgr.instance.log("error", "type_read error", error);
-                await executor.notifyError(error.message || error);
+                await executor.notifyError(contextId, error.message || error);
             }
         });
 
-        notification.on("executor.type_create", async (executor, typeName, data) => {
+        notification.on("executor.type_create", async (contextId, executor, typeName, data) => {
             try {
                 let obj;
                 const job = await Job.findOne({ _id: executor.jobId });
@@ -159,24 +159,24 @@ class Control {
                 default:
                     throw new Error(`Type ${typeName} not supported`);
                 }
-                await executor.notifyInfo("type_created", obj);
+                await executor.notifyInfo("type_created", contextId, obj);
             } catch (error) {
                 ServiceMgr.instance.log("error", "type_create error", error);
-                await executor.notifyError(error.message || error);
+                await executor.notifyError(contextId, error.message || error);
             }
         });
 
-        notification.on("executor.type_action", async (executor, typeName, id, action, data) => {
+        notification.on("executor.type_action", async (contextId, executor, typeName, id, action, data) => {
             try {
                 const obj = await executor.typeAction(typeName, id, action, data);
-                await executor.notifyInfo("type_action_done", obj);
+                await executor.notifyInfo("type_action_done", contextId, obj);
             } catch (error) {
                 ServiceMgr.instance.log("error", "type_action error", error);
-                await executor.notifyError(error.message || error);
+                await executor.notifyError(contextId, error.message || error);
             }
         });
 
-        notification.on("executor.type_update", async (executor, typeName, id, data) => {
+        notification.on("executor.type_update", async (contextId, executor, typeName, id, data) => {
             try {
                 let obj;
                 switch (typeName) {
@@ -186,14 +186,14 @@ class Control {
                 default:
                     throw new Error(`Type ${typeName} not supported`);
                 }
-                await executor.notifyInfo("type_updated", obj);
+                await executor.notifyInfo("type_updated", contextId, obj);
             } catch (error) {
                 ServiceMgr.instance.log("error", "type_update error", error);
-                await executor.notifyError(error.message || error);
+                await executor.notifyError(contextId, error.message || error);
             }
         });
 
-        notification.on("executor.file_upload", async (executor, kind, data) => {
+        notification.on("executor.file_upload", async (contextId, executor, kind, data) => {
             try {
                 assertType(data.path, "data.path", "string");
                 let obj;
@@ -247,14 +247,14 @@ class Control {
                 default:
                     throw new Error(`upload_file of ${kind} not supported`);
                 }
-                await executor.notifyInfo("file_uploaded", obj);
+                await executor.notifyInfo("file_uploaded", contextId, obj);
             } catch (error) {
                 ServiceMgr.instance.log("error", "file_upload error", error);
-                await executor.notifyError(error.message || error);
+                await executor.notifyError(contextId, error.message || error);
             }
         });
 
-        notification.on("executor.revision_merge", async (executor, revisionId /* data */) => {
+        notification.on("executor.revision_merge", async (contextId, executor, revisionId /* data */) => {
             try {
                 let obj;
                 const job = await Job.findOne({ _id: executor.jobId });
@@ -267,10 +267,10 @@ class Control {
                 } else {
                     throw new Error("No revision id");
                 }
-                await executor.notifyInfo("revision_merged", obj);
+                await executor.notifyInfo("revision_merged", contextId, obj);
             } catch (error) {
                 ServiceMgr.instance.log("error", "revision_merge error", error);
-                await executor.notifyError(error.message || error);
+                await executor.notifyError(contextId, error.message || error);
             }
         });
 

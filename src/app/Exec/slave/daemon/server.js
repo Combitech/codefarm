@@ -71,7 +71,7 @@ class Server extends AsyncEventEmitter {
         if (data.type === "ack") {
             await this.outstream.ack(data.ack);
         } else if (data.type === "cmd") {
-            await this.emit(data.action, data.data);
+            await this.emit(data.action, data.data, data.contextId);
         }
     }
 
@@ -98,7 +98,7 @@ class Server extends AsyncEventEmitter {
 
     async _sendOut(type, content = {}) {
         const data = Object.assign(content, {
-            type: type,
+            type,
             time: moment().utc().format()
         });
         await this.outstream.write(data);
@@ -128,28 +128,51 @@ class Server extends AsyncEventEmitter {
         await this._sendOut("executing", {});
     }
 
-    async typeRead(typeName, id, getter) {
-        await this._sendOut("type_read", { typeName: typeName, id: id, getter: getter });
+    async typeRead(contextId, typeName, id, getter) {
+        await this._sendOut("type_read", {
+            typeName, id, getter, contextId
+        });
     }
 
-    async typeCreate(typeName, data = null) {
-        await this._sendOut("type_create", { typeName: typeName, data: data });
+    async typeCreate(contextId, typeName, data = null) {
+        await this._sendOut("type_create", {
+            typeName, data, contextId
+        });
     }
 
-    async typeUpdate(typeName, id, data = null) {
-        await this._sendOut("type_update", { typeName: typeName, id: id, data: data });
+    async typeUpdate(contextId, typeName, id, data = null) {
+        await this._sendOut("type_update", {
+            typeName,
+            id,
+            data,
+            contextId
+        });
     }
 
-    async typeAction(typeName, id, action, data = null) {
-        await this._sendOut("type_action", { typeName: typeName, id: id, action: action, data: data });
+    async typeAction(contextId, typeName, id, action, data = null) {
+        await this._sendOut("type_action", {
+            typeName,
+            id,
+            action,
+            data,
+            contextId
+        });
     }
 
-    async fileUpload(kind, data = null) {
-        await this._sendOut("file_upload", { kind: kind, data: data });
+    async fileUpload(contextId, kind, data = null) {
+        await this._sendOut("file_upload", {
+            kind,
+            data,
+            contextId
+        });
     }
 
-    async revisionMerge(revisionId, data = null) {
-        await this._sendOut("revision_merge", { revisionId: revisionId, data: data });
+    async revisionMerge(contextId, revisionId, data = null) {
+        await this._sendOut("revision_merge", {
+            revisionId,
+            data,
+            contextId
+        });
     }
 
     _log(line) {

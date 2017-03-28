@@ -1,12 +1,12 @@
 "use strict";
 
-/* global describe it before beforeEach */
+/* global describe it before after beforeEach */
 
 const { assert } = require("chai");
 const { mochaPatch } = require("testsupport");
 const path = require("path");
 const rp = require("request-promise");
-const fs = require("fs");
+const fs = require("fs-extra-promise");
 const getPort = require("get-port");
 const { ServiceMgr } = require("service");
 const { ServiceComBus } = require("servicecom");
@@ -30,6 +30,7 @@ const waitJobFinished = async (id) =>
 const DEFAULT_JOB_TIMEOUT = 10 * 1000;
 
 describe("Exec", () => {
+    let slavesDir;
     let testInfo;
     let main;
     let privateKeyPath;
@@ -40,6 +41,8 @@ describe("Exec", () => {
     let lastCodeRepoMergeRevisionId;
 
     before(async () => {
+        slavesDir = await fs.mkdtempAsync(path.join(__dirname, "tmp-"));
+        console.log("SLAVES_DIR", slavesDir);
         const restServicePort = await getPort();
         testInfo = {
             name: "exec",
@@ -165,6 +168,10 @@ describe("Exec", () => {
         });
     });
 
+    after(async () => {
+        await fs.removeAsync(slavesDir);
+    });
+
     beforeEach(() => {
         uploadedArtifactContent = null;
         uploadedLogContent = null;
@@ -192,7 +199,7 @@ describe("Exec", () => {
                 json: true,
                 body: {
                     _id: "Slave1",
-                    uri: `ssh://${process.env.USER}@localhost:/tmp`,
+                    uri: `ssh://${process.env.USER}@localhost:${slavesDir}`,
                     tags: [ "tag1", "tag2" ],
                     executors: 1,
                     privateKeyPath: privateKeyPath,
@@ -201,7 +208,7 @@ describe("Exec", () => {
             });
 
             assert.equal(data.result, "success");
-            assert.equal(data.data.uri, `ssh://${process.env.USER}@localhost:/tmp`);
+            assert.equal(data.data.uri, `ssh://${process.env.USER}@localhost:${slavesDir}`);
             assert.deepEqual(data.data.tags, [ "tag1", "tag2", data.data._id ]);
             assert.equal(data.data.executors, 1);
             assert.equal(data.data.privateKeyPath, privateKeyPath);
@@ -216,7 +223,7 @@ describe("Exec", () => {
             });
 
             assert.equal(data._id, id);
-            assert.equal(data.uri, `ssh://${process.env.USER}@localhost:/tmp`);
+            assert.equal(data.uri, `ssh://${process.env.USER}@localhost:${slavesDir}`);
             assert.deepEqual(data.tags, [ "tag1", "tag2", data._id ]);
             assert.equal(data.executors, 1);
             assert.equal(data.privateKeyPath, privateKeyPath);
@@ -242,7 +249,7 @@ describe("Exec", () => {
             });
 
             assert.equal(data.result, "success");
-            assert.equal(data.data.uri, `ssh://${process.env.USER}@localhost:/tmp`);
+            assert.equal(data.data.uri, `ssh://${process.env.USER}@localhost:${slavesDir}`);
             assert.deepEqual(data.data.tags, [ "tag1", "tag2", data.data._id ]);
             assert.equal(data.data.executors, 1);
             assert.equal(data.data.privateKeyPath, privateKeyPath);
@@ -266,7 +273,7 @@ describe("Exec", () => {
                 json: true,
                 body: {
                     _id: "Slave2",
-                    uri: `ssh://${process.env.USER}@localhost:/tmp`,
+                    uri: `ssh://${process.env.USER}@localhost:${slavesDir}`,
                     tags: [ "tag1", "tag2" ],
                     executors: 1,
                     privateKeyPath: privateKeyPath,
@@ -275,7 +282,7 @@ describe("Exec", () => {
             });
 
             assert.equal(data.result, "success");
-            assert.equal(data.data.uri, `ssh://${process.env.USER}@localhost:/tmp`);
+            assert.equal(data.data.uri, `ssh://${process.env.USER}@localhost:${slavesDir}`);
             assert.deepEqual(data.data.tags, [ "tag1", "tag2", data.data._id ]);
             assert.equal(data.data.executors, 1);
             assert.equal(data.data.privateKeyPath, privateKeyPath);

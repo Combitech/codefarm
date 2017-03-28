@@ -446,36 +446,36 @@ class Executor extends Type {
             this.__com.on("type_read", async (data) => {
                 const getterStr = data.getter ? `/${data.getter}` : "";
                 const idStr = data.id ? `/${data.id}` : "";
-                await this._logln(`Job read type ${data.typeName}${idStr}${getterStr} requested`);
-                notification.emit(`${this.constructor.typeName}.type_read`, this, data.typeName, data.id, data.getter);
+                await this._logln(`Job read type ${data.typeName}${idStr}${getterStr} requested in context ${data.contextId}`);
+                notification.emit(`${this.constructor.typeName}.type_read`, data.contextId, this, data.typeName, data.id, data.getter);
             });
 
             this.__com.on("type_create", async (data) => {
-                await this._logln(`Job create type ${data.typeName} requested`);
-                notification.emit(`${this.constructor.typeName}.type_create`, this, data.typeName, data.data);
+                await this._logln(`Job create type ${data.typeName} requested in context ${data.contextId}`);
+                notification.emit(`${this.constructor.typeName}.type_create`, data.contextId, this, data.typeName, data.data);
             });
 
             this.__com.on("type_update", async (data) => {
                 const idStr = data.id ? `/${data.id}` : "";
-                await this._logln(`Job update type ${data.typeName}${idStr} requested`);
-                notification.emit(`${this.constructor.typeName}.type_update`, this, data.typeName, data.id, data.data);
+                await this._logln(`Job update type ${data.typeName}${idStr} requested in context ${data.contextId}`);
+                notification.emit(`${this.constructor.typeName}.type_update`, data.contextId, this, data.typeName, data.id, data.data);
             });
 
             this.__com.on("type_action", async (data) => {
                 const actionStr = data.action ? `/${data.action}` : "";
                 const idStr = data.id ? `/${data.id}` : "";
-                await this._logln(`Job type action ${data.typeName}${idStr}${actionStr} requested`);
-                notification.emit(`${this.constructor.typeName}.type_action`, this, data.typeName, data.id, data.action, data.data);
+                await this._logln(`Job type action ${data.typeName}${idStr}${actionStr} requested in context ${data.contextId}`);
+                notification.emit(`${this.constructor.typeName}.type_action`, data.contextId, this, data.typeName, data.id, data.action, data.data);
             });
 
             this.__com.on("file_upload", async (data) => {
-                await this._logln(`Job upload ${data.kind} with slave path ${data.data.path} requested`);
-                notification.emit(`${this.constructor.typeName}.file_upload`, this, data.kind, data.data);
+                await this._logln(`Job upload ${data.kind} with slave path ${data.data.path} requested in context ${data.contextId}`);
+                notification.emit(`${this.constructor.typeName}.file_upload`, data.contextId, this, data.kind, data.data);
             });
 
             this.__com.on("revision_merge", async (data) => {
-                await this._logln(`Job merge revision ${data.revisionId} requested`);
-                notification.emit(`${this.constructor.typeName}.revision_merge`, this, data.revisionId, data.data);
+                await this._logln(`Job merge revision ${data.revisionId} requested in context ${data.contextId}`);
+                notification.emit(`${this.constructor.typeName}.revision_merge`, data.contextId, this, data.revisionId, data.data);
             });
 
             this.__com.on("executing", async () => {
@@ -551,22 +551,22 @@ class Executor extends Type {
     }
 
     // TODO: Better function naming, notifyEvent is already taken by base-class Type
-    async notifyInfo(event, obj = null) {
+    async notifyInfo(event, contextId = false, obj = null) {
         if (!this.__com) {
             return;
         }
 
-        await this._logln(`Notify event ${event}: ${JSON.stringify(obj)}`);
-        await this.__com.sendCommand(`notify_${event}`, obj);
+        await this._logln(`Notify event ${event} in context ${contextId}: ${JSON.stringify(obj)}`);
+        await this.__com.sendCommand(`notify_${event}`, obj, contextId);
     }
 
-    async notifyError(obj = null) {
+    async notifyError(contextId = false, obj = null) {
         if (!this.__com) {
             return;
         }
 
-        await this._logln(`Notify error: ${JSON.stringify(obj)}`);
-        await this.__com.sendCommand("notify_error", obj);
+        await this._logln(`Notify error in context ${contextId}: ${JSON.stringify(obj)}`);
+        await this.__com.sendCommand("notify_error", obj, contextId);
     }
 }
 

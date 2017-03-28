@@ -3,6 +3,7 @@
 const net = require("net");
 const log = require("./log");
 const { AsyncEventEmitter } = require("emitter");
+const { v4: uuid } = require("uuid");
 
 let client;
 
@@ -59,18 +60,38 @@ class ComClient extends AsyncEventEmitter {
     /** Write a request to command socket and wait for response.
      * Connection is closed when done.
      * @param {Object} data Data to send, will be serialized as a JSON string
-     * @param {String} encoding How to serialize data sent to socket
+     * @param {Object} [opts] Options
+     * @param {String} [opts.encoding] How to serialize data sent to socket
+     * @param {String} [opts.useContextId] Add contextId to request and assert same in response
      * @return {Object} Request response
      */
-    async request(data, encoding = "json") {
+    async request(data, opts = {}) {
+        opts = opts || {};
+        opts.encoding = opts.encoding || "json";
+        opts.useContextId = opts.hasOwnProperty("useContextId") ? opts.useContextId : true;
+        opts.throwOnError = opts.hasOwnProperty("throwOnError") ? opts.throwOnError : true;
         await this.connect();
-        const msg = this._encode(data, encoding);
+        if (opts.useContextId) {
+            data.contextId = uuid();
+        }
+        const msg = this._encode(data, opts.encoding);
         await this._send(msg);
         await this._waitRemoteEnd();
         const rxData = await this._receive();
         await this.disconnect();
 
-        return this._decode(rxData, encoding);
+        const response = await this._decode(rxData, opts.encoding);
+        if (data.contextId) {
+            if (data.contextId !== response.contextId) {
+                const error = new Error(`Unexpected response contextId ${response.contextId} received. Expected ${data.contextId}.`);
+                log.error(`com: ${error.message}`, data, response);
+                if (opts.throwOnError) {
+                    throw error;
+                }
+            }
+        }
+
+        return response;
     }
 
     async _send(msg) {

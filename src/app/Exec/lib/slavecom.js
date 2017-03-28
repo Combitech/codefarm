@@ -59,11 +59,12 @@ class SlaveCom extends AsyncEventEmitter {
         }
     }
 
-    sendCommand(action, data = {}) {
+    sendCommand(action, data = {}, contextId = false) {
         const line = JSON.stringify({
             type: "cmd",
-            action: action,
-            data: data,
+            action,
+            data,
+            contextId,
             seq: this.counter++,
             _src: "master"
         });

@@ -63,7 +63,7 @@ class ScriptServer extends AsyncEventEmitter {
 
     async handle(data) {
         if (data.type === "cmd") {
-            await this.emit(data.action, data.data);
+            await this.emit(data.action, data.data, data.contextId || false);
         }
     }
 
@@ -95,16 +95,16 @@ class ScriptServer extends AsyncEventEmitter {
             this.socket.write(`${strData}\n`, "utf8", resolve));
     }
 
-    async error(msg, data = null) {
-        await this._write({ type: "error", msg: msg, data: data });
+    async error(msg, data = null, contextId = false) {
+        await this._write({ type: "error", msg, data, contextId });
     }
 
-    async response(data = null) {
-        await this._write({ type: "response", data: data });
+    async response(data = null, contextId) {
+        await this._write({ type: "response", data, contextId });
     }
 
     async info(msg, data = null) {
-        await this._write({ type: "msg", msg: msg, data: data });
+        await this._write({ type: "msg", msg, data });
     }
 
     async stdout(msg) {
