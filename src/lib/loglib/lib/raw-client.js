@@ -26,7 +26,7 @@ class RawClient {
         await this.bus.assertExchange(this.exchangeName);
     }
 
-    async append(id, time, level, tag, str) {
+    async append(id, time, level, tag, str, lineNr = false) {
         if (!this.bus) {
             throw new Error("No bus created, please run start first");
         }
@@ -34,10 +34,11 @@ class RawClient {
         const data = {
             _id: id,
             data: {
-                time: time,
-                level: level,
-                tag: tag,
-                str: str
+                time,
+                level,
+                tag,
+                str,
+                lineNr
             }
         };
 

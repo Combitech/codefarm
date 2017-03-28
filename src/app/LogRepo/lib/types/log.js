@@ -90,6 +90,9 @@ class Log extends Type {
         if (data.level) {
             tags.push(data.level);
         }
+        if (typeof data.lineNr === "number") {
+            tags.push(`L${data.lineNr}`);
+        }
         const prefix = tags.length > 0 ? `[${tags.join(" ")}] ` : "";
 
         for (const line of data.str.split("\n")) {

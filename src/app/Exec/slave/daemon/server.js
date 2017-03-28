@@ -112,12 +112,12 @@ class Server extends AsyncEventEmitter {
         await this._sendOut("msg", { msg: msg, data: data });
     }
 
-    async stdout(msg) {
-        await this._sendOut("stdout", { msg: msg });
+    async stdout(data) {
+        await this._sendOut("stdout", data);
     }
 
-    async stderr(msg) {
-        await this._sendOut("stderr", { msg: msg });
+    async stderr(data) {
+        await this._sendOut("stderr", data);
     }
 
     async finish(result) {

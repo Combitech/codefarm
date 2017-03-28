@@ -101,12 +101,12 @@ class Executor extends Type {
         await this._log(`${str}\n`, level, tag, time);
     }
 
-    async _log(str, level = LEVEL.STDOUT, tag = "exe", time) {
+    async _log(str, level = LEVEL.STDOUT, tag = "exe", time, lineNr = false) {
         str = str.replace(/\n$/, "");
 
         for (const line of str.split("\n")) {
             if (this.logId) {
-                await RawLogClient.instance.append(this.logId, time, level, tag, line);
+                await RawLogClient.instance.append(this.logId, time, level, tag, line, lineNr);
             }
 
             const prefix = `${tag.toUpperCase()}:${level}`;
@@ -436,11 +436,11 @@ class Executor extends Type {
             });
 
             this.__com.on("stdout", async (data) => {
-                await this._log(data.msg, LEVEL.STDOUT, "exe", data.time);
+                await this._log(data.msg, LEVEL.STDOUT, "exe", data.time, data.lineNr);
             });
 
             this.__com.on("stderr", async (data) => {
-                await this._log(data.msg, LEVEL.STDERR, "exe", data.time);
+                await this._log(data.msg, LEVEL.STDERR, "exe", data.time, data.lineNr);
             });
 
             this.__com.on("type_read", async (data) => {
@@ -531,7 +531,6 @@ class Executor extends Type {
         if (!this.__com) {
             return;
         }
-
         await this._logln("Abort requested");
         this.finished = true;
         await this.save();

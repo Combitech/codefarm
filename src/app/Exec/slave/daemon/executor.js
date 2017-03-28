@@ -29,6 +29,7 @@ class Executor extends AsyncEventEmitter {
             await fs.writeFileAsync(dataFilePath, JSON.stringify(data, null, 2));
 
             this._log(`Executing ${script} with env ${JSON.stringify(env)}`);
+            let nextOutputLineNr = 0;
             this.process = spawn(script, [], {
                 cwd: cwd,
                 env: Object.assign({}, process.env, env),
@@ -36,12 +37,20 @@ class Executor extends AsyncEventEmitter {
                 stdio: [ "pipe", "pipe", "pipe" ]
             });
 
-            this.process.stdout.on("data", (data) => {
-                this.emit("stdout", data.toString());
+            this.process.stdout.on("data", (line) => {
+                const data = {
+                    msg: line.toString(),
+                    lineNr: nextOutputLineNr++
+                };
+                this.emit("stdout", data);
             });
 
-            this.process.stderr.on("data", (data) => {
-                this.emit("stderr", data.toString());
+            this.process.stderr.on("data", (line) => {
+                const data = {
+                    msg: line.toString(),
+                    lineNr: nextOutputLineNr++
+                };
+                this.emit("stderr", data);
             });
 
             this.process.on("close", (code) => {
