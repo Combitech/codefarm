@@ -16,11 +16,11 @@ Code Farm consists of the following services:
 * **ArtifactRepo** - Stores information about artifact repositories and artifacts
 * **LogRepo** - Stores logs
 * **UserRepo** - Stores information about users and teams
+* **MetaData** - Stores information about other type instances
 * **BaselineGen** - Generates baselines from baseline specifications
 * **FlowCtrl** - Requests baselines and triggers steps on generated baselines
 * **DataResolve** - Resolves complex data queries
 * **Exec** - Executes jobs on slaves
-* **MetaData** - Responsible for storing meta-data about other types.
 * **Mgmt** - Responsible for managing Code Farm, distributes config etc.
 
 The services are designed to use different *backends* where needed, for example
