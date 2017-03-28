@@ -74,6 +74,8 @@ class Main extends Service {
         this.addDisposable(ServiceProxy.instance);
         ServiceProxy.instance.addProxyRoute("get", "read", "userrepo.useravatar", "avatar");
         ServiceProxy.instance.addProxyRoute("get", "read", "userrepo.teamavatar", "avatar");
+        ServiceProxy.instance.addProxyRoute("post", "upload", "userrepo.useravatar", "upload");
+        ServiceProxy.instance.addProxyRoute("post", "upload", "userrepo.teamavatar", "upload");
         ServiceProxy.instance.addProxyRoute("get", "read", "logrepo.log", "download");
         ServiceProxy.instance.addProxyRoute("get", "read", "artifactrepo.artifact", "download");
 

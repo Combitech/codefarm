@@ -68,6 +68,12 @@ class Item extends LightComponent {
             "setteams",
             { throwOnError: false }
         );
+        const isUploadAvatarGranted = isTokenValidForAccess(
+            this.props.activeUser.has("priv") && this.props.activeUser.get("priv").toJS(),
+            "userrepo.useravatar",
+            "upload",
+            { throwOnError: false }
+        );
 
         const controls = this.props.controls.slice(0);
         controls.push((
@@ -110,6 +116,17 @@ class Item extends LightComponent {
                 label="Update teams"
                 onClick={() => this.context.router.push({
                     pathname: `${this.props.pathname}/updateteams`
+                })}
+            />
+        ));
+
+        controls.push((
+            <TAControlButton
+                disabled={!isUploadAvatarGranted}
+                key="uploadavatar"
+                label="Upload avatar"
+                onClick={() => this.context.router.push({
+                    pathname: `${this.props.pathname}/uploadavatar`
                 })}
             />
         ));

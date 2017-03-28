@@ -25,12 +25,12 @@ class ServiceProxy {
         return restClient.url;
     }
 
-    addProxyRoute(method, requiredAccess, type, getter) {
+    addProxyRoute(method, requiredAccess, type, getterOrAction) {
         const [ service, typeName ] = type.split(".");
         const baseRoute = `/${service}/${typeName}`;
         let route = `${baseRoute}/:id`;
-        if (getter) {
-            route = `${route}/${getter}`;
+        if (getterOrAction) {
+            route = `${route}/${getterOrAction}`;
         }
         const routeHandler = async (ctx, id) => {
             const decodedToken = ctx.state && ctx.state.user;
@@ -39,8 +39,8 @@ class ServiceProxy {
             const targetBasePath = `/${typeName}`;
             let targetPath = `${targetBasePath}/${id}`;
 
-            if (getter) {
-                targetPath = `${targetPath}/${getter}`;
+            if (getterOrAction) {
+                targetPath = `${targetPath}/${getterOrAction}`;
             }
 
             ServiceMgr.instance.log("verbose", `Proxy request to ${serviceUrl}${targetPath}`);
