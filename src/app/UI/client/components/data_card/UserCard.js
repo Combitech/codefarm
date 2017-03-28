@@ -149,7 +149,7 @@ UserCard.defaultProps = {
     expanded: false,
     expandable: true,
     showAdvanced: false,
-    isCurrentSignedInUser: true
+    isCurrentSignedInUser: false
 };
 
 UserCard.propTypes = {
