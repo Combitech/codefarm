@@ -4,7 +4,12 @@ const { name, version } = require("./package.json");
 const path = require("path");
 const yargs = require("yargs");
 const Main = require("./lib/main");
-const { ServiceMgr, getCmdLineOpts: getServiceOpts } = require("service");
+const {
+    ServiceMgr,
+    getCmdLineOpts: getServiceOpts,
+    setupProcessHooks,
+    crashHandler
+} = require("service");
 
 const argv = yargs
 .usage("Usage: $0 -c [config]")
@@ -51,31 +56,7 @@ const argv = yargs
 .options(getServiceOpts({ queueName: name }))
 .argv;
 
-const crashHandler = (error) => {
-    console.error(new Date());
-    console.error("Error! Oh, no, we crashed hard!");
-    console.error(error);
-    console.error(error.stack);
-    process.exit(error.code || 255);
-};
-
-const promiseWarningHandler = (error, promise) => {
-    console.error(new Date());
-    console.error("Warning, unhandled promise rejection", error);
-    console.error("Promise: ", promise);
-    process.exit(error.code || 254);
-};
-
-const shutdownHandler = async () => {
-    await ServiceMgr.instance.dispose();
-    process.exit(0);
-};
-
-process
-.on("SIGINT", shutdownHandler)
-.on("SIGTERM", shutdownHandler)
-.on("uncaughtException", crashHandler)
-.on("unhandledRejection", promiseWarningHandler);
+setupProcessHooks();
 
 const main = new Main(name, version);
 argv.autoUseMgmt = false;
