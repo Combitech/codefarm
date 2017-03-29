@@ -39,7 +39,6 @@
     "singleton"
   ],
   "dependencies": {
-    "async-busboy": "^0.3.4",
     "yargs": "^7.0.2"
   },
   "devDependencies": {

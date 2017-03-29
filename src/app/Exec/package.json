@@ -41,7 +41,7 @@
     "singleton"
   ],
   "dependencies": {
-    "async-busboy": "^0.3.4",
+    "async-busboy": "^0.4.0",
     "babel-eslint": "^7.2.1",
     "bluebird": "^3.5.0",
     "commander": "^2.9.0",
@@ -52,7 +52,7 @@
     "request": "^2.81.0",
     "source-map-support": "^0.4.14",
     "uuid": "^3.0.1",
-    "webpack": "^2.3.1",
+    "webpack": "^2.3.2",
     "webpack-async-await": "^1.1.0",
     "yargs": "^7.0.2"
   },

@@ -38,7 +38,7 @@
   ],
   "dependencies": {
     "argon2": "^0.15.0",
-    "async-busboy": "^0.3.4",
+    "async-busboy": "^0.4.0",
     "yargs": "^7.0.2"
   },
   "devDependencies": {

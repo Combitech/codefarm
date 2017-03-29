@@ -40,13 +40,13 @@
     "loglib"
   ],
   "dependencies": {
-    "async-busboy": "^0.3.4",
+    "async-busboy": "^0.4.0",
     "fs-extra-promise": "^0.4.1",
     "read-last-lines": "^1.1.2",
     "yargs": "^7.0.2"
   },
   "devDependencies": {
-    "babel-eslint": "^7.2.0",
+    "babel-eslint": "^7.2.1",
     "chai": "^3.5.0",
     "eslint": "^3.18.0",
     "get-port": "^3.0.0",
