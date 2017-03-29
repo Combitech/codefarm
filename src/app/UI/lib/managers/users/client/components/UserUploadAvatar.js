@@ -1,4 +1,4 @@
-/* global FileReader document */
+/* global FileReader */
 import React from "react";
 import ImmutablePropTypes from "react-immutable-proptypes";
 import LightComponent from "ui-lib/light_component";
@@ -21,7 +21,7 @@ class UserUploadAvatar extends LightComponent {
 
     async _onConfirm() {
         // TODO: Submit form using jquery or something else...
-        document.getElementById("upload_avatar_form").submit();
+        this.uploadAvatarForm.submit();
     }
 
     async _onCancel() {
@@ -81,7 +81,7 @@ class UserUploadAvatar extends LightComponent {
                             onCancel={() => this._onCancel()}
                         >
                             <form
-                                id="upload_avatar_form"
+                                ref={(ref) => this.uploadAvatarForm = ref}
                                 name="upload_avatar"
                                 encType="multipart/form-data"
                                 method="POST"
