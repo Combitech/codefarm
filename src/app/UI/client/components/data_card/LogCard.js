@@ -1,6 +1,4 @@
 
-/* global window document */
-
 import React from "react";
 import LightComponent from "ui-lib/light_component";
 import { CardTitle, CardText } from "react-toolbox/lib/card";
@@ -11,6 +9,7 @@ import ExpandableCard from "ui-components/expandable_card";
 import UserAvatar from "ui-components/user_avatar";
 import stateVar from "ui-lib/state_var";
 import { LogLines } from "ui-components/log_viewer";
+import CardLinkIcon from "./CardLinkIcon";
 
 class LogCard extends LightComponent {
     constructor(props) {
@@ -21,11 +20,9 @@ class LogCard extends LightComponent {
         };
     }
 
-    download() {
-        window.open(`${document.location.origin}/logrepo/log/${this.props.item._id}/download`);
-    }
-
     render() {
+        const myItemPath = `/logrepo/log/${this.props.item._id}/download`;
+
         return (
             <ExpandableCard
                 className={this.props.theme.card}
@@ -40,12 +37,15 @@ class LogCard extends LightComponent {
                         />
                     )}
                     title={(
-                        <a
-                            className={this.props.theme.link}
-                            onClick={() => this.download()}
-                        >
+                        <div>
                             {this.props.item.name}
-                        </a>
+                            <CardLinkIcon
+                                theme={this.props.theme}
+                                path={myItemPath}
+                                name="log"
+                                openInNew={true}
+                            />
+                        </div>
                     )}
                     subtitle={(
                         <DateTime

@@ -3,17 +3,10 @@ import React from "react";
 import moment from "moment";
 import Immutable from "immutable";
 import LightComponent from "ui-lib/light_component";
-import AppHeader from "ui-components/app_header";
-import { IconStyler, CodeFarmIcon } from "ui-components/app_icons";
 import { Header, Row, Column, Loading } from "ui-components/layout";
 import TypeList from "ui-observables/type_list";
 import { States as ObservableDataStates } from "ui-lib/observable_data";
 import { CardList, RevisionCard, ArtifactCard } from "ui-components/data_card";
-
-const ICON_SIZE = {
-    width: 312,
-    height: 312
-};
 
 class IndexPage extends LightComponent {
     constructor(props) {
@@ -54,19 +47,6 @@ class IndexPage extends LightComponent {
     }
 
     render() {
-        const iconStyle = {
-            verticalAlign: "bottom"
-        };
-        const icon = (
-            <IconStyler white>
-                <CodeFarmIcon
-                    style={iconStyle}
-                    width={ICON_SIZE.width}
-                    height={ICON_SIZE.height}
-                />
-            </IconStyler>
-        );
-
         const revisions = this.state.revisions.map((revision) => Immutable.fromJS({
             id: revision.get("_id"),
             time: moment(revision.get("statusSetAt")).unix(),
@@ -85,12 +65,7 @@ class IndexPage extends LightComponent {
 
         return (
             <div>
-                <AppHeader
-                    primaryText="Welcome to the Code Farm"
-                    secondaryText="Grow your software, herd your revisions..."
-                    icon={icon}
-                />
-                <Row style={{ margin: 16, marginTop: 32 }}>
+                <Row style={{ margin: "1.6rem", marginTop: "9.6rem" }}>
                     <Column xs={12} md={4}>
                         <Header label="Welcome" />
                         <p>

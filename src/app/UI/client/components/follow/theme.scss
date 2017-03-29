@@ -11,6 +11,12 @@
     margin-bottom: $layout-gutter-width * 2;
 }
 
+.emptyTable {
+    color: $color-text-secondary;
+    text-transform: uppercase;
+    text-align: center;
+}
+
 .table {
     width: 100%;
     font-size: 1.3rem;

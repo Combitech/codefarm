@@ -2,12 +2,12 @@
 import React from "react";
 import LightComponent from "ui-lib/light_component";
 import { CardTitle } from "react-toolbox/lib/card";
-import { IconButton } from "react-toolbox/lib/button";
 import DateTime from "ui-components/datetime";
 import Tags from "ui-components/tags";
 import ExpandableCard from "ui-components/expandable_card";
 import stateVar from "ui-lib/state_var";
 import * as pathBuilder from "ui-lib/path_builder";
+import CardLinkIcon from "./CardLinkIcon";
 
 class PolicyCard extends LightComponent {
     constructor(props) {
@@ -19,21 +19,7 @@ class PolicyCard extends LightComponent {
     }
 
     render() {
-        // Instantiate link button if not already on link destination
         const myItemPath = pathBuilder.fromType("userrepo.policy", this.props.item);
-        let openItemLinkButton;
-        if (!this.context.router.isActive(myItemPath)) {
-            openItemLinkButton = (
-                <IconButton
-                    icon="open_in_browser"
-                    onClick={() => {
-                        this.context.router.push({
-                            pathname: myItemPath
-                        });
-                    }}
-                />
-            );
-        }
 
         return (
             <ExpandableCard
@@ -45,7 +31,11 @@ class PolicyCard extends LightComponent {
                     title={(
                         <div>
                             {this.props.item._id}
-                            {openItemLinkButton}
+                            <CardLinkIcon
+                                theme={this.props.theme}
+                                path={myItemPath}
+                                name="policy"
+                            />
                         </div>
                     )}
                 />

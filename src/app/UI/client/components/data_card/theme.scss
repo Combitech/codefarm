@@ -6,6 +6,21 @@
 
 .card {
     margin-bottom: $layout-gutter-width-sm;
+
+    .linkIcon {
+        opacity: 0;
+        transition: opacity 0.3s;
+    }
+
+    &:hover .linkIcon {
+        opacity: 0.8;
+        transition: opacity 0.1s;
+        color: $color-text-secondary;
+
+        &:hover {
+            color: $cf-color-selected;
+        }
+    }
 }
 
 .commentBase {

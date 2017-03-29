@@ -16,8 +16,8 @@
     border-bottom: 1px solid $cf-color-pane-border;
 
     h1 {
-        font-size: 5.6rem;
-        font-weight: $font-weight-thin;
+        font-size: 5.8rem;
+        font-weight: $font-weight-normal;
         color: $cf-color-pane-header-text;
         margin-bottom: $baseline-grid;
     }
@@ -37,8 +37,6 @@
         transform: rotate(5deg);
         opacity: 0.5;
     }
-
-
 }
 
 .input {

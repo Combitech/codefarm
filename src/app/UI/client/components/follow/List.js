@@ -90,31 +90,40 @@ class List extends LightComponent {
         return (
             <div className={this.props.theme.listContainer}>
                 <Loading show={this.state.state === ObservableDataStates.LOADING}/>
-                <table className={this.props.theme.table}>
-                    <tbody className={this.props.theme.header}>
-                        <this.props.HeaderComponent
-                            theme={this.props.theme}
-                            steps={steps}
-                        />
-                    </tbody>
-                    <tbody className={this.props.theme.list}>
-                        <For each="item" of={this.state.items}>
-                            <this.props.RowComponent
-                                key={item.get("_id")}
-                                theme={this.props.theme}
-                                onClick={(item, step) => this.gotoStep(item, step)}
-                                item={item}
-                                steps={steps}
+                <Choose>
+                    <When condition={this.state.items.size === 0}>
+                        <div className={this.props.theme.emptyTable}>
+                            Nothing to list
+                        </div>
+                    </When>
+                    <Otherwise>
+                        <table className={this.props.theme.table}>
+                            <tbody className={this.props.theme.header}>
+                                <this.props.HeaderComponent
+                                    theme={this.props.theme}
+                                    steps={steps}
+                                />
+                            </tbody>
+                            <tbody className={this.props.theme.list}>
+                                <For each="item" of={this.state.items}>
+                                    <this.props.RowComponent
+                                        key={item.get("_id")}
+                                        theme={this.props.theme}
+                                        onClick={(item, step) => this.gotoStep(item, step)}
+                                        item={item}
+                                        steps={steps}
+                                    />
+                                </For>
+                            </tbody>
+                        </table>
+                        <If condition={this.props.limit > 0}>
+                            <ListPager
+                                pagedList={this.items}
+                                pagingInfo={this.items.pagingInfo.getValue()}
                             />
-                        </For>
-                    </tbody>
-                </table>
-                <If condition={this.props.limit > 0}>
-                    <ListPager
-                        pagedList={this.items}
-                        pagingInfo={this.items.pagingInfo.getValue()}
-                    />
-                </If>
+                        </If>
+                    </Otherwise>
+                </Choose>
             </div>
         );
     }
