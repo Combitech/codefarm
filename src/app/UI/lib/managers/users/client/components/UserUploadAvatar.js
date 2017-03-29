@@ -1,4 +1,4 @@
-
+/* global FileReader document */
 import React from "react";
 import ImmutablePropTypes from "react-immutable-proptypes";
 import LightComponent from "ui-lib/light_component";
@@ -7,14 +7,21 @@ import {
     Form as TAForm,
     Section as TASection
 } from "ui-components/type_admin";
+import { Header } from "ui-components/layout";
 import { isTokenValidForAccess } from "auth/lib/util";
 
 class UserUploadAvatar extends LightComponent {
     constructor(props) {
         super(props);
+        this.state = {
+            avatarFilename: "",
+            avatarPreviewData: false
+        };
     }
 
     async _onConfirm() {
+        // TODO: Submit form using jquery or something else...
+        document.getElementById("upload_avatar_form").submit();
     }
 
     async _onCancel() {
@@ -23,7 +30,7 @@ class UserUploadAvatar extends LightComponent {
 
     _confirmAllowed() {
         const user = this._getUser();
-        const inputsValid = true;
+        const inputsValid = this.state.avatarFilename.length > 0;
 
         return user && inputsValid;
     }
@@ -32,6 +39,14 @@ class UserUploadAvatar extends LightComponent {
         props = props || this.props;
 
         return props.parentItems.find((item) => item.type === "userrepo.user");
+    }
+
+    _onAvatarFilenameChange(avatarFilename, event) {
+        this.setState({ avatarFilename });
+        const reader = new FileReader();
+        reader.onload = (e) =>
+            this.setState({ avatarPreviewData: e.target.result });
+        reader.readAsDataURL(event.target.files[0]);
     }
 
     render() {
@@ -65,8 +80,8 @@ class UserUploadAvatar extends LightComponent {
                             onConfirm={() => this._onConfirm()}
                             onCancel={() => this._onCancel()}
                         >
-                            {/* TODO - prettify upload below... */}
                             <form
+                                id="upload_avatar_form"
                                 name="upload_avatar"
                                 encType="multipart/form-data"
                                 method="POST"
@@ -74,14 +89,21 @@ class UserUploadAvatar extends LightComponent {
                             >
                                 <Input
                                     type="file"
-                                    label="Choose image file"
+                                    label="Choose avatar image"
                                     name="avatarFile"
-                                />
-                                <Input
-                                    type="submit"
-                                    value="submit"
+                                    value={this.state.avatarFilename}
+                                    onChange={(value, event) => this._onAvatarFilenameChange(value, event)}
+                                    floating={false}
+                                    required={true}
                                 />
                             </form>
+                            <If condition={this.state.avatarPreviewData}>
+                                <Header label="Preview" />
+                                <img
+                                    className={this.props.theme.uploadAvatarPreview}
+                                    src={this.state.avatarPreviewData}
+                                />
+                            </If>
                         </TAForm>
                     </When>
                 </Choose>
