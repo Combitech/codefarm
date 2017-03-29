@@ -3,7 +3,6 @@ import React from "react";
 import ImmutablePropTypes from "react-immutable-proptypes";
 import LightComponent from "ui-lib/light_component";
 import Input from "react-toolbox/lib/input";
-import { CardText } from "react-toolbox/lib/card";
 import {
     Form as TAForm,
     Section as TASection
