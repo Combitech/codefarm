@@ -2,7 +2,6 @@
 import React from "react";
 import LightComponent from "ui-lib/light_component";
 import { CardTitle } from "react-toolbox/lib/card";
-import { IconButton } from "react-toolbox/lib/button";
 import HiddenText from "ui-components/hidden_text";
 import DateTime from "ui-components/datetime";
 import Tags from "ui-components/tags";
@@ -10,6 +9,7 @@ import ExpandableCard from "ui-components/expandable_card";
 import stateVar from "ui-lib/state_var";
 import { ArtifactRepoBackendIcon } from "ui-components/app_icons";
 import * as pathBuilder from "ui-lib/path_builder";
+import CardLinkIcon from "./CardLinkIcon";
 
 class ArtifactCard extends LightComponent {
     constructor(props) {
@@ -29,21 +29,7 @@ class ArtifactCard extends LightComponent {
             return "/Cheser/48x48/mimetypes/application-x-rpm.png";
         };
 
-        // Instantiate link button if not already on link destination
         const myItemPath = pathBuilder.fromType("artifactrepo.artifact", this.props.item);
-        let openItemLinkButton;
-        if (!this.context.router.isActive(myItemPath)) {
-            openItemLinkButton = (
-                <IconButton
-                    icon="open_in_browser"
-                    onClick={() => {
-                        this.context.router.push({
-                            pathname: myItemPath
-                        });
-                    }}
-                />
-            );
-        }
 
         return (
             <ExpandableCard
@@ -63,7 +49,11 @@ class ArtifactCard extends LightComponent {
                             <span>
                                 {`${this.props.item.name} - ${this.props.item.version}`}
                             </span>
-                            {openItemLinkButton}
+                            <CardLinkIcon
+                                theme={this.props.theme}
+                                path={myItemPath}
+                                name="artifact"
+                            />
                         </div>
                     )}
                     subtitle={(

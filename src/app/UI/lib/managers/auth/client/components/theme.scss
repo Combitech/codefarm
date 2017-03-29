@@ -4,6 +4,5 @@
 @import "react-toolbox/components/mixins";
 
 .content {
-    margin-left: $baseline-grid * 2;
-    margin-top: $standard-increment-desktop + $baseline-grid * 2;
+    margin-top: $standard-increment-desktop + $baseline-grid * 4;
 }

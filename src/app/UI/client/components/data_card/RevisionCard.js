@@ -2,7 +2,7 @@
 import React from "react";
 import LightComponent from "ui-lib/light_component";
 import { CardTitle, CardText } from "react-toolbox/lib/card";
-import { Button, IconButton } from "react-toolbox/lib/button";
+import { Button } from "react-toolbox/lib/button";
 import FontIcon from "react-toolbox/lib/font_icon";
 import UserAvatar from "ui-components/user_avatar";
 import DateTime from "ui-components/datetime";
@@ -15,6 +15,7 @@ import { StringUtil } from "misc";
 import UserName from "ui-components/user_name";
 import { CodeRepoBackendIcon } from "ui-components/app_icons";
 import * as pathBuilder from "ui-lib/path_builder";
+import CardLinkIcon from "./CardLinkIcon";
 
 const FILE_STATUS_ICON = {
     added: "add",
@@ -98,24 +99,10 @@ class RevisionCard extends LightComponent {
             titlePrefix = "Merged by";
         }
 
-        // Instantiate link button if not already on link destination
         const myItemPath = pathBuilder.fromType("coderepo.revision", this.props.item);
-        let openItemLinkButton;
-        if (!this.context.router.isActive(myItemPath)) {
-            openItemLinkButton = (
-                <IconButton
-                    icon="open_in_browser"
-                    onClick={() => {
-                        this.context.router.push({
-                            pathname: myItemPath
-                        });
-                    }}
-                />
-            );
-        }
 
         let patchPager;
-        if (this.props.patchIndex < 0) {
+        if (this.props.patchIndex < 0 && this.props.item.patches.length > 1) {
             patchPager = (
                 <AppPager
                     theme={this.props.theme}
@@ -146,7 +133,11 @@ class RevisionCard extends LightComponent {
                                 notFoundText={patch.name}
                                 prefixText={titlePrefix}
                             />
-                            {openItemLinkButton}
+                            <CardLinkIcon
+                                theme={this.props.theme}
+                                path={myItemPath}
+                                name="revision"
+                            />
                         </div>
                     )}
                     subtitle={(

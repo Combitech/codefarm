@@ -1,14 +1,17 @@
+
 import React from "react";
 import LightComponent from "ui-lib/light_component";
 import { Input } from "react-toolbox/lib/input";
 import {
-    Form as TAForm
+    Form as TAForm,
+    Section as TASection
 } from "ui-components/type_admin";
 import { signin } from "ui-lib/auth";
 
 class SignInForm extends LightComponent {
     constructor(props) {
         super(props);
+
         this.state = {
             emailOrId: "",
             password: ""
@@ -22,6 +25,7 @@ class SignInForm extends LightComponent {
     async onConfirm() {
         const response = await signin(this.state.emailOrId, this.state.password);
         this.log("Sign in response", response);
+
         if (response.success) {
             this.context.router.push({
                 pathname: "/"
@@ -33,28 +37,32 @@ class SignInForm extends LightComponent {
         this.log("render", this.props);
 
         return (
-            <TAForm
-                confirmAllowed={true}
-                confirmText="Sign in"
-                primaryText="CodeFarm - Sign In"
-                onConfirm={() => this.onConfirm()}
-                onCancel={() => this.onCancel()}
-            >
-                <Input
-                    type="text"
-                    label="User id or email"
-                    required={true}
-                    value={this.state.emailOrId}
-                    onChange={(emailOrId) => this.setState({ emailOrId })}
-                />
-                <Input
-                    type="password"
-                    label="Password"
-                    required={true}
-                    value={this.state.password}
-                    onChange={(password) => this.setState({ password })}
-                />
-            </TAForm>
+            <div className={this.props.theme.content}>
+                <TASection>
+                    <TAForm
+                        confirmAllowed={true}
+                        confirmText="Sign In"
+                        primaryText="Sign In"
+                        onConfirm={() => this.onConfirm()}
+                        onCancel={() => this.onCancel()}
+                    >
+                        <Input
+                            type="text"
+                            label="User id or email"
+                            required={true}
+                            value={this.state.emailOrId}
+                            onChange={(emailOrId) => this.setState({ emailOrId })}
+                        />
+                        <Input
+                            type="password"
+                            label="Password"
+                            required={true}
+                            value={this.state.password}
+                            onChange={(password) => this.setState({ password })}
+                        />
+                    </TAForm>
+                </TASection>
+            </div>
         );
     }
 }

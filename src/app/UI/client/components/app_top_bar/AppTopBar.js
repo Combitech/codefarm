@@ -7,6 +7,7 @@ import LightComponent from "ui-lib/light_component";
 import { CodeFarmIcon } from "ui-components/app_icons";
 import ActiveUser from "ui-observables/active_user";
 import UserAvatar from "ui-components/user_avatar";
+import { signout } from "ui-lib/auth";
 
 class AppTopBar extends LightComponent {
     constructor(props) {
@@ -24,6 +25,17 @@ class AppTopBar extends LightComponent {
 
     onClick(pathname) {
         this.context.router.push({ pathname });
+    }
+
+    signOut() {
+        signout()
+        .then((response) => {
+            this.log("Sign out response", response);
+        })
+        .catch((error) => {
+            this.log("Sign out failed", error);
+            console.error("Sign out failed", error);
+        });
     }
 
     _toggleUserMenu() {
@@ -100,8 +112,8 @@ class AppTopBar extends LightComponent {
                                 <MenuDivider />
                                 <MenuItem
                                     icon="exit_to_app"
-                                    value="/signout"
                                     caption="Sign out"
+                                    onClick={() => this.signOut()}
                                 />
                             </Menu>
                         </div>

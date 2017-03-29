@@ -9,16 +9,16 @@ class Section extends LightComponent {
 
         return (
             <div className={this.props.theme.section}>
-                <div className={this.props.theme.header}>
-                    {this.props.controls}
-                    <Breadcrumbs
-                        theme={this.props.theme}
-                        items={this.props.breadcrumbs}
-                    />
-                </div>
-                <div>
-                    {this.props.children}
-                </div>
+                <If condition={this.props.breadcrumbs || this.props.controls}>
+                    <div className={this.props.theme.header}>
+                        {this.props.controls}
+                        <Breadcrumbs
+                            theme={this.props.theme}
+                            items={this.props.breadcrumbs}
+                        />
+                    </div>
+                </If>
+                {this.props.children}
             </div>
         );
     }
