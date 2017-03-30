@@ -4,11 +4,10 @@
 
 const { assert } = require("chai");
 const getPort = require("get-port");
-const { mochaPatch, RestStub } = require("testsupport");
+const { mochaPatch, RestStub, serviceComStub } = require("testsupport");
 const Main = require("../lib/main");
 const rp = require("request-promise");
 const { ServiceMgr } = require("service");
-const { ServiceComBus } = require("servicecom");
 
 mochaPatch();
 
@@ -174,7 +173,6 @@ describe("GithubBackend", async () => {
             assert(p.pullreqnr === `${prefix}-123`);
             assert(p.change.newrev === `${prefix}-headSha`);
             assert(p.change.oldrev === `${prefix}-baseSha`);
-            console.log(p.userRef.id, user);
             assert(p.userRef.id === user);
             assert(p.userRef.type === "userrepo.user");
             assert(p.change.files.length === 0);
@@ -200,10 +198,8 @@ describe("GithubBackend", async () => {
         ServiceMgr.instance.create(main, testInfo.config);
         await main.awaitOnline();
 
-        // TODO: Isolate this in own module and remember to removeListener(name, func) on added listeners at cleanup
-        ServiceComBus.instance.addListener("request", async (event) => {
-            ServiceComBus.instance._onData({ type: "response", result: "success", _id: event._id, data: testInfo.userData });
-        });
+        // Set up response to user query from github backend
+        serviceComStub("list", "user", "success", testInfo.userData);
 
         await addBackend(testInfo.gitHubBackend);
 
@@ -267,8 +263,6 @@ describe("GithubBackend", async () => {
             assert(deferred.resolved);
 
             const r = await getRevision("12345");
-//            console.log(JSON.stringify(r, null, 2));
-
             assert(r.status === "merged");
             assert(r.tags.length === 1);
             assert(r.tags[0] === "merged");
