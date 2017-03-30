@@ -4,11 +4,10 @@
 
 const { assert } = require("chai");
 const getPort = require("get-port");
-const { mochaPatch } = require("testsupport");
+const { mochaPatch, RestStub } = require("testsupport");
 const Main = require("../lib/main");
 const rp = require("request-promise");
 const { ServiceMgr } = require("service");
-const GhStub = require("./github_stub");
 const { ServiceComBus } = require("servicecom");
 
 mochaPatch();
@@ -51,7 +50,7 @@ describe("GithubBackend", async () => {
             version: "0.0.1",
             config: {
                 autoUseMgmt: false,
-                level: "verbose",
+                level: "info",
                 web: {
                     port: await getPort()
                 },
@@ -208,7 +207,7 @@ describe("GithubBackend", async () => {
 
         await addBackend(testInfo.gitHubBackend);
 
-        ghStub = new GhStub();
+        ghStub = new RestStub();
         await ghStub.start(ghStubPort);
     });
 

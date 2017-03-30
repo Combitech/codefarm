@@ -126,7 +126,6 @@ describe("CodeRepo", async () => {
                 json: true
             });
 
-            console.log(backends);
             assert.lengthOf(backends, 0);
         });
 
@@ -196,7 +195,6 @@ describe("CodeRepo", async () => {
                 url: `${baseUrl}/backend`,
                 json: true
             });
-            console.log(backends);
 
             await deleteBackend(testInfo.gitHubBackend._id);
             await deleteBackend(testInfo.gerritBackend._id);
