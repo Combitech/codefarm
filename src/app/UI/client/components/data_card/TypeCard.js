@@ -8,6 +8,9 @@ import SubJobCard from "./SubJobCard";
 import LogCard from "./LogCard";
 import UserCard from "./UserCard";
 import TeamCard from "./TeamCard";
+import PolicyCard from "./PolicyCard";
+import StatSpecCard from "./StatSpecCard";
+import StatStatCard from "./StatStatCard";
 
 const Cards = {
     "coderepo.revision": RevisionCard,
@@ -17,7 +20,10 @@ const Cards = {
     "exec.subjob": SubJobCard,
     "logrepo.log": LogCard,
     "userrepo.user": UserCard,
-    "userrepo.team": TeamCard
+    "userrepo.team": TeamCard,
+    "userrepo.policy": PolicyCard,
+    "stat.spec": StatSpecCard,
+    "stat.stat": StatStatCard
 };
 
 class TypeCard extends React.PureComponent {

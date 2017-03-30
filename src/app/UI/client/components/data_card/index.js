@@ -19,6 +19,8 @@ import ArtifactRepositoryCard from "./ArtifactRepositoryCard";
 import UserCard from "./UserCard";
 import TeamCard from "./TeamCard";
 import PolicyCard from "./PolicyCard";
+import StatSpecCard from "./StatSpecCard";
+import StatStatCard from "./StatStatCard";
 
 const ThemedCardList = themr(DATA_CARD, theme)(CardList);
 const ThemedTypeCard = themr(DATA_CARD, theme)(TypeCard);
@@ -36,6 +38,8 @@ const ThemedArtifactRepositoryCard = themr(DATA_CARD, theme)(ArtifactRepositoryC
 const ThemedUserCard = themr(DATA_CARD, theme)(UserCard);
 const ThemedTeamCard = themr(DATA_CARD, theme)(TeamCard);
 const ThemedPolicyCard = themr(DATA_CARD, theme)(PolicyCard);
+const ThemedStatSpecCard = themr(DATA_CARD, theme)(StatSpecCard);
+const ThemedStatStatCard = themr(DATA_CARD, theme)(StatStatCard);
 
 export { ThemedCardList as CardList };
 export { ThemedTypeCard as TypeCard };
@@ -53,3 +57,5 @@ export { ThemedArtifactRepositoryCard as ArtifactRepositoryCard };
 export { ThemedUserCard as UserCard };
 export { ThemedTeamCard as TeamCard };
 export { ThemedPolicyCard as PolicyCard };
+export { ThemedStatSpecCard as StatSpecCard };
+export { ThemedStatStatCard as StatStatCard };

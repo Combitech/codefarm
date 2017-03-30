@@ -30,7 +30,7 @@
 }
 
 // Comment is used for commit messages and user comments
-.comment {
+.comment, .code {
     @extend .commentBase;
     white-space: pre;
     overflow: hidden;

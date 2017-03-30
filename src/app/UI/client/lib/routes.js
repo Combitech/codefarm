@@ -23,6 +23,7 @@ import adminPageFlowRoutes from "ui-mgr/administration/client/components/section
 import adminPageJobRoutes from "ui-mgr/administration/client/components/sections/job/routes";
 import adminPageSlaveRoutes from "ui-mgr/administration/client/components/sections/slave/routes";
 import adminPageBaselineRoutes from "ui-mgr/administration/client/components/sections/baseline/routes";
+import adminPageStatRoutes from "ui-mgr/administration/client/components/sections/stats/routes";
 
 import mgmtPageUserrepoBackendRoutes from "ui-mgr/mgmt/client/components/sections/userrepo_backend/routes";
 import mgmtPageUserrepoPolicyRoutes from "ui-mgr/mgmt/client/components/sections/userrepo_policy/routes";
@@ -44,6 +45,7 @@ const routes = (
             {adminPageLogrepoRoutes}
             {adminPageBaselineRoutes}
             {adminPageFlowRoutes}
+            {adminPageStatRoutes}
             {adminPageSlaveRoutes}
             {adminPageJobRoutes}
         </Route>

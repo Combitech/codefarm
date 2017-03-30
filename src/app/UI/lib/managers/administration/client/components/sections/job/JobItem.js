@@ -7,7 +7,7 @@ import moment from "moment";
 import LightComponent from "ui-lib/light_component";
 import Link from "react-toolbox/lib/link";
 import { Tab, Tabs } from "react-toolbox/lib/tabs";
-import { Row, Column as Col, Header, Section } from "ui-components/layout";
+import { Row, Column, Header, Section } from "ui-components/layout";
 import LogListItem from "./LogListItem";
 import ArtifactListItem from "./JobListItem";
 import SubJobListItem from "./SubJobListItem";
@@ -144,7 +144,7 @@ class Item extends LightComponent {
                             <div className={this.props.theme.panel}>
                                 <h6 className={this.props.theme.title}>Properties</h6>
                                 <Row>
-                                    <Col xs={12} md={5} className={this.props.theme.panel}>
+                                    <Column xs={12} md={5} className={this.props.theme.panel}>
                                         <table className={this.props.theme.properties}>
                                             <tbody>
                                                 <tr>
@@ -170,7 +170,7 @@ class Item extends LightComponent {
                                                 </tr>
                                             </tbody>
                                         </table>
-                                    </Col>
+                                    </Column>
                                 </Row>
                             </div>
                             <Tabs
@@ -253,7 +253,7 @@ class Item extends LightComponent {
             >
                 <div className={this.props.theme.container}>
                     <Row>
-                        <Col xs={12} md={5}>
+                        <Column xs={12} md={5}>
                             <Section>
                                 <Header label="Properties" />
                                 <JobCard
@@ -264,20 +264,20 @@ class Item extends LightComponent {
                                     linkSlave={true}
                                 />
                             </Section>
-                        </Col>
-                        <Col xs={12} md={7}>
+                        </Column>
+                        <Column xs={12} md={7}>
                             {baselineContent}
-                        </Col>
+                        </Column>
                     </Row>
                     <Row>
-                        <Col xs={12}>
+                        <Column xs={12}>
                             {runContent}
-                        </Col>
+                        </Column>
                     </Row>
                     <Row>
-                        <Col xs={12} md={5}>
+                        <Column xs={12} md={5}>
                             <CardList list={Immutable.fromJS(commentCardList)} expanded />
-                        </Col>
+                        </Column>
                     </Row>
                 </div>
             </TASection>

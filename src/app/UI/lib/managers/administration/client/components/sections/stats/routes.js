@@ -8,30 +8,30 @@ import {
 } from "ui-components/type_admin";
 import List from "./List";
 import Item from "./Item";
+import StatItem from "./StatItem";
 import Edit from "./Edit";
 import Remove from "./Remove";
-import EditStep from "./EditStep";
 
 const routes = (
     <Route
-        path="flows"
+        path="stats"
         component={TAView}
         List={List}
-        type="flowctrl.flow"
-        label="Flows"
-        icon="device_hub"
+        type="stat.spec"
+        label="Statistics"
+        icon="show_chart"
     >
         <Route
             path="create"
             component={TAEdit}
             Create={Edit}
-            type="flowctrl.flow"
+            type="stat.spec"
         />
         <Route
-            path=":flowId"
+            path=":_id"
             component={TAView}
             Item={Item}
-            type="flowctrl.flow"
+            type="stat.spec"
         >
             <Route
                 path="edit"
@@ -44,27 +44,11 @@ const routes = (
                 Remove={Remove}
             />
             <Route
-                path="create"
-                component={TAEdit}
-                Create={EditStep}
-                type="flowctrl.step"
-            />
-            <Route
-                path=":stepId"
+                path=":_id_stat"
                 component={TAView}
-                type="flowctrl.step"
-            >
-                <Route
-                    path="edit"
-                    component={TAEdit}
-                    Edit={EditStep}
-                />
-                <Route
-                    path="remove"
-                    component={TARemove}
-                    Remove={Remove}
-                />
-            </Route>
+                Item={StatItem}
+                type="stat.stat"
+            />
         </Route>
     </Route>
 );
