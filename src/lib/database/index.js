@@ -73,7 +73,11 @@ class Database extends ProviderClient {
         let cursor = this.db.collection(collection).find(query);
 
         if (options && options.project) {
-            cursor = cursor.project(options.project);
+            if (this.config.testMode) {
+                // TODO: Implement project
+            } else {
+                cursor = cursor.project(options.project);
+            }
         }
 
         if (options && options.sort) {

@@ -81,6 +81,10 @@ class Stat extends Type {
     async getInfo(fields, opts) {
         return this.__statData.calcCharacteristics(fields, opts);
     }
+
+    async getSamples(fields, opts) {
+        return this.__statData.getSamples(fields, opts);
+    }
 }
 
 module.exports = Stat;

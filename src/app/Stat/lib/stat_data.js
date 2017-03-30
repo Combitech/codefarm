@@ -82,6 +82,18 @@ class StatData {
 
         return res;
     }
+
+    async getSamples(fields, opts) {
+        const project = { _id: 1, collected: 1 };
+        fields.forEach((field) => project[field] = 1);
+        const db = await ServiceMgr.instance.use("db");
+
+        return await db.find(this._collection, {}, {
+            project,
+            sort: opts.sort,
+            limit: opts.limit
+        });
+    }
 }
 
 module.exports = StatData;

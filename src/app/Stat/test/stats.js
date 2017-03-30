@@ -245,5 +245,12 @@ describe("Stat", () => {
             assert.strictEqual(data[0].id, "sample");
             assert.strictEqual(data[0].collection, `statdata_${stat1._id}`);
         });
+
+        it("should get stat samples", async () => {
+            const data = await restGet("stat", stat1._id, "samples", "field=sample");
+            assert.equal(data.length, stat1.samples.length);
+            const samples = data.map((item) => item.sample);
+            assert.deepEqual(samples, stat1.samples);
+        });
     });
 });
