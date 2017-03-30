@@ -8,6 +8,7 @@ import DateTime from "ui-components/datetime";
 import Tags from "ui-components/tags";
 import ExpandableCard from "ui-components/expandable_card";
 import { StatusIcon } from "ui-components/status";
+import { Claim } from "ui-components/claim";
 import stateVar from "ui-lib/state_var";
 import statusText from "ui-lib/status_text";
 
@@ -96,6 +97,18 @@ class SubJobCard extends LightComponent {
                                     </tr>
                                 </For>
                             </If>
+                            <tr>
+                                <td>Claimed&nbsp;by</td>
+                                <td>
+                                    <Claim
+                                        targetRef={{
+                                            _ref: true,
+                                            type: this.props.item.type,
+                                            id: this.props.item._id
+                                        }}
+                                    />
+                                </td>
+                            </tr>
                             <tr>
                                 <td>Tags</td>
                                 <td>

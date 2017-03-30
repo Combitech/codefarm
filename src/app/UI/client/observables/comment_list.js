@@ -6,7 +6,7 @@ const COMMENT_TYPE = "metadata.comment";
 class CommentList extends ResolveRefs {
     constructor(initialOpts) {
         if (!(initialOpts.commentRefs instanceof Array) && initialOpts.commentRefs !== false) {
-            throw new Error("commentRefs must be set to an arrayi n the initial opts");
+            throw new Error("commentRefs must be set to an array in the initial opts");
         }
 
         const defaultOpts = {

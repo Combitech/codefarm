@@ -5,7 +5,7 @@ import Notification from "ui-observables/notification";
 import { assertType } from "misc";
 
 const createComment = async (comment, targetTypeInstance) => {
-    assertType(comment.text, "targetTypeInstance._id", "string");
+    assertType(comment.text, "claim.text", "string");
     assertType(targetTypeInstance._id, "targetTypeInstance._id", "string");
     assertType(targetTypeInstance.type, "targetTypeInstance.type", "string");
 

@@ -58,7 +58,7 @@ class UserName extends LightComponent {
         }
 
         return (
-            <span>
+            <span className={this.props.className}>
                 <If condition={ this.props.prefixText }>
                     <span>
                         {`${this.props.prefixText} `}
@@ -76,6 +76,7 @@ class UserName extends LightComponent {
 }
 
 UserName.defaultProps = {
+    className: "",
     userId: false,
     notFoundText: "",
     prefixText: "",
@@ -84,6 +85,7 @@ UserName.defaultProps = {
 };
 
 UserName.propTypes = {
+    className: React.PropTypes.string,
     theme: React.PropTypes.object,
     userId: React.PropTypes.any,
     notFoundText: React.PropTypes.string,

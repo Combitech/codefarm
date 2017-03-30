@@ -18,7 +18,7 @@ class UserItem extends TypeList {
             query: createQuery(initialOpts.identifier)
         };
 
-        super(Object.assign({}, defaultOpts, initialOpts));
+        super(Object.assign([], defaultOpts, initialOpts));
 
         this._wrappedValue = new Rx.BehaviorSubject(Immutable.fromJS({}));
         this._createQuery = createQuery;

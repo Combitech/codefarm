@@ -6,6 +6,7 @@ const Web = require("web");
 const { Service } = require("service");
 const { ServiceComBus } = require("servicecom");
 const Comments = require("./controllers/comments");
+const Claims = require("./controllers/claims");
 
 class Main extends Service {
     constructor(name, version) {
@@ -21,7 +22,7 @@ class Main extends Service {
     }
 
     async onOnline() {
-        const routes = [].concat(Comments.instance.routes, this.routes);
+        const routes = [].concat(Comments.instance.routes, Claims.instance.routes, this.routes);
 
         await ServiceComBus.instance.start(Object.assign({
             name: this.name,
@@ -32,6 +33,7 @@ class Main extends Service {
         this.addDisposable(ServiceComBus.instance);
         ServiceComBus.instance.attachControllers([
             Comments.instance,
+            Claims.instance,
             this.statesControllerInstance
         ]);
 
