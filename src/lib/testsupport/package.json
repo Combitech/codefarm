@@ -17,6 +17,8 @@
   },
   "libraries": [
     "emitter"
+    "misc",
+    "servicecom"
   ],
   "dependencies": {
     "koa": "^2.2.0",
