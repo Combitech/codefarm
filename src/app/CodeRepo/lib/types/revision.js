@@ -193,6 +193,7 @@ class Revision extends Type {
         try {
             const client = ServiceComBus.instance.getClient("userrepo");
             const users = await client.list("user", query);
+
             if (!(users instanceof Array)) {
                 throw new Error(`Expected array result, got data: ${JSON.stringify(users)}`);
             }

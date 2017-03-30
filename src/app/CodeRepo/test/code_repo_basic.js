@@ -13,7 +13,7 @@ const { ServiceMgr } = require("service");
 
 mochaPatch();
 
-describe("CodeRepo", () => {
+describe("CodeRepo", async () => {
     let testInfo;
     let main;
     let baseUrl;
@@ -37,7 +37,7 @@ describe("CodeRepo", () => {
         tmpPrivateKeyFile = path.join(testTmpDir, "privateKey");
         await fs.writeFileAsync(tmpPrivateKeyFile, "dummy private key");
         testInfo = {
-            name: "coderepo",
+            name: "coderepo-basic",
             version: "0.0.1",
             config: {
                 autoUseMgmt: false,
@@ -103,16 +103,16 @@ describe("CodeRepo", () => {
         main = new Main(testInfo.name, testInfo.version);
         ServiceMgr.instance.create(main, testInfo.config);
         await main.awaitOnline();
-//        await addBackend(testInfo.backend1);
     });
 
     after(async () => {
         await fs.removeAsync(tmpPrivateKeyFile);
         await fs.removeAsync(testTmpDir);
+        ServiceMgr.instance.dispose();
     });
 
     const assertBackendData = (data, expId) => {
-        assert.strictEqual(data.type, "coderepo.backend");
+        assert.strictEqual(data.type, "coderepo-basic.backend");
         assert.strictEqual(data._id, expId);
         assert.lengthOf(data.tags, 0);
         assert.property(data, "created");
@@ -126,6 +126,7 @@ describe("CodeRepo", () => {
                 json: true
             });
 
+            console.log(backends);
             assert.lengthOf(backends, 0);
         });
 
@@ -189,7 +190,14 @@ describe("CodeRepo", () => {
             assertBackendData(backend, testInfo.gitHubBackend._id);
         });
 
+        // TODO: Troubleshoot this test case
         it("shall delete backends", async () => {
+            const backends = await rp({
+                url: `${baseUrl}/backend`,
+                json: true
+            });
+            console.log(backends);
+
             await deleteBackend(testInfo.gitHubBackend._id);
             await deleteBackend(testInfo.gerritBackend._id);
         });
