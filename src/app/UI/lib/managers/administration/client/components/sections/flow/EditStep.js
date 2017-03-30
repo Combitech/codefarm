@@ -70,6 +70,11 @@ class EditStep extends LightComponent {
                 required: () => true,
                 defaultValue: "keep"
             },
+            "initialJobTags": {
+                editable: true,
+                required: () => false,
+                defaultValue: []
+            },
             "parentSteps": {
                 editable: true,
                 required: () => false,
@@ -270,6 +275,15 @@ class EditStep extends LightComponent {
                         disabled={this.props.item && !this.itemProperties.tagScript.editable}
                         value={this.state.tagScript.value}
                         onChange={this.state.tagScript.set}
+                    />
+                    <Autocomplete
+                        selectedPosition="below"
+                        allowCreate={true}
+                        label="Tags to assign to jobs"
+                        disabled={this.props.item && !this.itemProperties.initialJobTags.editable}
+                        onChange={this.state.initialJobTags.set}
+                        source={this.state.initialJobTags.value}
+                        value={this.state.initialJobTags.value}
                     />
                     <Input
                         type="text"

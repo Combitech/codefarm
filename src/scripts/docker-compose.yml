@@ -141,3 +141,12 @@ services:
             - mongo
             - rabbitmq
         network_mode: "host"
+    stat:
+        build:
+            context: ../app/Stat
+        image: codefarm/stat:0.0.0
+        depends_on:
+            - appnodebase
+            - mongo
+            - rabbitmq
+        network_mode: "host"

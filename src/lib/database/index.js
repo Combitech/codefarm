@@ -60,6 +60,15 @@ class Database extends ProviderClient {
         return this.db.collection(collection).distinct(field, query);
     }
 
+    aggregate(collection, pipeline, options = {}) {
+        if (this.config.testMode) {
+            return this.config.testAggregate(collection, pipeline, options);
+        }
+        const cursor = this.db.collection(collection).aggregate(pipeline, options);
+
+        return cursor.toArray();
+    }
+
     find(collection, query = {}, options = {}) {
         let cursor = this.db.collection(collection).find(query);
 

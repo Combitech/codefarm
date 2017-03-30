@@ -169,7 +169,7 @@ class Type {
 
     static async findRef(ref, options) {
         assertType(ref, "ref", "ref");
-        if (ref.type !== this.getType) {
+        if (ref.type !== this.getType()) {
             throw new Error("ref.type doesn't match type");
         }
         if (ref.id.constructor === Array) {

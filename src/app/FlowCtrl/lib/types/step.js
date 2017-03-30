@@ -29,6 +29,7 @@ class Step extends Type {
         this.visible = true;
         this.workspaceName = false;
         this.workspaceCleanup = CLEANUP_POLICY.KEEP;
+        this.initialJobTags = [];
 
         this.jobs = [];
 
@@ -70,6 +71,9 @@ class Step extends Type {
             assertType(data.concurrency, "data.concurrency", "number");
             assertProp(data, "baseline", true);
             assertType(data.baseline, "data.baseline", "ref");
+            if (data.hasOwnProperty("initialJobTags")) {
+                assertType(data.initialJobTags, "data.initialJobTags", "array");
+            }
             // assertType(data.script, "data.parentSteps", "array"); TODO: This does not work correctly
             // TODO: Check workspace and cleanup policy
         }
@@ -139,7 +143,8 @@ class Step extends Type {
             script: this.script,
             baseline: baseline,
             workspaceName: this.workspaceName,
-            workspaceCleanup: this.workspaceCleanup
+            workspaceCleanup: this.workspaceCleanup,
+            tags: this.initialJobTags
         });
 
         this.jobs.push({ jobId: data._id, baseline: baseline });
