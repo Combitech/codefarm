@@ -62,12 +62,14 @@ class AvatarBase extends LightComponent {
     }
 
     render() {
-        this.log("state", JSON.stringify(this.state, null, 2));
+        this.log("render", this.props, JSON.stringify(this.state, null, 2));
+
+        const className = `${this.props.className} ${this.props.large ? this.props.theme.avatarLarge : ""}`;
 
         if (this.state.loaded) {
             return (
                 <Avatar
-                    className={`${this.props.theme.avatar} ${this.props.className}`}
+                    className={`${this.props.theme.avatar} ${className}`}
                     image={this.image.src}
                 />
             );
@@ -75,7 +77,7 @@ class AvatarBase extends LightComponent {
 
         return (
             <img
-                className={`${this.props.theme.image} ${this.props.className}`}
+                className={`${this.props.theme.image} ${className}`}
                 src={this.props.defaultUrl}
             />
         );
@@ -84,14 +86,16 @@ class AvatarBase extends LightComponent {
 
 AvatarBase.defaultProps = {
     identifier: false,
-    avatarType: AVATAR_TYPE.USER
+    avatarType: AVATAR_TYPE.USER,
+    large: false
 };
 
 AvatarBase.propTypes = {
     className: React.PropTypes.string,
     identifier: React.PropTypes.any,
     defaultUrl: React.PropTypes.string.isRequired,
-    avatarType: React.PropTypes.oneOf(values(AVATAR_TYPE)).isRequired
+    avatarType: React.PropTypes.oneOf(values(AVATAR_TYPE)).isRequired,
+    large: React.PropTypes.bool
 };
 
 export default AvatarBase;

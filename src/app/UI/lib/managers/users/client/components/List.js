@@ -1,13 +1,14 @@
 
 import React from "react";
+import Immutable from "immutable";
 import ImmutablePropTypes from "react-immutable-proptypes";
 import LightComponent from "ui-lib/light_component";
 import Input from "react-toolbox/lib/input";
 import {
     Section as TASection,
-    ListComponent as TAListComponent,
     ListPager as TAListPager
 } from "ui-components/type_admin";
+import { CardList, TypeCard } from "ui-components/data_card";
 
 class List extends LightComponent {
     render() {
@@ -27,25 +28,22 @@ class List extends LightComponent {
             />
         ));
 
+        const list = this.props.items.toJS().map((item) => ({
+            id: item._id,
+            time: 0,
+            item: item,
+            Card: TypeCard,
+            props: {}
+        }));
+
         return (
             <TASection
                 controls={controls}
                 breadcrumbs={this.props.breadcrumbs}
             >
-                <TAListComponent>
-                    {this.props.items.toJS().map((item) => (
-                        <this.props.ListItemComponent
-                            key={item._id}
-                            theme={this.props.theme}
-                            onClick={() => {
-                                this.context.router.push({
-                                    pathname: `${this.props.pathname}/${item._id}`
-                                });
-                            }}
-                            item={item}
-                        />
-                    ))}
-                </TAListComponent>
+                <div className={this.props.theme.listContainer}>
+                    <CardList list={Immutable.fromJS(list)} />
+                </div>
                 <TAListPager
                     pagedList={this.props.listObservable}
                     pagingInfo={this.props.listObservable.pagingInfo.getValue()}
@@ -61,7 +59,6 @@ List.propTypes = {
     type: React.PropTypes.string.isRequired,
     breadcrumbs: React.PropTypes.array.isRequired,
     controls: React.PropTypes.array.isRequired,
-    ListItemComponent: React.PropTypes.func.isRequired,
     items: ImmutablePropTypes.list
 };
 

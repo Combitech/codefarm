@@ -1,16 +1,15 @@
 
 import React from "react";
+import Immutable from "immutable";
 import ImmutablePropTypes from "react-immutable-proptypes";
 import LightComponent from "ui-lib/light_component";
+import { IconMenu, MenuItem } from "react-toolbox/lib/menu";
 import {
-    Section as TASection,
-    ControlButton as TAControlButton
+    Section as TASection
 } from "ui-components/type_admin";
 import { Row, Column, Header, Section } from "ui-components/layout";
-import { UserCard, TeamCard, PolicyCard } from "ui-components/data_card";
-import CollaboratorAvatar from "ui-components/collaborator_avatar";
+import { CardList, UserCard, TeamCard, PolicyCard } from "ui-components/data_card";
 import * as queryBuilder from "ui-lib/query_builder";
-import theme from "./theme.scss";
 import { isTokenValidForAccess } from "auth/lib/util";
 import TypeList from "ui-observables/type_list";
 import ResolveRefs from "ui-observables/resolve_refs";
@@ -75,89 +74,86 @@ class Item extends LightComponent {
             { throwOnError: false }
         );
 
-        const controls = this.props.controls.slice(0);
-        controls.push((
-            <TAControlButton
-                disabled={!isSignedInUser}
-                key="setpassword"
-                label="Update password"
-                onClick={() => this.context.router.push({
-                    pathname: `${this.props.pathname}/updatepassword`
-                })}
-            />
-        ));
+        const controls = [];
 
         controls.push((
-            <TAControlButton
-                disabled={!isSignedInUser}
-                key="addkey"
-                label="Add public key"
-                onClick={() => this.context.router.push({
-                    pathname: `${this.props.pathname}/addkey`
-                })}
-            />
+            <IconMenu
+                key="menu"
+                className={this.props.theme.button}
+                icon="more_vert"
+                menuRipple={true}
+            >
+                <If condition={isUploadAvatarGranted}>
+                    <MenuItem
+                        caption="Edit tags"
+                        onClick={() => this.context.router.push({
+                            pathname: `${this.props.pathname}/tags`
+                        })}
+                    />
+                </If>
+
+                <If condition={isSignedInUser}>
+                    <MenuItem
+                        caption="Update password"
+                        onClick={() => this.context.router.push({
+                            pathname: `${this.props.pathname}/updatepassword`
+                        })}
+                    />
+                </If>
+
+                <If condition={isSignedInUser}>
+                    <MenuItem
+                        caption="Add public key"
+                        onClick={() => this.context.router.push({
+                            pathname: `${this.props.pathname}/addkey`
+                        })}
+                    />
+                </If>
+
+                <If condition={isSetPoliciesGranted}>
+                    <MenuItem
+                        caption="Update policies"
+                        onClick={() => this.context.router.push({
+                            pathname: `${this.props.pathname}/updatepolicies`
+                        })}
+                    />
+                </If>
+
+                <If condition={isSetTeamsGranted}>
+                    <MenuItem
+                        caption="Update teams"
+                        onClick={() => this.context.router.push({
+                            pathname: `${this.props.pathname}/updateteams`
+                        })}
+                    />
+                </If>
+
+                <If condition={isUploadAvatarGranted}>
+                    <MenuItem
+                        caption="Upload avatar"
+                        onClick={() => this.context.router.push({
+                            pathname: `${this.props.pathname}/uploadavatar`
+                        })}
+                    />
+                </If>
+            </IconMenu>
         ));
 
-        controls.push((
-            <TAControlButton
-                disabled={!isSetPoliciesGranted}
-                key="setpolicies"
-                label="Update policies"
-                onClick={() => this.context.router.push({
-                    pathname: `${this.props.pathname}/updatepolicies`
-                })}
-            />
-        ));
+        const teams = this.state.teams.toJS().map((item) => ({
+            id: item._id,
+            time: 0,
+            item: item,
+            Card: TeamCard,
+            props: {}
+        }));
 
-        controls.push((
-            <TAControlButton
-                disabled={!isSetTeamsGranted}
-                key="setteams"
-                label="Update teams"
-                onClick={() => this.context.router.push({
-                    pathname: `${this.props.pathname}/updateteams`
-                })}
-            />
-        ));
-
-        controls.push((
-            <TAControlButton
-                disabled={!isUploadAvatarGranted}
-                key="uploadavatar"
-                label="Upload avatar"
-                onClick={() => this.context.router.push({
-                    pathname: `${this.props.pathname}/uploadavatar`
-                })}
-            />
-        ));
-
-        const teamCards = [];
-        this.state.teams.forEach((item) => {
-            const team = item.toJS();
-            teamCards.push((
-                <TeamCard
-                    key={team._id}
-                    item={team}
-                    expandable={true}
-                    expanded={false}
-                    theme={this.props.theme}
-                />
-            ));
-        });
-
-        const policyCards = [];
-        this.state.policies.forEach((item) => {
-            const policy = item.toJS();
-            policyCards.push((
-                <PolicyCard
-                    key={policy._id}
-                    item={policy}
-                    expandable={true}
-                    expanded={false}
-                    theme={this.props.theme}
-                />
-            ));
-        });
+        const policies = this.state.policies.toJS().map((item) => ({
+            id: item._id,
+            time: 0,
+            item: item,
+            Card: PolicyCard,
+            props: {}
+        }));
 
         return (
             <div>
@@ -177,25 +173,18 @@ class Item extends LightComponent {
                                         expanded={true}
                                         showAdvanced={true}
                                         isCurrentSignedInUser={isSignedInUser}
+                                        largeIcon={true}
                                     />
                                 </Section>
                                 <Section>
-                                    <Header label="Teams" />
-                                    {teamCards}
-                                </Section>
-                                <Section>
                                     <Header label="Granted access policies" />
-                                    {policyCards}
+                                    <CardList list={Immutable.fromJS(policies)} />
                                 </Section>
                             </Column>
                             <Column xs={12} md={7}>
                                 <Section>
-                                    <Header label="Avatar" />
-                                    <CollaboratorAvatar
-                                        id={this.props.item._id}
-                                        avatarType={"useravatar"}
-                                        className={theme.avatarLarge}
-                                    />
+                                    <Header label="Teams" />
+                                    <CardList list={Immutable.fromJS(teams)} />
                                 </Section>
                             </Column>
                         </Row>

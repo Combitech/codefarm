@@ -1,13 +1,12 @@
 
 import React from "react";
+import Immutable from "immutable";
 import LightComponent from "ui-lib/light_component";
 import {
     Section as TASection
 } from "ui-components/type_admin";
 import { Row, Column, Header, Section } from "ui-components/layout";
-import { TeamCard, UserCard } from "ui-components/data_card";
-import CollaboratorAvatar from "ui-components/collaborator_avatar";
-import theme from "./theme.scss";
+import { CardList, TeamCard, UserCard } from "ui-components/data_card";
 import TypeList from "ui-observables/type_list";
 
 class Item extends LightComponent {
@@ -40,19 +39,13 @@ class Item extends LightComponent {
 
         const controls = this.props.controls.slice(0);
 
-        const userCards = [];
-        this.state.users.forEach((item) => {
-            const user = item.toJS();
-            userCards.push((
-                <UserCard
-                    key={user._id}
-                    item={user}
-                    expandable={true}
-                    expanded={false}
-                    theme={this.props.theme}
-                />
-            ));
-        });
+        const users = this.state.users.toJS().map((item) => ({
+            id: item._id,
+            time: 0,
+            item: item,
+            Card: UserCard,
+            props: {}
+        }));
 
         return (
             <div>
@@ -70,21 +63,15 @@ class Item extends LightComponent {
                                         item={this.props.item}
                                         expandable={false}
                                         expanded={true}
+                                        largeIcon={true}
                                     />
                                 </Section>
-                                <Section>
-                                    <Header label="Users" />
-                                    {userCards}
-                                </Section>
+
                             </Column>
                             <Column xs={12} md={7}>
                                 <Section>
-                                    <Header label="Avatar" />
-                                    <CollaboratorAvatar
-                                        id={this.props.item._id}
-                                        avatarType={"teamavatar"}
-                                        className={theme.avatarLarge}
-                                    />
+                                    <Header label="Users" />
+                                    <CardList list={Immutable.fromJS(users)} />
                                 </Section>
                             </Column>
                         </Row>
