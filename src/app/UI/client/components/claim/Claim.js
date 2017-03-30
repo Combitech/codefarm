@@ -51,7 +51,7 @@ class Claim extends LightComponent {
             return (<Loading />);
         }
 
-        const claims = this.state.claims.toJS()
+        const claims = this.state.claims.toJS();
         const signedInUser = ActiveUser.instance.user.getValue().toJS();
         const myClaim = claims.find((item) => item.creatorRef.id === signedInUser.id);
 
