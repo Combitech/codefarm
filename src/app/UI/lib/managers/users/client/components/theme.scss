@@ -8,6 +8,10 @@
     margin-top: $standard-increment-desktop;
 }
 
+.listContainer {
+    margin: $layout-gutter-width;
+}
+
 .avatar {
     &Large {
         max-width: 480px;

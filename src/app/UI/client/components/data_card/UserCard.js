@@ -36,6 +36,7 @@ class UserCard extends LightComponent {
                         <UserAvatar
                             className={this.props.theme.avatar}
                             userId={this.props.item._id}
+                            large={this.props.largeIcon}
                         />
                     )}
                     title={(
@@ -118,7 +119,7 @@ class UserCard extends LightComponent {
                             </tr>
                             <If condition={this.props.showAdvanced}>
                                 <tr>
-                                    <td>Public keys</td>
+                                    <td>Public&nbsp;keys</td>
                                     <td>{this.props.item.numKeys} uploaded</td>
                                 </tr>
                             </If>
@@ -134,7 +135,8 @@ UserCard.defaultProps = {
     expanded: false,
     expandable: true,
     showAdvanced: false,
-    isCurrentSignedInUser: false
+    isCurrentSignedInUser: false,
+    largeIcon: false
 };
 
 UserCard.propTypes = {
@@ -143,7 +145,8 @@ UserCard.propTypes = {
     expanded: React.PropTypes.bool,
     expandable: React.PropTypes.bool,
     showAdvanced: React.PropTypes.bool,
-    isCurrentSignedInUser: React.PropTypes.bool
+    isCurrentSignedInUser: React.PropTypes.bool,
+    largeIcon: React.PropTypes.bool
 };
 
 UserCard.contextTypes = {

@@ -14,6 +14,7 @@ class UserAvatar extends LightComponent {
                 identifier={this.props.userId}
                 avatarType={AVATAR_TYPE.USER}
                 defaultUrl={this.props.defaultUrl}
+                large={this.props.large}
             />
         );
     }
@@ -21,13 +22,15 @@ class UserAvatar extends LightComponent {
 
 UserAvatar.defaultProps = {
     defaultUrl: "/Cheser/48x48/status/avatar-default.png",
-    userId: false
+    userId: false,
+    large: false
 };
 
 UserAvatar.propTypes = {
     className: React.PropTypes.string,
     userId: React.PropTypes.any,
-    defaultUrl: React.PropTypes.string
+    defaultUrl: React.PropTypes.string,
+    large: React.PropTypes.bool
 };
 
 export default UserAvatar;

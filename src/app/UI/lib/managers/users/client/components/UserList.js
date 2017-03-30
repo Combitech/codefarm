@@ -2,7 +2,6 @@
 import React from "react";
 import LightComponent from "ui-lib/light_component";
 import List from "./List";
-import UserListItem from "./UserListItem";
 import UserListObservable from "../observables/user_list";
 
 class UserList extends LightComponent {
@@ -12,7 +11,7 @@ class UserList extends LightComponent {
         this.userList = new UserListObservable({
             sortOn: "name",
             sortOnType: "String",
-            limit: 10
+            limit: 20
         });
 
         this.state = {
@@ -31,7 +30,6 @@ class UserList extends LightComponent {
     render() {
         return (
             <List
-                ListItemComponent={UserListItem}
                 items={this.state.list}
                 listObservable={this.userList}
                 {...this.props}

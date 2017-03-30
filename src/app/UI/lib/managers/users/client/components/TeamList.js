@@ -2,7 +2,6 @@
 import React from "react";
 import LightComponent from "ui-lib/light_component";
 import List from "./List";
-import TeamListItem from "./TeamListItem";
 import TeamListObservable from "../observables/team_list";
 
 class TeamList extends LightComponent {
@@ -12,7 +11,7 @@ class TeamList extends LightComponent {
         this.teamList = new TeamListObservable({
             sortOn: "name",
             sortOnType: "String",
-            limit: 10
+            limit: 20
         });
 
         this.state = {
@@ -31,7 +30,6 @@ class TeamList extends LightComponent {
     render() {
         return (
             <List
-                ListItemComponent={TeamListItem}
                 items={this.state.list}
                 listObservable={this.teamList}
                 {...this.props}
