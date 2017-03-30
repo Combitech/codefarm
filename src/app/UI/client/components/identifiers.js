@@ -13,6 +13,7 @@ export const DATE_TIME = "CFDateTime";
 export const EXPANDABLE_CARD = "CFExpandableCard";
 export const COLLABORATOR_AVATAR = "CFCollaboratorAvatar";
 export const BREADCRUMBS = "CFBreadcrumbs";
+export const CLAIM = "CFClaim";
 export const FLOW = "CFFlow";
 export const FOLLOW = "CFFollow";
 export const JOB_FLOW = "CFJobFlow";

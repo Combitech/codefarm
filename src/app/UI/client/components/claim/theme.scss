@@ -1,0 +1,35 @@
+
+
+@import "react-toolbox/components/colors";
+@import "react-toolbox/components/globals";
+@import "~ui-styles/colors";
+@import "~ui-styles/common";
+
+.avatar {
+    display: inline-block !important;
+    margin-right: $unit * 0.5;
+    width: 16px;
+    height: 16px;
+}
+
+.name {
+    font-weight: $font-weight-semi-bold;
+    margin-right: $unit * 2;
+}
+
+.noClaim {
+    font-style: italic;
+}
+
+.button {
+    float: right;
+    font-size: $font-size-small * 0.9;
+    color: $color-text-secondary;
+    cursor: pointer;
+    text-transform: uppercase;
+    font-weight: $font-weight-semi-bold;
+
+    &:hover {
+        color: $cf-color-selected;
+    }
+}

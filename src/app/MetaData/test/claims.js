@@ -13,22 +13,22 @@ describe("MetaData", () => {
     let main;
     let baseUrl;
 
-    const addComment = async (data) =>
+    const addClaim = async (data) =>
         rp.post({
-            url: `${baseUrl}/comment`,
+            url: `${baseUrl}/claim`,
             body: data,
             json: true
         });
 
-    const listComments = async () =>
+    const listClaims = async () =>
         rp({
-            url: `${baseUrl}/comment`,
+            url: `${baseUrl}/claim`,
             json: true
         });
 
     before(async () => {
         testInfo = {
-            name: "metadata-comments",
+            name: "metadata-claims",
             version: "0.0.1",
             config: {
                 autoUseMgmt: false,
@@ -60,8 +60,8 @@ describe("MetaData", () => {
         await ServiceMgr.instance.dispose();
     });
 
-    const comment1 = {
-        text: "Comment 1",
+    const claim1 = {
+        text: "Claim 1",
         creatorRef: {
             _ref: true,
             id: "type1",
@@ -69,8 +69,8 @@ describe("MetaData", () => {
         }
     };
 
-    const comment2 = {
-        text: "Comment 2",
+    const claim2 = {
+        text: "Claim 2",
         creatorRef: {
             _ref: true,
             id: "type1",
@@ -83,55 +83,55 @@ describe("MetaData", () => {
         }
     };
 
-    describe("type comment", () => {
-        it("should initially list no comments", async () => {
-            const data = await listComments();
+    describe("type claim", () => {
+        it("should initially list no claims", async () => {
+            const data = await listClaims();
             assert.equal(data.length, 0);
         });
 
-        let comment1Id;
-        it("should add comment", async () => {
-            const data = await addComment(comment1);
+        let claim1Id;
+        it("should add claim", async () => {
+            const data = await addClaim(claim1);
 
             assert.strictEqual(data.result, "success");
-            assert.strictEqual(data.data.text, comment1.text);
-            assert.deepEqual(data.data.creatorRef, comment1.creatorRef);
+            assert.strictEqual(data.data.text, claim1.text);
+            assert.deepEqual(data.data.creatorRef, claim1.creatorRef);
             assert.strictEqual(data.data.targetRef, false);
-            comment1Id = data.data._id;
+            claim1Id = data.data._id;
         });
 
-        it("should list comment", async () => {
-            const data = await listComments();
+        it("should list claim", async () => {
+            const data = await listClaims();
             assert.equal(data.length, 1);
-            assert.strictEqual(data[0]._id, comment1Id);
-            assert.strictEqual(data[0].text, comment1.text);
+            assert.strictEqual(data[0]._id, claim1Id);
+            assert.strictEqual(data[0].text, claim1.text);
         });
 
-        let comment2Id;
-        it("should add comment with targetRef", async () => {
-            const data = await addComment(comment2);
+        let claim2Id;
+        it("should add claim with targetRef", async () => {
+            const data = await addClaim(claim2);
 
             assert.strictEqual(data.result, "success");
-            assert.strictEqual(data.data.text, comment2.text);
-            assert.deepEqual(data.data.creatorRef, comment2.creatorRef);
-            assert.deepEqual(data.data.targetRef, comment2.targetRef);
-            comment2Id = data.data._id;
+            assert.strictEqual(data.data.text, claim2.text);
+            assert.deepEqual(data.data.creatorRef, claim2.creatorRef);
+            assert.deepEqual(data.data.targetRef, claim2.targetRef);
+            claim2Id = data.data._id;
         });
 
-        it("should list comments", async () => {
-            const data = await listComments();
+        it("should list claims", async () => {
+            const data = await listClaims();
             assert.equal(data.length, 2);
 
-            assert(data.find((item) => item._id === comment1Id));
-            assert(data.find((item) => item._id === comment2Id));
+            assert(data.find((item) => item._id === claim1Id));
+            assert(data.find((item) => item._id === claim2Id));
         });
 
-        it("should not add comment without text", async () => {
+        it("should not add claim without text", async () => {
             try {
-                await addComment({
+                await addClaim({
                     creatorRef: { _ref: true, id: "id1", type: "service.type" }
                 });
-                assert(false, "Unexpected comment add");
+                assert(false, "Unexpected claim add");
             } catch (error) {
                 assert.strictEqual(error.statusCode, 400);
                 assert.match(error.message, /text must be of type string/);

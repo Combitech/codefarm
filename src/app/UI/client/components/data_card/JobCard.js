@@ -9,6 +9,7 @@ import DateTime from "ui-components/datetime";
 import Tags from "ui-components/tags";
 import ExpandableCard from "ui-components/expandable_card";
 import { StatusIcon } from "ui-components/status";
+import { Claim } from "ui-components/claim";
 import stateVar from "ui-lib/state_var";
 import statusText from "ui-lib/status_text";
 import * as pathBuilder from "ui-lib/path_builder";
@@ -112,7 +113,7 @@ class JobCard extends LightComponent {
                             </If>
                             <If condition={this.props.item.slaveId}>
                                 <tr>
-                                    <td>Executed on slave</td>
+                                    <td>Slave</td>
                                     <td className={this.props.theme.monospace}>
                                         <Choose>
                                             <When condition={this.props.linkSlave}>
@@ -133,6 +134,18 @@ class JobCard extends LightComponent {
                                     </td>
                                 </tr>
                             </If>
+                            <tr>
+                                <td>Claimed&nbsp;by</td>
+                                <td>
+                                    <Claim
+                                        targetRef={{
+                                            _ref: true,
+                                            type: this.props.item.type,
+                                            id: this.props.item._id
+                                        }}
+                                    />
+                                </td>
+                            </tr>
                             <tr>
                                 <td>Tags</td>
                                 <td>
