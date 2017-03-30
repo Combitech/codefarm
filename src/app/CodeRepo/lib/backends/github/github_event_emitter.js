@@ -1,6 +1,6 @@
 "use strict";
 
-const Koa = require("koa2");
+const Koa = require("koa");
 const bodyParser = require("koa-bodyparser");
 const { synchronize } = require("misc");
 const { AsyncEventEmitter } = require("emitter");

@@ -1,9 +1,9 @@
 "use strict";
 
 const route = require("koa-route");
-const Koa = require("koa2");
+const Koa = require("koa");
 const { AsyncEventEmitter } = require("emitter");
-const { Deferred } = require("misc");
+const Deferred = require("./deferred");
 
 class GitHubStub extends AsyncEventEmitter {
     constructor() {
