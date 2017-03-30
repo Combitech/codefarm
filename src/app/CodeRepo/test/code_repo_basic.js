@@ -191,7 +191,7 @@ describe("CodeRepo", async () => {
 
         // TODO: Troubleshoot this test case
         it("shall delete backends", async () => {
-            const backends = await rp({
+            await rp({
                 url: `${baseUrl}/backend`,
                 json: true
             });
