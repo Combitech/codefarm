@@ -1,14 +1,13 @@
 
 import React from "react";
 import LightComponent from "ui-lib/light_component";
-import { CardTitle } from "react-toolbox/lib/card";
 import DateTime from "ui-components/datetime";
 import Tags from "ui-components/tags";
-import ExpandableCard from "ui-components/expandable_card";
+import DataCard from "./DataCard";
 import UserAvatar from "ui-components/user_avatar";
+import { CardTitle } from "react-toolbox/lib/card";
 import stateVar from "ui-lib/state_var";
 import * as pathBuilder from "ui-lib/path_builder";
-import CardLinkIcon from "./CardLinkIcon";
 
 class UserCard extends LightComponent {
     constructor(props) {
@@ -26,10 +25,11 @@ class UserCard extends LightComponent {
         const myItemPath = pathBuilder.fromType("userrepo.user", this.props.item);
 
         return (
-            <ExpandableCard
-                className={this.props.theme.card}
+            <DataCard
+                theme={this.props.theme}
                 expanded={this.state.expanded}
                 expandable={this.props.expandable}
+                path={myItemPath}
             >
                 <CardTitle
                     avatar={(
@@ -40,19 +40,14 @@ class UserCard extends LightComponent {
                         />
                     )}
                     title={(
-                        <div>
+                        <span>
                             {this.props.item.name}
                             <If condition={this.props.isCurrentSignedInUser}>
                                 <div className={this.props.theme.currentUserLabel}>
                                     Current user
                                 </div>
                             </If>
-                            <CardLinkIcon
-                                theme={this.props.theme}
-                                path={myItemPath}
-                                name="user"
-                            />
-                        </div>
+                        </span>
                     )}
                     subtitle={this.props.item.email.join(", ")}
                 />
@@ -126,7 +121,7 @@ class UserCard extends LightComponent {
                         </tbody>
                     </table>
                 </If>
-            </ExpandableCard>
+            </DataCard>
         );
     }
 }
@@ -134,9 +129,11 @@ class UserCard extends LightComponent {
 UserCard.defaultProps = {
     expanded: false,
     expandable: true,
+    clickable: false,
     showAdvanced: false,
     isCurrentSignedInUser: false,
-    largeIcon: false
+    largeIcon: false,
+    titleLink: false
 };
 
 UserCard.propTypes = {
@@ -144,9 +141,11 @@ UserCard.propTypes = {
     item: React.PropTypes.object.isRequired,
     expanded: React.PropTypes.bool,
     expandable: React.PropTypes.bool,
+    clickable: React.PropTypes.bool,
     showAdvanced: React.PropTypes.bool,
     isCurrentSignedInUser: React.PropTypes.bool,
-    largeIcon: React.PropTypes.bool
+    largeIcon: React.PropTypes.bool,
+    titleLink: React.PropTypes.bool
 };
 
 UserCard.contextTypes = {

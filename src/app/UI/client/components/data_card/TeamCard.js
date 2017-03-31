@@ -1,14 +1,13 @@
 
 import React from "react";
 import LightComponent from "ui-lib/light_component";
-import { CardTitle } from "react-toolbox/lib/card";
 import DateTime from "ui-components/datetime";
 import Tags from "ui-components/tags";
-import ExpandableCard from "ui-components/expandable_card";
+import DataCard from "./DataCard";
 import { TeamAvatar } from "ui-components/user_avatar";
+import { CardTitle } from "react-toolbox/lib/card";
 import stateVar from "ui-lib/state_var";
 import * as pathBuilder from "ui-lib/path_builder";
-import CardLinkIcon from "./CardLinkIcon";
 
 class TeamCard extends LightComponent {
     constructor(props) {
@@ -23,10 +22,11 @@ class TeamCard extends LightComponent {
         const myItemPath = pathBuilder.fromType("userrepo.team", this.props.item);
 
         return (
-            <ExpandableCard
-                className={this.props.theme.card}
+            <DataCard
+                them={this.props.theme}
                 expanded={this.state.expanded}
                 expandable={this.props.expandable}
+                path={myItemPath}
             >
                 <CardTitle
                     avatar={(
@@ -35,16 +35,7 @@ class TeamCard extends LightComponent {
                             teamId={this.props.item._id}
                         />
                     )}
-                    title={(
-                        <div>
-                            {this.props.item.name}
-                            <CardLinkIcon
-                                theme={this.props.theme}
-                                path={myItemPath}
-                                name="team"
-                            />
-                        </div>
-                    )}
+                    title={this.props.item.name}
                 />
                 <If condition={this.state.expanded.value}>
                     <table className={this.props.theme.table}>
@@ -98,21 +89,23 @@ class TeamCard extends LightComponent {
                         </tbody>
                     </table>
                 </If>
-            </ExpandableCard>
+            </DataCard>
         );
     }
 }
 
 TeamCard.defaultProps = {
     expanded: false,
-    expandable: true
+    expandable: true,
+    clickable: false
 };
 
 TeamCard.propTypes = {
     theme: React.PropTypes.object,
     item: React.PropTypes.object.isRequired,
     expanded: React.PropTypes.bool,
-    expandable: React.PropTypes.bool
+    expandable: React.PropTypes.bool,
+    clickable: React.PropTypes.bool
 };
 
 TeamCard.contextTypes = {

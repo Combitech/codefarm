@@ -1,15 +1,14 @@
 
 import React from "react";
 import LightComponent from "ui-lib/light_component";
-import { CardTitle } from "react-toolbox/lib/card";
 import HiddenText from "ui-components/hidden_text";
 import DateTime from "ui-components/datetime";
 import Tags from "ui-components/tags";
-import ExpandableCard from "ui-components/expandable_card";
-import stateVar from "ui-lib/state_var";
+import DataCard from "./DataCard";
 import { ArtifactRepoBackendIcon } from "ui-components/app_icons";
+import { CardTitle } from "react-toolbox/lib/card";
+import stateVar from "ui-lib/state_var";
 import * as pathBuilder from "ui-lib/path_builder";
-import CardLinkIcon from "./CardLinkIcon";
 
 class ArtifactCard extends LightComponent {
     constructor(props) {
@@ -32,10 +31,11 @@ class ArtifactCard extends LightComponent {
         const myItemPath = pathBuilder.fromType("artifactrepo.artifact", this.props.item);
 
         return (
-            <ExpandableCard
-                className={this.props.theme.card}
+            <DataCard
+                theme={this.props.theme}
                 expanded={this.state.expanded}
                 expandable={this.props.expandable}
+                path={myItemPath}
             >
                 <CardTitle
                     avatar={(
@@ -45,16 +45,9 @@ class ArtifactCard extends LightComponent {
                         />
                     )}
                     title={(
-                        <div>
-                            <span>
-                                {`${this.props.item.name} - ${this.props.item.version}`}
-                            </span>
-                            <CardLinkIcon
-                                theme={this.props.theme}
-                                path={myItemPath}
-                                name="artifact"
-                            />
-                        </div>
+                        <span>
+                            {`${this.props.item.name} - ${this.props.item.version}`}
+                        </span>
                     )}
                     subtitle={(
                         <DateTime
@@ -122,21 +115,23 @@ class ArtifactCard extends LightComponent {
                         </tbody>
                     </table>
                 </If>
-            </ExpandableCard>
+            </DataCard>
         );
     }
 }
 
 ArtifactCard.defaultProps = {
     expanded: false,
-    expandable: true
+    expandable: true,
+    clickable: false
 };
 
 ArtifactCard.propTypes = {
     theme: React.PropTypes.object,
     item: React.PropTypes.object.isRequired,
     expanded: React.PropTypes.bool,
-    expandable: React.PropTypes.bool
+    expandable: React.PropTypes.bool,
+    clickable: React.PropTypes.bool
 };
 
 ArtifactCard.contextTypes = {

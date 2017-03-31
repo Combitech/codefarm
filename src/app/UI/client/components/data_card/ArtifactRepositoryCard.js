@@ -1,13 +1,13 @@
 
 import React from "react";
 import LightComponent from "ui-lib/light_component";
-import { CardTitle } from "react-toolbox/lib/card";
 import UserAvatar from "ui-components/user_avatar";
 import DateTime from "ui-components/datetime";
 import Tags from "ui-components/tags";
-import ExpandableCard from "ui-components/expandable_card";
-import stateVar from "ui-lib/state_var";
+import DataCard from "./DataCard";
 import { ArtifactRepoBackendIcon } from "ui-components/app_icons";
+import { CardTitle } from "react-toolbox/lib/card";
+import stateVar from "ui-lib/state_var";
 
 class ArtifactRepositoryCard extends LightComponent {
     constructor(props) {
@@ -20,8 +20,8 @@ class ArtifactRepositoryCard extends LightComponent {
 
     render() {
         return (
-            <ExpandableCard
-                className={this.props.theme.card}
+            <DataCard
+                theme={this.props.theme}
                 expanded={this.state.expanded}
                 expandable={this.props.expandable}
             >
@@ -64,7 +64,7 @@ class ArtifactRepositoryCard extends LightComponent {
                         </tbody>
                     </table>
                 </If>
-            </ExpandableCard>
+            </DataCard>
         );
     }
 }

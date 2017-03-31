@@ -1,15 +1,14 @@
 
 import React from "react";
 import LightComponent from "ui-lib/light_component";
-import { CardTitle, CardText } from "react-toolbox/lib/card";
+import { CardText, CardTitle } from "react-toolbox/lib/card";
 import HiddenText from "ui-components/hidden_text";
 import DateTime from "ui-components/datetime";
 import Tags from "ui-components/tags";
-import ExpandableCard from "ui-components/expandable_card";
+import DataCard from "./DataCard";
 import UserAvatar from "ui-components/user_avatar";
 import stateVar from "ui-lib/state_var";
 import { LogLines } from "ui-components/log_viewer";
-import CardLinkIcon from "./CardLinkIcon";
 
 class LogCard extends LightComponent {
     constructor(props) {
@@ -24,10 +23,12 @@ class LogCard extends LightComponent {
         const myItemPath = `/logrepo/log/${this.props.item._id}/download`;
 
         return (
-            <ExpandableCard
-                className={this.props.theme.card}
+            <DataCard
+                theme={this.props.theme}
                 expanded={this.state.expanded}
                 expandable={this.props.expandable}
+                path={myItemPath}
+                openInNew={true}
             >
                 <CardTitle
                     avatar={(
@@ -36,17 +37,7 @@ class LogCard extends LightComponent {
                             defaultUrl="/Cheser/48x48/mimetypes/text-x-generic.png"
                         />
                     )}
-                    title={(
-                        <div>
-                            {this.props.item.name}
-                            <CardLinkIcon
-                                theme={this.props.theme}
-                                path={myItemPath}
-                                name="log"
-                                openInNew={true}
-                            />
-                        </div>
-                    )}
+                    title={this.props.item.name}
                     subtitle={(
                         <DateTime
                             value={this.props.item.saved}
@@ -107,7 +98,7 @@ class LogCard extends LightComponent {
                         </tbody>
                     </table>
                 </If>
-            </ExpandableCard>
+            </DataCard>
         );
     }
 }

@@ -2,13 +2,13 @@
 import React from "react";
 import moment from "moment";
 import LightComponent from "ui-lib/light_component";
-import { CardTitle } from "react-toolbox/lib/card";
 import HiddenText from "ui-components/hidden_text";
 import DateTime from "ui-components/datetime";
 import Tags from "ui-components/tags";
-import ExpandableCard from "ui-components/expandable_card";
+import DataCard from "./DataCard";
 import { StatusIcon } from "ui-components/status";
 import { Claim } from "ui-components/claim";
+import { CardTitle } from "react-toolbox/lib/card";
 import stateVar from "ui-lib/state_var";
 import statusText from "ui-lib/status_text";
 
@@ -23,8 +23,8 @@ class SubJobCard extends LightComponent {
 
     render() {
         return (
-            <ExpandableCard
-                className={this.props.theme.card}
+            <DataCard
+                theme={this.props.theme}
                 expanded={this.state.expanded}
                 expandable={this.props.expandable}
             >
@@ -118,7 +118,7 @@ class SubJobCard extends LightComponent {
                         </tbody>
                     </table>
                 </If>
-            </ExpandableCard>
+            </DataCard>
         );
     }
 }

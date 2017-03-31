@@ -33,7 +33,9 @@ class List extends LightComponent {
             time: 0,
             item: item,
             Card: TypeCard,
-            props: {}
+            props: {
+                clickable: true
+            }
         }));
 
         return (

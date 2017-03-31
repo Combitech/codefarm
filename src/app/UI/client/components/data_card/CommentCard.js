@@ -1,12 +1,12 @@
 
 import React from "react";
 import LightComponent from "ui-lib/light_component";
-import { CardTitle, CardText } from "react-toolbox/lib/card";
+import { CardText, CardTitle } from "react-toolbox/lib/card";
 import UserAvatar from "ui-components/user_avatar";
 import DateTime from "ui-components/datetime";
-import ExpandableCard from "ui-components/expandable_card";
-import stateVar from "ui-lib/state_var";
+import DataCard from "./DataCard";
 import UserName from "ui-components/user_name";
+import stateVar from "ui-lib/state_var";
 
 class CommentCard extends LightComponent {
     constructor(props) {
@@ -47,8 +47,8 @@ class CommentCard extends LightComponent {
         }
 
         return (
-            <ExpandableCard
-                className={this.props.theme.card}
+            <DataCard
+                theme={this.props.theme}
                 expanded={this.state.expanded}
                 expandable={this.props.expandable}
             >
@@ -69,7 +69,7 @@ class CommentCard extends LightComponent {
                         </span>
                     </CardText>
                 </If>
-            </ExpandableCard>
+            </DataCard>
         );
     }
 }

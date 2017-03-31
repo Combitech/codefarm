@@ -1,9 +1,9 @@
 
 import React from "react";
 import LightComponent from "ui-lib/light_component";
-import { CardTitle } from "react-toolbox/lib/card";
-import ExpandableCard from "ui-components/expandable_card";
+import DataCard from "./DataCard";
 import { StatusIcon } from "ui-components/status";
+import { CardTitle } from "react-toolbox/lib/card";
 import stateVar from "ui-lib/state_var";
 import statusText from "ui-lib/status_text";
 
@@ -18,12 +18,13 @@ class StepResultCard extends LightComponent {
 
     render() {
         return (
-            <ExpandableCard
-                className={this.props.theme.card}
+            <DataCard
+                theme={this.props.theme}
                 expanded={this.state.expanded}
                 expandable={this.props.expandable}
             >
                 <CardTitle
+                    theme={this.props.theme}
                     avatar={(
                         <StatusIcon
                             className={this.props.theme.avatar}
@@ -33,7 +34,7 @@ class StepResultCard extends LightComponent {
                     )}
                     title={`${this.props.item.name} step ${statusText[this.props.item.status]}`}
                 />
-            </ExpandableCard>
+            </DataCard>
         );
     }
 }

@@ -7,7 +7,7 @@ import FontIcon from "react-toolbox/lib/font_icon";
 import UserAvatar from "ui-components/user_avatar";
 import DateTime from "ui-components/datetime";
 import Tags from "ui-components/tags";
-import ExpandableCard from "ui-components/expandable_card";
+import DataCard from "./DataCard";
 import AppPager from "ui-components/app_pager";
 import stateVar from "ui-lib/state_var";
 import CodeRepoAndBackend from "ui-observables/code_repo_and_backend";
@@ -15,7 +15,6 @@ import { StringUtil } from "misc";
 import UserName from "ui-components/user_name";
 import { CodeRepoBackendIcon } from "ui-components/app_icons";
 import * as pathBuilder from "ui-lib/path_builder";
-import CardLinkIcon from "./CardLinkIcon";
 
 const FILE_STATUS_ICON = {
     added: "add",
@@ -114,10 +113,11 @@ class RevisionCard extends LightComponent {
         }
 
         return (
-            <ExpandableCard
-                className={this.props.theme.card}
+            <DataCard
+                theme={this.props.theme}
                 expanded={this.state.expanded}
                 expandable={this.props.expandable}
+                path={myItemPath}
             >
                 <CardTitle
                     avatar={(
@@ -127,18 +127,11 @@ class RevisionCard extends LightComponent {
                         />
                     )}
                     title={(
-                        <div>
-                            <UserName
-                                userId={patch.userRef.id}
-                                notFoundText={patch.name}
-                                prefixText={titlePrefix}
-                            />
-                            <CardLinkIcon
-                                theme={this.props.theme}
-                                path={myItemPath}
-                                name="revision"
-                            />
-                        </div>
+                        <UserName
+                            userId={patch.userRef.id}
+                            notFoundText={patch.name}
+                            prefixText={titlePrefix}
+                        />
                     )}
                     subtitle={(
                         <DateTime
@@ -279,7 +272,7 @@ class RevisionCard extends LightComponent {
                         </CardText>
                     </If>
                 </If>
-            </ExpandableCard>
+            </DataCard>
         );
     }
 }
@@ -287,6 +280,7 @@ class RevisionCard extends LightComponent {
 RevisionCard.defaultProps = {
     expanded: false,
     expandable: true,
+    clickable: false,
     patchIndex: -1
 };
 
@@ -295,7 +289,8 @@ RevisionCard.propTypes = {
     item: React.PropTypes.object.isRequired,
     patchIndex: React.PropTypes.number,
     expanded: React.PropTypes.bool,
-    expandable: React.PropTypes.bool
+    expandable: React.PropTypes.bool,
+    clickable: React.PropTypes.bool
 };
 
 RevisionCard.contextTypes = {

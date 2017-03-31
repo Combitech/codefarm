@@ -78,7 +78,7 @@ class Claim extends LightComponent {
                 </Choose>
                 <If condition={claims.length === 0}>
                     <div className={this.props.theme.noClaim}>
-                        No claim found
+                        No claims found
                     </div>
                 </If>
                 <For each="item" of={claims}>

@@ -52,7 +52,9 @@ class IndexPage extends LightComponent {
             time: moment(revision.get("statusSetAt")).unix(),
             item: revision.toJS(),
             Card: RevisionCard,
-            props: {}
+            props: {
+                clickable: true
+            }
         }));
 
         const artifacts = this.state.artifacts.map((artifact) => Immutable.fromJS({
@@ -60,7 +62,9 @@ class IndexPage extends LightComponent {
             time: moment(artifact.get("created")).unix(),
             item: artifact.toJS(),
             Card: ArtifactCard,
-            props: {}
+            props: {
+                clickable: true
+            }
         }));
 
         return (

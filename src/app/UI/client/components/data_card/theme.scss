@@ -7,6 +7,10 @@
 .card {
     margin-bottom: $layout-gutter-width-sm;
 
+    .clickable {
+        cursor: pointer;
+    }
+
     .linkIcon {
         opacity: 0;
         transition: opacity 0.3s;

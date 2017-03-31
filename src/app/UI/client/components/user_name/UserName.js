@@ -1,6 +1,5 @@
 
 import React from "react";
-import { Link } from "react-router";
 import LightComponent from "ui-lib/light_component";
 import UserItem from "ui-observables/user_item";
 import { States as ObservableDataStates } from "ui-lib/observable_data";
@@ -32,6 +31,15 @@ class UserName extends LightComponent {
         });
     }
 
+    onClick(event) {
+        const id = this.state.user.get("_id");
+        const pathname = pathBuilder.fromType("userrepo.user", { _id: id });
+
+        event.stopPropagation();
+
+        this.context.router.push({ pathname });
+    }
+
     render() {
         if (this.state.state === ObservableDataStates.LOADING) {
             // TODO: Show loader
@@ -43,11 +51,11 @@ class UserName extends LightComponent {
         let userName;
         if (this.props.isLink && this.state.user.has("name")) {
             userName = (
-                <Link
+                <a
                     className={this.props.theme.link}
-                    to={pathBuilder.fromType("userrepo.user", { _id: this.state.user.get("_id") })}>
+                    onClick={(e) => this.onClick(e)}>
                     {name}
-                </Link>
+                </a>
             );
         } else {
             userName = (

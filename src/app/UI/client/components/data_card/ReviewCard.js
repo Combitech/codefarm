@@ -1,13 +1,13 @@
 
 import React from "react";
 import LightComponent from "ui-lib/light_component";
-import { CardTitle } from "react-toolbox/lib/card";
 import UserAvatar from "ui-components/user_avatar";
 import DateTime from "ui-components/datetime";
-import ExpandableCard from "ui-components/expandable_card";
+import DataCard from "./DataCard";
+import UserName from "ui-components/user_name";
+import { CardTitle } from "react-toolbox/lib/card";
 import stateVar from "ui-lib/state_var";
 import { StringUtil } from "misc";
-import UserName from "ui-components/user_name";
 
 class ReviewCard extends LightComponent {
     constructor(props) {
@@ -29,8 +29,8 @@ class ReviewCard extends LightComponent {
         }
 
         return (
-            <ExpandableCard
-                className={this.props.theme.card}
+            <DataCard
+                theme={this.props.theme}
                 expanded={this.state.expanded}
                 expandable={this.props.expandable}
             >
@@ -85,7 +85,7 @@ class ReviewCard extends LightComponent {
                         </tbody>
                     </table>
                 </If>
-            </ExpandableCard>
+            </DataCard>
         );
     }
 }
