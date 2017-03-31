@@ -2,6 +2,7 @@
 import React from "react";
 import LightComponent from "ui-lib/light_component";
 import { Autocomplete } from "react-toolbox/lib/autocomplete";
+import Dropdown from "react-toolbox/lib/dropdown";
 import { Row, Column, Header, Section } from "ui-components/layout";
 import { StatStatCard, StatStatInfoCard } from "ui-components/data_card";
 import {
@@ -23,26 +24,57 @@ const colorNames = [
 
 const STROKE_PALETTE = colorNames.map((colorName) => color[`${colorName}${colorSeries}`]);
 
+const DEFAULT_X_AXIS = "_t";
+
+const HARDCODED_FIELDS = {
+    [ DEFAULT_X_AXIS ]: "Collection time",
+    "_seq": "Sample index"
+};
+
+// Keys matches recharts XAxis property type values
+const AXIS_TYPE = {
+    number: "number",
+    category: "category"
+};
+
+const axisTypes = [
+    { value: AXIS_TYPE.category, label: "Category" },
+    { value: AXIS_TYPE.number, label: "Numeric" }
+];
+
 class StatItem extends LightComponent {
     constructor(props) {
         super(props);
 
-        const activeFields = (props.item && props.item.fieldNames) || [];
+        const availableFields = (props.item && props.item.fieldNames) || [];
 
         this.samples = new StatSamples({
             id: props.item && props.item._id,
-            fields: activeFields
+            fields: availableFields
         });
         this.statInfo = new StatInfo({
             id: props.item && props.item._id,
-            fields: activeFields
+            fields: availableFields
         });
 
         this.state = {
             samples: this.samples.value.getValue(),
             statInfo: this.statInfo.value.getValue(),
-            activeFields
+            serieFields: [ DEFAULT_X_AXIS ],
+            dataFields: availableFields,
+            yAxisType: AXIS_TYPE.category,
+            xAxisType: AXIS_TYPE.number
         };
+    }
+
+    _getFields() {
+        const fieldNames = (this.props.item && this.props.item.fieldNames) || [];
+        const fields = Object.assign({}, HARDCODED_FIELDS);
+        fieldNames.forEach((key) =>
+            fields[key] = key
+        );
+
+        return fields;
     }
 
     componentDidMount() {
@@ -54,25 +86,39 @@ class StatItem extends LightComponent {
 
     componentWillReceiveProps(nextProps) {
         this.samples.setOpts({
-            id: nextProps.item && nextProps.item.id,
-            fields: (nextProps.item && nextProps.item.fieldNames) || []
+            id: nextProps.item && nextProps.item.id
         });
         this.statInfo.setOpts({
-            id: nextProps.item && nextProps.item.id,
-            fields: (nextProps.item && nextProps.item.fieldNames) || []
+            id: nextProps.item && nextProps.item.id
         });
+    }
+
+    componentDidUpdate(/* prevProps, prevState */) {
+        const fields = this.state.serieFields
+            .concat(this.state.dataFields)
+            // Remove hardcoded fields...
+            .filter((name) => !Object.keys(HARDCODED_FIELDS).includes(name));
+
+        this.samples.setOpts({ fields });
+        this.statInfo.setOpts({ fields });
     }
 
     render() {
         this.log("render", this.props, JSON.stringify(this.state, null, 2));
 
-        const activeFields = this.state.activeFields;
-        let chart;
-        if (activeFields.length > 0 && this.state.samples.size > 0) {
+        const serieFields = this.state.serieFields;
+        const dataFields = this.state.dataFields;
+
+        let chart = (
+            <div className={this.props.theme.noGraph}>
+                Nothing to plot
+            </div>
+        );
+        if (serieFields.length > 0 && dataFields.length > 0 && this.state.samples.size > 0) {
             const samples = this.state.samples.toJS();
             samples.forEach((sample, index) => {
                 sample._seq = index;
-                sample._t = moment(sample._collected).format("YYYY-MM-DD HH:mm:ss");
+                sample[DEFAULT_X_AXIS] = moment(sample._collected).format("YYYY-MM-DD HH:mm:ss");
             });
 
             chart = (
@@ -82,14 +128,20 @@ class StatItem extends LightComponent {
                     data={samples}
                     margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
                 >
-                    <XAxis dataKey="_t" hide={true} />
-                    <YAxis />
+                    {serieFields.map((field) => (
+                        <XAxis
+                            key={`x_${field}`}
+                            dataKey={field}
+                            type={this.state.yAxisType}
+                        />
+                    ))}
+                    <YAxis type={this.state.xAxisType} />
                     <CartesianGrid strokeDasharray="3 3"/>
                     <Tooltip/>
                     <Legend />
-                    {activeFields.map((field, index) => (
+                    {dataFields.map((field, index) => (
                         <Line
-                            key={field}
+                            key={`y_${field}`}
                             type="monotone"
                             stroke={STROKE_PALETTE[index % STROKE_PALETTE.length]}
                             dataKey={field}
@@ -98,17 +150,12 @@ class StatItem extends LightComponent {
                     ))}
                 </LineChart>
             );
-        } else {
-            chart = (
-                <div className={this.props.theme.noGraph}>
-                    Nothing to plot
-                </div>
-            );
         }
 
-
         const statInfo = this.state.statInfo
-            .filter((info) => activeFields.includes(info.get("id")));
+            .filter((info) => dataFields.includes(info.get("id")));
+
+        const availableFields = this._getFields();
 
         return (
             <div>
@@ -131,23 +178,59 @@ class StatItem extends LightComponent {
                             <Column xs={12} md={7}>
                                 <Section>
                                     <Header label="Data explorer" />
-                                    <Autocomplete
-                                        direction="down"
-                                        selectedPosition="below"
-                                        label="Select fields"
-                                        onChange={(activeFields) => this.setState({ activeFields })}
-                                        source={this.props.item.fieldNames}
-                                        value={activeFields}
-                                      />
-                                    {chart}
-                                    {statInfo.map((info) => (
-                                        <StatStatInfoCard
-                                            key={info.get("id")}
-                                            item={info.toJS()}
-                                            expandable={true}
-                                            expanded={false}
-                                        />
-                                    ))}
+                                    <Row>
+                                        <Column xs={12} md={8}>
+                                            <Autocomplete
+                                                direction="down"
+                                                selectedPosition="below"
+                                                label="Select data fields"
+                                                onChange={(dataFields) => this.setState({ dataFields })}
+                                                source={availableFields}
+                                                value={dataFields}
+                                            />
+                                        </Column>
+                                        <Column xs={12} md={4}>
+                                            <Dropdown
+                                                label="X-axis type"
+                                                value={this.state.xAxisType}
+                                                source={axisTypes}
+                                                onChange={(xAxisType) => this.setState({ xAxisType })}
+                                            />
+                                        </Column>
+                                    </Row>
+                                    <Row>
+                                        <Column xs={12} md={8}>
+                                            <Autocomplete
+                                                direction="down"
+                                                selectedPosition="below"
+                                                label="Select series field"
+                                                onChange={(serieFields) => this.setState({ serieFields })}
+                                                source={availableFields}
+                                                value={serieFields}
+                                            />
+                                        </Column>
+                                        <Column xs={12} md={4}>
+                                            <Dropdown
+                                                label="Y-axis type"
+                                                value={this.state.yAxisType}
+                                                source={axisTypes}
+                                                onChange={(yAxisType) => this.setState({ yAxisType })}
+                                            />
+                                        </Column>
+                                    </Row>
+                                    <Row>
+                                        {chart}
+                                    </Row>
+                                    <Row>
+                                        {statInfo.map((info) => (
+                                            <StatStatInfoCard
+                                                key={info.get("id")}
+                                                item={info.toJS()}
+                                                expandable={true}
+                                                expanded={false}
+                                            />
+                                        ))}
+                                    </Row>
                                 </Section>
                             </Column>
                         </Row>
