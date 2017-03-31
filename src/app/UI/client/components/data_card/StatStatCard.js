@@ -46,8 +46,16 @@ class StatStatCard extends LightComponent {
                                 <td>Specification</td>
                                 <td>{this.props.item.specRef.id}</td>
                             </tr>
+                            <If condition={this.props.item.fieldNames}>
+                                <tr>
+                                    <td>Reported&nbsp;fields</td>
+                                    <td>
+                                        {this.props.item.fieldNames.join(", ")}
+                                    </td>
+                                </tr>
+                            </If>
                             <tr>
-                                <td>Last data</td>
+                                <td>Last&nbsp;data</td>
                                 <td>
                                     <span className={this.props.theme.codeLineWrap}>
                                         {JSON.stringify(this.props.item.lastData, null, 2)}

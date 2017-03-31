@@ -8,4 +8,5 @@ if (newdata.started && newdata.finished && olddata.finished === false) {
         queueTimeMs,
         execTimeMs
     };
+    fieldNames = [ "queueTimeMs", "execTimeMs" ];
 }

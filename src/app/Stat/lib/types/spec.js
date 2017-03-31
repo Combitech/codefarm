@@ -60,12 +60,14 @@ class Spec extends Type {
             },
             moment,
             value: null,
-            nextState: null
+            nextState: null,
+            fieldNames: null
         };
 
         let result = {
             value: null,
-            state: null
+            state: null,
+            fieldNames: null
         };
 
         if (this.script) {
@@ -76,7 +78,8 @@ class Spec extends Type {
             const elapsedMs = Date.now() - startTs;
             result = {
                 value: sandbox.value,
-                state: sandbox.nextState
+                state: sandbox.nextState,
+                fieldNames: sandbox.fieldNames
             };
 
             ServiceMgr.instance.log("verbose", `Spec ${this._id} script finished in ${elapsedMs} ms, result:`, result);

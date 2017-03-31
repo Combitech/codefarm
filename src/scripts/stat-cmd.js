@@ -26,9 +26,13 @@ const argv = yargs
         type: "string"
     },
     "info": {
-        describe: "Query info for field",
+        describe: "Query info for field, specify all for all fields",
         type: "array",
-        requiresArg: true,
+        default: []
+    },
+    "samples": {
+        describe: "Query samples for field, specify all for all fields",
+        type: "array",
         default: []
     }
 })
@@ -60,11 +64,27 @@ const commands = {
     stat: async (argv) => {
         let getter = false;
         if (argv.id && argv.info.length > 0) {
-            const queryStr = argv.info
-                .map((field) => `field=${field}`)
-                .join("&");
+            let queryStr;
+            if (argv.info.includes("all")) {
+                queryStr = "field=false";
+            } else {
+                queryStr = argv.info
+                    .map((field) => `field=${field}`)
+                    .join("&");
+            }
             getter = `info?${queryStr}`;
+        } else if (argv.id && argv.samples.length > 0) {
+            let queryStr;
+            if (argv.samples.includes("all")) {
+                queryStr = "field=false";
+            } else {
+                queryStr = argv.samples
+                    .map((field) => `field=${field}`)
+                    .join("&");
+            }
+            getter = `samples?${queryStr}`;
         }
+
         const result = await restGet("stat", argv.id, getter);
         console.dir(result, { colors: true, depth: null });
     },

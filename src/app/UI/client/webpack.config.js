@@ -8,7 +8,9 @@ module.exports = function(options) {
     const isProduction = !(options && options.dev);
     // List of regexes matching modules that shall be transpiled
     const explicitModuleIncludes = [
-        /node_modules\/api\.io/
+        /node_modules\/api\.io/,
+        /node_modules\/recharts/,
+        /node_modules\/d3/
     ];
     const extractStyles = new ExtractTextPlugin("[name].css");
 

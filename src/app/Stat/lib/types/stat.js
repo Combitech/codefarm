@@ -13,6 +13,7 @@ class Stat extends Type {
         this.specRef = false;
         this.lastData = null;
         this.state = null;
+        this.fieldNames = null;
 
         if (data) {
             this.set(data);
@@ -41,6 +42,7 @@ class Stat extends Type {
         if (event === "create") {
             assertProp(data, "_id", true);
             assertType(data.specRef, "data.specRef", "ref");
+            assertType(data.fieldNames, "data.fieldNames", "array");
         } else if (event === "update") {
             // Update
         }
@@ -55,7 +57,7 @@ class Stat extends Type {
         if (!spec) {
             throw new Error(`Can't resolve specRef ${JSON.stringify(this.specRef)}`);
         }
-        const { value, state } = await spec.run(eventData, this);
+        const { value, state, fieldNames } = await spec.run(eventData, this);
 
         let updated = false;
         if (value !== null) {
@@ -64,6 +66,10 @@ class Stat extends Type {
         }
         if (state !== null) {
             this.state = state;
+            updated = true;
+        }
+        if (fieldNames !== null) {
+            this.fieldNames = fieldNames;
             updated = true;
         }
 
@@ -78,11 +84,29 @@ class Stat extends Type {
         return updated;
     }
 
-    async getInfo(fields, opts) {
+    async getInfo(fields = false, opts = {}) {
+        // If no fields given, try to get info for all
+        if (fields === false) {
+            fields = this.fieldNames;
+        }
+
+        if (!fields || fields.length === 0) {
+            return [];
+        }
+
         return this.__statData.calcCharacteristics(fields, opts);
     }
 
-    async getSamples(fields, opts) {
+    async getSamples(fields = false, opts = {}) {
+        // If no fields given, try to get info for all
+        if (fields === false) {
+            fields = this.fieldNames || [];
+        }
+
+        if (!fields || fields.length === 0) {
+            return [];
+        }
+
         return this.__statData.getSamples(fields, opts);
     }
 }

@@ -2,7 +2,7 @@
 import ObservableData, { States as ObservableDataStates } from "ui-lib/observable_data";
 import api from "api.io/api.io-client";
 
-class StatSamples extends ObservableData {
+class StatInfo extends ObservableData {
     constructor(initialOpts, debug = false) {
         if (!(initialOpts.fields instanceof Array) && initialOpts.fields !== false) {
             throw new Error("fields must be set to an array in the initial opts");
@@ -22,19 +22,19 @@ class StatSamples extends ObservableData {
             return this._initialValue;
         }
 
-        const samplesOpts = {};
+        const infoOpts = {};
         // Copy properties from opts if specified
         [ "first", "last" ].forEach((prop) => {
             if (opts.hasOwnProperty(prop)) {
-                samplesOpts[prop] = opts[prop];
+                infoOpts[prop] = opts[prop];
             }
         });
 
-        return await api.rest.get("stat.stat", opts.id, "samples", {
+        return await api.rest.get("stat.stat", opts.id, "info", {
             fields: opts.fields || false,
-            opts: samplesOpts
+            opts: infoOpts
         });
     }
 }
 
-export default StatSamples;
+export default StatInfo;

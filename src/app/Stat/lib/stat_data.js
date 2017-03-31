@@ -12,9 +12,10 @@ class StatData {
     async add(triggerRef, value) {
         const db = await ServiceMgr.instance.use("db");
         const data = Object.assign({
+            // Fields added by statData prefixed with underscore...
             _id: db.generateId(),
-            collected: new Date(),
-            triggerRef
+            _collected: new Date(),
+            _triggerRef: triggerRef
         }, value);
 
         await db.insertOne(this._collection, data);
@@ -84,7 +85,7 @@ class StatData {
     }
 
     async getSamples(fields, opts) {
-        const project = { _id: 1, collected: 1 };
+        const project = { _id: 1, _collected: 1 };
         fields.forEach((field) => project[field] = 1);
         const db = await ServiceMgr.instance.use("db");
 

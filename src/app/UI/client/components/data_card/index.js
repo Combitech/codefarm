@@ -21,6 +21,7 @@ import TeamCard from "./TeamCard";
 import PolicyCard from "./PolicyCard";
 import StatSpecCard from "./StatSpecCard";
 import StatStatCard from "./StatStatCard";
+import StatStatInfoCard from "./StatStatInfoCard";
 
 const ThemedCardList = themr(DATA_CARD, theme)(CardList);
 const ThemedTypeCard = themr(DATA_CARD, theme)(TypeCard);
@@ -40,6 +41,7 @@ const ThemedTeamCard = themr(DATA_CARD, theme)(TeamCard);
 const ThemedPolicyCard = themr(DATA_CARD, theme)(PolicyCard);
 const ThemedStatSpecCard = themr(DATA_CARD, theme)(StatSpecCard);
 const ThemedStatStatCard = themr(DATA_CARD, theme)(StatStatCard);
+const ThemedStatStatInfoCard = themr(DATA_CARD, theme)(StatStatInfoCard);
 
 export { ThemedCardList as CardList };
 export { ThemedTypeCard as TypeCard };
@@ -59,3 +61,4 @@ export { ThemedTeamCard as TeamCard };
 export { ThemedPolicyCard as PolicyCard };
 export { ThemedStatSpecCard as StatSpecCard };
 export { ThemedStatStatCard as StatStatCard };
+export { ThemedStatStatInfoCard as StatStatInfoCard };
