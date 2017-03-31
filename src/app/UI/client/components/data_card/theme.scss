@@ -30,7 +30,7 @@
 }
 
 // Comment is used for commit messages and user comments
-.comment, .code {
+.comment {
     @extend .commentBase;
     white-space: pre;
     overflow: hidden;
@@ -39,6 +39,19 @@
     &LineWrap {
         @extend .commentBase;
         white-space: pre-wrap;
+    }
+}
+
+.code {
+    @extend .commentBase;
+    white-space: pre;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    &LineWrap {
+        @extend .commentBase;
+        white-space: pre-wrap;
+        word-break: break-all;
     }
 }
 

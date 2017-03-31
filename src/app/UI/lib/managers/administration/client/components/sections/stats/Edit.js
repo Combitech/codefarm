@@ -2,8 +2,6 @@
 import React from "react";
 import LightComponent from "ui-lib/light_component";
 import Input from "react-toolbox/lib/input";
-import Dropdown from "react-toolbox/lib/dropdown";
-import Switch from "react-toolbox/lib/switch";
 import Autocomplete from "react-toolbox/lib/autocomplete";
 import {
     Form as TAForm,
@@ -21,59 +19,76 @@ class Edit extends LightComponent {
                 required: () => true,
                 defaultValue: ""
             },
+            "description": {
+                editable: true,
+                required: () => false,
+                defaultValue: ""
+            },
+            "initialState": {
+                editable: true,
+                required: () => false,
+                defaultValue: "",
+                serialize: (input) => typeof input === "string" && input.length > 0 ? JSON.parse(input) : null,
+                deserialize: (jsObj) => typeof jsObj !== "string" ? JSON.stringify(jsObj, null, 2) : jsObj
+            },
+            "script": {
+                editable: true,
+                required: () => true,
+                defaultValue: ""
+            },
             "tags": {
                 editable: true,
                 required: () => false,
                 defaultValue: []
-            },
-            "collectors[0].name": {
-                editable: true,
-                required: () => true,
-                defaultValue: ""
-            },
-            "collectors[0].collectType": {
-                editable: true,
-                required: () => true,
-                defaultValue: ""
-            },
-            "collectors[0].criteria": {
-                editable: true,
-                required: () => true,
-                defaultValue: ""
-            },
-            "collectors[0].limit": {
-                editable: true,
-                required: () => true,
-                defaultValue: 0
-            },
-            "collectors[0].latest": {
-                editable: true,
-                required: () => true,
-                defaultValue: false
             }
         };
 
         this.state = tautils.createStateProperties(this, this.itemProperties, this.props.item);
     }
 
-    getCollectTypes() {
-        return [
-            { value: "coderepo.revision", label: "Revision" },
-            { value: "artifactrepo.artifact", label: "Artifact" }
-        ];
-    }
-
     async onConfirm() {
         const data = tautils.serialize(this.state, this.itemProperties, this.props.item);
-        await this.props.onSave("baselinegen.specification", data, {
+        await this.props.onSave("stat.spec", data, {
             create: !this.props.item
         });
+    }
+
+    _validate() {
+        const inputsValid = tautils.isValid(this.state, this.itemProperties);
+
+        let scriptErrorMsg = "";
+        try {
+            new Function(this.state.script.value); // eslint-disable-line no-new-func
+        } catch (error) {
+            console.log("script JSON serialization failed:", error.message);
+            scriptErrorMsg = error.message;
+        }
+
+        let initialStateErrorMsg = "";
+        try {
+            this.itemProperties.initialState.serialize(
+                this.state.initialState.value
+            );
+        } catch (error) {
+            console.log("initialState JSON serialization failed:", error.message);
+            initialStateErrorMsg = error.message;
+        }
+
+        return {
+            confirmAllowed: inputsValid && initialStateErrorMsg.length === 0,
+            initialStateErrorMsg,
+            scriptErrorMsg
+        };
     }
 
     render() {
         this.log("render", this.props, this.state);
 
-        const collectTypes = this.getCollectTypes();
+        const {
+            confirmAllowed,
+            initialStateErrorMsg,
+            scriptErrorMsg
+        } = this._validate();
 
         return (
             <TASection
@@ -81,10 +96,10 @@ class Edit extends LightComponent {
                 controls={this.props.controls}
             >
                 <TAForm
-                    confirmAllowed={tautils.isValid(this.state, this.itemProperties)}
+                    confirmAllowed={confirmAllowed}
                     confirmText={this.props.item ? "Save" : "Create"}
-                    primaryText={`${this.props.item ? "Edit" : "Create"} baseline`}
-                    secondaryText="A baseline collects ids based on a criteria"
+                    primaryText={`${this.props.item ? "Edit" : "Create"} statistics specification`}
+                    secondaryText="A statistics specification specifies which data to collect"
                     onConfirm={() => this.onConfirm()}
                     onCancel={() => this.props.onCancel()}
                 >
@@ -100,51 +115,42 @@ class Edit extends LightComponent {
                     />
                     <Input
                         type="text"
-                        label="Collector name"
-                        name="collectors[0].name"
+                        label="Description"
+                        name="description"
                         floating={true}
-                        required={this.itemProperties["collectors[0].name"].required()}
-                        disabled={this.props.item && !this.itemProperties["collectors[0].name"].editable}
-                        value={this.state["collectors[0].name"].value}
-                        onChange={this.state["collectors[0].name"].set}
-                    />
-                    <Dropdown
-                        label="Collector type"
-                        required={this.itemProperties["collectors[0].collectType"].required()}
-                        disabled={this.props.item && !this.itemProperties["collectors[0].collectType"].editable}
-                        onChange={this.state["collectors[0].collectType"].set}
-                        source={collectTypes}
-                        value={this.state["collectors[0].collectType"].value}
+                        required={this.itemProperties.description.required()}
+                        disabled={this.props.item && !this.itemProperties.description.editable}
+                        value={this.state.description.value}
+                        onChange={this.state.description.set}
                     />
                     <Input
+                        theme={this.props.theme}
+                        className={this.props.theme.monospaceInput}
                         type="text"
-                        label="Collector criteria"
-                        name="collectors[0].criteria"
+                        label="Script"
+                        name="script"
                         floating={true}
-                        required={this.itemProperties["collectors[0].criteria"].required()}
-                        disabled={this.props.item && !this.itemProperties["collectors[0].criteria"].editable}
-                        value={this.state["collectors[0].criteria"].value}
-                        onChange={this.state["collectors[0].criteria"].set}
+                        multiline={true}
+                        required={this.itemProperties.script.required()}
+                        disabled={this.props.item && !this.itemProperties.script.editable}
+                        value={this.state.script.value}
+                        onChange={this.state.script.set}
+                        error={scriptErrorMsg}
                     />
                     <Input
-                        type="number"
-                        label="Collector limit"
-                        name="collectors[0].limit"
+                        theme={this.props.theme}
+                        className={this.props.theme.monospaceInput}
+                        type="text"
+                        label="Initial state"
+                        name="initialState"
                         floating={true}
-                        required={this.itemProperties["collectors[0].limit"].required()}
-                        disabled={this.props.item && !this.itemProperties["collectors[0].limit"].editable}
-                        value={this.state["collectors[0].limit"].value}
-                        onChange={this.state["collectors[0].limit"].set}
+                        multiline={true}
+                        required={this.itemProperties.initialState.required()}
+                        disabled={this.props.item && !this.itemProperties.initialState.editable}
+                        value={this.state.initialState.value}
+                        onChange={this.state.initialState.set}
+                        error={initialStateErrorMsg}
                     />
-                    <div>
-                        <div className={this.props.theme.subtitle}>Collect latest *</div>
-                        <Switch
-                            required={this.itemProperties["collectors[0].latest"].required()}
-                            disabled={this.props.item && !this.itemProperties["collectors[0].latest"].editable}
-                            checked={this.state["collectors[0].latest"].value}
-                            onChange={this.state["collectors[0].latest"].set}
-                        />
-                    </div>
                     <Autocomplete
                         selectedPosition="below"
                         allowCreate={true}

@@ -49,3 +49,9 @@
     text-transform: uppercase;
     text-align: center;
 }
+
+.monospaceInput {
+    .inputElement {
+        font-family: "Roboto Mono" !important;
+    }
+}

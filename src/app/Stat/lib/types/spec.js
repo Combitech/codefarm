@@ -10,7 +10,7 @@ class Spec extends Type {
     constructor(data) {
         super();
 
-        this.description = false;
+        this.description = "";
         this.initialState = null;
         this.script = false;
         if (data) {
