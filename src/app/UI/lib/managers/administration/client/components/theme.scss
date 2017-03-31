@@ -9,6 +9,10 @@
     margin-top: $standard-increment-desktop;
 }
 
+.card {
+    margin-bottom: $layout-gutter-width-sm;
+}
+
 .jobStatusIcon {
     color: $color-white;
     &Queued {
@@ -44,10 +48,9 @@
     }
 }
 
-.noGraph {
-    color: $color-text-secondary;
-    text-transform: uppercase;
-    text-align: center;
+.titleSwitch {
+    float: right;
+    margin-left: $layout-gutter-width-sm;
 }
 
 .monospaceInput {

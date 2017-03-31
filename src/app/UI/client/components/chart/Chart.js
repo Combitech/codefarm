@@ -6,6 +6,7 @@ import {
     BarChart, Bar,
     XAxis, YAxis, CartesianGrid, Tooltip, Legend
 } from "recharts";
+import { Card, CardText, CardTitle } from "react-toolbox/lib/card";
 import * as color from "ui-lib/colors";
 
 const colorSeries = 500;
@@ -17,9 +18,7 @@ const colorNames = [
 
 const STROKE_PALETTE = colorNames.map((colorName) => color[`${colorName}${colorSeries}`]);
 
-const CHART_WIDTH = 600;
-const CHART_HEIGHT = 300;
-const CHART_MARGIN = { top: 5, right: 30, left: 20, bottom: 5 };
+const CHART_MARGIN = { top: 5, right: 0, left: 0, bottom: 5 };
 
 const AXIS_TYPE = {
     number: "number",
@@ -32,9 +31,6 @@ const CHART_TYPE = {
 };
 
 class Chart extends LightComponent {
-    constructor(props) {
-        super(props);
-    }
     render() {
         const serieFields = this.props.serieFields;
         const dataFields = this.props.dataFields;
@@ -46,14 +42,20 @@ class Chart extends LightComponent {
         );
         const samples = this.props.samples;
         if (serieFields.length > 0 && dataFields.length > 0 && samples.length > 0) {
+            const chartProps = {
+                width: this.props.width,
+                height: this.props.height,
+                data: samples,
+                margin: CHART_MARGIN
+            };
+            const commonComponents = [
+                <CartesianGrid key="grid" strokeDasharray="3 3"/>,
+                <Tooltip key="tooltip" />,
+                <Legend key="legend" />
+            ];
             if (this.props.chartType === CHART_TYPE.line) {
                 chart = (
-                    <LineChart
-                        width={CHART_WIDTH}
-                        height={CHART_HEIGHT}
-                        data={samples}
-                        margin={CHART_MARGIN}
-                    >
+                    <LineChart {...chartProps}>
                         {serieFields.map((field) => (
                             <XAxis
                                 key={`x_${field}`}
@@ -62,9 +64,7 @@ class Chart extends LightComponent {
                             />
                         ))}
                         <YAxis type={this.props.yAxisType} />
-                        <CartesianGrid strokeDasharray="3 3"/>
-                        <Tooltip/>
-                        <Legend />
+                        {commonComponents}
                         {dataFields.map((field, index) => (
                             <Line
                                 key={`y_${field}`}
@@ -78,12 +78,7 @@ class Chart extends LightComponent {
                 );
             } else if (this.props.chartType === CHART_TYPE.bar) {
                 chart = (
-                    <BarChart
-                        width={CHART_WIDTH}
-                        height={CHART_HEIGHT}
-                        data={samples}
-                        margin={CHART_MARGIN}
-                    >
+                    <BarChart {...chartProps}>
                         {serieFields.map((field) => (
                             <XAxis
                                 key={`x_${field}`}
@@ -92,9 +87,7 @@ class Chart extends LightComponent {
                             />
                         ))}
                         <YAxis type={this.props.yAxisType} />
-                        <CartesianGrid strokeDasharray="3 3"/>
-                        <Tooltip/>
-                        <Legend />
+                        {commonComponents}
                         {dataFields.map((field, index) => (
                             <Bar
                                 key={`y_${field}`}
@@ -107,9 +100,24 @@ class Chart extends LightComponent {
             }
         }
 
-        return chart;
+        return (
+            <Card theme={this.props.theme}>
+                <If condition={this.props.title}>
+                    <CardTitle title={this.props.title} />
+                </If>
+                <CardText>
+                    {chart}
+                </CardText>
+            </Card>
+        );
     }
 }
+
+Chart.defaultProps = {
+    width: 600,
+    height: 300,
+    title: ""
+};
 
 Chart.propTypes = {
     theme: React.PropTypes.object,
@@ -118,7 +126,10 @@ Chart.propTypes = {
     dataFields: React.PropTypes.array.isRequired,
     chartType: React.PropTypes.string.isRequired,
     yAxisType: React.PropTypes.string.isRequired,
-    xAxisType: React.PropTypes.string.isRequired
+    xAxisType: React.PropTypes.string.isRequired,
+    title: React.PropTypes.string,
+    width: React.PropTypes.number,
+    height: React.PropTypes.number
 };
 
 export default Chart;

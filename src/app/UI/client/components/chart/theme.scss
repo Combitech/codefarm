@@ -4,3 +4,13 @@
 @import "react-toolbox/components/globals";
 @import "~ui-styles/colors";
 @import "~ui-styles/common";
+
+.card {
+    margin-bottom: $layout-gutter-width-sm;
+}
+
+.noGraph {
+    color: $color-text-secondary;
+    text-transform: uppercase;
+    text-align: center;
+}

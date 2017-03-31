@@ -1,8 +1,11 @@
 
 import React from "react";
 import LightComponent from "ui-lib/light_component";
+import Input from "react-toolbox/lib/input";
 import { Autocomplete } from "react-toolbox/lib/autocomplete";
 import Dropdown from "react-toolbox/lib/dropdown";
+import Switch from "react-toolbox/lib/switch";
+import { Card, CardText } from "react-toolbox/lib/card";
 import { Row, Column, Header, Section } from "ui-components/layout";
 import { StatStatCard, StatStatInfoCard } from "ui-components/data_card";
 import {
@@ -12,6 +15,11 @@ import StatSamples from "ui-observables/stat_samples";
 import StatInfo from "ui-observables/stat_info";
 import moment from "moment";
 import { Chart, CHART_TYPE, AXIS_TYPE } from "ui-components/chart";
+
+const CHART_DIM = {
+    big: { width: 800, height: 600 },
+    normal: { width: 600, height: 300 }
+};
 
 const DEFAULT_X_AXIS = "_t";
 
@@ -52,7 +60,9 @@ class StatItem extends LightComponent {
             dataFields: availableFields,
             yAxisType: AXIS_TYPE.number,
             xAxisType: AXIS_TYPE.category,
-            chartType: CHART_TYPE.line
+            chartType: CHART_TYPE.line,
+            chartTitle: `Chart ${props.item._id}`,
+            propsVisible: true
         };
     }
 
@@ -98,6 +108,11 @@ class StatItem extends LightComponent {
         const serieFields = this.state.serieFields;
         const dataFields = this.state.dataFields;
 
+        const rootColWidths = [
+            { xs: 12, md: 5 },
+            { xs: 12, md: 7 }
+        ];
+
         let samples = [];
         if (serieFields.length > 0 && dataFields.length > 0 && this.state.samples.size > 0) {
             samples = this.state.samples.toJS();
@@ -106,15 +121,30 @@ class StatItem extends LightComponent {
                 sample[DEFAULT_X_AXIS] = moment(sample._collected).format("YYYY-MM-DD HH:mm:ss");
             });
         }
+
+        const controls = this.props.controls.slice(0);
+        controls.push((
+            <Switch
+                theme={this.props.theme}
+                className={this.props.theme.titleSwitch}
+                key="show_hide_props"
+                label="Show properties"
+                onChange={() => this.setState((prevState) => ({ propsVisible: !prevState.propsVisible }))}
+                checked={this.state.propsVisible}
+            />
+        ));
+
         const chart = (
             <Chart
                 theme={this.props.theme}
                 samples={samples}
                 serieFields={serieFields}
                 dataFields={dataFields}
+                title={this.state.chartTitle}
                 chartType={this.state.chartType}
                 yAxisType={this.state.yAxisType}
                 xAxisType={this.state.xAxisType}
+                {...(this.state.propsVisible ? CHART_DIM.normal : CHART_DIM.big)}
             />
         );
 
@@ -123,94 +153,139 @@ class StatItem extends LightComponent {
 
         const availableFields = this._getFields();
 
+        const propSection = (
+            <Section>
+                <Header label="Properties" />
+                <StatStatCard
+                    item={this.props.item}
+                    expanded={true}
+                    expandable={false}
+                />
+            </Section>
+        );
+
+        const statInfoRows = statInfo.map((info) => (
+            <Row key={info.get("id")}>
+                <StatStatInfoCard
+                    item={info.toJS()}
+                    expandable={true}
+                    expanded={false}
+                />
+            </Row>
+        ));
+
+        const chartCtrls = (
+            <Card theme={this.props.theme}>
+                <CardText>
+                    <Row>
+                        <Column xs={12} md={6}>
+                            <Dropdown
+                                label="Chart type"
+                                value={this.state.chartType}
+                                source={chartTypes}
+                                onChange={(chartType) => this.setState({ chartType })}
+                            />
+                        </Column>
+                        <Column xs={12} md={6}>
+                            <Input
+                                type="text"
+                                label="Chart title"
+                                value={this.state.chartTitle}
+                                onChange={(chartTitle) => this.setState({ chartTitle })}
+                            />
+                        </Column>
+                    </Row>
+                    <Row>
+                        <Column xs={12} md={6}>
+                            <Autocomplete
+                                direction="down"
+                                selectedPosition="below"
+                                label="Select data fields"
+                                onChange={(dataFields) => this.setState({ dataFields })}
+                                source={availableFields}
+                                value={dataFields}
+                            />
+                        </Column>
+                        <Column xs={12} md={6}>
+                            <Autocomplete
+                                direction="down"
+                                selectedPosition="below"
+                                label="Select series field"
+                                onChange={(serieFields) => this.setState({ serieFields })}
+                                source={availableFields}
+                                value={serieFields}
+                            />
+                        </Column>
+                    </Row>
+                    <Row>
+                        <Column xs={12} md={6}>
+                            <Dropdown
+                                label="Y-axis type"
+                                value={this.state.yAxisType}
+                                source={axisTypes}
+                                onChange={(yAxisType) => this.setState({ yAxisType })}
+                            />
+                        </Column>
+                        <Column xs={12} md={6}>
+                            <Dropdown
+                                label="X-axis type"
+                                disabled={this.state.chartType === CHART_TYPE.bar}
+                                value={this.state.xAxisType}
+                                source={axisTypes}
+                                onChange={(xAxisType) => this.setState({ xAxisType })}
+                            />
+                        </Column>
+                    </Row>
+                </CardText>
+            </Card>
+        );
+
         return (
             <div>
                 <TASection
-                    controls={this.props.controls}
+                    controls={controls}
                     breadcrumbs={this.props.breadcrumbs}
                 >
                     <div className={this.props.theme.container}>
-                        <Row>
-                            <Column xs={12} md={5}>
-                                <Section>
-                                    <Header label="Properties" />
-                                    <StatStatCard
-                                        item={this.props.item}
-                                        expanded={true}
-                                        expandable={false}
-                                    />
-                                </Section>
-                            </Column>
-                            <Column xs={12} md={7}>
+                        <Choose>
+                            <When condition={this.state.propsVisible}>
+                                <Row>
+                                    <Column {...rootColWidths[0]}>
+                                        {propSection}
+                                    </Column>
+                                    <Column {...rootColWidths[1]}>
+                                        <Section>
+                                            <Header label="Data explorer" />
+                                            <Row>
+                                                {chartCtrls}
+                                            </Row>
+                                            <Row>
+                                                {chart}
+                                            </Row>
+                                            {statInfoRows}
+                                        </Section>
+                                    </Column>
+                                </Row>
+                            </When>
+                            <Otherwise>
                                 <Section>
                                     <Header label="Data explorer" />
                                     <Row>
-                                        <Column xs={12} md={6}>
-                                            <Dropdown
-                                                label="Chart type"
-                                                value={this.state.chartType}
-                                                source={chartTypes}
-                                                onChange={(chartType) => this.setState({ chartType })}
-                                            />
+                                        <Column {...rootColWidths[0]}>
+                                            <Row>
+                                                {chartCtrls}
+                                            </Row>
+                                            {statInfoRows}
                                         </Column>
-                                    </Row>
-                                    <Row>
-                                        <Column xs={12} md={6}>
-                                            <Autocomplete
-                                                direction="down"
-                                                selectedPosition="below"
-                                                label="Select data fields"
-                                                onChange={(dataFields) => this.setState({ dataFields })}
-                                                source={availableFields}
-                                                value={dataFields}
-                                            />
+                                        <Column {...rootColWidths[1]}>
+                                            <Section>
+                                                {chart}
+                                            </Section>
                                         </Column>
-                                        <Column xs={12} md={6}>
-                                            <Autocomplete
-                                                direction="down"
-                                                selectedPosition="below"
-                                                label="Select series field"
-                                                onChange={(serieFields) => this.setState({ serieFields })}
-                                                source={availableFields}
-                                                value={serieFields}
-                                            />
-                                        </Column>
-                                    </Row>
-                                    <Row>
-                                        <Column xs={12} md={6}>
-                                            <Dropdown
-                                                label="Y-axis type"
-                                                value={this.state.yAxisType}
-                                                source={axisTypes}
-                                                onChange={(yAxisType) => this.setState({ yAxisType })}
-                                            />
-                                        </Column>
-                                        <Column xs={12} md={6}>
-                                            <Dropdown
-                                                label="X-axis type"
-                                                disabled={this.state.chartType === CHART_TYPE.bar}
-                                                value={this.state.xAxisType}
-                                                source={axisTypes}
-                                                onChange={(xAxisType) => this.setState({ xAxisType })}
-                                            />
-                                        </Column>
-                                    </Row>
-                                    <Row>
-                                        {chart}
-                                    </Row>
-                                    <Row>
-                                        {statInfo.map((info) => (
-                                            <StatStatInfoCard
-                                                key={info.get("id")}
-                                                item={info.toJS()}
-                                                expandable={true}
-                                                expanded={false}
-                                            />
-                                        ))}
                                     </Row>
                                 </Section>
-                            </Column>
-                        </Row>
+                            </Otherwise>
+                        </Choose>
                     </div>
                 </TASection>
             </div>

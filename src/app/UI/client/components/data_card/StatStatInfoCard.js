@@ -22,11 +22,7 @@ class StatStatInfoCard extends LightComponent {
                 expandable={this.props.expandable}
             >
                 <CardTitle
-                    title={(
-                        <div>
-                            {this.props.item.id}
-                        </div>
-                    )}
+                    title={`${this.props.item.id} characteristics`}
                 />
                 <If condition={this.state.expanded.value}>
                     <table className={this.props.theme.table}>
