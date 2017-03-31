@@ -66,19 +66,10 @@ class AvatarBase extends LightComponent {
 
         const className = `${this.props.className} ${this.props.large ? this.props.theme.avatarLarge : ""}`;
 
-        if (this.state.loaded) {
-            return (
-                <Avatar
-                    className={`${this.props.theme.avatar} ${className}`}
-                    image={this.image.src}
-                />
-            );
-        }
-
         return (
-            <img
-                className={`${this.props.theme.image} ${className}`}
-                src={this.props.defaultUrl}
+            <Avatar
+                className={`${this.props.theme.avatar} ${className}`}
+                image={this.state.loaded ? this.image.src : this.props.defaultUrl}
             />
         );
     }

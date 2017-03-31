@@ -1,11 +1,13 @@
 
 import React from "react";
+import Immutable from "immutable";
 import LightComponent from "ui-lib/light_component";
 import DateTime from "ui-components/datetime";
 import Tags from "ui-components/tags";
 import DataCard from "./DataCard";
 import UserAvatar from "ui-components/user_avatar";
 import { CardTitle } from "react-toolbox/lib/card";
+import { ChipList } from "ui-components/data_chip";
 import stateVar from "ui-lib/state_var";
 import * as pathBuilder from "ui-lib/path_builder";
 
@@ -23,6 +25,20 @@ class UserCard extends LightComponent {
             .map((key) => `${key}: ${this.props.item.aliases[key]}`);
 
         const myItemPath = pathBuilder.fromType("userrepo.user", this.props.item);
+
+        const teams = this.props.item.teams.map((id) => ({
+            id: id,
+            ref: {
+                _ref: true,
+                type: "userrepo.team",
+                id: id
+            }
+        }));
+
+        const policies = (this.props.item.policyRefs || []).map((ref) => ({
+            id: ref.id,
+            ref: ref
+        }));
 
         return (
             <DataCard
@@ -107,9 +123,15 @@ class UserCard extends LightComponent {
                                 </td>
                             </tr>
                             <tr>
-                                <td>Tags</td>
+                                <td>Teams</td>
                                 <td>
-                                    <Tags list={this.props.item.tags} />
+                                    <ChipList list={Immutable.fromJS(teams)} />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Policies</td>
+                                <td>
+                                    <ChipList list={Immutable.fromJS(policies)} />
                                 </td>
                             </tr>
                             <If condition={this.props.showAdvanced}>
@@ -118,6 +140,12 @@ class UserCard extends LightComponent {
                                     <td>{this.props.item.numKeys} uploaded</td>
                                 </tr>
                             </If>
+                            <tr>
+                                <td>Tags</td>
+                                <td>
+                                    <Tags list={this.props.item.tags} />
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                 </If>

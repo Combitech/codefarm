@@ -1,12 +1,13 @@
 
 import React from "react";
+import Immutable from "immutable";
 import LightComponent from "ui-lib/light_component";
 import { createClaim, removeClaim } from "ui-lib/claim";
 import { Loading } from "ui-components/layout";
 import { States as ObservableDataStates } from "ui-lib/observable_data";
 import ClaimList from "ui-observables/claim_list";
 import ActiveUser from "ui-observables/active_user";
-import { UserChip } from "ui-components/data_chip";
+import { ChipList } from "ui-components/data_chip";
 
 class Claim extends LightComponent {
     constructor(props) {
@@ -53,6 +54,13 @@ class Claim extends LightComponent {
         const claims = this.state.claims.toJS();
         const signedInUser = ActiveUser.instance.user.getValue().toJS();
         const myClaim = claims.find((item) => item.creatorRef.id === signedInUser.id);
+        const list = claims.map((item) => ({
+            id: item._id,
+            ref: item.creatorRef,
+            props: {
+                onDelete: () => this.onUnclaim(item)
+            }
+        }));
 
         return (
             <div>
@@ -70,13 +78,7 @@ class Claim extends LightComponent {
                         No claims found
                     </div>
                 </If>
-                <For each="item" of={claims}>
-                    <UserChip
-                        key={item._id}
-                        itemRef={item.creatorRef}
-                        onDelete={() => this.onUnclaim(item)}
-                    />
-                </For>
+                <ChipList list={Immutable.fromJS(list)} />
             </div>
         );
     }

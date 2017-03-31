@@ -5,6 +5,7 @@
 @import "~ui-styles/common";
 
 .chip {
+    background-color: $palette-grey-300;
     cursor: pointer;
     padding-left: 0;
 
@@ -15,11 +16,14 @@
         width: 3.2rem;
         height: 3.2rem;
         margin-right: $unit;
+
+        background-color: $palette-blue-500;
+        color: white;
     }
 
     &:hover {
-        background-color: $palette-grey-300;
-        color: $cf-color-selected;
+        background-color: $palette-grey-500;
+        color: white;
 
         transition: color 0.1s, background-color 0.1s;
     }
