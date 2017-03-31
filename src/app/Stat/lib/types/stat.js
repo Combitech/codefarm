@@ -14,6 +14,7 @@ class Stat extends Type {
         this.lastData = null;
         this.state = null;
         this.fieldNames = null;
+        this.chartConfigs = [];
 
         if (data) {
             this.set(data);
@@ -45,6 +46,10 @@ class Stat extends Type {
             assertType(data.fieldNames, "data.fieldNames", "array");
         } else if (event === "update") {
             // Update
+        }
+
+        if (data.chartConfigs) {
+            assertType(data.chartConfigs, "data.chartConfigs", "array");
         }
     }
 

@@ -9,12 +9,14 @@ import { Card, CardText } from "react-toolbox/lib/card";
 import { Row, Column, Header, Section } from "ui-components/layout";
 import { StatStatCard, StatStatInfoCard } from "ui-components/data_card";
 import {
-    Section as TASection
+    Section as TASection,
+    ControlButton as TAControlButton
 } from "ui-components/type_admin";
 import StatSamples from "ui-observables/stat_samples";
 import StatInfo from "ui-observables/stat_info";
 import moment from "moment";
 import { Chart, CHART_TYPE, AXIS_TYPE } from "ui-components/chart";
+import api from "api.io/api.io-client";
 
 const CHART_DIM = {
     big: { width: 800, height: 600 },
@@ -102,6 +104,30 @@ class StatItem extends LightComponent {
         this.statInfo.setOpts({ fields });
     }
 
+    _getChartProps() {
+        return {
+            serieFields: this.state.serieFields,
+            dataFields: this.state.dataFields,
+            title: this.state.chartTitle,
+            chartType: this.state.chartType,
+            yAxisType: this.state.yAxisType,
+            xAxisType: this.state.xAxisType
+        };
+    }
+
+    async _saveChartConfig() {
+        const chartConfig = this._getChartProps();
+
+        try {
+            await api.rest.save(this.props.item.type, this.props.item._id, {
+                chartConfigs: [ chartConfig ]
+            });
+            console.log("Update success!");
+        } catch (error) {
+            console.error("Update statistic failed", error);
+        }
+    }
+
     render() {
         this.log("render", this.props, JSON.stringify(this.state, null, 2));
 
@@ -133,17 +159,19 @@ class StatItem extends LightComponent {
                 checked={this.state.propsVisible}
             />
         ));
+        controls.push((
+            <TAControlButton
+                key="save"
+                label="Save chart"
+                onClick={() => this._saveChartConfig()}
+            />
+        ));
 
         const chart = (
             <Chart
                 theme={this.props.theme}
                 samples={samples}
-                serieFields={serieFields}
-                dataFields={dataFields}
-                title={this.state.chartTitle}
-                chartType={this.state.chartType}
-                yAxisType={this.state.yAxisType}
-                xAxisType={this.state.xAxisType}
+                {...this._getChartProps()}
                 {...(this.state.propsVisible ? CHART_DIM.normal : CHART_DIM.big)}
             />
         );
