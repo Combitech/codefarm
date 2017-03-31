@@ -12,12 +12,16 @@ const restApiExports = api.register("rest", {
 
         return client.list(typeName, query, { token });
     }),
-    get: api.export(async (session, type, id, getterName) => {
+    get: api.export(async (session, type, id, getterName, data = {}) => {
         const token = session.user && session.user.token;
         const [ serviceId, typeName ] = type.split(".");
         const client = ServiceComBus.instance.getClient(serviceId);
 
-        return client[getterName || "get"](typeName, id, { token });
+        if (getterName) {
+            return client[getterName](typeName, id, data, { token });
+        }
+
+        return client.get(typeName, id, { token });
     }),
     save: api.export(async (session, type, id, data = {}) => {
         const token = session.user && session.user.token;

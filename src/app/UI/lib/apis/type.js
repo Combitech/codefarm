@@ -16,12 +16,12 @@ const typeApiExports = api.register("type", {
 
         return client.list(typeName, query, { token });
     }),
-    getter: api.export(async (session, type, id, getter) => {
+    getter: api.export(async (session, type, id, getter, data = {}) => {
         const token = session.user && session.user.token;
         const [ serviceId, typeName ] = type.split(".");
         const client = ServiceComBus.instance.getClient(serviceId);
 
-        return client[getter](typeName, id, { token });
+        return client[getter](typeName, id, data, { token });
     })
 });
 

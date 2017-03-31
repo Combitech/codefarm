@@ -13,8 +13,10 @@ class Stats extends Controller {
         this._addGetter("samples", this._samples, "Get samples");
     }
 
-    async _info(ctx, id, fields = [], opts = {}) {
+    async _info(ctx, id, data = {}) {
         this._isAllowed(ctx, "read");
+        let fields = data.fields || [];
+        const opts = data.opts || {};
         if (ctx.reqType === "http") {
             const queryPar = qs.parse(ctx.httpCtx.query);
             if (queryPar.hasOwnProperty("field")) {
@@ -46,8 +48,10 @@ class Stats extends Controller {
         return await obj.getInfo(fields, opts);
     }
 
-    async _samples(ctx, id, fields = [], opts = {}) {
+    async _samples(ctx, id, data = {}) {
         this._isAllowed(ctx, "read");
+        let fields = data.fields || [];
+        const opts = data.opts || {};
         if (ctx.reqType === "http") {
             const queryPar = qs.parse(ctx.httpCtx.query);
             if (queryPar.hasOwnProperty("field")) {
@@ -68,6 +72,14 @@ class Stats extends Controller {
             if (queryPar.hasOwnProperty("first")) {
                 opts.sort = { collected: 1 };
                 opts.limit = JSON.parse(queryPar.first);
+            }
+        } else {
+            if (typeof opts.last === "number") { // eslint-disable-line no-lonely-if
+                opts.sort = { collected: -1 };
+                opts.limit = opts.last;
+            } else if (typeof opts.first === "number") {
+                opts.sort = { collected: 1 };
+                opts.limit = opts.first;
             }
         }
 

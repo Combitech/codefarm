@@ -6,8 +6,33 @@ import { StatStatCard } from "ui-components/data_card";
 import {
     Section as TASection
 } from "ui-components/type_admin";
+import StatSamples from "ui-observables/stat_samples";
 
 class StatItem extends LightComponent {
+    constructor(props) {
+        super(props);
+
+        this.samples = new StatSamples({
+            id: props.item && props.item._id,
+            fields: [ "execTimeMs", "queueTimeMs" ]
+        });
+
+        this.state = {
+            samples: this.samples.value.getValue()
+        };
+    }
+
+    componentDidMount() {
+        this.addDisposable(this.samples.start());
+        this.addDisposable(this.samples.value.subscribe((samples) => this.setState({ samples })));
+    }
+
+    componentWillReceiveProps(nextProps) {
+        this.samples.setOpts({
+            id: nextProps.item && nextProps.item.id
+        });
+    }
+
     render() {
         this.log("render", this.props, JSON.stringify(this.state, null, 2));
 
@@ -27,6 +52,14 @@ class StatItem extends LightComponent {
                                         expanded={true}
                                         expandable={false}
                                     />
+                                </Section>
+                            </Column>
+                            <Column xs={12} md={7}>
+                                <Section>
+                                    <Header label="Samples" />
+                                    <pre>
+                                        {JSON.stringify(this.state.samples.toJS(), null, 2)}
+                                    </pre>
                                 </Section>
                             </Column>
                         </Row>
