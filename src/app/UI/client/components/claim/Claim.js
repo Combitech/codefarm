@@ -2,12 +2,11 @@
 import React from "react";
 import LightComponent from "ui-lib/light_component";
 import { createClaim, removeClaim } from "ui-lib/claim";
-import UserName from "ui-components/user_name";
-import UserAvatar from "ui-components/user_avatar";
 import { Loading } from "ui-components/layout";
 import { States as ObservableDataStates } from "ui-lib/observable_data";
 import ClaimList from "ui-observables/claim_list";
 import ActiveUser from "ui-observables/active_user";
+import { UserChip } from "ui-components/data_chip";
 
 class Claim extends LightComponent {
     constructor(props) {
@@ -57,38 +56,25 @@ class Claim extends LightComponent {
 
         return (
             <div>
-                <Choose>
-                    <When condition={myClaim}>
-                        <a
-                            className={this.props.theme.button}
-                            onClick={() => this.onUnclaim(myClaim)}
-                        >
-                            Unclaim
-                        </a>
-                    </When>
-                    <Otherwise>
-                        <a
-                            className={this.props.theme.button}
-                            onClick={() => this.onClaim()}
-                        >
-                            Claim
-                        </a>
+                <If condition={!myClaim}>
+                    <a
+                        className={this.props.theme.button}
+                        onClick={() => this.onClaim()}
+                    >
+                        Claim
+                    </a>
 
-                    </Otherwise>
-                </Choose>
+                </If>
                 <If condition={claims.length === 0}>
                     <div className={this.props.theme.noClaim}>
                         No claims found
                     </div>
                 </If>
                 <For each="item" of={claims}>
-                    <UserAvatar
-                        className={this.props.theme.avatar}
-                        userId={item.creatorRef.id}
-                    />
-                    <UserName
-                        className={this.props.theme.name}
-                        userId={item.creatorRef.id}
+                    <UserChip
+                        key={item._id}
+                        itemRef={item.creatorRef}
+                        onDelete={() => this.onUnclaim(item)}
                     />
                 </For>
             </div>

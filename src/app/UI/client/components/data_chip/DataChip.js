@@ -2,9 +2,9 @@
 /* global window */
 
 import React from "react";
-import ExpandableCard from "ui-components/expandable_card";
+import Chip from "react-toolbox/lib/chip";
 
-class DataCard extends React.PureComponent {
+class DataChip extends React.PureComponent {
     onClick(event) {
         event.stopPropagation();
 
@@ -17,40 +17,45 @@ class DataCard extends React.PureComponent {
         }
     }
 
+    onDelete(event) {
+        if (this.props.onDelete) {
+            event.stopPropagation();
+            this.props.onDelete();
+        }
+    }
+
     render() {
         const isActive = this.props.path && this.context.router.isActive(this.props.path);
         const isClickable = !isActive && this.props.path;
         const onClick = isClickable ? (e) => this.onClick(e) : null;
 
         return (
-            <ExpandableCard
-                className={this.props.theme.card}
-                expanded={this.props.expanded}
-                expandable={this.props.expandable}
+            <Chip
+                className={this.props.theme.chip}
                 onClick={onClick}
+                deletable={!!this.props.onDelete}
+                onDeleteClick={(e) => this.onDelete(e)}
             >
                 {this.props.children}
-            </ExpandableCard>
+            </Chip>
         );
     }
 }
 
-DataCard.defaultProps = {
-    expandable: true,
+DataChip.defaultProps = {
     openInNew: false
 };
 
-DataCard.propTypes = {
+DataChip.propTypes = {
     theme: React.PropTypes.object,
     children: React.PropTypes.node,
-    expanded: React.PropTypes.object,
-    expandable: React.PropTypes.bool,
+    onDelete: React.PropTypes.func,
     path: React.PropTypes.string,
     openInNew: React.PropTypes.bool
 };
 
-DataCard.contextTypes = {
+DataChip.contextTypes = {
     router: React.PropTypes.object.isRequired
 };
 
-export default DataCard;
+export default DataChip;

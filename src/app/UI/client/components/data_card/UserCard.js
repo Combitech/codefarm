@@ -148,8 +148,4 @@ UserCard.propTypes = {
     titleLink: React.PropTypes.bool
 };
 
-UserCard.contextTypes = {
-    router: React.PropTypes.object.isRequired
-};
-
 export default UserCard;

@@ -9,6 +9,7 @@ export const APP_ICON = "CFAppIcon";
 export const APP_PAGER = "CFAppPager";
 export const CONFIRM_DIALOG = "CFConfirmDialog";
 export const DATA_CARD = "CFDataCard";
+export const DATA_CHIP = "CFDataChip";
 export const DATE_TIME = "CFDateTime";
 export const EXPANDABLE_CARD = "CFExpandableCard";
 export const COLLABORATOR_AVATAR = "CFCollaboratorAvatar";

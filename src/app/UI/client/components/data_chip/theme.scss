@@ -1,0 +1,26 @@
+
+@import "react-toolbox/components/colors";
+@import "react-toolbox/components/globals";
+@import "~ui-styles/colors";
+@import "~ui-styles/common";
+
+.chip {
+    cursor: pointer;
+    padding-left: 0;
+
+    transition: color 0.3s, background-color 0.3s;
+
+    .avatar {
+        display: inline-block;
+        width: 3.2rem;
+        height: 3.2rem;
+        margin-right: $unit;
+    }
+
+    &:hover {
+        background-color: $palette-grey-300;
+        color: $cf-color-selected;
+
+        transition: color 0.1s, background-color 0.1s;
+    }
+}
