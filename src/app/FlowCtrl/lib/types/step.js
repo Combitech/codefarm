@@ -98,7 +98,7 @@ class Step extends Type {
 
                         if (!foundJob || foundJob.finished) {
                             ServiceMgr.instance.log("info", `Step ${this.name} found job ${job.jobId} which has finished or is missing, performing step job finish`);
-                            await this.finishJob(job._id, foundJob ? foundJob.status : "unknown");
+                            await this.finishJob(job.jobId, foundJob ? foundJob.status : "unknown");
                         }
                     }
                 } catch (error) {
