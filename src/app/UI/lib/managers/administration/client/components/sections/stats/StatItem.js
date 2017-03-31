@@ -12,7 +12,11 @@ import StatSamples from "ui-observables/stat_samples";
 import StatInfo from "ui-observables/stat_info";
 
 import moment from "moment";
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from "recharts";
+import {
+    LineChart, Line,
+    BarChart, Bar,
+    XAxis, YAxis, CartesianGrid, Tooltip, Legend
+} from "recharts";
 import * as color from "ui-lib/colors";
 
 const colorSeries = 500;
@@ -23,6 +27,10 @@ const colorNames = [
 ];
 
 const STROKE_PALETTE = colorNames.map((colorName) => color[`${colorName}${colorSeries}`]);
+
+const CHART_WIDTH = 600;
+const CHART_HEIGHT = 300;
+const CHART_MARGIN = { top: 5, right: 30, left: 20, bottom: 5 };
 
 const DEFAULT_X_AXIS = "_t";
 
@@ -40,6 +48,16 @@ const AXIS_TYPE = {
 const axisTypes = [
     { value: AXIS_TYPE.category, label: "Category" },
     { value: AXIS_TYPE.number, label: "Numeric" }
+];
+
+const CHART_TYPE = {
+    line: "line",
+    bar: "bar"
+};
+
+const chartTypes = [
+    { value: CHART_TYPE.line, label: "Line chart" },
+    { value: CHART_TYPE.bar, label: "Bar chart" }
 ];
 
 class StatItem extends LightComponent {
@@ -62,8 +80,9 @@ class StatItem extends LightComponent {
             statInfo: this.statInfo.value.getValue(),
             serieFields: [ DEFAULT_X_AXIS ],
             dataFields: availableFields,
-            yAxisType: AXIS_TYPE.category,
-            xAxisType: AXIS_TYPE.number
+            yAxisType: AXIS_TYPE.number,
+            xAxisType: AXIS_TYPE.category,
+            chartType: CHART_TYPE.line
         };
     }
 
@@ -121,35 +140,65 @@ class StatItem extends LightComponent {
                 sample[DEFAULT_X_AXIS] = moment(sample._collected).format("YYYY-MM-DD HH:mm:ss");
             });
 
-            chart = (
-                <LineChart
-                    width={600}
-                    height={300}
-                    data={samples}
-                    margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-                >
-                    {serieFields.map((field) => (
-                        <XAxis
-                            key={`x_${field}`}
-                            dataKey={field}
-                            type={this.state.yAxisType}
-                        />
-                    ))}
-                    <YAxis type={this.state.xAxisType} />
-                    <CartesianGrid strokeDasharray="3 3"/>
-                    <Tooltip/>
-                    <Legend />
-                    {dataFields.map((field, index) => (
-                        <Line
-                            key={`y_${field}`}
-                            type="monotone"
-                            stroke={STROKE_PALETTE[index % STROKE_PALETTE.length]}
-                            dataKey={field}
-                            activeDot={{ r: 8 }}
-                        />
-                    ))}
-                </LineChart>
-            );
+            if (this.state.chartType === CHART_TYPE.line) {
+                chart = (
+                    <LineChart
+                        width={CHART_WIDTH}
+                        height={CHART_HEIGHT}
+                        data={samples}
+                        margin={CHART_MARGIN}
+                    >
+                        {serieFields.map((field) => (
+                            <XAxis
+                                key={`x_${field}`}
+                                dataKey={field}
+                                type={this.state.xAxisType}
+                            />
+                        ))}
+                        <YAxis type={this.state.yAxisType} />
+                        <CartesianGrid strokeDasharray="3 3"/>
+                        <Tooltip/>
+                        <Legend />
+                        {dataFields.map((field, index) => (
+                            <Line
+                                key={`y_${field}`}
+                                dataKey={field}
+                                type="monotone"
+                                stroke={STROKE_PALETTE[index % STROKE_PALETTE.length]}
+                                activeDot={{ r: 8 }}
+                            />
+                        ))}
+                    </LineChart>
+                );
+            } else if (this.state.chartType === CHART_TYPE.bar) {
+                chart = (
+                    <BarChart
+                        width={CHART_WIDTH}
+                        height={CHART_HEIGHT}
+                        data={samples}
+                        margin={CHART_MARGIN}
+                    >
+                        {serieFields.map((field) => (
+                            <XAxis
+                                key={`x_${field}`}
+                                dataKey={field}
+                                type="category"
+                            />
+                        ))}
+                        <YAxis type={this.state.yAxisType} />
+                        <CartesianGrid strokeDasharray="3 3"/>
+                        <Tooltip/>
+                        <Legend />
+                        {dataFields.map((field, index) => (
+                            <Bar
+                                key={`y_${field}`}
+                                dataKey={field}
+                                fill={STROKE_PALETTE[index % STROKE_PALETTE.length]}
+                            />
+                        ))}
+                    </BarChart>
+                );
+            }
         }
 
         const statInfo = this.state.statInfo
@@ -179,7 +228,17 @@ class StatItem extends LightComponent {
                                 <Section>
                                     <Header label="Data explorer" />
                                     <Row>
-                                        <Column xs={12} md={8}>
+                                        <Column xs={12} md={6}>
+                                            <Dropdown
+                                                label="Chart type"
+                                                value={this.state.chartType}
+                                                source={chartTypes}
+                                                onChange={(chartType) => this.setState({ chartType })}
+                                            />
+                                        </Column>
+                                    </Row>
+                                    <Row>
+                                        <Column xs={12} md={6}>
                                             <Autocomplete
                                                 direction="down"
                                                 selectedPosition="below"
@@ -189,17 +248,7 @@ class StatItem extends LightComponent {
                                                 value={dataFields}
                                             />
                                         </Column>
-                                        <Column xs={12} md={4}>
-                                            <Dropdown
-                                                label="X-axis type"
-                                                value={this.state.xAxisType}
-                                                source={axisTypes}
-                                                onChange={(xAxisType) => this.setState({ xAxisType })}
-                                            />
-                                        </Column>
-                                    </Row>
-                                    <Row>
-                                        <Column xs={12} md={8}>
+                                        <Column xs={12} md={6}>
                                             <Autocomplete
                                                 direction="down"
                                                 selectedPosition="below"
@@ -209,12 +258,23 @@ class StatItem extends LightComponent {
                                                 value={serieFields}
                                             />
                                         </Column>
-                                        <Column xs={12} md={4}>
+                                    </Row>
+                                    <Row>
+                                        <Column xs={12} md={6}>
                                             <Dropdown
                                                 label="Y-axis type"
                                                 value={this.state.yAxisType}
                                                 source={axisTypes}
                                                 onChange={(yAxisType) => this.setState({ yAxisType })}
+                                            />
+                                        </Column>
+                                        <Column xs={12} md={6}>
+                                            <Dropdown
+                                                label="X-axis type"
+                                                disabled={this.state.chartType === CHART_TYPE.bar}
+                                                value={this.state.xAxisType}
+                                                source={axisTypes}
+                                                onChange={(xAxisType) => this.setState({ xAxisType })}
                                             />
                                         </Column>
                                     </Row>
