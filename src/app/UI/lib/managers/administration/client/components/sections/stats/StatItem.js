@@ -10,27 +10,8 @@ import {
 } from "ui-components/type_admin";
 import StatSamples from "ui-observables/stat_samples";
 import StatInfo from "ui-observables/stat_info";
-
 import moment from "moment";
-import {
-    LineChart, Line,
-    BarChart, Bar,
-    XAxis, YAxis, CartesianGrid, Tooltip, Legend
-} from "recharts";
-import * as color from "ui-lib/colors";
-
-const colorSeries = 500;
-const colorNames = [
-    "deepPurple", "pink", "indigo", "cyan", "green", "purple",
-    "blue", "lightBlue", "teal", "lime", "yellow", "red",
-    "amber", "orange", "deepOrange", "brown", "grey", "bluegrey"
-];
-
-const STROKE_PALETTE = colorNames.map((colorName) => color[`${colorName}${colorSeries}`]);
-
-const CHART_WIDTH = 600;
-const CHART_HEIGHT = 300;
-const CHART_MARGIN = { top: 5, right: 30, left: 20, bottom: 5 };
+import { Chart, CHART_TYPE, AXIS_TYPE } from "ui-components/chart";
 
 const DEFAULT_X_AXIS = "_t";
 
@@ -39,21 +20,10 @@ const HARDCODED_FIELDS = {
     "_seq": "Sample index"
 };
 
-// Keys matches recharts XAxis property type values
-const AXIS_TYPE = {
-    number: "number",
-    category: "category"
-};
-
 const axisTypes = [
     { value: AXIS_TYPE.category, label: "Category" },
     { value: AXIS_TYPE.number, label: "Numeric" }
 ];
-
-const CHART_TYPE = {
-    line: "line",
-    bar: "bar"
-};
 
 const chartTypes = [
     { value: CHART_TYPE.line, label: "Line chart" },
@@ -128,78 +98,25 @@ class StatItem extends LightComponent {
         const serieFields = this.state.serieFields;
         const dataFields = this.state.dataFields;
 
-        let chart = (
-            <div className={this.props.theme.noGraph}>
-                Nothing to plot
-            </div>
-        );
+        let samples = [];
         if (serieFields.length > 0 && dataFields.length > 0 && this.state.samples.size > 0) {
-            const samples = this.state.samples.toJS();
+            samples = this.state.samples.toJS();
             samples.forEach((sample, index) => {
                 sample._seq = index;
                 sample[DEFAULT_X_AXIS] = moment(sample._collected).format("YYYY-MM-DD HH:mm:ss");
             });
-
-            if (this.state.chartType === CHART_TYPE.line) {
-                chart = (
-                    <LineChart
-                        width={CHART_WIDTH}
-                        height={CHART_HEIGHT}
-                        data={samples}
-                        margin={CHART_MARGIN}
-                    >
-                        {serieFields.map((field) => (
-                            <XAxis
-                                key={`x_${field}`}
-                                dataKey={field}
-                                type={this.state.xAxisType}
-                            />
-                        ))}
-                        <YAxis type={this.state.yAxisType} />
-                        <CartesianGrid strokeDasharray="3 3"/>
-                        <Tooltip/>
-                        <Legend />
-                        {dataFields.map((field, index) => (
-                            <Line
-                                key={`y_${field}`}
-                                dataKey={field}
-                                type="monotone"
-                                stroke={STROKE_PALETTE[index % STROKE_PALETTE.length]}
-                                activeDot={{ r: 8 }}
-                            />
-                        ))}
-                    </LineChart>
-                );
-            } else if (this.state.chartType === CHART_TYPE.bar) {
-                chart = (
-                    <BarChart
-                        width={CHART_WIDTH}
-                        height={CHART_HEIGHT}
-                        data={samples}
-                        margin={CHART_MARGIN}
-                    >
-                        {serieFields.map((field) => (
-                            <XAxis
-                                key={`x_${field}`}
-                                dataKey={field}
-                                type="category"
-                            />
-                        ))}
-                        <YAxis type={this.state.yAxisType} />
-                        <CartesianGrid strokeDasharray="3 3"/>
-                        <Tooltip/>
-                        <Legend />
-                        {dataFields.map((field, index) => (
-                            <Bar
-                                key={`y_${field}`}
-                                dataKey={field}
-                                fill={STROKE_PALETTE[index % STROKE_PALETTE.length]}
-                            />
-                        ))}
-                    </BarChart>
-                );
-            }
         }
+        const chart = (
+            <Chart
+                theme={this.props.theme}
+                samples={samples}
+                serieFields={serieFields}
+                dataFields={dataFields}
+                chartType={this.state.chartType}
+                yAxisType={this.state.yAxisType}
+                xAxisType={this.state.xAxisType}
+            />
+        );
 
         const statInfo = this.state.statInfo
             .filter((info) => dataFields.includes(info.get("id")));
