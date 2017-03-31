@@ -82,22 +82,24 @@ class Step extends Type {
     async evaluateStatus(evaluateJobs = false) {
         if (evaluateJobs) {
             if (this.jobs.length > 0) {
-                const jobIds = this.jobs.map((job) => job.jobId);
+                const jobs = this.jobs.slice(0);
+                const jobIds = jobs.map((job) => job.jobId);
                 const client = ServiceComBus.instance.getClient("exec");
 
                 try {
-                    const finishedJobs = await client.list("job", {
+                    const foundJobs = await client.list("job", {
                         _id: {
                             $in: jobIds
-                        },
-                        finished: {
-                            $ne: false
                         }
                     });
 
-                    for (const job of finishedJobs) {
-                        ServiceMgr.instance.log("info", `Step ${this.name} found job ${job._id} which has finished, performing step job finish`);
-                        await this.finishJob(job._id, job.status);
+                    for (const job of jobs) {
+                        const foundJob = foundJobs.find((fj) => fj._id === job.jobId);
+
+                        if (!foundJob || foundJob.finished) {
+                            ServiceMgr.instance.log("info", `Step ${this.name} found job ${job.jobId} which has finished or is missing, performing step job finish`);
+                            await this.finishJob(job._id, foundJob ? foundJob.status : "unknown");
+                        }
                     }
                 } catch (error) {
                     ServiceMgr.instance.log("error", `Step ${this.name} failed to request finished jobs`, error);
