@@ -23,7 +23,7 @@ class TeamCard extends LightComponent {
 
         return (
             <DataCard
-                them={this.props.theme}
+                theme={this.props.theme}
                 expanded={this.state.expanded}
                 expandable={this.props.expandable}
                 path={myItemPath}
