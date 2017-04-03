@@ -16,7 +16,7 @@
     "node": ">= 7.0.0"
   },
   "libraries": [
-    "emitter"
+    "emitter",
     "misc",
     "servicecom"
   ],
