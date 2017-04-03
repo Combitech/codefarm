@@ -167,6 +167,12 @@ class AppTopBar extends LightComponent {
                             inverse={true}
                             onMouseUp={this.onClick.bind(this, "/collaborators")}
                         />
+                        <Button
+                            label="Statistics"
+                            flat={true}
+                            inverse={true}
+                            onMouseUp={this.onClick.bind(this, "/statistics")}
+                        />
                         {this.props.children}
                     </div>
                 }

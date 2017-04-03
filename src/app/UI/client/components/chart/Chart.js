@@ -6,7 +6,6 @@ import {
     BarChart, Bar,
     XAxis, YAxis, CartesianGrid, Tooltip, Legend
 } from "recharts";
-import { Card, CardText, CardTitle } from "react-toolbox/lib/card";
 import * as color from "ui-lib/colors";
 
 const colorSeries = 500;
@@ -100,23 +99,13 @@ class Chart extends LightComponent {
             }
         }
 
-        return (
-            <Card theme={this.props.theme}>
-                <If condition={this.props.title}>
-                    <CardTitle title={this.props.title} />
-                </If>
-                <CardText>
-                    {chart}
-                </CardText>
-            </Card>
-        );
+        return chart;
     }
 }
 
 Chart.defaultProps = {
     width: 600,
-    height: 300,
-    title: ""
+    height: 300
 };
 
 Chart.propTypes = {
@@ -127,7 +116,6 @@ Chart.propTypes = {
     chartType: React.PropTypes.string.isRequired,
     yAxisType: React.PropTypes.string.isRequired,
     xAxisType: React.PropTypes.string.isRequired,
-    title: React.PropTypes.string,
     width: React.PropTypes.number,
     height: React.PropTypes.number
 };

@@ -7,21 +7,14 @@ import Dropdown from "react-toolbox/lib/dropdown";
 import Switch from "react-toolbox/lib/switch";
 import { Card, CardText } from "react-toolbox/lib/card";
 import { Row, Column, Header, Section } from "ui-components/layout";
-import { StatStatCard, StatStatInfoCard } from "ui-components/data_card";
+import { StatStatCard, StatStatInfoCard, StatChartCard } from "ui-components/data_card";
 import {
     Section as TASection,
     ControlButton as TAControlButton
 } from "ui-components/type_admin";
-import StatSamples from "ui-observables/stat_samples";
 import StatInfo from "ui-observables/stat_info";
-import moment from "moment";
-import { Chart, CHART_TYPE, AXIS_TYPE } from "ui-components/chart";
+import { CHART_TYPE, AXIS_TYPE } from "ui-components/chart";
 import api from "api.io/api.io-client";
-
-const CHART_DIM = {
-    big: { width: 800, height: 600 },
-    normal: { width: 600, height: 300 }
-};
 
 const DEFAULT_X_AXIS = "_t";
 
@@ -46,17 +39,12 @@ class StatItem extends LightComponent {
 
         const availableFields = (props.item && props.item.fieldNames) || [];
 
-        this.samples = new StatSamples({
-            id: props.item && props.item._id,
-            fields: availableFields
-        });
         this.statInfo = new StatInfo({
             id: props.item && props.item._id,
             fields: availableFields
         });
 
         this.state = {
-            samples: this.samples.value.getValue(),
             statInfo: this.statInfo.value.getValue(),
             serieFields: [ DEFAULT_X_AXIS ],
             dataFields: availableFields,
@@ -79,16 +67,11 @@ class StatItem extends LightComponent {
     }
 
     componentDidMount() {
-        this.addDisposable(this.samples.start());
-        this.addDisposable(this.samples.value.subscribe((samples) => this.setState({ samples })));
         this.addDisposable(this.statInfo.start());
         this.addDisposable(this.statInfo.value.subscribe((statInfo) => this.setState({ statInfo })));
     }
 
     componentWillReceiveProps(nextProps) {
-        this.samples.setOpts({
-            id: nextProps.item && nextProps.item.id
-        });
         this.statInfo.setOpts({
             id: nextProps.item && nextProps.item.id
         });
@@ -100,7 +83,6 @@ class StatItem extends LightComponent {
             // Remove hardcoded fields...
             .filter((name) => !Object.keys(HARDCODED_FIELDS).includes(name));
 
-        this.samples.setOpts({ fields });
         this.statInfo.setOpts({ fields });
     }
 
@@ -139,15 +121,6 @@ class StatItem extends LightComponent {
             { xs: 12, md: 7 }
         ];
 
-        let samples = [];
-        if (serieFields.length > 0 && dataFields.length > 0 && this.state.samples.size > 0) {
-            samples = this.state.samples.toJS();
-            samples.forEach((sample, index) => {
-                sample._seq = index;
-                sample[DEFAULT_X_AXIS] = moment(sample._collected).format("YYYY-MM-DD HH:mm:ss");
-            });
-        }
-
         const controls = this.props.controls.slice(0);
         controls.push((
             <Switch
@@ -168,11 +141,12 @@ class StatItem extends LightComponent {
         ));
 
         const chart = (
-            <Chart
+            <StatChartCard
                 theme={this.props.theme}
-                samples={samples}
-                {...this._getChartProps()}
-                {...(this.state.propsVisible ? CHART_DIM.normal : CHART_DIM.big)}
+                statId={this.props.item._id}
+                chartConfig={this._getChartProps()}
+                chartSize={this.state.propsVisible ? "normal" : "big"}
+                expanded={true}
             />
         );
 

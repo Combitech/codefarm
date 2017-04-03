@@ -10,11 +10,13 @@ import UsersPage from "ui-mgr/users/client/components";
 import PlaygroundPage from "ui-mgr/playground/client/components";
 import AdminPage from "ui-mgr/administration/client/components";
 import MgmtPage from "ui-mgr/mgmt/client/components";
+import StatisticsPage from "ui-mgr/statistics/client/components";
 
 import authRoutes from "ui-mgr/auth/client/components/routes";
 import codePageRoutes from "ui-mgr/code/client/components/routes";
 import artifactsPageRoutes from "ui-mgr/artifacts/client/components/routes";
 import usersPageRoutes from "ui-mgr/users/client/components/routes";
+import statisticsRoutes from "ui-mgr/statistics/client/components/routes";
 
 import adminPageCoderepoRoutes from "ui-mgr/administration/client/components/sections/coderepo/routes";
 import adminPageArtifactrepoRoutes from "ui-mgr/administration/client/components/sections/artifactrepo/routes";
@@ -37,16 +39,6 @@ const routes = (
     <Route path="/" component={Layout}>
         <IndexRoute component={IndexPage} />
         {authRoutes}
-        <Route path="code" component={CodePage}>
-            {codePageRoutes}
-        </Route>
-        <Route path="artifacts" component={ArtifactsPage}>
-            {artifactsPageRoutes}
-        </Route>
-        <Route path="collaborators" component={UsersPage}>
-            <IndexRedirect to={usersPageRoutes[0].props.path} />
-            {usersPageRoutes}
-        </Route>
         <Route path="admin" component={AdminPage}>
             <IndexRedirect to={adminPageCoderepoRoutes.props.path} />
 
@@ -70,7 +62,20 @@ const routes = (
             {mgmtPageArtifactrepoRoutes}
             {mgmtPageLogrepoRoutes}
         </Route>
-
+        <Route path="code" component={CodePage}>
+            {codePageRoutes}
+        </Route>
+        <Route path="artifacts" component={ArtifactsPage}>
+            {artifactsPageRoutes}
+        </Route>
+        <Route path="collaborators" component={UsersPage}>
+            <IndexRedirect to={usersPageRoutes[0].props.path} />
+            {usersPageRoutes}
+        </Route>
+        <Route path="statistics" component={StatisticsPage}>
+            <IndexRedirect to={statisticsRoutes[0].props.path} />
+            {statisticsRoutes}
+        </Route>
         <Route path="notifications" component={AppNotificationsPage} />
         <Route path="playground" component={PlaygroundPage} />
 

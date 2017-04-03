@@ -45,6 +45,14 @@ class StatStatCard extends LightComponent {
                                     </td>
                                 </tr>
                             </If>
+                            <If condition={this.props.item.chartConfigs}>
+                                <tr>
+                                    <td>Saved&nbsp;configurations</td>
+                                    <td>
+                                        {this.props.item.chartConfigs.length}
+                                    </td>
+                                </tr>
+                            </If>
                             <tr>
                                 <td>Last&nbsp;data</td>
                                 <td>
