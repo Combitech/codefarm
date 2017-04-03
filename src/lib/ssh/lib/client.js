@@ -9,9 +9,12 @@ const { Deferred } = require("misc");
 class SshClient {
     constructor() {
         this.connected = new Deferred();
+        this.disconnected = false;
     }
 
     async connect(params, handler) {
+        this.disconnected = false;
+
         await this._connect(params, handler);
 
         if (params.useSftp) {
@@ -24,6 +27,11 @@ class SshClient {
     }
 
     _connect(params, handler) {
+        // Disconnected before we had chance to connect
+        if (this.disconnected) {
+            return;
+        }
+
         this.client = new ssh2.Client();
 
         this.client.on("ready", () => {
@@ -141,8 +149,11 @@ class SshClient {
     }
 
     async disconnect() {
-        this.client.destroy();
-        delete this.client;
+        if (this.client) {
+            this.disconnected = true;
+            this.client.destroy();
+            delete this.client;
+        }
         this.connected = new Deferred();
     }
 }
