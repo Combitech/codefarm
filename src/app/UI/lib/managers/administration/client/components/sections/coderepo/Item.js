@@ -1,12 +1,10 @@
 
 import React from "react";
 import LightComponent from "ui-lib/light_component";
-import Tags from "ui-components/tags";
-import { Row, Col } from "react-flexbox-grid";
 import {
-    Section as TASection,
-    PagedList as TAPagedList
+    Section as TASection
 } from "ui-components/type_admin";
+import { CodeRepositoryView } from "ui-components/data_view";
 
 class Item extends LightComponent {
     render() {
@@ -18,33 +16,9 @@ class Item extends LightComponent {
                 breadcrumbs={this.props.breadcrumbs}
             >
                 <div className={this.props.theme.container}>
-                    <Row>
-                        <Col xs={12} md={5} className={this.props.theme.panel}>
-                            <h6 className={this.props.theme.title}>Properties</h6>
-                            <table className={this.props.theme.properties}>
-                                <tbody>
-                                    <tr>
-                                        <td>Backend</td>
-                                        <td>{this.props.item.backend}</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Tags</td>
-                                        <td>
-                                            <Tags list={this.props.item.tags} />
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </Col>
-                        <Col xs={12} md={7} className={this.props.theme.panel}>
-                            <h6 className={this.props.theme.title}>Revisions</h6>
-                            <TAPagedList
-                                type="coderepo.revision"
-                                query={{ repository: this.props.item._id }}
-                                limit={10}
-                            />
-                        </Col>
-                    </Row>
+                    <CodeRepositoryView
+                        item={this.props.item}
+                    />
                 </div>
             </TASection>
         );

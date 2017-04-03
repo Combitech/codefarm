@@ -24,7 +24,7 @@ class UserCard extends LightComponent {
         const aliases = Object.keys(this.props.item.aliases || {})
             .map((key) => `${key}: ${this.props.item.aliases[key]}`);
 
-        const myItemPath = pathBuilder.fromType("userrepo.user", this.props.item);
+        const myItemPath = pathBuilder.fromType(this.props.item.type, this.props.item);
 
         const teams = this.props.item.teams.map((id) => ({
             id: id,
@@ -45,7 +45,7 @@ class UserCard extends LightComponent {
                 theme={this.props.theme}
                 expanded={this.state.expanded}
                 expandable={this.props.expandable}
-                path={myItemPath}
+                path={this.props.clickable ? myItemPath : ""}
             >
                 <CardTitle
                     avatar={(

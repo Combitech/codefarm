@@ -4,13 +4,11 @@ import Immutable from "immutable";
 import ImmutablePropTypes from "react-immutable-proptypes";
 import LightComponent from "ui-lib/light_component";
 import Input from "react-toolbox/lib/input";
-import {
-    Section as TASection,
-    ListPager as TAListPager
-} from "ui-components/type_admin";
+import Section from "./Section";
+import ListPager from "./ListPager";
 import { CardList, TypeCard } from "ui-components/data_card";
 
-class List extends LightComponent {
+class ListCards extends LightComponent {
     render() {
         this.log("render", this.props);
 
@@ -34,38 +32,42 @@ class List extends LightComponent {
             item: item,
             Card: TypeCard,
             props: {
-                clickable: true
+                clickable: true,
+                linkToAdmin: this.props.linkToAdmin
             }
         }));
 
         return (
-            <TASection
+            <Section
+                theme={this.props.theme}
                 controls={controls}
                 breadcrumbs={this.props.breadcrumbs}
             >
                 <div className={this.props.theme.listContainer}>
                     <CardList list={Immutable.fromJS(list)} />
+                    <ListPager
+                        theme={this.props.theme}
+                        pagedList={this.props.listObservable}
+                        pagingInfo={this.props.listObservable.pagingInfo.getValue()}
+                    />
                 </div>
-                <TAListPager
-                    pagedList={this.props.listObservable}
-                    pagingInfo={this.props.listObservable.pagingInfo.getValue()}
-                />
-            </TASection>
+            </Section>
         );
     }
 }
 
-List.propTypes = {
+ListCards.propTypes = {
     theme: React.PropTypes.object,
     pathname: React.PropTypes.string.isRequired,
     type: React.PropTypes.string.isRequired,
     breadcrumbs: React.PropTypes.array.isRequired,
     controls: React.PropTypes.array.isRequired,
-    items: ImmutablePropTypes.list
+    items: ImmutablePropTypes.list,
+    linkToAdmin: React.PropTypes.bool
 };
 
-List.contextTypes = {
+ListCards.contextTypes = {
     router: React.PropTypes.object.isRequired
 };
 
-export default List;
+export default ListCards;

@@ -12,6 +12,7 @@ import { CardTitle } from "react-toolbox/lib/card";
 import { TypeChip } from "ui-components/data_chip";
 import stateVar from "ui-lib/state_var";
 import statusText from "ui-lib/status_text";
+import * as pathBuilder from "ui-lib/path_builder";
 
 class JobCard extends LightComponent {
     constructor(props) {
@@ -23,11 +24,14 @@ class JobCard extends LightComponent {
     }
 
     render() {
+        const myItemPath = pathBuilder.fromType(this.props.item.type, this.props.item);
+
         return (
             <DataCard
                 theme={this.props.theme}
                 expanded={this.state.expanded}
                 expandable={this.props.expandable}
+                path={this.props.clickable ? myItemPath : ""}
             >
                 <CardTitle
                     avatar={(
@@ -171,6 +175,7 @@ class JobCard extends LightComponent {
 JobCard.defaultProps = {
     expanded: false,
     expandable: true,
+    clickable: false,
     showAdvanced: false
 };
 
@@ -179,6 +184,7 @@ JobCard.propTypes = {
     item: React.PropTypes.object.isRequired,
     expanded: React.PropTypes.bool,
     expandable: React.PropTypes.bool,
+    clickable: React.PropTypes.bool,
     showAdvanced: React.PropTypes.bool
 };
 

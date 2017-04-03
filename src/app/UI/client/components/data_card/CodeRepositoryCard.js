@@ -9,6 +9,7 @@ import { CodeRepoBackendIcon } from "ui-components/app_icons";
 import { CardTitle } from "react-toolbox/lib/card";
 import stateVar from "ui-lib/state_var";
 import RepositoryUri from "ui-observables/repository_uri";
+import * as pathBuilder from "ui-lib/path_builder";
 
 class CodeRepositoryCard extends LightComponent {
     constructor(props) {
@@ -36,11 +37,14 @@ class CodeRepositoryCard extends LightComponent {
     }
 
     render() {
+        const myItemPath = pathBuilder.fromType(this.props.item.type, this.props.item, { prefix: this.props.linkToAdmin ? "admin" : false });
+
         return (
             <DataCard
                 theme={this.props.theme}
                 expanded={this.state.expanded}
                 expandable={this.props.expandable}
+                path={this.props.clickable ? myItemPath : ""}
             >
                 <CardTitle
                     avatar={(
@@ -101,7 +105,8 @@ CodeRepositoryCard.propTypes = {
     theme: React.PropTypes.object,
     item: React.PropTypes.object.isRequired,
     expanded: React.PropTypes.bool,
-    expandable: React.PropTypes.bool
+    expandable: React.PropTypes.bool,
+    linkToAdmin: React.PropTypes.bool
 };
 
 export default CodeRepositoryCard;

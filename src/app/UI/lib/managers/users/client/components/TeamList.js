@@ -1,7 +1,7 @@
 
 import React from "react";
 import LightComponent from "ui-lib/light_component";
-import List from "./List";
+import { ListCards } from "ui-components/type_admin";
 import TeamListObservable from "../observables/team_list";
 
 class TeamList extends LightComponent {
@@ -29,7 +29,7 @@ class TeamList extends LightComponent {
 
     render() {
         return (
-            <List
+            <ListCards
                 items={this.state.list}
                 listObservable={this.teamList}
                 {...this.props}
@@ -41,13 +41,8 @@ class TeamList extends LightComponent {
 TeamList.propTypes = {
     theme: React.PropTypes.object,
     pathname: React.PropTypes.string.isRequired,
-    type: React.PropTypes.string.isRequired,
     breadcrumbs: React.PropTypes.array.isRequired,
     controls: React.PropTypes.array.isRequired
-};
-
-TeamList.contextTypes = {
-    router: React.PropTypes.object.isRequired
 };
 
 export default TeamList;
