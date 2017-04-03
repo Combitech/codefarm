@@ -77,6 +77,26 @@ class AppTopBar extends LightComponent {
                                 onHide={() => this._hideUserMenu()}
                                 onSelect={this.onClick.bind(this)}
                             >
+                                <If condition={ activeUser.id }>
+                                    <MenuItem
+                                        icon="person"
+                                        value={`/collaborators/users/${activeUser.id}`}
+                                        caption="Profile"
+                                    />
+                                </If>
+                                <MenuItem
+                                    icon="feedback"
+                                    value="/feedback"
+                                    caption="Feedback"
+                                />
+                                <MenuItem
+                                    icon="help"
+                                    value="/help"
+                                    caption="Help"
+                                />
+
+                                <MenuDivider />
+
                                 <MenuItem
                                     icon="build"
                                     value="/admin"
@@ -92,24 +112,9 @@ class AppTopBar extends LightComponent {
                                     value="/notifications"
                                     caption="Notifications"
                                 />
-                                <If condition={ activeUser.id }>
-                                    <MenuItem
-                                        icon="person"
-                                        value={`/collaborators/users/${activeUser.id}`}
-                                        caption="User profile"
-                                    />
-                                </If>
-                                <MenuItem
-                                    icon="feedback"
-                                    value="/feedback"
-                                    caption="Send feedback"
-                                />
-                                <MenuItem
-                                    icon="help"
-                                    value="/help"
-                                    caption="Help"
-                                />
+
                                 <MenuDivider />
+
                                 <MenuItem
                                     icon="exit_to_app"
                                     caption="Sign out"

@@ -3,7 +3,7 @@ import React from "react";
 import LightComponent from "ui-lib/light_component";
 import { JobCard } from "ui-components/data_card";
 import { Row, Column, Header, Section } from "ui-components/layout";
-import BaselineContentList from "./BaselineContentList";
+import { BaselineContent } from "ui-components/baseline_content";
 import CommentList from "./CommentList";
 
 class JobTab extends LightComponent {
@@ -31,7 +31,7 @@ class JobTab extends LightComponent {
                 </Column>
                 <Column xs={12} md={6}>
                     <Header label="In this run" />
-                    <BaselineContentList
+                    <BaselineContent
                         theme={this.props.theme}
                         baselineRef={{
                             _ref: true,

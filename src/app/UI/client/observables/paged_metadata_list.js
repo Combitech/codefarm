@@ -1,7 +1,11 @@
 
-import TypeList from "ui-observables/type_list";
+import PagedTypeList from "ui-observables/paged_type_list";
 
-const validateOpts = (opts) => {
+const validateOpts = (opts, checkType) => {
+    if (checkType && !opts.hasOwnProperty("type")) {
+        throw new Error("type must be set in the initial opts");
+    }
+
     if (!opts.hasOwnProperty("targetRef") && !opts.hasOwnProperty("creatorRef")) {
         throw new Error("targetRef or creatorRef must be set in the initial opts");
     }
@@ -11,38 +15,31 @@ const validateOpts = (opts) => {
     }
 };
 
-class ClaimList extends TypeList {
+class MetaDataList extends PagedTypeList {
     constructor(initialOpts) {
-        validateOpts(initialOpts);
+        validateOpts(initialOpts, true);
 
         const createQuery = (targetRef, creatorRef) => {
             const query = {};
 
             if (targetRef) {
-                query.targetRef = {
-                    _ref: true,
-                    id: targetRef.id,
-                    type: targetRef.type
-                };
+                query["targetRef.id"] = targetRef.id;
+                query["targetRef.type"] = targetRef.type;
             }
 
             if (creatorRef) {
-                query.creatorRef = {
-                    _ref: true,
-                    id: creatorRef.id,
-                    type: creatorRef.type
-                };
+                query["creatorRef.id"] = creatorRef.id;
+                query["creatorRef.type"] = creatorRef.type;
             }
 
             return query;
         };
 
         const defaultOpts = {
-            type: "metadata.claim",
             query: createQuery(initialOpts.targetRef, initialOpts.creatorRef)
         };
 
-        super(Object.assign([], defaultOpts, initialOpts));
+        super(Object.assign({}, defaultOpts, initialOpts));
 
         this._createQuery = createQuery;
     }
@@ -51,7 +48,7 @@ class ClaimList extends TypeList {
         const nextOpts = Object.assign({}, opts);
 
         if (opts.hasOwnProperty("targetRef") || opts.hasOwnProperty("creatorRef")) {
-            validateOpts(opts);
+            validateOpts(opts, false);
 
             nextOpts.query = this._createQuery(opts.targetRef, opts.creatorRef);
         }
@@ -60,4 +57,4 @@ class ClaimList extends TypeList {
     }
 }
 
-export default ClaimList;
+export default MetaDataList;

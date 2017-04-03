@@ -2,7 +2,6 @@
 import React from "react";
 import moment from "moment";
 import LightComponent from "ui-lib/light_component";
-import Link from "react-toolbox/lib/link";
 import HiddenText from "ui-components/hidden_text";
 import DateTime from "ui-components/datetime";
 import Tags from "ui-components/tags";
@@ -10,9 +9,9 @@ import DataCard from "./DataCard";
 import { StatusIcon } from "ui-components/status";
 import { Claim } from "ui-components/claim";
 import { CardTitle } from "react-toolbox/lib/card";
+import { TypeChip } from "ui-components/data_chip";
 import stateVar from "ui-lib/state_var";
 import statusText from "ui-lib/status_text";
-import * as pathBuilder from "ui-lib/path_builder";
 
 class JobCard extends LightComponent {
     constructor(props) {
@@ -63,15 +62,14 @@ class JobCard extends LightComponent {
                                 </td>
                             </tr>
                             <tr>
-                                <td>Baseline&nbsp;name</td>
+                                <td>Baseline</td>
                                 <td>
-                                    <span className={this.props.theme.monospace}>
-                                        {this.props.item.baseline.name}
-                                    </span>
-                                    <HiddenText
-                                        className={this.props.theme.hiddenText}
-                                        label="SHOW ID"
-                                        text={this.props.item.baseline._id}
+                                    <TypeChip
+                                        itemRef={{
+                                            _ref: true,
+                                            type: "baselinegen.baseline",
+                                            id: this.props.item.baseline._id
+                                        }}
                                     />
                                 </td>
                             </tr>
@@ -114,23 +112,14 @@ class JobCard extends LightComponent {
                             <If condition={this.props.item.slaveId}>
                                 <tr>
                                     <td>Slave</td>
-                                    <td className={this.props.theme.monospace}>
-                                        <Choose>
-                                            <When condition={this.props.linkSlave}>
-                                                <Link
-                                                    theme={this.props.theme}
-                                                    label={ this.props.item.slaveId }
-                                                    onClick={() => {
-                                                        this.context.router.push({
-                                                            pathname: pathBuilder.fromType("exec.slave", { _id: this.props.item.slaveId })
-                                                        });
-                                                    }}
-                                                />
-                                            </When>
-                                            <Otherwise>
-                                                {this.props.item.slaveId}
-                                            </Otherwise>
-                                        </Choose>
+                                    <td>
+                                        <TypeChip
+                                            itemRef={{
+                                                _ref: true,
+                                                type: "exec.slave",
+                                                id: this.props.item.slaveId
+                                            }}
+                                        />
                                     </td>
                                 </tr>
                             </If>
@@ -182,8 +171,7 @@ class JobCard extends LightComponent {
 JobCard.defaultProps = {
     expanded: false,
     expandable: true,
-    showAdvanced: false,
-    linkSlave: false
+    showAdvanced: false
 };
 
 JobCard.propTypes = {
@@ -191,8 +179,7 @@ JobCard.propTypes = {
     item: React.PropTypes.object.isRequired,
     expanded: React.PropTypes.bool,
     expandable: React.PropTypes.bool,
-    showAdvanced: React.PropTypes.bool,
-    linkSlave: React.PropTypes.bool
+    showAdvanced: React.PropTypes.bool
 };
 
 JobCard.contextTypes = {

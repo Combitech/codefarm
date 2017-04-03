@@ -9,7 +9,7 @@ import UserName from "ui-components/user_name";
 import { TypeChip } from "ui-components/data_chip";
 import stateVar from "ui-lib/state_var";
 
-class CommentCard extends LightComponent {
+class ClaimCard extends LightComponent {
     constructor(props) {
         super(props);
 
@@ -26,7 +26,7 @@ class CommentCard extends LightComponent {
                 <UserName
                     userId={this.props.item.creatorRef ? this.props.item.creatorRef.id : false}
                     notFoundText="Someone"
-                    suffixText="said..."
+                    suffixText="claimed..."
                 />
             );
             avatar = (
@@ -87,16 +87,16 @@ class CommentCard extends LightComponent {
     }
 }
 
-CommentCard.defaultProps = {
+ClaimCard.defaultProps = {
     expanded: false,
     expandable: true
 };
 
-CommentCard.propTypes = {
+ClaimCard.propTypes = {
     theme: React.PropTypes.object,
     item: React.PropTypes.object.isRequired,
     expanded: React.PropTypes.bool,
     expandable: React.PropTypes.bool
 };
 
-export default CommentCard;
+export default ClaimCard;

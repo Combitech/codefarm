@@ -37,6 +37,16 @@ const routes = (
     <Route path="/" component={Layout}>
         <IndexRoute component={IndexPage} />
         {authRoutes}
+        <Route path="code" component={CodePage}>
+            {codePageRoutes}
+        </Route>
+        <Route path="artifacts" component={ArtifactsPage}>
+            {artifactsPageRoutes}
+        </Route>
+        <Route path="collaborators" component={UsersPage}>
+            <IndexRedirect to={usersPageRoutes[0].props.path} />
+            {usersPageRoutes}
+        </Route>
         <Route path="admin" component={AdminPage}>
             <IndexRedirect to={adminPageCoderepoRoutes.props.path} />
 
@@ -60,16 +70,7 @@ const routes = (
             {mgmtPageArtifactrepoRoutes}
             {mgmtPageLogrepoRoutes}
         </Route>
-        <Route path="code" component={CodePage}>
-            {codePageRoutes}
-        </Route>
-        <Route path="artifacts" component={ArtifactsPage}>
-            {artifactsPageRoutes}
-        </Route>
-        <Route path="collaborators" component={UsersPage}>
-            <IndexRedirect to={usersPageRoutes[0].props.path} />
-            {usersPageRoutes}
-        </Route>
+
         <Route path="notifications" component={AppNotificationsPage} />
         <Route path="playground" component={PlaygroundPage} />
 

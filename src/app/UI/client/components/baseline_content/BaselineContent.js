@@ -12,7 +12,7 @@ const cards = {
     "artifactrepo.artifact": ArtifactCard
 };
 
-class BaselineContentList extends LightComponent {
+class BaselineContent extends LightComponent {
     constructor(props) {
         super(props);
 
@@ -70,9 +70,9 @@ class BaselineContentList extends LightComponent {
     }
 }
 
-BaselineContentList.propTypes = {
+BaselineContent.propTypes = {
     theme: React.PropTypes.object,
     baselineRef: React.PropTypes.object.isRequired
 };
 
-export default BaselineContentList;
+export default BaselineContent;

@@ -5,7 +5,7 @@ import LightComponent from "ui-lib/light_component";
 import { createClaim, removeClaim } from "ui-lib/claim";
 import { Loading } from "ui-components/layout";
 import { States as ObservableDataStates } from "ui-lib/observable_data";
-import ClaimList from "ui-observables/claim_list";
+import MetaDataList from "ui-observables/metadata_list";
 import ActiveUser from "ui-observables/active_user";
 import { ChipList } from "ui-components/data_chip";
 
@@ -13,7 +13,8 @@ class Claim extends LightComponent {
     constructor(props) {
         super(props);
 
-        this.claims = new ClaimList({
+        this.claims = new MetaDataList({
+            type: "metadata.claim",
             targetRef: this.props.targetRef
         });
 
