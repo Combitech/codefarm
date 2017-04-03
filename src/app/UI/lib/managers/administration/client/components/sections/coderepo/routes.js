@@ -27,7 +27,7 @@ const routes = (
             type="coderepo.repository"
         />
         <Route
-            path=":repositoryId"
+            path=":_id"
             component={TAView}
             Item={Item}
             type="coderepo.repository"

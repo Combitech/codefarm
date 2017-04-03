@@ -15,6 +15,10 @@
 }
 
 .section {
+    .listContainer {
+        margin: $layout-gutter-width;
+    }
+
     .header {
         padding: $layout-gutter-width-sm * 2;
     }

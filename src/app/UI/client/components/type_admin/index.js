@@ -15,6 +15,7 @@ import LoadIndicator from "./LoadIndicator";
 import Section from "./Section";
 import ListItemIcon from "./ListItemIcon";
 import ListPager from "./ListPager";
+import ListCards from "./ListCards";
 import EditTags from "./EditTags";
 import utils from "./utils";
 
@@ -30,6 +31,7 @@ const ThemedLoadIndicator = themr(TYPE_ADMIN, theme)(LoadIndicator);
 const ThemedSection = themr(TYPE_ADMIN, theme)(Section);
 const ThemedListItemIcon = themr(TYPE_ADMIN, theme)(ListItemIcon);
 const ThemedListPager = themr(TYPE_ADMIN, theme)(ListPager);
+const ThemedListCards = themr(TYPE_ADMIN, theme)(ListCards);
 const ThemedEditTags = themr(TYPE_ADMIN, theme)(EditTags);
 
 export {
@@ -46,5 +48,6 @@ export {
     ThemedSection as Section,
     ThemedListItemIcon as ListItemIcon,
     ThemedListPager as ListPager,
+    ThemedListCards as ListCards,
     ThemedEditTags as EditTags
 };

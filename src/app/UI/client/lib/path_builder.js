@@ -5,9 +5,10 @@ import { ensureArray } from "misc";
 /** Find first route with a given propName that matches typeName
  * @param {String} typeName Type name
  * @param {String} [propName] Name of property
+ * @param {String} prefix Enforce path must begin with
  * @return {Array} Array of paths up to and including target route
  */
-const findPath = (typeName, propName = "Item") => {
+const findPath = (typeName, propName, prefix = false) => {
     const visit = (node, parentPath) => {
         let myPath = parentPath;
         if (!node) {
@@ -26,8 +27,9 @@ const findPath = (typeName, propName = "Item") => {
         // Recursively iterate through childrens until first child path matches
         const childs = (node instanceof Array) ? node : ensureArray(node.props.children);
         for (const child of childs) {
-            const childPath = visit(child, myPath);
-            if (childPath) {
+            const childPath = visit(child, myPath, prefix);
+
+            if (childPath && (!prefix || childPath[1] === prefix)) {
                 return childPath;
             }
         }
@@ -35,7 +37,7 @@ const findPath = (typeName, propName = "Item") => {
         return false;
     };
 
-    return visit(routes, []);
+    return visit(routes, [], prefix);
 };
 
 /** Replace all path items starting with : with matching prop in item
@@ -75,10 +77,11 @@ const pathFromArray = (arr) => arr.join("/");
 const fromType = (typeName, item, opts = {}) => {
     opts = Object.assign({
         debug: false,
-        idMap: {}
+        idMap: {},
+        prefix: false
     }, opts);
 
-    const templatePath = findPath(typeName);
+    const templatePath = findPath(typeName, "Item", opts.prefix);
     const path = fillTemplatePath(templatePath, item, opts.idMap);
     const pathStr = pathFromArray(path);
 

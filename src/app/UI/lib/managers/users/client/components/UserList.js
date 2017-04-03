@@ -1,7 +1,7 @@
 
 import React from "react";
 import LightComponent from "ui-lib/light_component";
-import List from "./List";
+import { ListCards } from "ui-components/type_admin";
 import UserListObservable from "../observables/user_list";
 
 class UserList extends LightComponent {
@@ -29,7 +29,7 @@ class UserList extends LightComponent {
 
     render() {
         return (
-            <List
+            <ListCards
                 items={this.state.list}
                 listObservable={this.userList}
                 {...this.props}
@@ -41,13 +41,8 @@ class UserList extends LightComponent {
 UserList.propTypes = {
     theme: React.PropTypes.object,
     pathname: React.PropTypes.string.isRequired,
-    type: React.PropTypes.string.isRequired,
     breadcrumbs: React.PropTypes.array.isRequired,
     controls: React.PropTypes.array.isRequired
-};
-
-UserList.contextTypes = {
-    router: React.PropTypes.object.isRequired
 };
 
 export default UserList;

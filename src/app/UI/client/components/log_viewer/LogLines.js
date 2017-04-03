@@ -46,7 +46,7 @@ class LogLines extends LightComponent {
         const loading = this.state.state === ObservableDataStates.LOADING;
 
         return (
-            <div>
+            <div onClick={(e) => e.stopPropagation()}>
                 <Loading show={loading} />
                 <If condition={lines.length > 0 && lines[0].offset > 0}>
                     <div className={this.props.theme.centeredButtons}>
