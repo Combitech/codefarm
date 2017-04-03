@@ -33,7 +33,9 @@ class LogLines extends LightComponent {
         });
     }
 
-    onMoreLines() {
+    onMoreLines(event) {
+        event.stopPropagation();
+
         const limit = this.logLines.opts.getValue().get("limit");
 
         this.logLines.setOpts({ limit: limit + this.props.numberOfLines });
@@ -51,7 +53,7 @@ class LogLines extends LightComponent {
                         <Button
                             disabled={loading}
                             label="Show more"
-                            onClick={() => this.onMoreLines()}
+                            onClick={(e) => this.onMoreLines(e)}
                         />
                     </div>
                 </If>
