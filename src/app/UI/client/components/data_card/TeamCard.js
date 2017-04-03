@@ -1,25 +1,55 @@
 
 import React from "react";
+import Immutable from "immutable";
 import LightComponent from "ui-lib/light_component";
 import DateTime from "ui-components/datetime";
 import Tags from "ui-components/tags";
 import DataCard from "./DataCard";
 import { TeamAvatar } from "ui-components/user_avatar";
+import { ChipList } from "ui-components/data_chip";
 import { CardTitle } from "react-toolbox/lib/card";
 import stateVar from "ui-lib/state_var";
 import * as pathBuilder from "ui-lib/path_builder";
+import TypeList from "ui-observables/type_list";
 
 class TeamCard extends LightComponent {
     constructor(props) {
         super(props);
 
+        this.users = new TypeList({
+            query: this.props.item ? { teams: this.props.item._id } : false,
+            type: "userrepo.user"
+        });
+
         this.state = {
-            expanded: stateVar(this, "expanded", this.props.expanded)
+            expanded: stateVar(this, "expanded", this.props.expanded),
+            users: this.users.value.getValue()
         };
     }
 
+    componentDidMount() {
+        this.addDisposable(this.users.start());
+        this.addDisposable(this.users.value.subscribe((users) => this.setState({ users })));
+    }
+
+    componentWillReceiveProps(nextProps) {
+        this.users.setOpts({
+            query: nextProps.item ? { teams: nextProps.item._id } : false
+        });
+    }
+
+
     render() {
         const myItemPath = pathBuilder.fromType("userrepo.team", this.props.item);
+
+        const users = this.state.users.toJS().map((user) => ({
+            id: user._id,
+            ref: {
+                _ref: true,
+                type: user.type,
+                id: user._id
+            }
+        }));
 
         return (
             <DataCard
@@ -78,6 +108,12 @@ class TeamCard extends LightComponent {
                                         value={this.props.item.saved}
                                         niceDate={true}
                                     />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Members</td>
+                                <td>
+                                    <ChipList list={Immutable.fromJS(users)} />
                                 </td>
                             </tr>
                             <tr>

@@ -8,7 +8,7 @@ import JobTab from "./job/JobTab";
 import SubJobTab from "./job/SubJobTab";
 import LogTab from "./job/LogTab";
 
-class Job extends LightComponent {
+class JobView extends LightComponent {
     constructor(props) {
         super(props);
 
@@ -20,8 +20,8 @@ class Job extends LightComponent {
     render() {
         this.log("render", this.props, this.state);
 
-        const job = this.props.jobItem;
-        const run = job.runs[this.props.jobItem.lastRunId];
+        const job = this.props.item;
+        const run = job.runs[this.props.item.lastRunId];
 
         return (
             <Tabs
@@ -153,10 +153,9 @@ class Job extends LightComponent {
     }
 }
 
-Job.propTypes = {
+JobView.propTypes = {
     theme: React.PropTypes.object,
-    item: React.PropTypes.object.isRequired,
-    job: React.PropTypes.object
+    item: React.PropTypes.object
 };
 
-export default Job;
+export default JobView;

@@ -1,3 +1,4 @@
+
 import routes from "./routes";
 import { ensureArray } from "misc";
 
@@ -44,11 +45,19 @@ const findPath = (typeName, propName = "Item") => {
  *   [ "first", 10 ]
  * @param {Array} templatePath Array of template path items
  * @param {Object} item Item to lookup properties in
+ * @param {object} idMap Translation object for ids
  * @return {Array} Path with templates resolved
  */
-const fillTemplatePath = (templatePath, item) => templatePath.map((pathItem) =>
-    pathItem.startsWith(":") ? item[pathItem.slice(1)] : pathItem
-);
+const fillTemplatePath = (templatePath, item, idMap) => templatePath.map((pathItem) => {
+    if (!pathItem.startsWith(":")) {
+        return pathItem;
+    }
+
+    const name = pathItem.slice(1);
+    const key = idMap[name] || name;
+
+    return item[key];
+});
 
 const pathFromArray = (arr) => arr.join("/");
 
@@ -65,11 +74,14 @@ const pathFromArray = (arr) => arr.join("/");
  */
 const fromType = (typeName, item, opts = {}) => {
     opts = Object.assign({
-        debug: false
+        debug: false,
+        idMap: {}
     }, opts);
+
     const templatePath = findPath(typeName);
-    const path = fillTemplatePath(templatePath, item);
+    const path = fillTemplatePath(templatePath, item, opts.idMap);
     const pathStr = pathFromArray(path);
+
     opts.debug && console.log(`pathBuilder.fromType: ${typeName} -> ${pathFromArray(templatePath)} -> ${pathStr}`);
 
     return pathStr;

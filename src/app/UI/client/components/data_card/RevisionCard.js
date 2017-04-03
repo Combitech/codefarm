@@ -14,6 +14,7 @@ import CodeRepoAndBackend from "ui-observables/code_repo_and_backend";
 import { StringUtil } from "misc";
 import UserName from "ui-components/user_name";
 import { CodeRepoBackendIcon } from "ui-components/app_icons";
+import { TypeChip } from "ui-components/data_chip";
 import * as pathBuilder from "ui-lib/path_builder";
 
 const FILE_STATUS_ICON = {
@@ -157,10 +158,13 @@ class RevisionCard extends LightComponent {
                             <tr>
                                 <td>Repository</td>
                                 <td>
-                                    <span className={this.props.theme.repoBackendIconContainer}>
-                                        {repoBackendIcon}
-                                    </span>
-                                    {this.props.item.repository}
+                                    <TypeChip
+                                        itemRef={{
+                                            _ref: true,
+                                            type: "coderepo.repository",
+                                            id: this.props.item.repository
+                                        }}
+                                    />
                                 </td>
                             </tr>
                             <tr>
