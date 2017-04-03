@@ -8,6 +8,7 @@ const { ServiceComBus } = require("servicecom");
 const Control = require("./control");
 const Specs = require("./controllers/specs");
 const Stats = require("./controllers/stats");
+const Charts = require("./controllers/charts");
 
 class Main extends Service {
     constructor(name, version) {
@@ -23,7 +24,7 @@ class Main extends Service {
     }
 
     async onOnline() {
-        const routes = [].concat(Specs.instance.routes, Stats.instance.routes, this.routes);
+        const routes = [].concat(Specs.instance.routes, Stats.instance.routes, Charts.instance.routes, this.routes);
 
         await ServiceComBus.instance.start(Object.assign({
             name: this.name,
@@ -35,6 +36,7 @@ class Main extends Service {
         ServiceComBus.instance.attachControllers([
             Specs.instance,
             Stats.instance,
+            Charts.instance,
             this.statesControllerInstance
         ]);
 

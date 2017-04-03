@@ -25,6 +25,12 @@
             color: $cf-color-selected;
         }
     }
+
+    &Inline {
+        display: inline-block;
+        width: auto;
+        margin-right: $layout-gutter-width-sm;
+    }
 }
 
 .commentBase {

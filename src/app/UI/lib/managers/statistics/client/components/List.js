@@ -1,27 +1,29 @@
 
 import React from "react";
+import Immutable from "immutable";
 import LightComponent from "ui-lib/light_component";
-import { Container } from "ui-components/layout";
+import { Container, Loading } from "ui-components/layout";
 import { Section as TASection } from "ui-components/type_admin";
-import { StatChartCard } from "ui-components/data_card";
-import SavedStats from "../observables/saved_stats";
+import { CardList, TypeCard } from "ui-components/data_card";
+import ChartList from "ui-observables/chart_list";
+import { States as ObservableDataStates } from "ui-lib/observable_data";
 
 class List extends LightComponent {
     constructor(props) {
         super(props);
 
-        this.savedStats = new SavedStats();
+        this.charts = new ChartList();
 
         this.state = {
-            stats: this.savedStats.value.getValue(),
-            state: this.savedStats.state.getValue()
+            charts: this.charts.value.getValue(),
+            state: this.charts.state.getValue()
         };
     }
 
     componentDidMount() {
-        this.addDisposable(this.savedStats.start());
-        this.addDisposable(this.savedStats.value.subscribe((stats) => this.setState({ stats })));
-        this.addDisposable(this.savedStats.state.subscribe((state) => this.setState({ state })));
+        this.addDisposable(this.charts.start());
+        this.addDisposable(this.charts.value.subscribe((charts) => this.setState({ charts })));
+        this.addDisposable(this.charts.state.subscribe((state) => this.setState({ state })));
     }
 
     render() {
@@ -29,20 +31,19 @@ class List extends LightComponent {
 
         const controls = this.props.controls.slice(0);
 
-        const cardList = [];
-        for (const stat of this.state.stats.toJS()) {
-            stat.chartConfigs.forEach((chartCfg, index) =>
-                cardList.push((
-                    <StatChartCard
-                        key={`${stat._id}-${index}`}
-                        expandable={false}
-                        expanded={true}
-                        statId={stat._id}
-                        chartConfig={chartCfg}
-                        chartSize="small"
-                    />
-                ))
-            );
+        let list = [];
+        if (this.state.state !== ObservableDataStates.LOADING) {
+            list = this.state.charts.toJS().map((item) => ({
+                id: item._id,
+                time: 0,
+                item: item,
+                Card: TypeCard,
+                props: {
+                    clickable: true,
+                    inline: true,
+                    chartSize: "small"
+                }
+            }));
         }
 
         return (
@@ -51,7 +52,13 @@ class List extends LightComponent {
                 breadcrumbs={this.props.breadcrumbs}
             >
                 <Container>
-                    {cardList}
+                    <Loading show={this.state.state === ObservableDataStates.LOADING}/>
+                    <CardList
+                        theme={this.props.theme}
+                        list={Immutable.fromJS(list)}
+                        expandable={false}
+                        expanded={true}
+                    />
                 </Container>
             </TASection>
         );

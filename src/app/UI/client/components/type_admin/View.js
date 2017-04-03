@@ -15,10 +15,24 @@ class View extends LightComponent {
 
         this.log("Constructor");
 
+        this._getIdFromProps = (props) => {
+            let id = false;
+            const path = props.route.path;
+            if (path.indexOf(":") !== -1) {
+                const parts = path.split("/");
+                const idFields = parts
+                    .filter((item) => item.startsWith(":"))
+                    .map((item) => item.substr(1));
+                id = (idFields.length === 1 && props.params[idFields[0]]) || false;
+            }
+
+            return id;
+        };
+
         this.item = new TypeItem({
             type: props.route.type || false,
-            id: props.params[props.route.path.substr(1).split("/")[0]] || false,
-            subscribe: props.route.path.startsWith(":")
+            id: this._getIdFromProps(props),
+            subscribe: this._getIdFromProps(props) !== false
         });
 
         this.state = {
@@ -39,8 +53,8 @@ class View extends LightComponent {
     componentWillReceiveProps(nextProps) {
         this.item.setOpts({
             type: nextProps.route.type,
-            id: nextProps.params[nextProps.route.path.substr(1).split("/")[0]] || false,
-            subscribe: nextProps.route.path.startsWith(":")
+            id: this._getIdFromProps(nextProps),
+            subscribe: this._getIdFromProps(nextProps) !== false
         });
     }
 

@@ -4,7 +4,6 @@ import LightComponent from "ui-lib/light_component";
 import DataCard from "./DataCard";
 import { CardTitle } from "react-toolbox/lib/card";
 import stateVar from "ui-lib/state_var";
-import TypeItem from "ui-observables/type_item";
 import StatSamples from "ui-observables/stat_samples";
 import moment from "moment";
 import { Chart } from "ui-components/chart";
@@ -27,52 +26,46 @@ class StatChartCard extends LightComponent {
     constructor(props) {
         super(props);
 
-        this.item = new TypeItem({
-            type: "stat.stat",
-            id: props.statId,
-            subscribe: true
-        });
-
         const getFieldsToFetch = (props) =>
-            props.chartConfig.serieFields
-                .concat(props.chartConfig.dataFields)
+            props.item.serieFields
+                .concat(props.item.dataFields)
                 // Remove hardcoded fields...
                 .filter((name) => !Object.keys(HARDCODED_FIELDS).includes(name));
 
         this.samples = new StatSamples({
-            id: props.statId,
+            id: (props.expanded && props.item && props.item.statRef && props.item.statRef.id) || false,
             fields: getFieldsToFetch(props)
         });
 
         this.state = {
-            expanded: stateVar(this, "expanded", this.props.expanded),
-            samples: this.samples.value.getValue(),
-            item: this.item.value.getValue()
+            expanded: stateVar(this, "expanded", props.expanded),
+            samples: this.samples.value.getValue()
         };
 
         this._getFieldsToFetch = getFieldsToFetch;
     }
 
     componentDidMount() {
-        this.addDisposable(this.item.start());
-        this.addDisposable(this.item.value.subscribe((item) => this.setState({ item })));
         this.addDisposable(this.samples.start());
         this.addDisposable(this.samples.value.subscribe((samples) => this.setState({ samples })));
     }
 
     componentWillReceiveProps(nextProps) {
-        this.item.setOpts({
-            id: nextProps.statId
-        });
         this.samples.setOpts({
-            id: nextProps.statId,
+            id: (nextProps.expanded && nextProps.item && nextProps.item.statRef && nextProps.item.statRef.id) || false,
             fields: this._getFieldsToFetch(nextProps)
         });
     }
 
+    componentDidUpdate(/* prevProps, prevState */) {
+        this.samples.setOpts({
+            id: (this.state.expanded && this.props.item && this.props.item.statRef && this.props.item.statRef.id) || false
+        });
+    }
+
     render() {
-        const serieFields = this.props.chartConfig.serieFields;
-        const dataFields = this.props.chartConfig.dataFields;
+        const serieFields = this.props.item.serieFields;
+        const dataFields = this.props.item.dataFields;
 
         let samples = [];
         if (serieFields.length > 0 && dataFields.length > 0 && this.state.samples.size > 0) {
@@ -84,9 +77,9 @@ class StatChartCard extends LightComponent {
         }
 
         let tags;
-        if (this.state.item && this.state.item.get("tags", []).size > 0) {
+        if (this.props.item && this.props.item.tags && this.props.item.tags.length > 0) {
             tags = (
-                <Tags list={this.state.item.get("tags").toJS()} />
+                <Tags list={this.props.item.tags} />
             );
         }
 
@@ -95,15 +88,21 @@ class StatChartCard extends LightComponent {
                 theme={this.props.theme}
                 expanded={this.state.expanded}
                 expandable={this.props.expandable}
+                path={this.props.path}
+                inline={this.props.inline}
             >
                 <CardTitle
-                    title={this.props.chartConfig.title}
+                    title={this.props.item.name}
                 />
                 <If condition={this.state.expanded.value}>
                     <Chart
                         theme={this.props.theme}
                         samples={samples}
-                        {...this.props.chartConfig}
+                        chartType={this.props.item.chartType}
+                        xAxisType={this.props.item.xAxisType}
+                        yAxisType={this.props.item.yAxisType}
+                        serieFields={this.props.item.serieFields}
+                        dataFields={this.props.item.dataFields}
                         {...CHART_DIM[this.props.chartSize]}
                     />
                     {tags}
@@ -116,16 +115,17 @@ class StatChartCard extends LightComponent {
 StatChartCard.defaultProps = {
     expanded: false,
     expandable: true,
-    chartSize: "normal"
+    chartSize: "normal",
+    inline: false
 };
 
 StatChartCard.propTypes = {
     theme: React.PropTypes.object,
-    statId: React.PropTypes.string.isRequired,
-    chartConfig: React.PropTypes.object.isRequired,
-    chartSize: React.PropTypes.string,
+    item: React.PropTypes.object.isRequired,
     expanded: React.PropTypes.bool,
-    expandable: React.PropTypes.bool
+    expandable: React.PropTypes.bool,
+    inline: React.PropTypes.bool,
+    chartSize: React.PropTypes.string
 };
 
 StatChartCard.contextTypes = {

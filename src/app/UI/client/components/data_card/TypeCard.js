@@ -11,6 +11,7 @@ import TeamCard from "./TeamCard";
 import PolicyCard from "./PolicyCard";
 import StatSpecCard from "./StatSpecCard";
 import StatStatCard from "./StatStatCard";
+import StatChartCard from "./StatChartCard";
 
 const Cards = {
     "coderepo.revision": RevisionCard,
@@ -23,7 +24,8 @@ const Cards = {
     "userrepo.team": TeamCard,
     "userrepo.policy": PolicyCard,
     "stat.spec": StatSpecCard,
-    "stat.stat": StatStatCard
+    "stat.stat": StatStatCard,
+    "stat.chart": StatChartCard
 };
 
 class TypeCard extends React.PureComponent {

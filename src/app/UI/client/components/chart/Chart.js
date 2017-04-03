@@ -17,7 +17,7 @@ const colorNames = [
 
 const STROKE_PALETTE = colorNames.map((colorName) => color[`${colorName}${colorSeries}`]);
 
-const CHART_MARGIN = { top: 5, right: 0, left: 0, bottom: 5 };
+const CHART_MARGIN = { top: 5, right: 5, left: 5, bottom: 5 };
 
 const AXIS_TYPE = {
     number: "number",

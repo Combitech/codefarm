@@ -10,6 +10,8 @@ import {
 import List from "./List";
 import Item from "./Item";
 import StatItem from "./StatItem";
+import StatDataExplore from "./StatDataExplore";
+import ChartItem from "./ChartItem";
 import Edit from "./Edit";
 import Remove from "./Remove";
 
@@ -29,6 +31,12 @@ const routes = (
             type="stat.spec"
         />
         <Route
+            path="chart/:_id_chart"
+            component={TAView}
+            Item={ChartItem}
+            type="stat.chart"
+        />
+        <Route
             path=":_id"
             component={TAView}
             Item={Item}
@@ -45,17 +53,23 @@ const routes = (
                 Remove={Remove}
             />
             <Route
-                path=":_id_stat"
-                component={TAView}
-                Item={StatItem}
-                type="stat.stat"
-            />
-            <Route
                 path="tags"
                 component={TAView}
                 Action={TAEditTags}
                 type="stat.spec"
             />
+            <Route
+                path=":_id_stat"
+                component={TAView}
+                Item={StatItem}
+                type="stat.stat"
+            >
+                <Route
+                    path="explore"
+                    component={TAView}
+                    Action={StatDataExplore}
+                />
+            </Route>
         </Route>
     </Route>
 );

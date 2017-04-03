@@ -22,9 +22,14 @@ class DataCard extends React.PureComponent {
         const isClickable = !isActive && this.props.path;
         const onClick = isClickable ? (e) => this.onClick(e) : null;
 
+        const classNames = [ this.props.theme.card ];
+        if (this.props.inline) {
+            classNames.push(this.props.theme.cardInline);
+        }
+
         return (
             <ExpandableCard
-                className={this.props.theme.card}
+                className={classNames.join(" ")}
                 expanded={this.props.expanded}
                 expandable={this.props.expandable}
                 onClick={onClick}
@@ -37,6 +42,7 @@ class DataCard extends React.PureComponent {
 
 DataCard.defaultProps = {
     expandable: true,
+    inline: false,
     openInNew: false
 };
 
@@ -45,6 +51,7 @@ DataCard.propTypes = {
     children: React.PropTypes.node,
     expanded: React.PropTypes.object,
     expandable: React.PropTypes.bool,
+    inline: React.PropTypes.bool,
     path: React.PropTypes.string,
     openInNew: React.PropTypes.bool
 };

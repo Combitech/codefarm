@@ -14,6 +14,7 @@ class CardList extends React.PureComponent {
                         item={item.item}
                         expanded={this.props.expanded}
                         expandable={this.props.expandable}
+                        inline={this.props.inline}
                         {...item.props}
                     />
                 ))}
@@ -24,14 +25,16 @@ class CardList extends React.PureComponent {
 
 CardList.defaultProps = {
     expanded: false,
-    expandable: true
+    expandable: true,
+    inline: false
 };
 
 CardList.propTypes = {
     theme: React.PropTypes.object,
     list: ImmutablePropTypes.list.isRequired,
     expanded: React.PropTypes.bool,
-    expandable: React.PropTypes.bool
+    expandable: React.PropTypes.bool,
+    inline: React.PropTypes.bool
 };
 
 export default CardList;
