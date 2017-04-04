@@ -149,8 +149,8 @@ class SshClient {
     }
 
     async disconnect() {
+        this.disconnected = true;
         if (this.client) {
-            this.disconnected = true;
             this.client.destroy();
             delete this.client;
         }
