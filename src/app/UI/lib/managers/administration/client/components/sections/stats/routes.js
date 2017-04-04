@@ -14,13 +14,17 @@ import StatDataExplore from "./StatDataExplore";
 import ChartItem from "./ChartItem";
 import Edit from "./Edit";
 import Remove from "./Remove";
+import SpecListItem from "./SpecListItem";
+import ChartListItem from "./ChartListItem";
 
-const routes = (
+const routes = [
     <Route
+        key="specs"
         path="stats"
         component={TAView}
         List={List}
         type="stat.spec"
+        ListItemComponent={SpecListItem}
         label="Statistics"
         icon="show_chart"
     >
@@ -30,19 +34,6 @@ const routes = (
             Create={Edit}
             type="stat.spec"
         />
-        <Route
-            path="chart/:_id_chart"
-            component={TAView}
-            Item={ChartItem}
-            type="stat.chart"
-        >
-            <Route
-                path="tags"
-                component={TAView}
-                Action={TAEditTags}
-                type="stat.chart"
-            />
-        </Route>
         <Route
             path=":_id"
             component={TAView}
@@ -58,6 +49,7 @@ const routes = (
                 path="remove"
                 component={TARemove}
                 Remove={Remove}
+                humanTypeName="statistics specification"
             />
             <Route
                 path="tags"
@@ -72,13 +64,49 @@ const routes = (
                 type="stat.stat"
             >
                 <Route
+                    path="remove"
+                    component={TARemove}
+                    Remove={Remove}
+                    humanTypeName="statistics"
+                />
+                <Route
                     path="explore"
                     component={TAView}
                     Action={StatDataExplore}
                 />
             </Route>
         </Route>
+    </Route>,
+    <Route
+        key="charts"
+        path="charts"
+        component={TAView}
+        List={List}
+        type="stat.chart"
+        ListItemComponent={ChartListItem}
+        label="Charts"
+        icon="show_chart"
+    >
+        <Route
+            path=":_id_chart"
+            component={TAView}
+            Item={ChartItem}
+            type="stat.chart"
+        >
+            <Route
+                path="remove"
+                component={TARemove}
+                Remove={Remove}
+                humanTypeName="chart"
+            />
+            <Route
+                path="tags"
+                component={TAView}
+                Action={TAEditTags}
+                type="stat.chart"
+            />
+        </Route>
     </Route>
-);
+];
 
 export default routes;

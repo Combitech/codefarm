@@ -17,7 +17,7 @@ class Remove extends LightComponent {
             >
                 <TAForm
                     confirmText="Remove"
-                    primaryText="Remove statistics specification"
+                    primaryText={`Remove ${this.props.route.humanTypeName}`}
                     secondaryText={`Area you sure you want to remove ${this.props.item._id}?`}
                     onConfirm={async () => {
                         await this.props.onRemove(this.props.item.type, this.props.item._id);
@@ -38,7 +38,8 @@ Remove.propTypes = {
     breadcrumbs: React.PropTypes.array.isRequired,
     controls: React.PropTypes.array.isRequired,
     onRemove: React.PropTypes.func.isRequired,
-    onCancel: React.PropTypes.func.isRequired
+    onCancel: React.PropTypes.func.isRequired,
+    route: React.PropTypes.object.isRequired
 };
 
 export default Remove;

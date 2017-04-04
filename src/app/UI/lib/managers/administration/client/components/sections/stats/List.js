@@ -6,7 +6,6 @@ import {
     Section as TASection,
     PagedList as TAPagedList
 } from "ui-components/type_admin";
-import BaselineListItem from "./ListItem";
 
 class List extends LightComponent {
     constructor(props) {
@@ -43,7 +42,7 @@ class List extends LightComponent {
                     type={this.props.type}
                     filter={this.state.filter.value}
                     limit={10}
-                    ListItemComponent={BaselineListItem}
+                    ListItemComponent={this.props.route.ListItemComponent}
                     onSelect={(item) => {
                         this.context.router.push({
                             pathname: `${this.props.pathname}/${item._id}`

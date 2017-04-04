@@ -34,6 +34,7 @@ class Remove extends LightComponent {
             controls: [],
             pathname: this.props.pathname,
             context: this.props.context,
+            route: this.props.route,
             onRemove: (...args) => this.onRemove(...args),
             onCancel: () => this.context.router.goBack()
         };
@@ -54,7 +55,8 @@ Remove.propTypes = {
     breadcrumbs: React.PropTypes.array /* .isRequired */,
     item: React.PropTypes.object /* .isRequired */,
     parentItems: React.PropTypes.array /* .isRequired */,
-    context: React.PropTypes.object
+    context: React.PropTypes.object,
+    route: React.PropTypes.object.isRequired,
 };
 
 Remove.contextTypes = {

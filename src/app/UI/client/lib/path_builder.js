@@ -51,14 +51,22 @@ const findPath = (typeName, propName, prefix = false) => {
  * @return {Array} Path with templates resolved
  */
 const fillTemplatePath = (templatePath, item, idMap) => templatePath.map((pathItem) => {
-    if (!pathItem.startsWith(":")) {
+    if (pathItem.indexOf(":") === -1) {
         return pathItem;
     }
 
-    const name = pathItem.slice(1);
-    const key = idMap[name] || name;
+    return pathItem
+        .split("/")
+        .map((part) => {
+            if (!part.startsWith(":")) {
+                return part;
+            }
+            const name = part.slice(1);
+            const key = idMap[name] || name;
 
-    return item[key];
+            return item[key];
+        })
+        .join("/");
 });
 
 const pathFromArray = (arr) => arr.join("/");

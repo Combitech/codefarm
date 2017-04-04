@@ -11,6 +11,7 @@ import {
 } from "ui-components/type_admin";
 import TypeList from "ui-observables/type_list";
 import { States as ObservableDataStates } from "ui-lib/observable_data";
+import * as pathBuilder from "ui-lib/path_builder";
 
 class StatItem extends LightComponent {
     constructor(props) {
@@ -66,7 +67,10 @@ class StatItem extends LightComponent {
                 props: {
                     clickable: true,
                     chartSize: CHART_SIZE.md,
-                    path: `/admin/stats/chart/${item._id}`
+                    path: pathBuilder.fromType("stat.chart", item, {
+                        idMap: { "_id_chart": "_id" },
+                        prefix: "admin"
+                    })
                 }
             }));
         }

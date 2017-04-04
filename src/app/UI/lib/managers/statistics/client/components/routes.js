@@ -1,6 +1,6 @@
 
 import React from "react";
-import { Route } from "react-router";
+import { Route, Redirect } from "react-router";
 import {
     View as TAView,
     EditTags as TAEditTags
@@ -17,6 +17,7 @@ const routes = [
         type="stat.chart"
         label="Statistics"
     >
+        <Redirect from=":id/edit" to="/admin/charts/:id" />
         <Route
             path=":_id"
             component={TAView}

@@ -15,6 +15,8 @@ import {
 import StatInfo from "ui-observables/stat_info";
 import { CHART_TYPE, AXIS_TYPE } from "ui-components/chart";
 import api from "api.io/api.io-client";
+import Notification from "ui-observables/notification";
+import * as pathBuilder from "ui-lib/path_builder";
 
 const DEFAULT_X_AXIS = "_t";
 
@@ -128,40 +130,60 @@ class StatDataExplorer extends LightComponent {
         };
     }
 
-    async _saveChart() {
+    async _saveChart(forceSaveAsNew = false) {
         const chart = this._getChartData();
-        const id = chart._id;
+        const id = forceSaveAsNew ? false : chart._id;
         delete chart._id;
+        const isUpdate = typeof id === "string";
 
         try {
-            if (typeof id === "string") {
+            if (isUpdate) {
                 const res = await api.rest.save("stat.chart", id, chart);
+                Notification.instance.publish(`Chart ${res.name} saved successfully!`);
                 console.log("Save stat.chart success!", res);
             } else {
                 const res = await api.rest.post("stat.chart", chart);
+                Notification.instance.publish(`Chart ${res.name} created successfully!`);
                 console.log("Create stat.chart success!", res);
+
+                // Redirect to chart page
+                const idMap = { "_id_chart": "_id" };
+                this.context.router.push({
+                    pathname: pathBuilder.fromType("stat.chart", res, { idMap, prefix: "statistics" })
+                });
             }
         } catch (error) {
             console.error("Create stat.chart failed", error);
+            const opStr = isUpdate ? "save" : "create";
+            Notification.instance.publish(`Chart ${opStr} failed with error ${error.message || error}!`);
         }
     }
 
     render() {
         this.log("render", this.props, JSON.stringify(this.state, null, 2));
 
+        const item = this.props.chartItem || this._getChartData();
+
         const controls = this.props.controls.slice(0);
         controls.push((
             <TAControlButton
-                key="save"
-                label="Save"
-                onClick={() => this._saveChart()}
+                key="save_as_new"
+                label="Save as new"
+                onClick={() => this._saveChart(true)}
             />
         ));
+        if (item._id) {
+            controls.push((
+                <TAControlButton
+                    key="save"
+                    label="Save"
+                    onClick={() => this._saveChart()}
+                />
+            ));
+        }
 
         const serieFields = this.state.serieFields;
         const dataFields = this.state.dataFields;
-
-        const item = this.props.chartItem || this._getChartData();
 
         const statInfo = this.state.statInfo
             .filter((info) => dataFields.includes(info.get("id")));
@@ -290,6 +312,10 @@ StatDataExplorer.propTypes = {
     pathname: React.PropTypes.string.isRequired,
     breadcrumbs: React.PropTypes.array.isRequired,
     controls: React.PropTypes.array.isRequired
+};
+
+StatDataExplorer.contextTypes = {
+    router: React.PropTypes.object.isRequired
 };
 
 export default StatDataExplorer;
