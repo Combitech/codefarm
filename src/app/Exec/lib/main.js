@@ -10,6 +10,8 @@ const Slaves = require("./controllers/slaves");
 const Jobs = require("./controllers/jobs");
 const SubJobs = require("./controllers/sub_jobs");
 const Control = require("./control");
+const Backends = require("./controllers/backends");
+const BackendProxy = require("./backend_proxy");
 
 class Main extends Service {
     constructor(name, version) {
@@ -29,7 +31,7 @@ class Main extends Service {
     }
 
     async onOnline() {
-        const routes = [].concat(Slaves.instance.routes, Jobs.instance.routes, SubJobs.instance.routes, this.routes);
+        const routes = [].concat(Slaves.instance.routes, Backends.instance.routes, Jobs.instance.routes, SubJobs.instance.routes, this.routes);
 
         await ServiceComBus.instance.start(Object.assign({
             name: this.name,
@@ -42,6 +44,7 @@ class Main extends Service {
             Slaves.instance,
             Jobs.instance,
             SubJobs.instance,
+            Backends.instance,
             this.statesControllerInstance
         ]);
 
@@ -52,6 +55,9 @@ class Main extends Service {
 
         await Control.instance.start();
         this.addDisposable(Control.instance);
+
+        await BackendProxy.instance.start(this.config.backends, this.config.backendsConfig);
+        this.addDisposable(BackendProxy.instance);
 
         await Web.instance.start(this.config.web, routes);
         this.addDisposable(Web.instance);
