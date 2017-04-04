@@ -9,20 +9,21 @@ import List from "./List";
 
 const routes = [
     <Route
-        key="list"
-        path="list"
+        key="charts"
+        path="charts"
         component={TAView}
         List={List}
-        type="stat.stat"
+        type="stat.chart"
         label="Statistics"
-    />,
-    <Route
-        key="stat"
-        path=":_id"
-        component={TAView}
-        Item={Item}
-        type="stat.stat"
-    />
+    >
+        <Route
+            key="stat"
+            path=":_id"
+            component={TAView}
+            Item={Item}
+            type="stat.chart"
+        />
+    </Route>
 ];
 
 export default routes;

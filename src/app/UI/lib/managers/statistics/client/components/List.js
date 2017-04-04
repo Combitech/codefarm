@@ -78,7 +78,8 @@ class List extends LightComponent {
                 props: {
                     clickable: true,
                     inline: true,
-                    chartSize: this._chartSizes[this.state.chartSizeIndex]
+                    chartSize: this._chartSizes[this.state.chartSizeIndex],
+                    path: `${this.props.pathname}/${item._id}`
                 }
             }));
         }
