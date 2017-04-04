@@ -4,6 +4,7 @@ import Immutable from "immutable";
 import LightComponent from "ui-lib/light_component";
 import { Row, Column, Header, Section } from "ui-components/layout";
 import { StatStatCard, CardList, StatChartCard } from "ui-components/data_card";
+import { CHART_SIZE } from "ui-components/data_card/StatChartCard";
 import {
     Section as TASection,
     ControlButton as TAControlButton
@@ -64,7 +65,7 @@ class StatItem extends LightComponent {
                 Card: StatChartCard,
                 props: {
                     clickable: true,
-                    chartSize: "small",
+                    chartSize: CHART_SIZE.md,
                     path: `/admin/stats/chart/${item._id}`
                 }
             }));

@@ -7,6 +7,7 @@ import Dropdown from "react-toolbox/lib/dropdown";
 import { Card, CardText } from "react-toolbox/lib/card";
 import { Row, Column, Header, Section } from "ui-components/layout";
 import { StatStatInfoCard, StatChartCard } from "ui-components/data_card";
+import { CHART_SIZE } from "ui-components/data_card/StatChartCard";
 import {
     Section as TASection,
     ControlButton as TAControlButton
@@ -264,7 +265,7 @@ class StatDataExplorer extends LightComponent {
                                 <StatChartCard
                                     theme={this.props.theme}
                                     item={item}
-                                    chartSize="big"
+                                    chartSize={CHART_SIZE.lg}
                                     expanded={true}
                                     expandable={false}
                                 />

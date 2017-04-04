@@ -35,7 +35,14 @@ const routes = (
             component={TAView}
             Item={ChartItem}
             type="stat.chart"
-        />
+        >
+            <Route
+                path="tags"
+                component={TAView}
+                Action={TAEditTags}
+                type="stat.chart"
+            />
+        </Route>
         <Route
             path=":_id"
             component={TAView}

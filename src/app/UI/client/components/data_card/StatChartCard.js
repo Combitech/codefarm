@@ -2,17 +2,27 @@
 import React from "react";
 import LightComponent from "ui-lib/light_component";
 import DataCard from "./DataCard";
-import { CardTitle } from "react-toolbox/lib/card";
+import { CardTitle, CardText } from "react-toolbox/lib/card";
 import stateVar from "ui-lib/state_var";
 import StatSamples from "ui-observables/stat_samples";
 import moment from "moment";
 import { Chart } from "ui-components/chart";
 import Tags from "ui-components/tags";
 
+const CHART_SIZE = {
+    xs: "xs",
+    sm: "sm",
+    md: "md",
+    lg: "lg",
+    xl: "xl"
+};
+
 const CHART_DIM = {
-    big: { width: 800, height: 600 },
-    normal: { width: 600, height: 300 },
-    small: { width: 300, height: 200 }
+    [ CHART_SIZE.xl ]: { width: 1200, height: 700 },
+    [ CHART_SIZE.lg ]: { width: 800, height: 600 },
+    [ CHART_SIZE.md ]: { width: 600, height: 300 },
+    [ CHART_SIZE.sm ]: { width: 300, height: 200 },
+    [ CHART_SIZE.xs ]: { width: 150, height: 120 }
 };
 
 const DEFAULT_X_AXIS = "_t";
@@ -79,7 +89,9 @@ class StatChartCard extends LightComponent {
         let tags;
         if (this.props.item && this.props.item.tags && this.props.item.tags.length > 0) {
             tags = (
-                <Tags list={this.props.item.tags} />
+                <CardText>
+                    <Tags list={this.props.item.tags} />
+                </CardText>
             );
         }
 
@@ -95,17 +107,19 @@ class StatChartCard extends LightComponent {
                     title={this.props.item.name}
                 />
                 <If condition={this.state.expanded.value}>
-                    <Chart
-                        theme={this.props.theme}
-                        samples={samples}
-                        chartType={this.props.item.chartType}
-                        xAxisType={this.props.item.xAxisType}
-                        yAxisType={this.props.item.yAxisType}
-                        serieFields={this.props.item.serieFields}
-                        dataFields={this.props.item.dataFields}
-                        {...CHART_DIM[this.props.chartSize]}
-                    />
-                    {tags}
+                    <div>
+                        <Chart
+                            theme={this.props.theme}
+                            samples={samples}
+                            chartType={this.props.item.chartType}
+                            xAxisType={this.props.item.xAxisType}
+                            yAxisType={this.props.item.yAxisType}
+                            serieFields={this.props.item.serieFields}
+                            dataFields={this.props.item.dataFields}
+                            {...CHART_DIM[this.props.chartSize]}
+                        />
+                        {tags}
+                    </div>
                 </If>
             </DataCard>
         );
@@ -115,7 +129,7 @@ class StatChartCard extends LightComponent {
 StatChartCard.defaultProps = {
     expanded: false,
     expandable: true,
-    chartSize: "normal",
+    chartSize: "md",
     inline: false
 };
 
@@ -133,3 +147,4 @@ StatChartCard.contextTypes = {
 };
 
 export default StatChartCard;
+export { CHART_SIZE };

@@ -6,3 +6,9 @@
     margin-left: $baseline-grid * 40;
     margin-top: $standard-increment-desktop;
 }
+
+.chartSizeSlider {
+    float: right;
+    margin-left: $layout-gutter-width;
+    width: $unit * 20;
+}
