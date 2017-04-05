@@ -5,9 +5,9 @@
 @import "~ui-styles/common";
 
 .chip {
-    background-color: $palette-grey-300;
+    background-color: $palette-grey-300 !important;
     cursor: pointer;
-    padding-left: 0;
+    padding-left: 0 !important;
 
     transition: color 0.3s, background-color 0.3s;
 
@@ -23,7 +23,7 @@
 
     &:hover {
         background-color: $palette-grey-500;
-        color: white;
+        color: $cf-color-selected;
 
         transition: color 0.1s, background-color 0.1s;
     }
