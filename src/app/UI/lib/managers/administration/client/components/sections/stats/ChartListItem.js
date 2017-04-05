@@ -9,6 +9,11 @@ class StatListItem extends LightComponent {
 
         const item = this.props.item;
 
+        let rightIcon;
+        if (item.pinned) {
+            rightIcon = (<ListItemIcon icon="location_on" />);
+        }
+
         return (
             <ListItem
                 onClick={() => {
@@ -16,7 +21,8 @@ class StatListItem extends LightComponent {
                         this.props.onClick(item);
                     }
                 }}
-                leftIcon={<ListItemIcon icon="show_chart" />}
+                leftIcon={<ListItemIcon icon="timeline" />}
+                rightIcon={rightIcon}
                 selectable={!!this.props.onClick}
                 caption={item.name}
                 legend={item._id || ""}

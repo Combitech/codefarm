@@ -16,7 +16,7 @@ class StatListItem extends LightComponent {
                         this.props.onClick(item);
                     }
                 }}
-                leftIcon={<ListItemIcon icon="show_chart" />}
+                leftIcon={<ListItemIcon icon="trending_up" />}
                 selectable={!!this.props.onClick}
                 caption={item._id}
                 legend={item.description || ""}

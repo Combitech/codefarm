@@ -233,29 +233,41 @@ class Item extends LightComponent {
 
                                 <Section>
                                     <Header label="Revisions" />
-                                    <CardList list={Immutable.fromJS(revisions)} />
-                                    <TAListPager
-                                        pagedList={this.revisions}
-                                        pagingInfo={this.revisions.pagingInfo.getValue()}
+                                    <CardList
+                                        list={Immutable.fromJS(revisions)}
+                                        pager={
+                                            <TAListPager
+                                                pagedList={this.revisions}
+                                                pagingInfo={this.revisions.pagingInfo.getValue()}
+                                            />
+                                        }
                                     />
                                 </Section>
                             </Column>
                             <Column xs={12} md={6}>
                                 <Section>
                                     <Header label="Claims" />
-                                    <CardList list={Immutable.fromJS(claims)} />
-                                    <TAListPager
-                                        pagedList={this.claims}
-                                        pagingInfo={this.claims.pagingInfo.getValue()}
+                                    <CardList
+                                        list={Immutable.fromJS(claims)}
+                                        pager={
+                                            <TAListPager
+                                                pagedList={this.claims}
+                                                pagingInfo={this.claims.pagingInfo.getValue()}
+                                            />
+                                        }
                                     />
                                 </Section>
 
                                 <Section>
                                     <Header label="Comments" />
-                                    <CardList list={Immutable.fromJS(comments)} />
-                                    <TAListPager
-                                        pagedList={this.comments}
-                                        pagingInfo={this.comments.pagingInfo.getValue()}
+                                    <CardList
+                                        list={Immutable.fromJS(comments)}
+                                        pager={
+                                            <TAListPager
+                                                pagedList={this.comments}
+                                                pagingInfo={this.comments.pagingInfo.getValue()}
+                                            />
+                                        }
                                     />
                                 </Section>
                             </Column>

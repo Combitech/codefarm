@@ -25,6 +25,7 @@ class Chart extends Type {
         this.yAxisType = false;
         this.serieFields = [];
         this.dataFields = [];
+        this.pinned = false;
 
         if (data) {
             this.set(data);
@@ -88,6 +89,9 @@ class Chart extends Type {
         }
         if (data.hasOwnProperty("dataFields")) {
             assertType(data.dataFields, "data.dataFields", "array");
+        }
+        if (data.hasOwnProperty("pinned")) {
+            assertType(data.pinned, "data.pinned", "boolean");
         }
     }
 }

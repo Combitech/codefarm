@@ -8,16 +8,28 @@ class CardList extends React.PureComponent {
 
         return (
             <div>
-                {list.toJS().map((item) => (
-                    <item.Card
-                        key={item.id}
-                        item={item.item}
-                        expanded={this.props.expanded}
-                        expandable={this.props.expandable}
-                        inline={this.props.inline}
-                        {...item.props}
-                    />
-                ))}
+                <Choose>
+                    <When condition={this.props.showEmpty && list.size === 0}>
+                        <div className={this.props.theme.emptyCardList}>
+                            {this.props.emptyLabel}
+                        </div>
+                    </When>
+                    <Otherwise>
+                        <div>
+                            {list.toJS().map((item) => (
+                                <item.Card
+                                    key={item.id}
+                                    item={item.item}
+                                    expanded={this.props.expanded}
+                                    expandable={this.props.expandable}
+                                    inline={this.props.inline}
+                                    {...item.props}
+                                />
+                            ))}
+                            {this.props.pager}
+                        </div>
+                    </Otherwise>
+                </Choose>
             </div>
         );
     }
@@ -26,7 +38,9 @@ class CardList extends React.PureComponent {
 CardList.defaultProps = {
     expanded: false,
     expandable: true,
-    inline: false
+    inline: false,
+    showEmpty: true,
+    emptyLabel: "Nothing to list"
 };
 
 CardList.propTypes = {
@@ -34,7 +48,10 @@ CardList.propTypes = {
     list: ImmutablePropTypes.list.isRequired,
     expanded: React.PropTypes.bool,
     expandable: React.PropTypes.bool,
-    inline: React.PropTypes.bool
+    inline: React.PropTypes.bool,
+    showEmpty: React.PropTypes.bool,
+    emptyLabel: React.PropTypes.string,
+    pager: React.PropTypes.element
 };
 
 export default CardList;

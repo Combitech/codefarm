@@ -15,7 +15,11 @@ class List extends LightComponent {
     constructor(props) {
         super(props);
 
-        this.charts = new ChartList();
+        this.charts = new ChartList({
+            query: {
+                pinned: true
+            }
+        });
         this._chartSizes = Object.keys(CHART_SIZE).map((key) => CHART_SIZE[key]);
 
         this.state = {

@@ -26,7 +26,7 @@ const routes = [
         type="stat.spec"
         ListItemComponent={SpecListItem}
         label="Statistics"
-        icon="show_chart"
+        icon="trending_up"
     >
         <Route
             path="create"
@@ -85,7 +85,7 @@ const routes = [
         type="stat.chart"
         ListItemComponent={ChartListItem}
         label="Charts"
-        icon="show_chart"
+        icon="timeline"
     >
         <Route
             path=":_id_chart"

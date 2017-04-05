@@ -2,6 +2,7 @@
 import React from "react";
 import LightComponent from "ui-lib/light_component";
 import Input from "react-toolbox/lib/input";
+import Switch from "react-toolbox/lib/switch";
 import { Autocomplete } from "react-toolbox/lib/autocomplete";
 import Dropdown from "react-toolbox/lib/dropdown";
 import { Card, CardText } from "react-toolbox/lib/card";
@@ -47,7 +48,8 @@ class StatDataExplorer extends LightComponent {
             xAxisType: AXIS_TYPE.category,
             chartType: CHART_TYPE.line,
             serieFields: [ DEFAULT_X_AXIS ],
-            dataFields: (stat && stat.fieldNames) || []
+            dataFields: (stat && stat.fieldNames) || [],
+            pinned: false
         }, props.chartItem || {});
 
         this.statInfo = new StatInfo({
@@ -57,8 +59,9 @@ class StatDataExplorer extends LightComponent {
 
         this.state = {
             statInfo: this.statInfo.value.getValue(),
-            id: item._id,
+            _id: item._id,
             name: item.name,
+            pinned: item.pinned,
             yAxisType: item.yAxisType,
             xAxisType: item.xAxisType,
             chartType: item.chartType,
@@ -98,7 +101,32 @@ class StatDataExplorer extends LightComponent {
         const nextChartId = nextProps.chartItem && nextProps.chartItem._id;
         const currChartId = this.props.chartItem && this.props.chartItem._id;
         if (nextChartId !== currChartId) {
-            this.setState({ id: nextChartId });
+            this.setState({ _id: nextChartId });
+        }
+
+        if (nextProps.chartItem) {
+            if (!this.props.chartItem ||
+                (JSON.stringify(nextProps.chartItem) !== JSON.stringify(this.props.chartItem))) {
+                this.setState((state, props) => {
+                    const nextState = {};
+                    const updateStateIfPropChanged = (fieldName) => {
+                        if (props.chartItem && props.chartItem[fieldName] && props.chartItem[fieldName] !== state[fieldName]) {
+                            nextState[fieldName] = state[fieldName];
+                        }
+                    };
+
+                    updateStateIfPropChanged("_id");
+                    updateStateIfPropChanged("name");
+                    updateStateIfPropChanged("pinned");
+                    updateStateIfPropChanged("yAxisType");
+                    updateStateIfPropChanged("xAxisType");
+                    updateStateIfPropChanged("chartType");
+                    updateStateIfPropChanged("serieFields");
+                    updateStateIfPropChanged("dataFields");
+
+                    return nextState;
+                });
+            }
         }
     }
 
@@ -115,7 +143,7 @@ class StatDataExplorer extends LightComponent {
         const stat = this._getStat();
 
         return {
-            _id: this.state.id,
+            _id: this.state._id,
             name: this.state.name,
             statRef: {
                 _ref: true,
@@ -126,7 +154,8 @@ class StatDataExplorer extends LightComponent {
             dataFields: this.state.dataFields,
             chartType: this.state.chartType,
             yAxisType: this.state.yAxisType,
-            xAxisType: this.state.xAxisType
+            xAxisType: this.state.xAxisType,
+            pinned: this.state.pinned
         };
     }
 
@@ -146,11 +175,10 @@ class StatDataExplorer extends LightComponent {
                 Notification.instance.publish(`Chart ${res.name} created successfully!`);
                 console.log("Create stat.chart success!", res);
 
-                // Redirect to chart page
+                // Redirect to new chart admin page
                 const idMap = { "_id_chart": "_id" };
-                this.context.router.push({
-                    pathname: pathBuilder.fromType("stat.chart", res, { idMap, prefix: "statistics" })
-                });
+                const newPath = pathBuilder.fromType("stat.chart", res, { idMap, prefix: "admin" });
+                this.context.router.push({ pathname: newPath });
             }
         } catch (error) {
             console.error("Create stat.chart failed", error);
@@ -162,7 +190,7 @@ class StatDataExplorer extends LightComponent {
     render() {
         this.log("render", this.props, JSON.stringify(this.state, null, 2));
 
-        const item = this.props.chartItem || this._getChartData();
+        const item = this._getChartData();
 
         const controls = this.props.controls.slice(0);
         controls.push((
@@ -215,19 +243,29 @@ class StatDataExplorer extends LightComponent {
                                         <CardText>
                                             <Row>
                                                 <Column xs={12} md={6}>
-                                                    <Dropdown
-                                                        label="Chart type"
-                                                        value={this.state.chartType}
-                                                        source={chartTypes}
-                                                        onChange={(chartType) => this.setState({ chartType })}
-                                                    />
-                                                </Column>
-                                                <Column xs={12} md={6}>
                                                     <Input
                                                         type="text"
                                                         label="Chart title"
                                                         value={this.state.name}
                                                         onChange={(name) => this.setState({ name })}
+                                                    />
+                                                </Column>
+                                                <Column xs={12} md={6}>
+                                                    <Switch
+                                                        type="text"
+                                                        label="Pinned to public view"
+                                                        checked={this.state.pinned}
+                                                        onChange={(pinned) => this.setState({ pinned })}
+                                                    />
+                                                </Column>
+                                            </Row>
+                                            <Row>
+                                                <Column xs={12} md={6}>
+                                                    <Dropdown
+                                                        label="Chart type"
+                                                        value={this.state.chartType}
+                                                        source={chartTypes}
+                                                        onChange={(chartType) => this.setState({ chartType })}
                                                     />
                                                 </Column>
                                             </Row>

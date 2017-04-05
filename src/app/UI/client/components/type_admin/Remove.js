@@ -56,7 +56,7 @@ Remove.propTypes = {
     item: React.PropTypes.object /* .isRequired */,
     parentItems: React.PropTypes.array /* .isRequired */,
     context: React.PropTypes.object,
-    route: React.PropTypes.object.isRequired,
+    route: React.PropTypes.object.isRequired
 };
 
 Remove.contextTypes = {
