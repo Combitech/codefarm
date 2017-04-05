@@ -71,21 +71,26 @@ class Status extends LightComponent {
                     const iconClassName = `icon-${index}`;
 
                     return (
-                        <g
+                        <svg
                             key={icon}
-                            className={`${this.props.theme[status]} ${this.props.theme[statusClassName]}`}
                             width={iconSize}
                             height={iconSize}
+                            x={iconX}
+                            y={iconY}
                         >
-                            <image
-                                className={`${this.props.theme.icon} ${this.props.theme[iconClassName]}`}
-                                x={iconX}
-                                y={iconY}
-                                width={iconSize}
-                                height={iconSize}
-                                href={icon}
-                            />
-                        </g>
+                            <g
+                                className={`${this.props.theme[status]} ${this.props.theme[statusClassName]}`}
+                                style={{ transformOrigin: `${iconSize / 2}px ${iconSize / 2}px` }}
+                            >
+                                <image
+                                    className={`${this.props.theme.icon} ${this.props.theme[iconClassName]}`}
+
+                                    width={iconSize}
+                                    height={iconSize}
+                                    href={icon}
+                                />
+                            </g>
+                        </svg>
                     );
                 })}
                 <text
