@@ -25,22 +25,24 @@ const CHART_DIM = {
     [ CHART_SIZE.xs ]: { width: 150, height: 120 }
 };
 
-const DEFAULT_X_AXIS = "_t";
+const TIME_FIELD = "_t";
+const CONSTANT_FIELD = "_constant";
+const SEQ_FIELD = "_seq";
 
-const HARDCODED_FIELDS = {
-    [ DEFAULT_X_AXIS ]: "Collection time",
-    "_seq": "Sample index"
-};
+const HARDCODED_FIELDS = [
+    TIME_FIELD, CONSTANT_FIELD, SEQ_FIELD
+];
 
 class StatChartCard extends LightComponent {
     constructor(props) {
         super(props);
 
         const getFieldsToFetch = (props) =>
-            props.item.serieFields
-                .concat(props.item.dataFields)
+            props.item.xFields
+                .concat(props.item.yFields)
+                .concat(props.item.zFields)
                 // Remove hardcoded fields...
-                .filter((name) => !Object.keys(HARDCODED_FIELDS).includes(name));
+                .filter((name) => !HARDCODED_FIELDS.includes(name));
 
         this.samples = new StatSamples({
             id: (props.expanded && props.item && props.item.statRef && props.item.statRef.id) || false,
@@ -74,15 +76,17 @@ class StatChartCard extends LightComponent {
     }
 
     render() {
-        const serieFields = this.props.item.serieFields;
-        const dataFields = this.props.item.dataFields;
+        const xFields = this.props.item.xFields;
+        const yFields = this.props.item.yFields;
 
         let samples = [];
-        if (serieFields.length > 0 && dataFields.length > 0 && this.state.samples.size > 0) {
+        if (xFields.length > 0 && yFields.length > 0 && this.state.samples.size > 0) {
             samples = this.state.samples.toJS();
             samples.forEach((sample, index) => {
-                sample._seq = index;
-                sample[DEFAULT_X_AXIS] = moment(sample._collected).format("YYYY-MM-DD HH:mm:ss");
+                // TIME_FIELD, CONSTANT_FIELD, SEQ_FIELD
+                sample[SEQ_FIELD] = index;
+                sample[CONSTANT_FIELD] = 1;
+                sample[TIME_FIELD] = moment(sample._collected).format("YYYY-MM-DD HH:mm:ss");
             });
         }
 
@@ -114,8 +118,13 @@ class StatChartCard extends LightComponent {
                             chartType={this.props.item.chartType}
                             xAxisType={this.props.item.xAxisType}
                             yAxisType={this.props.item.yAxisType}
-                            serieFields={this.props.item.serieFields}
-                            dataFields={this.props.item.dataFields}
+                            zAxisType={this.props.item.zAxisType}
+                            xAxisScale={this.props.item.xAxisScale}
+                            yAxisScale={this.props.item.yAxisScale}
+                            zAxisScale={this.props.item.zAxisScale}
+                            xFields={this.props.item.xFields}
+                            yFields={this.props.item.yFields}
+                            zFields={this.props.item.zFields}
                             {...CHART_DIM[this.props.chartSize]}
                         />
                         {tags}
@@ -147,4 +156,4 @@ StatChartCard.contextTypes = {
 };
 
 export default StatChartCard;
-export { CHART_SIZE };
+export { CHART_SIZE, TIME_FIELD, CONSTANT_FIELD, SEQ_FIELD };

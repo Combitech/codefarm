@@ -1,7 +1,7 @@
 "use strict";
 
 const { ServiceMgr } = require("service");
-const { assertType, assertProp } = require("misc");
+const { assertType, assertProp, assertAnyOf } = require("misc");
 const { Type } = require("typelib");
 
 const AXIS_TYPE = {
@@ -9,9 +9,25 @@ const AXIS_TYPE = {
     category: "category"
 };
 
+const AXIS_SCALE = {
+    auto: "auto",
+    linear: "linear",
+    pow: "pow",
+    sqrt: "sqrt",
+    log: "log",
+    identity: "identity",
+    band: "band",
+    point: "point",
+    ordinal: "ordinal",
+    quantile: "quantile",
+    quantize: "quantize",
+    sequential: "sequential"
+};
+
 const CHART_TYPE = {
     line: "line",
-    bar: "bar"
+    bar: "bar",
+    scatter: "scatter"
 };
 
 class Chart extends Type {
@@ -23,8 +39,10 @@ class Chart extends Type {
         this.chartType = false;
         this.xAxisType = false;
         this.yAxisType = false;
-        this.serieFields = [];
-        this.dataFields = [];
+        this.zAxisType = false;
+        this.xFields = [];
+        this.yFields = [];
+        this.zFields = [];
         this.pinned = false;
 
         if (data) {
@@ -57,8 +75,10 @@ class Chart extends Type {
             assertProp(data, "chartType", true);
             assertProp(data, "xAxisType", true);
             assertProp(data, "yAxisType", true);
-            assertProp(data, "serieFields", true);
-            assertProp(data, "dataFields", true);
+            assertProp(data, "zAxisType", true);
+            assertProp(data, "xFields", true);
+            assertProp(data, "yFields", true);
+            assertProp(data, "zFields", true);
         } else if (event === "update") {
             // Update
         }
@@ -67,28 +87,34 @@ class Chart extends Type {
             assertType(data.name, "data.name", "string");
         }
         if (data.hasOwnProperty("chartType")) {
-            assertType(data.chartType, "data.chartType", "string");
-            if (!Object.values(CHART_TYPE).includes(data.chartType)) {
-                throw new Error(`Unkown chart type ${data.chartType}`);
-            }
+            assertAnyOf(data, "chartType", "data.chartType", Object.values(CHART_TYPE));
         }
         if (data.hasOwnProperty("xAxisType")) {
-            assertType(data.xAxisType, "data.xAxisType", "string");
-            if (!Object.values(AXIS_TYPE).includes(data.xAxisType)) {
-                throw new Error(`Unkown x axis type ${data.xAxisType}`);
-            }
+            assertAnyOf(data, "xAxisType", "data.xAxisType", Object.values(AXIS_TYPE));
         }
         if (data.hasOwnProperty("yAxisType")) {
-            assertType(data.yAxisType, "data.yAxisType", "string");
-            if (!Object.values(AXIS_TYPE).includes(data.yAxisType)) {
-                throw new Error(`Unkown y axis type ${data.yAxisType}`);
-            }
+            assertAnyOf(data, "yAxisType", "data.yAxisType", Object.values(AXIS_TYPE));
         }
-        if (data.hasOwnProperty("serieFields")) {
-            assertType(data.serieFields, "data.serieFields", "array");
+        if (data.hasOwnProperty("zAxisType")) {
+            assertAnyOf(data, "zAxisType", "data.zAxisType", Object.values(AXIS_TYPE));
         }
-        if (data.hasOwnProperty("dataFields")) {
-            assertType(data.dataFields, "data.dataFields", "array");
+        if (data.hasOwnProperty("xAxisScale")) {
+            assertAnyOf(data, "xAxisScale", "data.xAxisScale", Object.values(AXIS_SCALE));
+        }
+        if (data.hasOwnProperty("yAxisScale")) {
+            assertAnyOf(data, "yAxisScale", "data.yAxisScale", Object.values(AXIS_SCALE));
+        }
+        if (data.hasOwnProperty("zAxisScale")) {
+            assertAnyOf(data, "zAxisScale", "data.zAxisScale", Object.values(AXIS_SCALE));
+        }
+        if (data.hasOwnProperty("xFields")) {
+            assertType(data.xFields, "data.xFields", "array");
+        }
+        if (data.hasOwnProperty("yFields")) {
+            assertType(data.yFields, "data.yFields", "array");
+        }
+        if (data.hasOwnProperty("zFields")) {
+            assertType(data.zFields, "data.zFields", "array");
         }
         if (data.hasOwnProperty("pinned")) {
             assertType(data.pinned, "data.pinned", "boolean");
@@ -98,5 +124,6 @@ class Chart extends Type {
 
 Chart.AXIS_TYPE = AXIS_TYPE;
 Chart.CHART_TYPE = CHART_TYPE;
+Chart.AXIS_SCALE = AXIS_SCALE;
 
 module.exports = Chart;

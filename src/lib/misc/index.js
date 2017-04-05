@@ -6,6 +6,7 @@ const StreamConverter = require("./lib/stream_converter");
 const chainStreams = require("./lib/chain_streams");
 const assertType = require("./lib/assert_type");
 const assertProp = require("./lib/assert_prop");
+const assertAnyOf = require("./lib/assert_any_of");
 const TagCriteria = require("./lib/tag_criteria");
 const ensureArray = require("./lib/ensure_array");
 const asyncWithTmo = require("./lib/async_with_tmo");
@@ -23,6 +24,7 @@ module.exports = {
     chainStreams,
     assertType,
     assertProp,
+    assertAnyOf,
     TagCriteria,
     ensureArray,
     asyncWithTmo,

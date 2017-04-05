@@ -8,22 +8,26 @@ import Dropdown from "react-toolbox/lib/dropdown";
 import { Card, CardText } from "react-toolbox/lib/card";
 import { Row, Column, Header, Section } from "ui-components/layout";
 import { StatStatInfoCard, StatChartCard } from "ui-components/data_card";
-import { CHART_SIZE } from "ui-components/data_card/StatChartCard";
+import {
+    CHART_SIZE, TIME_FIELD, CONSTANT_FIELD, SEQ_FIELD
+} from "ui-components/data_card/StatChartCard";
 import {
     Section as TASection,
     ControlButton as TAControlButton
 } from "ui-components/type_admin";
 import StatInfo from "ui-observables/stat_info";
-import { CHART_TYPE, AXIS_TYPE } from "ui-components/chart";
+import { CHART_TYPE, AXIS_TYPE, AXIS_SCALE } from "ui-components/chart";
 import api from "api.io/api.io-client";
 import Notification from "ui-observables/notification";
 import * as pathBuilder from "ui-lib/path_builder";
 
-const DEFAULT_X_AXIS = "_t";
+const DEFAULT_X_AXIS = SEQ_FIELD;
+const DEFAULT_Z_AXIS = CONSTANT_FIELD;
 
 const HARDCODED_FIELDS = {
-    [ DEFAULT_X_AXIS ]: "Collection time",
-    "_seq": "Sample index"
+    [ TIME_FIELD ]: "Collection time",
+    [ CONSTANT_FIELD ]: "Constant",
+    [ SEQ_FIELD ]: "Sample index"
 };
 
 const axisTypes = [
@@ -31,9 +35,19 @@ const axisTypes = [
     { value: AXIS_TYPE.number, label: "Numeric" }
 ];
 
+const axisScales = [
+    { value: AXIS_SCALE.auto, label: "Auto" },
+    { value: AXIS_SCALE.linear, label: "Linear" },
+    { value: AXIS_SCALE.pow, label: "Power of 10" },
+    { value: AXIS_SCALE.sqrt, label: "Square root" },
+    { value: AXIS_SCALE.log, label: "Logarithmic" },
+    { value: AXIS_SCALE.sequential, label: "Sequential" }
+];
+
 const chartTypes = [
     { value: CHART_TYPE.line, label: "Line chart" },
-    { value: CHART_TYPE.bar, label: "Bar chart" }
+    { value: CHART_TYPE.bar, label: "Bar chart" },
+    { value: CHART_TYPE.scatter, label: "Scatter chart" }
 ];
 
 class StatDataExplorer extends LightComponent {
@@ -44,17 +58,22 @@ class StatDataExplorer extends LightComponent {
 
         const item = Object.assign({
             name: stat ? `Chart ${stat._id}` : "",
+            xAxisType: AXIS_TYPE.number,
             yAxisType: AXIS_TYPE.number,
-            xAxisType: AXIS_TYPE.category,
+            zAxisType: AXIS_TYPE.number,
+            xAxisScale: AXIS_SCALE.auto,
+            yAxisScale: AXIS_SCALE.auto,
+            zAxisScale: AXIS_SCALE.auto,
             chartType: CHART_TYPE.line,
-            serieFields: [ DEFAULT_X_AXIS ],
-            dataFields: (stat && stat.fieldNames) || [],
+            xFields: [ DEFAULT_X_AXIS ],
+            yFields: (stat && stat.fieldNames) || [],
+            zFields: [ DEFAULT_Z_AXIS ],
             pinned: false
         }, props.chartItem || {});
 
         this.statInfo = new StatInfo({
             id: stat && stat._id,
-            fields: item.dataFields
+            fields: item.yFields
         });
 
         this.state = {
@@ -62,11 +81,16 @@ class StatDataExplorer extends LightComponent {
             _id: item._id,
             name: item.name,
             pinned: item.pinned,
-            yAxisType: item.yAxisType,
-            xAxisType: item.xAxisType,
             chartType: item.chartType,
-            serieFields: item.serieFields,
-            dataFields: item.dataFields
+            xAxisType: item.xAxisType,
+            yAxisType: item.yAxisType,
+            zAxisType: item.zAxisType,
+            xAxisScale: item.xAxisScale,
+            yAxisScale: item.yAxisScale,
+            zAxisScale: item.zAxisScale,
+            xFields: item.xFields,
+            yFields: item.yFields,
+            zFields: item.zFields
         };
     }
 
@@ -118,11 +142,16 @@ class StatDataExplorer extends LightComponent {
                     updateStateIfPropChanged("_id");
                     updateStateIfPropChanged("name");
                     updateStateIfPropChanged("pinned");
-                    updateStateIfPropChanged("yAxisType");
-                    updateStateIfPropChanged("xAxisType");
                     updateStateIfPropChanged("chartType");
-                    updateStateIfPropChanged("serieFields");
-                    updateStateIfPropChanged("dataFields");
+                    updateStateIfPropChanged("xAxisType");
+                    updateStateIfPropChanged("yAxisType");
+                    updateStateIfPropChanged("zAxisType");
+                    updateStateIfPropChanged("xAxisScale");
+                    updateStateIfPropChanged("yAxisScale");
+                    updateStateIfPropChanged("zAxisScale");
+                    updateStateIfPropChanged("xFields");
+                    updateStateIfPropChanged("yFields");
+                    updateStateIfPropChanged("zFields");
 
                     return nextState;
                 });
@@ -131,8 +160,9 @@ class StatDataExplorer extends LightComponent {
     }
 
     componentDidUpdate(/* prevProps, prevState */) {
-        const fields = this.state.serieFields
-            .concat(this.state.dataFields)
+        const fields = this.state.xFields
+            .concat(this.state.yFields)
+            .concat(this.state.zFields)
             // Remove hardcoded fields...
             .filter((name) => !Object.keys(HARDCODED_FIELDS).includes(name));
 
@@ -150,11 +180,16 @@ class StatDataExplorer extends LightComponent {
                 type: "stat.stat",
                 id: stat && stat._id
             },
-            serieFields: this.state.serieFields,
-            dataFields: this.state.dataFields,
             chartType: this.state.chartType,
-            yAxisType: this.state.yAxisType,
+            xFields: this.state.xFields,
+            yFields: this.state.yFields,
+            zFields: this.state.zFields,
             xAxisType: this.state.xAxisType,
+            yAxisType: this.state.yAxisType,
+            zAxisType: this.state.zAxisType,
+            xAxisScale: this.state.xAxisScale,
+            yAxisScale: this.state.yAxisScale,
+            zAxisScale: this.state.zAxisScale,
             pinned: this.state.pinned
         };
     }
@@ -210,11 +245,12 @@ class StatDataExplorer extends LightComponent {
             ));
         }
 
-        const serieFields = this.state.serieFields;
-        const dataFields = this.state.dataFields;
+        const xFields = this.state.xFields;
+        const yFields = this.state.yFields;
+        const zFields = this.state.zFields;
 
         const statInfo = this.state.statInfo
-            .filter((info) => dataFields.includes(info.get("id")));
+            .filter((info) => yFields.includes(info.get("id")));
 
         const availableFields = this._getFields();
 
@@ -227,6 +263,10 @@ class StatDataExplorer extends LightComponent {
                 />
             </Row>
         ));
+
+        const hasX = true;
+        const hasY = true;
+        const hasZ = this.state.chartType === CHART_TYPE.scatter;
 
         return (
             <TASection
@@ -269,47 +309,97 @@ class StatDataExplorer extends LightComponent {
                                                     />
                                                 </Column>
                                             </Row>
-                                            <Row>
-                                                <Column xs={12} md={6}>
-                                                    <Autocomplete
-                                                        direction="down"
-                                                        selectedPosition="below"
-                                                        label="Select data fields"
-                                                        onChange={(dataFields) => this.setState({ dataFields })}
-                                                        source={availableFields}
-                                                        value={dataFields}
-                                                    />
-                                                </Column>
-                                                <Column xs={12} md={6}>
-                                                    <Autocomplete
-                                                        direction="down"
-                                                        selectedPosition="below"
-                                                        label="Select series field"
-                                                        onChange={(serieFields) => this.setState({ serieFields })}
-                                                        source={availableFields}
-                                                        value={serieFields}
-                                                    />
-                                                </Column>
-                                            </Row>
-                                            <Row>
-                                                <Column xs={12} md={6}>
-                                                    <Dropdown
-                                                        label="Y-axis type"
-                                                        value={this.state.yAxisType}
-                                                        source={axisTypes}
-                                                        onChange={(yAxisType) => this.setState({ yAxisType })}
-                                                    />
-                                                </Column>
-                                                <Column xs={12} md={6}>
-                                                    <Dropdown
-                                                        label="X-axis type"
-                                                        disabled={this.state.chartType === CHART_TYPE.bar}
-                                                        value={this.state.xAxisType}
-                                                        source={axisTypes}
-                                                        onChange={(xAxisType) => this.setState({ xAxisType })}
-                                                    />
-                                                </Column>
-                                            </Row>
+                                            <If condition={hasX}>
+                                                <Row>
+                                                    <Column xs={12} md={6}>
+                                                        <Autocomplete
+                                                            direction="down"
+                                                            selectedPosition="below"
+                                                            label="Select X-axis fields"
+                                                            onChange={(xFields) => this.setState({ xFields })}
+                                                            source={availableFields}
+                                                            value={xFields}
+                                                        />
+                                                    </Column>
+                                                    <Column xs={12} md={3}>
+                                                        <Dropdown
+                                                            label="X-axis type"
+                                                            disabled={this.state.chartType === CHART_TYPE.bar}
+                                                            value={this.state.xAxisType}
+                                                            source={axisTypes}
+                                                            onChange={(xAxisType) => this.setState({ xAxisType })}
+                                                        />
+                                                    </Column>
+                                                    <Column xs={12} md={3}>
+                                                        <Dropdown
+                                                            label="X-axis scale"
+                                                            value={this.state.xAxisScale}
+                                                            source={axisScales}
+                                                            onChange={(xAxisScale) => this.setState({ xAxisScale })}
+                                                        />
+                                                    </Column>
+                                                </Row>
+                                            </If>
+                                            <If condition={hasY}>
+                                                <Row>
+                                                    <Column xs={12} md={6}>
+                                                        <Autocomplete
+                                                            direction="down"
+                                                            selectedPosition="below"
+                                                            label="Select Y-axis fields"
+                                                            onChange={(yFields) => this.setState({ yFields })}
+                                                            source={availableFields}
+                                                            value={yFields}
+                                                        />
+                                                    </Column>
+                                                    <Column xs={12} md={3}>
+                                                        <Dropdown
+                                                            label="Y-axis type"
+                                                            value={this.state.yAxisType}
+                                                            source={axisTypes}
+                                                            onChange={(yAxisType) => this.setState({ yAxisType })}
+                                                        />
+                                                    </Column>
+                                                    <Column xs={12} md={3}>
+                                                        <Dropdown
+                                                            label="Y-axis scale"
+                                                            value={this.state.yAxisScale}
+                                                            source={axisScales}
+                                                            onChange={(yAxisScale) => this.setState({ yAxisScale })}
+                                                        />
+                                                    </Column>
+                                                </Row>
+                                            </If>
+                                            <If condition={hasZ}>
+                                                <Row>
+                                                    <Column xs={12} md={6}>
+                                                        <Autocomplete
+                                                            direction="down"
+                                                            selectedPosition="below"
+                                                            label="Select Z-axis fields"
+                                                            onChange={(zFields) => this.setState({ zFields })}
+                                                            source={availableFields}
+                                                            value={zFields}
+                                                        />
+                                                    </Column>
+                                                    <Column xs={12} md={3}>
+                                                        <Dropdown
+                                                            label="Z-axis type"
+                                                            value={this.state.zAxisType}
+                                                            source={axisTypes}
+                                                            onChange={(zAxisType) => this.setState({ zAxisType })}
+                                                        />
+                                                    </Column>
+                                                    <Column xs={12} md={3}>
+                                                        <Dropdown
+                                                            label="Z-axis scale"
+                                                            value={this.state.zAxisScale}
+                                                            source={axisScales}
+                                                            onChange={(zAxisScale) => this.setState({ zAxisScale })}
+                                                        />
+                                                    </Column>
+                                                </Row>
+                                            </If>
                                         </CardText>
                                     </Card>
                                 </Row>

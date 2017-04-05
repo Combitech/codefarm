@@ -11,6 +11,7 @@
 
 .card {
     margin-bottom: $layout-gutter-width-sm;
+    overflow: visible;
 }
 
 .jobStatusIcon {
@@ -46,11 +47,6 @@
     &Offline {
         background: $cf-color-offline;
     }
-}
-
-.titleSwitch {
-    float: right;
-    margin-left: $layout-gutter-width-sm;
 }
 
 .monospaceInput {
