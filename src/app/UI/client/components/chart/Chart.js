@@ -132,25 +132,39 @@ class Chart extends LightComponent {
                     const scatterProps = Object.assign({}, chartProps);
                     delete scatterProps.data;
                     const zFields = this.props.zFields.length > 0 ? this.props.zFields : [ "_z" ];
+                    const xRange = [ Number.MAX_SAFE_INTEGER, Number.MIN_SAFE_INTEGER ];
+                    const yRange = [ Number.MAX_SAFE_INTEGER, Number.MIN_SAFE_INTEGER ];
                     const zRange = [ Number.MAX_SAFE_INTEGER, Number.MIN_SAFE_INTEGER ];
+                    const updateRange = (range, value) => {
+                        range[0] = Math.min(range[0], value);
+                        range[1] = Math.max(range[1], value);
+                    };
                     const datas = flattenArray(this.props.yFields.map((yField) =>
                         this.props.xFields.map((xField) =>
                             zFields.map((zField) => ({
                                 name: `y: ${yField}, x: ${xField}, z: ${zField}`,
                                 samples: samples.map((item) => {
+                                    const x = item[xField];
+                                    const y = item[yField];
                                     const z = item[zField];
-                                    zRange[0] = Math.min(zRange[0], z);
-                                    zRange[1] = Math.max(zRange[1], z);
+                                    updateRange(xRange, x);
+                                    updateRange(yRange, y);
+                                    updateRange(zRange, z);
 
                                     return Object.assign({
-                                        _x: item[xField],
-                                        _y: item[yField],
+                                        _x: x,
+                                        _y: y,
                                         _z: z
                                     }, item);
                                 })
                             }))
                         )
                     ));
+                    const zAxisRange = [
+                        10,
+                        // Tweak bubble size to not span whole chart...
+                        this.props.width * 2
+                    ];
                     chart = (
                         <ScatterChart {...scatterProps}>
                             <XAxis
@@ -169,7 +183,7 @@ class Chart extends LightComponent {
                             />
                             <ZAxis
                                 dataKey={"_z"}
-                                range={zRange}
+                                range={zAxisRange}
                                 type={this.props.zAxisType}
                                 scale={this.props.zAxisScale}
                                 domain={[ "auto", "auto" ]}
