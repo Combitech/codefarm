@@ -20,6 +20,21 @@ class BackendProxy extends BackendProxyBase {
         await super.start({ types: backendTypes }, ...args);
     }
 
+    async attach(backend, executor) {
+        const instance = this.getBackend(backend);
+        await instance.attach(executor);
+    }
+
+    async startJob(backend, job, executor) {
+        const instance = this.getBackend(backend);
+        await instance.startJob(job, executor);
+    }
+
+    async detach(backend, executor, reason) {
+        const instance = this.getBackend(backend);
+        await instance.detach(executor, reason);
+    }
+
     async dispose() {
         await super.dispose();
     }
