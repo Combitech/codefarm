@@ -3,7 +3,6 @@
 
 import React from "react";
 import ExpandableCard from "ui-components/expandable_card";
-
 class DataCard extends React.PureComponent {
     onClick(event) {
         event.stopPropagation();
@@ -26,6 +25,9 @@ class DataCard extends React.PureComponent {
         if (this.props.inline) {
             classNames.push(this.props.theme.cardInline);
         }
+        if (this.props.column) {
+            classNames.push(this.props.theme.cardColumn);
+        }
 
         return (
             <ExpandableCard
@@ -43,6 +45,7 @@ class DataCard extends React.PureComponent {
 DataCard.defaultProps = {
     expandable: true,
     inline: false,
+    column: false,
     openInNew: false
 };
 
@@ -52,6 +55,7 @@ DataCard.propTypes = {
     expanded: React.PropTypes.object,
     expandable: React.PropTypes.bool,
     inline: React.PropTypes.bool,
+    column: React.PropTypes.bool,
     path: React.PropTypes.string,
     openInNew: React.PropTypes.bool
 };

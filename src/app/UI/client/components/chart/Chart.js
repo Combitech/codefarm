@@ -6,7 +6,8 @@ import {
     BarChart, Bar,
     ScatterChart, Scatter,
     XAxis, YAxis, ZAxis,
-    CartesianGrid, Tooltip, Legend
+    CartesianGrid, Tooltip, Legend,
+    ResponsiveContainer
 } from "recharts";
 import * as color from "ui-lib/colors";
 import { flattenArray } from "misc";
@@ -62,8 +63,6 @@ class Chart extends LightComponent {
             const samples = this.props.samples;
             if (xFields.length > 0 && yFields.length > 0 && samples.length > 0) {
                 const chartProps = {
-                    width: this.props.width,
-                    height: this.props.height,
                     data: samples,
                     margin: CHART_MARGIN
                 };
@@ -72,8 +71,9 @@ class Chart extends LightComponent {
                     <Tooltip key="tooltip" />,
                     <Legend key="legend" />
                 ];
+                let chartComponent;
                 if (this.props.chartType === CHART_TYPE.line) {
-                    chart = (
+                    chartComponent = (
                         <LineChart {...chartProps}>
                             {xFields.map((field) => (
                                 <XAxis
@@ -102,7 +102,7 @@ class Chart extends LightComponent {
                         </LineChart>
                     );
                 } else if (this.props.chartType === CHART_TYPE.bar) {
-                    chart = (
+                    chartComponent = (
                         <BarChart {...chartProps}>
                             {xFields.map((field) => (
                                 <XAxis
@@ -163,9 +163,9 @@ class Chart extends LightComponent {
                     const zAxisRange = [
                         10,
                         // Tweak bubble size to not span whole chart...
-                        this.props.width * 2
+                        800
                     ];
-                    chart = (
+                    chartComponent = (
                         <ScatterChart {...scatterProps}>
                             <XAxis
                                 dataKey={"_x"}
@@ -203,6 +203,14 @@ class Chart extends LightComponent {
                         </ScatterChart>
                     );
                 }
+                chart = (
+                    <ResponsiveContainer
+                        width={this.props.width}
+                        aspect={this.props.aspectRatio}
+                    >
+                        {chartComponent}
+                    </ResponsiveContainer>
+                );
             }
         } catch (error) {
             console.error("Failed to plot chart", error);
@@ -218,14 +226,14 @@ class Chart extends LightComponent {
 }
 
 Chart.defaultProps = {
-    width: 600,
-    height: 300,
     xAxisType: AXIS_TYPE.category,
     yAxisType: AXIS_TYPE.category,
     zAxisType: AXIS_TYPE.category,
     xAxisScale: AXIS_SCALE.auto,
     yAxisScale: AXIS_SCALE.auto,
-    zAxisScale: AXIS_SCALE.auto
+    zAxisScale: AXIS_SCALE.auto,
+    width: "100%",
+    aspectRatio: 16 / 9
 };
 
 Chart.propTypes = {
@@ -241,8 +249,8 @@ Chart.propTypes = {
     xAxisScale: React.PropTypes.string,
     yAxisScale: React.PropTypes.string,
     zAxisScale: React.PropTypes.string,
-    width: React.PropTypes.number,
-    height: React.PropTypes.number
+    width: React.PropTypes.string,
+    aspectRatio: React.PropTypes.number
 };
 
 export default Chart;

@@ -7,7 +7,6 @@ import Input from "react-toolbox/lib/input";
 import { Container, Loading } from "ui-components/layout";
 import { Section as TASection } from "ui-components/type_admin";
 import { CardList, TypeCard } from "ui-components/data_card";
-import { CHART_SIZE } from "ui-components/data_card/StatChartCard";
 import ChartList from "ui-observables/chart_list";
 import { States as ObservableDataStates } from "ui-lib/observable_data";
 
@@ -20,12 +19,11 @@ class List extends LightComponent {
                 pinned: true
             }
         });
-        this._chartSizes = Object.keys(CHART_SIZE).map((key) => CHART_SIZE[key]);
 
         this.state = {
             charts: this.charts.value.getValue(),
             state: this.charts.state.getValue(),
-            chartSizeIndex: this._chartSizes.indexOf(CHART_SIZE.sm),
+            numColumns: 3,
             filter: ""
         };
     }
@@ -61,13 +59,13 @@ class List extends LightComponent {
 
         controls.push((
             <Slider
-                key="chartSizeSlider"
+                key="numColumnsSlider"
                 theme={this.props.theme}
-                className={this.props.theme.chartSizeSlider}
-                onChange={(chartSizeIndex) => this.setState({ chartSizeIndex })}
-                value={this.state.chartSizeIndex}
-                min={0}
-                max={this._chartSizes.length - 1}
+                className={this.props.theme.numColumnsSlider}
+                onChange={(numColumns) => this.setState({ numColumns })}
+                value={this.state.numColumns}
+                min={1}
+                max={4}
                 step={1}
             />
         ));
@@ -81,8 +79,7 @@ class List extends LightComponent {
                 Card: TypeCard,
                 props: {
                     clickable: true,
-                    inline: true,
-                    chartSize: this._chartSizes[this.state.chartSizeIndex],
+                    column: true,
                     path: `${this.props.pathname}/${item._id}`
                 }
             }));
@@ -100,6 +97,7 @@ class List extends LightComponent {
                         list={Immutable.fromJS(list)}
                         expandable={false}
                         expanded={true}
+                        columns={this.state.numColumns}
                     />
                 </Container>
             </TASection>

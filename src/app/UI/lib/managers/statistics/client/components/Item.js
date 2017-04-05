@@ -7,7 +7,6 @@ import {
     ControlButton as TAControlButton
 } from "ui-components/type_admin";
 import { StatChartCard } from "ui-components/data_card";
-import { CHART_SIZE } from "ui-components/data_card/StatChartCard";
 import { isTokenValidForAccess } from "auth/lib/util";
 
 class Item extends LightComponent {
@@ -38,7 +37,6 @@ class Item extends LightComponent {
                     <StatChartCard
                         theme={this.props.theme}
                         item={this.props.item}
-                        chartSize={CHART_SIZE.xl}
                         expanded={true}
                         expandable={false}
                     />

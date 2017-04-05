@@ -9,7 +9,7 @@ import { Card, CardText } from "react-toolbox/lib/card";
 import { Row, Column, Header, Section } from "ui-components/layout";
 import { StatStatInfoCard, StatChartCard } from "ui-components/data_card";
 import {
-    CHART_SIZE, TIME_FIELD, CONSTANT_FIELD, SEQ_FIELD
+    TIME_FIELD, CONSTANT_FIELD, SEQ_FIELD
 } from "ui-components/data_card/StatChartCard";
 import {
     Section as TASection,
@@ -415,7 +415,6 @@ class StatDataExplorer extends LightComponent {
                                 <StatChartCard
                                     theme={this.props.theme}
                                     item={item}
-                                    chartSize={CHART_SIZE.lg}
                                     expanded={true}
                                     expandable={false}
                                 />

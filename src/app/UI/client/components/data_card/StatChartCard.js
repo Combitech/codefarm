@@ -9,22 +9,6 @@ import moment from "moment";
 import { Chart } from "ui-components/chart";
 import Tags from "ui-components/tags";
 
-const CHART_SIZE = {
-    xs: "xs",
-    sm: "sm",
-    md: "md",
-    lg: "lg",
-    xl: "xl"
-};
-
-const CHART_DIM = {
-    [ CHART_SIZE.xl ]: { width: 1200, height: 700 },
-    [ CHART_SIZE.lg ]: { width: 800, height: 600 },
-    [ CHART_SIZE.md ]: { width: 600, height: 300 },
-    [ CHART_SIZE.sm ]: { width: 300, height: 200 },
-    [ CHART_SIZE.xs ]: { width: 150, height: 120 }
-};
-
 const TIME_FIELD = "_t";
 const CONSTANT_FIELD = "_constant";
 const SEQ_FIELD = "_seq";
@@ -106,6 +90,7 @@ class StatChartCard extends LightComponent {
                 expandable={this.props.expandable}
                 path={this.props.path}
                 inline={this.props.inline}
+                column={this.props.column}
             >
                 <CardTitle
                     title={this.props.item.name}
@@ -125,7 +110,6 @@ class StatChartCard extends LightComponent {
                             xFields={this.props.item.xFields}
                             yFields={this.props.item.yFields}
                             zFields={this.props.item.zFields}
-                            {...CHART_DIM[this.props.chartSize]}
                         />
                         {tags}
                     </div>
@@ -138,17 +122,18 @@ class StatChartCard extends LightComponent {
 StatChartCard.defaultProps = {
     expanded: false,
     expandable: true,
-    chartSize: "md",
-    inline: false
+    inline: false,
+    column: false
 };
 
 StatChartCard.propTypes = {
     theme: React.PropTypes.object,
+    className: React.PropTypes.string,
     item: React.PropTypes.object.isRequired,
     expanded: React.PropTypes.bool,
     expandable: React.PropTypes.bool,
     inline: React.PropTypes.bool,
-    chartSize: React.PropTypes.string
+    column: React.PropTypes.bool
 };
 
 StatChartCard.contextTypes = {
@@ -156,4 +141,4 @@ StatChartCard.contextTypes = {
 };
 
 export default StatChartCard;
-export { CHART_SIZE, TIME_FIELD, CONSTANT_FIELD, SEQ_FIELD };
+export { TIME_FIELD, CONSTANT_FIELD, SEQ_FIELD };
