@@ -11,7 +11,9 @@ class DirectBackend extends AsyncEventEmitter {
     }
 
     async start() {
-        console.log("Yo");
+    }
+
+    async dispose() {
     }
 }
 
