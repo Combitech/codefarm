@@ -26,7 +26,7 @@ const DEFAULT_Z_AXIS = CONSTANT_FIELD;
 
 const HARDCODED_FIELDS = {
     [ TIME_FIELD ]: "Collection time",
-    [ CONSTANT_FIELD ]: "Constant",
+    [ CONSTANT_FIELD ]: "Constant one",
     [ SEQ_FIELD ]: "Sample index"
 };
 
