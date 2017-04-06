@@ -5,7 +5,7 @@ import Immutable from "immutable";
 import LightComponent from "ui-lib/light_component";
 import { Row, Column, Header, Section, Loading } from "ui-components/layout";
 import { CardList, LogRepositoryCard, LogCard } from "ui-components/data_card";
-import LogListObservable from "ui-observables/paged_artifact_list";
+import LogListObservable from "ui-observables/paged_log_list";
 import { ListPager } from "ui-components/type_admin";
 import { States as ObservableDataStates } from "ui-lib/observable_data";
 
@@ -14,7 +14,10 @@ class LogRepositoryView extends LightComponent {
         super(props);
 
         this.logs = new LogListObservable({
-            limit: 10
+            limit: 10,
+            query: {
+                repository: props.item._id
+            }
         });
 
         this.state = {
@@ -28,6 +31,14 @@ class LogRepositoryView extends LightComponent {
 
         this.addDisposable(this.logs.value.subscribe((logs) => this.setState({ logs })));
         this.addDisposable(this.logs.value.subscribe((logsState) => this.setState({ logsState })));
+    }
+
+    componentWillReceiveProps(nextProps) {
+        this.logs.setOpts({
+            query: {
+                repository: nextProps.item._id
+            }
+        });
     }
 
     render() {

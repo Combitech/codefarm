@@ -12,7 +12,8 @@ const types = {
     "userrepo.user": {
         Avatar: UserAvatar,
         avatarProps: (item) => ({
-            userId: item._id
+            userId: item._id,
+            forceAvatar: true
         }),
         name: (item) => item.name
     },
@@ -20,7 +21,7 @@ const types = {
         Avatar: TeamAvatar,
         avatarProps: (item) => ({
             teamId: item._id,
-            cover: true
+            forceAvatar: true
         }),
         name: (item) => item.name
     },

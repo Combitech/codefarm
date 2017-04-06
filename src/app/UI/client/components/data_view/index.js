@@ -7,15 +7,18 @@ import JobView from "./JobView";
 import CodeRepositoryView from "./CodeRepositoryView";
 import ArtifactRepositoryView from "./ArtifactRepositoryView";
 import LogRepositoryView from "./LogRepositoryView";
+import SlaveView from "./SlaveView";
 
 const ThemedJobView = themr(DATA_VIEW, theme)(JobView);
 const ThemedCodeRepositoryView = themr(DATA_VIEW, theme)(CodeRepositoryView);
 const ThemedArtifactRepositoryView = themr(DATA_VIEW, theme)(ArtifactRepositoryView);
 const ThemedLogRepositoryView = themr(DATA_VIEW, theme)(LogRepositoryView);
+const ThemedSlaveView = themr(DATA_VIEW, theme)(SlaveView);
 
 export {
     ThemedJobView as JobView,
     ThemedCodeRepositoryView as CodeRepositoryView,
     ThemedArtifactRepositoryView as ArtifactRepositoryView,
-    ThemedLogRepositoryView as LogRepositoryView
+    ThemedLogRepositoryView as LogRepositoryView,
+    ThemedSlaveView as SlaveView
 };

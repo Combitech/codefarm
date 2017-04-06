@@ -1,17 +1,12 @@
 
 import React from "react";
-import Tags from "ui-components/tags";
 import LightComponent from "ui-lib/light_component";
-import { Row, Col } from "react-flexbox-grid";
-// Re-use job-list-item component from job section
-import JobListItem from "../job/ListItem";
+import { IconMenu, MenuItem } from "react-toolbox/lib/menu";
+import { SlaveView } from "ui-components/data_view";
 import {
-    Section as TASection,
-    PagedList as TAPagedList,
-    ControlButton as TAControlButton
+    Section as TASection
 } from "ui-components/type_admin";
 import api from "api.io/api.io-client";
-import * as pathBuilder from "ui-lib/path_builder";
 import Notification from "ui-observables/notification";
 
 class Item extends LightComponent {
@@ -63,22 +58,36 @@ class Item extends LightComponent {
     render() {
         this.log("render", this.props, this.state);
 
-        const controls = this.props.controls.slice(0);
+        const isSignedIn = !!this.props.activeUser.get("id");
+
+        const controls = [];
 
         controls.push((
-            <TAControlButton
-                key="onlineoffline"
-                label={this.props.item.offline ? "Set Online" : "Set Offline"}
-                onClick={() => this.onSetOfflineOnline()}
-            />
-        ));
+            <IconMenu
+                key="menu"
+                className={this.props.theme.button}
+                icon="more_vert"
+                menuRipple={true}
+            >
+                <If condition={isSignedIn}>
+                    <MenuItem
+                        caption="Edit tags"
+                        onClick={() => this.context.router.push({
+                            pathname: `${this.props.pathname}/tags`
+                        })}
+                    />
 
-        controls.push((
-            <TAControlButton
-                key="test"
-                label="Test connection"
-                onClick={() => this.onTestConnection()}
-            />
+                    <MenuItem
+                        caption={this.props.item.offline ? "Set Online" : "Set Offline"}
+                        onClick={() => this.onSetOfflineOnline()}
+                    />
+
+                    <MenuItem
+                        caption="Test connection"
+                        onClick={() => this.onTestConnection()}
+                    />
+                </If>
+            </IconMenu>
         ));
 
         return (
@@ -87,76 +96,9 @@ class Item extends LightComponent {
                 breadcrumbs={this.props.breadcrumbs}
             >
                 <div className={this.props.theme.container}>
-                    <Row>
-                        <Col xs={12} md={5} className={this.props.theme.panel}>
-                            <h6 className={this.props.theme.title}>Properties</h6>
-                            <table className={this.props.theme.properties}>
-                                <tbody>
-                                    <tr>
-                                        <td>URI</td>
-                                        <td className={this.props.theme.monospace}>{this.props.item.uri}</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Executors</td>
-                                        <td>{this.props.item.executors}</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Private Key</td>
-                                        <td className={this.props.theme.monospace}>{this.props.item.privateKeyPath}</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Created</td>
-                                        <td>{this.props.item.created}</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Saved</td>
-                                        <td>{this.props.item.saved}</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Tags</td>
-                                        <td>
-                                            <Tags list={this.props.item.tags} />
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </Col>
-                        <Col xs={12} md={7} className={this.props.theme.panel}>
-                            <h6 className={this.props.theme.title}>Allocated jobs</h6>
-                            <TAPagedList
-                                type="exec.job"
-                                query={{ slaveId: this.props.item._id, status: "allocated" }}
-                                onSelect={(item) => {
-                                    this.context.router.push({
-                                        pathname: pathBuilder.fromType("exec.job", item)
-                                    });
-                                }}
-                                ListItemComponent={JobListItem}
-                            />
-                            <h6 className={this.props.theme.title}>Running jobs</h6>
-                            <TAPagedList
-                                type="exec.job"
-                                query={{ slaveId: this.props.item._id, status: "ongoing" }}
-                                onSelect={(item) => {
-                                    this.context.router.push({
-                                        pathname: pathBuilder.fromType("exec.job", item)
-                                    });
-                                }}
-                                ListItemComponent={JobListItem}
-                            />
-                            <h6 className={this.props.theme.title}>Finished jobs</h6>
-                            <TAPagedList
-                                type="exec.job"
-                                query={{ slaveId: this.props.item._id, status: { $nin: [ "queued", "allocated", "ongoing" ] } }}
-                                onSelect={(item) => {
-                                    this.context.router.push({
-                                        pathname: pathBuilder.fromType("exec.job", item)
-                                    });
-                                }}
-                                ListItemComponent={JobListItem}
-                            />
-                        </Col>
-                    </Row>
+                    <SlaveView
+                        item={this.props.item}
+                    />
                 </div>
             </TASection>
         );

@@ -1,20 +1,13 @@
 
 import React from "react";
-import LightComponent from "ui-lib/light_component";
 import AvatarBase, { AVATAR_TYPE } from "./AvatarBase";
 
-class UserAvatar extends LightComponent {
+class UserAvatar extends React.PureComponent {
     render() {
-        this.log("state", JSON.stringify(this.state, null, 2));
-
         return (
             <AvatarBase
-                className={this.props.className}
-                theme={this.props.theme}
+                {...this.props}
                 identifier={this.props.userId}
-                avatarType={AVATAR_TYPE.USER}
-                defaultUrl={this.props.defaultUrl}
-                large={this.props.large}
             />
         );
     }
@@ -22,11 +15,14 @@ class UserAvatar extends LightComponent {
 
 UserAvatar.defaultProps = {
     defaultUrl: "/Cheser/48x48/status/avatar-default.png",
+    className: "",
     userId: false,
-    large: false
+    large: false,
+    avatarType: AVATAR_TYPE.USER
 };
 
 UserAvatar.propTypes = {
+    theme: React.PropTypes.object,
     className: React.PropTypes.string,
     userId: React.PropTypes.any,
     defaultUrl: React.PropTypes.string,

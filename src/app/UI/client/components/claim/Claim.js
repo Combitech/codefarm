@@ -37,7 +37,9 @@ class Claim extends LightComponent {
         });
     }
 
-    onClaim() {
+    onClaim(event) {
+        event.stopPropagation();
+
         createClaim({
             text: ""
         }, this.props.targetRef);
@@ -68,7 +70,7 @@ class Claim extends LightComponent {
                 <If condition={!myClaim}>
                     <a
                         className={this.props.theme.button}
-                        onClick={() => this.onClaim()}
+                        onClick={(e) => this.onClaim(e)}
                     >
                         Claim
                     </a>
