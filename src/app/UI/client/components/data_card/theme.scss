@@ -154,7 +154,7 @@
     table-layout: fixed;
 
     tbody td:first-child {
-        width: 100px;
+        width: $unit * 10;
     }
 
     tbody td:last-child {
