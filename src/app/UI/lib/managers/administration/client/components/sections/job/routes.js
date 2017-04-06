@@ -7,8 +7,7 @@ import {
     Remove as TARemove
 } from "ui-components/type_admin";
 import List from "./List";
-import JobItem from "./JobItem";
-import SubJobItem from "./SubJobItem";
+import Item from "./Item";
 import Edit from "./Edit";
 import Remove from "./Remove";
 
@@ -30,7 +29,7 @@ const routes = (
         <Route
             path=":_id"
             component={TAView}
-            Item={JobItem}
+            Item={Item}
             type="exec.job"
         >
             {/* <Route
@@ -42,12 +41,6 @@ const routes = (
                 path="remove"
                 component={TARemove}
                 Remove={Remove}
-            />
-            <Route
-                path=":subJobId"
-                component={TAView}
-                Item={SubJobItem}
-                type="exec.subjob"
             />
         </Route>
     </Route>

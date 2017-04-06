@@ -6,6 +6,7 @@ class ArtifactRepositoryList extends PagedTypeList {
         const defaultOpts = {
             type: "artifactrepo.repository",
             query: {},
+            sortOn: "_id",
             sortDesc: true,
             filter: "",
             filterFields: [ "_id" ]

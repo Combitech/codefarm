@@ -28,7 +28,7 @@ const routes = (
             type="flowctrl.flow"
         />
         <Route
-            path=":flowId"
+            path=":_id"
             component={TAView}
             Item={Item}
             type="flowctrl.flow"

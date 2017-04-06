@@ -1,7 +1,6 @@
 
 import React from "react";
 import Immutable from "immutable";
-import ImmutablePropTypes from "react-immutable-proptypes";
 import LightComponent from "ui-lib/light_component";
 import Input from "react-toolbox/lib/input";
 import Section from "./Section";
@@ -9,6 +8,27 @@ import ListPager from "./ListPager";
 import { CardList, TypeCard } from "ui-components/data_card";
 
 class ListCards extends LightComponent {
+    constructor(props) {
+        super(props);
+
+        this.list = new this.props.Observable({
+            limit: 20
+        });
+
+        this.state = {
+            list: this.list.value.getValue(),
+            state: this.list.state.getValue()
+        };
+    }
+
+    componentDidMount() {
+        this.log("componentDidMount");
+
+        this.addDisposable(this.list.start());
+        this.addDisposable(this.list.value.subscribe((list) => this.setState({ list })));
+        this.addDisposable(this.list.state.subscribe((state) => this.setState({ state })));
+    }
+
     render() {
         this.log("render", this.props);
 
@@ -21,12 +41,12 @@ class ListCards extends LightComponent {
                 type="text"
                 label="Filter list"
                 name="filter"
-                value={this.props.listObservable.opts.getValue().get("filter")}
-                onChange={(filter) => this.props.listObservable.setOpts({ filter })}
+                value={this.list.opts.getValue().get("filter")}
+                onChange={(filter) => this.list.setOpts({ filter })}
             />
         ));
 
-        const list = this.props.items.toJS().map((item) => ({
+        const list = this.state.list.toJS().map((item) => ({
             id: item._id,
             time: 0,
             item: item,
@@ -44,11 +64,15 @@ class ListCards extends LightComponent {
                 breadcrumbs={this.props.breadcrumbs}
             >
                 <div className={this.props.theme.listContainer}>
-                    <CardList list={Immutable.fromJS(list)} />
-                    <ListPager
-                        theme={this.props.theme}
-                        pagedList={this.props.listObservable}
-                        pagingInfo={this.props.listObservable.pagingInfo.getValue()}
+                    <CardList
+                        list={Immutable.fromJS(list)}
+                        pager={
+                            <ListPager
+                                theme={this.props.theme}
+                                pagedList={this.list}
+                                pagingInfo={this.list.pagingInfo.getValue()}
+                            />
+                        }
                     />
                 </div>
             </Section>
@@ -58,16 +82,10 @@ class ListCards extends LightComponent {
 
 ListCards.propTypes = {
     theme: React.PropTypes.object,
-    pathname: React.PropTypes.string.isRequired,
-    type: React.PropTypes.string.isRequired,
     breadcrumbs: React.PropTypes.array.isRequired,
     controls: React.PropTypes.array.isRequired,
-    items: ImmutablePropTypes.list,
+    Observable: React.PropTypes.func.isRequired,
     linkToAdmin: React.PropTypes.bool
-};
-
-ListCards.contextTypes = {
-    router: React.PropTypes.object.isRequired
 };
 
 export default ListCards;
