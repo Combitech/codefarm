@@ -153,7 +153,7 @@ class Item extends LightComponent {
                 icon="more_vert"
                 menuRipple={true}
             >
-                <If condition={isUploadAvatarGranted}>
+                <If condition={isSignedInUser}>
                     <MenuItem
                         caption="Edit tags"
                         onClick={() => this.context.router.push({

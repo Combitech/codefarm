@@ -1,33 +1,33 @@
 
 import React from "react";
-import LightComponent from "ui-lib/light_component";
 import AvatarBase, { AVATAR_TYPE } from "./AvatarBase";
 
-class TeamAvatar extends LightComponent {
+class TeamAvatar extends React.PureComponent {
     render() {
-        this.log("state", JSON.stringify(this.state, null, 2));
-
         return (
             <AvatarBase
-                className={this.props.className}
-                theme={this.props.theme}
+                {...this.props}
                 identifier={this.props.teamId}
-                avatarType={AVATAR_TYPE.TEAM}
-                defaultUrl={this.props.defaultUrl}
             />
         );
     }
 }
 
+
 TeamAvatar.defaultProps = {
     defaultUrl: "/Cheser/48x48/apps/system-users.png",
-    teamId: false
+    className: "",
+    teamId: false,
+    large: false,
+    avatarType: AVATAR_TYPE.TEAM
 };
 
 TeamAvatar.propTypes = {
+    theme: React.PropTypes.object,
     className: React.PropTypes.string,
     teamId: React.PropTypes.any,
-    defaultUrl: React.PropTypes.string
+    defaultUrl: React.PropTypes.string,
+    large: React.PropTypes.bool
 };
 
 export default TeamAvatar;

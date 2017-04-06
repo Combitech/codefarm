@@ -4,39 +4,39 @@ import moment from "moment";
 import Immutable from "immutable";
 import LightComponent from "ui-lib/light_component";
 import { Row, Column, Header, Section, Loading } from "ui-components/layout";
-import { CardList, CodeRepositoryCard, RevisionCard } from "ui-components/data_card";
-import RevisionListObservable from "ui-observables/paged_revision_list";
+import { CardList, SlaveCard, JobCard } from "ui-components/data_card";
+import JobListObservable from "ui-observables/paged_job_list";
 import { ListPager } from "ui-components/type_admin";
 import { States as ObservableDataStates } from "ui-lib/observable_data";
 
-class CodeRepositoryView extends LightComponent {
+class SlaveView extends LightComponent {
     constructor(props) {
         super(props);
 
-        this.revisions = new RevisionListObservable({
+        this.jobs = new JobListObservable({
             limit: 10,
             query: {
-                repository: props.item._id
+                slaveId: props.item._id
             }
         });
 
         this.state = {
-            revisions: this.revisions.value.getValue(),
-            revisionsState: this.revisions.state.getValue()
+            jobs: this.jobs.value.getValue(),
+            jobsState: this.jobs.state.getValue()
         };
     }
 
     componentDidMount() {
-        this.addDisposable(this.revisions.start());
+        this.addDisposable(this.jobs.start());
 
-        this.addDisposable(this.revisions.value.subscribe((revisions) => this.setState({ revisions })));
-        this.addDisposable(this.revisions.value.subscribe((revisionsState) => this.setState({ revisionsState })));
+        this.addDisposable(this.jobs.value.subscribe((jobs) => this.setState({ jobs })));
+        this.addDisposable(this.jobs.value.subscribe((jobsState) => this.setState({ jobsState })));
     }
 
     componentWillReceiveProps(nextProps) {
-        this.revisions.setOpts({
+        this.jobs.setOpts({
             query: {
-                repository: nextProps.item._id
+                slaveId: nextProps.item._id
             }
         });
     }
@@ -44,11 +44,11 @@ class CodeRepositoryView extends LightComponent {
     render() {
         this.log("render", this.props, this.state);
 
-        const revisions = this.state.revisions.map((item) => Immutable.fromJS({
+        const jobs = this.state.jobs.map((item) => Immutable.fromJS({
             id: item.get("_id"),
-            time: moment(item.get("statusSetAt")).unix(),
+            time: moment(item.get("created")).unix(),
             item: item.toJS(),
-            Card: RevisionCard,
+            Card: JobCard,
             props: {
                 clickable: true
             }
@@ -59,7 +59,7 @@ class CodeRepositoryView extends LightComponent {
                 <Column xs={12} md={6}>
                     <Section>
                         <Header label="Properties" />
-                        <CodeRepositoryCard
+                        <SlaveCard
                             item={this.props.item}
                             expanded={true}
                             expandable={false}
@@ -67,12 +67,12 @@ class CodeRepositoryView extends LightComponent {
                     </Section>
                 </Column>
                 <Column xs={12} md={6}>
-                    <Header label="Revisions" />
-                    <Loading show={this.state.revisionsState === ObservableDataStates.LOADING}/>
-                    <CardList list={Immutable.fromJS(revisions)} />
+                    <Header label="Jobs" />
+                    <Loading show={this.state.jobsState === ObservableDataStates.LOADING}/>
+                    <CardList list={Immutable.fromJS(jobs)} />
                     <ListPager
-                        pagedList={this.revisions}
-                        pagingInfo={this.revisions.pagingInfo.getValue()}
+                        pagedList={this.jobs}
+                        pagingInfo={this.jobs.pagingInfo.getValue()}
                     />
                 </Column>
             </Row>
@@ -80,9 +80,9 @@ class CodeRepositoryView extends LightComponent {
     }
 }
 
-CodeRepositoryView.propTypes = {
+SlaveView.propTypes = {
     theme: React.PropTypes.object,
     item: React.PropTypes.object
 };
 
-export default CodeRepositoryView;
+export default SlaveView;

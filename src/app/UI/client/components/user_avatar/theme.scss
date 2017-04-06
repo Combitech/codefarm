@@ -1,13 +1,24 @@
 
+.container {
+    position: relative;
+}
+
 .avatarLarge {
     width: 150px !important;
     height: 150px !important;
 }
 
 .avatar {
-
+    overflow: visible;
 }
 
 .image {
     vertical-align: middle;
+}
+
+.emblem {
+    position: absolute;
+    right: -20%;
+    bottom: -20%;
+    height: 50%;
 }

@@ -14,7 +14,10 @@ class ArtifactRepositoryView extends LightComponent {
         super(props);
 
         this.artifacts = new ArtifactListObservable({
-            limit: 10
+            limit: 10,
+            query: {
+                repository: props.item._id
+            }
         });
 
         this.state = {
@@ -28,6 +31,14 @@ class ArtifactRepositoryView extends LightComponent {
 
         this.addDisposable(this.artifacts.value.subscribe((artifacts) => this.setState({ artifacts })));
         this.addDisposable(this.artifacts.value.subscribe((artifactsState) => this.setState({ artifactsState })));
+    }
+
+    componentWillReceiveProps(nextProps) {
+        this.artifacts.setOpts({
+            query: {
+                repository: nextProps.item._id
+            }
+        });
     }
 
     render() {

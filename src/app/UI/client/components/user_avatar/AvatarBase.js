@@ -67,10 +67,32 @@ class AvatarBase extends LightComponent {
         const className = `${this.props.className} ${this.props.large ? this.props.theme.avatarLarge : ""}`;
 
         return (
-            <Avatar
-                className={`${this.props.theme.avatar} ${className}`}
-                image={this.state.loaded ? this.image.src : this.props.defaultUrl}
-            />
+            <span
+                className={`${this.props.theme.container} ${className}`}
+            >
+                <Choose>
+                    <When condition={!this.state.loaded && !this.props.forceAvatar}>
+                        <img
+                            className={`${this.props.theme.avatar} ${className}`}
+                            style={{ marginRight: 0 }}
+                            src={this.props.defaultUrl}
+                        />
+                    </When>
+                    <Otherwise>
+                        <Avatar
+                            className={`${this.props.theme.avatar} ${className}`}
+                            style={{ marginRight: 0 }}
+                            image={this.state.loaded ? this.image.src : this.props.defaultUrl}
+                        />
+                    </Otherwise>
+                </Choose>
+                <If condition={this.props.emblem}>
+                    <img
+                        className={this.props.theme.emblem}
+                        src={this.props.emblem}
+                    />
+                </If>
+            </span>
         );
     }
 }
@@ -86,6 +108,7 @@ AvatarBase.propTypes = {
     identifier: React.PropTypes.any,
     defaultUrl: React.PropTypes.string.isRequired,
     avatarType: React.PropTypes.oneOf(values(AVATAR_TYPE)).isRequired,
+    forceAvatar: React.PropTypes.bool,
     large: React.PropTypes.bool
 };
 

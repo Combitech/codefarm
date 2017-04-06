@@ -25,6 +25,7 @@ import StatStatCard from "./StatStatCard";
 import StatStatInfoCard from "./StatStatInfoCard";
 import StatChartCard from "./StatChartCard";
 import LogRepositoryCard from "./LogRepositoryCard";
+import SlaveCard from "./SlaveCard";
 
 const ThemedCardList = themr(DATA_CARD, theme)(CardList);
 const ThemedTypeCard = themr(DATA_CARD, theme)(TypeCard);
@@ -48,6 +49,7 @@ const ThemedStatStatCard = themr(DATA_CARD, theme)(StatStatCard);
 const ThemedStatStatInfoCard = themr(DATA_CARD, theme)(StatStatInfoCard);
 const ThemedStatChartCard = themr(DATA_CARD, theme)(StatChartCard);
 const ThemedLogRepositoryCard = themr(DATA_CARD, theme)(LogRepositoryCard);
+const ThemedSlaveCard = themr(DATA_CARD, theme)(SlaveCard);
 
 export { ThemedCardList as CardList };
 export { ThemedTypeCard as TypeCard };
@@ -71,3 +73,4 @@ export { ThemedStatStatCard as StatStatCard };
 export { ThemedStatStatInfoCard as StatStatInfoCard };
 export { ThemedStatChartCard as StatChartCard };
 export { ThemedLogRepositoryCard as LogRepositoryCard };
+export { ThemedSlaveCard as SlaveCard };

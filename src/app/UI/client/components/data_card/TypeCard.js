@@ -14,6 +14,7 @@ import PolicyCard from "./PolicyCard";
 import StatSpecCard from "./StatSpecCard";
 import StatStatCard from "./StatStatCard";
 import StatChartCard from "./StatChartCard";
+import SlaveCard from "./SlaveCard";
 
 const Cards = {
     "coderepo.revision": RevisionCard,
@@ -29,7 +30,8 @@ const Cards = {
     "userrepo.policy": PolicyCard,
     "stat.spec": StatSpecCard,
     "stat.stat": StatStatCard,
-    "stat.chart": StatChartCard
+    "stat.chart": StatChartCard,
+    "exec.slave": SlaveCard
 };
 
 class TypeCard extends React.PureComponent {
