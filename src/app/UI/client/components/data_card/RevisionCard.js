@@ -240,11 +240,6 @@ class RevisionCard extends LightComponent {
                             <tr>
                                 <td>Files</td>
                                 <td className={this.props.theme.monospace}>
-                                    <div
-                                        className={this.props.theme.fileListItemLink}
-                                    >
-                                        src/app/UI/lib/managers/administration/client/components/sections/stats/StatDataExplore.js
-                                    </div>
                                     <If condition={ patch.change.files }>
                                         {patch.change.files.map((item) => (
                                             <div
