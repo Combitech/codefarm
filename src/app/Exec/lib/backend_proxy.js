@@ -15,8 +15,18 @@ class BackendProxy extends BackendProxyBase {
         super(Backend);
     }
 
-    async start(config = {}, ...args) {
+    createExecutor(backend, data = null) {
+        const backendType = this.getBackend(backend).backend.backendType;
+        if (Object.keys(this.executorClasses).indexOf(backendType) > -1) {
+            return new this.executorClasses[backendType](data);
+        }
+
+        throw Error(`Cannot find executor for backend '${backend}'`);
+    }
+
+    async start(config = {}, executorClasses, ...args) {
         const backendTypes = Object.assign({}, BackendTypes, config.types);
+        this.executorClasses = executorClasses;
         await super.start({ types: backendTypes }, ...args);
     }
 

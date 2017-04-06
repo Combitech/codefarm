@@ -8,6 +8,7 @@ const Slave = require("./types/slave");
 const Job = require("./types/job");
 const Executor = require("./types/executor");
 const { ServiceMgr } = require("service");
+const BackendProxy = require("./backend_proxy");
 
 class Control {
     constructor() {
@@ -350,7 +351,7 @@ class Control {
         }
 
         // Allocate executor
-        let executor = new Executor();
+        let executor = BackendProxy.instance.createExecutor(leastUtlizedSlave.backend);
         this.executors.push(executor);
         try {
             // allocate on an executor will trigger the event executor.allocated which

@@ -106,6 +106,12 @@ class Type {
         return obj;
     }
 
+    // This exists for abstract base classes to override and
+    // instantiate derived classes
+    static construct(data) {
+        return new this(data);
+    }
+
     static _instantiate(data) {
         if (data._id) {
             const typeInstanceMap = this._typeInstanceMap;
@@ -116,7 +122,7 @@ class Type {
             }
         }
 
-        return new this(data);
+        return this.construct(data);
     }
 
     static async _getDb() {
