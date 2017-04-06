@@ -16,6 +16,7 @@ import StatStatCard from "./StatStatCard";
 import StatChartCard from "./StatChartCard";
 import SlaveCard from "./SlaveCard";
 import FlowCard from "./FlowCard";
+import BaselineSpecificationCard from "./BaselineSpecificationCard";
 
 const Cards = {
     "coderepo.revision": RevisionCard,
@@ -33,7 +34,8 @@ const Cards = {
     "stat.stat": StatStatCard,
     "stat.chart": StatChartCard,
     "exec.slave": SlaveCard,
-    "flowctrl.flow": FlowCard
+    "flowctrl.flow": FlowCard,
+    "baselinegen.specification": BaselineSpecificationCard
 };
 
 class TypeCard extends React.PureComponent {
