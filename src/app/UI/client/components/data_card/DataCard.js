@@ -20,11 +20,12 @@ class DataCard extends React.PureComponent {
         const isActive = this.props.path && this.context.router.isActive(this.props.path);
         const isClickable = !isActive && this.props.path;
         const onClick = isClickable ? (e) => this.onClick(e) : null;
-
         const classNames = [ this.props.theme.card ];
+
         if (this.props.inline) {
             classNames.push(this.props.theme.cardInline);
         }
+
         if (this.props.column) {
             classNames.push(this.props.theme.cardColumn);
         }

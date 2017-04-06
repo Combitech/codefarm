@@ -1,10 +1,10 @@
 
 import PagedTypeList from "ui-observables/paged_type_list";
 
-class CodeRepositoryList extends PagedTypeList {
+class ArtifactRepositoryList extends PagedTypeList {
     constructor(initialOpts, debug = false) {
         const defaultOpts = {
-            type: "coderepo.repository",
+            type: "artifactrepo.repository",
             query: {},
             sortDesc: true,
             filter: "",
@@ -15,4 +15,4 @@ class CodeRepositoryList extends PagedTypeList {
     }
 }
 
-export default CodeRepositoryList;
+export default ArtifactRepositoryList;

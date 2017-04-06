@@ -5,8 +5,8 @@ import HiddenText from "ui-components/hidden_text";
 import DateTime from "ui-components/datetime";
 import Tags from "ui-components/tags";
 import DataCard from "./DataCard";
-import { ArtifactRepoBackendIcon } from "ui-components/app_icons";
 import { CardTitle } from "react-toolbox/lib/card";
+import { TypeChip } from "ui-components/data_chip";
 import stateVar from "ui-lib/state_var";
 import * as pathBuilder from "ui-lib/path_builder";
 
@@ -79,13 +79,13 @@ class ArtifactCard extends LightComponent {
                             <tr>
                                 <td>Repository</td>
                                 <td>
-                                    <span className={this.props.theme.repoBackendIconContainer}>
-                                        <ArtifactRepoBackendIcon
-                                            repoId={this.props.item.repository}
-                                            theme={this.props.theme}
-                                        />
-                                    </span>
-                                    {this.props.item.repository}
+                                    <TypeChip
+                                        itemRef={{
+                                            _ref: true,
+                                            type: "artifactrepo.repository",
+                                            id: this.props.item.repository
+                                        }}
+                                    />
                                 </td>
                             </tr>
                             <tr>

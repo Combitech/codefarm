@@ -5,9 +5,10 @@ import UserAvatar from "ui-components/user_avatar";
 import DateTime from "ui-components/datetime";
 import Tags from "ui-components/tags";
 import DataCard from "./DataCard";
-import { ArtifactRepoBackendIcon } from "ui-components/app_icons";
 import { CardTitle } from "react-toolbox/lib/card";
 import stateVar from "ui-lib/state_var";
+import { TypeChip } from "ui-components/data_chip";
+import * as pathBuilder from "ui-lib/path_builder";
 
 class ArtifactRepositoryCard extends LightComponent {
     constructor(props) {
@@ -19,11 +20,14 @@ class ArtifactRepositoryCard extends LightComponent {
     }
 
     render() {
+        const myItemPath = pathBuilder.fromType(this.props.item.type, this.props.item, { prefix: this.props.linkToAdmin ? "admin" : false });
+
         return (
             <DataCard
                 theme={this.props.theme}
                 expanded={this.state.expanded}
                 expandable={this.props.expandable}
+                path={this.props.clickable ? myItemPath : ""}
             >
                 <CardTitle
                     avatar={(
@@ -46,14 +50,22 @@ class ArtifactRepositoryCard extends LightComponent {
                             <tr>
                                 <td>Backend</td>
                                 <td>
-                                    <span className={this.props.theme.repoBackendIconContainer}>
-                                        <ArtifactRepoBackendIcon
-                                            repoId={this.props.item._id}
-                                            theme={this.props.theme}
-                                        />
-                                    </span>
-                                    {this.props.item.backend}
+                                    <TypeChip
+                                        itemRef={{
+                                            _ref: true,
+                                            type: "artifactrepo.backend",
+                                            id: this.props.item.backend
+                                        }}
+                                    />
                                 </td>
+                            </tr>
+                            <tr>
+                                <td>Version Scheme</td>
+                                <td>{this.props.item.versionScheme}</td>
+                            </tr>
+                            <tr>
+                                <td>Hash Algorithms</td>
+                                <td>{this.props.item.hashAlgorithms.join(", ")}</td>
                             </tr>
                             <tr>
                                 <td>Tags</td>
@@ -71,14 +83,17 @@ class ArtifactRepositoryCard extends LightComponent {
 
 ArtifactRepositoryCard.defaultProps = {
     expanded: false,
-    expandable: true
+    expandable: true,
+    clickable: false
 };
 
 ArtifactRepositoryCard.propTypes = {
     theme: React.PropTypes.object,
     item: React.PropTypes.object.isRequired,
     expanded: React.PropTypes.bool,
-    expandable: React.PropTypes.bool
+    expandable: React.PropTypes.bool,
+    clickable: React.PropTypes.bool,
+    linkToAdmin: React.PropTypes.bool
 };
 
 export default ArtifactRepositoryCard;

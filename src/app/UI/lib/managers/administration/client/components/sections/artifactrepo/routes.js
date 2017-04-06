@@ -27,7 +27,7 @@ const routes = (
             type="artifactrepo.repository"
         />
         <Route
-            path=":repositoryId"
+            path=":_id"
             component={TAView}
             Item={Item}
             type="artifactrepo.repository"

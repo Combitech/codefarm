@@ -3,6 +3,7 @@ import React from "react";
 import RevisionCard from "./RevisionCard";
 import CodeRepositoryCard from "./CodeRepositoryCard";
 import ArtifactCard from "./ArtifactCard";
+import ArtifactRepositoryCard from "./ArtifactRepositoryCard";
 import JobCard from "./JobCard";
 import SubJobCard from "./SubJobCard";
 import LogCard from "./LogCard";
@@ -17,6 +18,7 @@ const Cards = {
     "coderepo.revision": RevisionCard,
     "coderepo.repository": CodeRepositoryCard,
     "artifactrepo.artifact": ArtifactCard,
+    "artifactrepo.repository": ArtifactRepositoryCard,
     "exec.job": JobCard,
     "exec.subjob": SubJobCard,
     "logrepo.log": LogCard,

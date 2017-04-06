@@ -1,15 +1,12 @@
 
 import React from "react";
-import LightComponent from "ui-lib/light_component";
 import {
     Section as TASection
 } from "ui-components/type_admin";
 import { CodeRepositoryView } from "ui-components/data_view";
 
-class Item extends LightComponent {
+class Item extends React.PureComponent {
     render() {
-        this.log("render", this.props, this.state);
-
         return (
             <TASection
                 controls={this.props.controls}

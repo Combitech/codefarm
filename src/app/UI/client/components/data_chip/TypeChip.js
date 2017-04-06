@@ -45,6 +45,13 @@ const types = {
         }),
         name: (item) => item._id
     },
+    "coderepo.backend": {
+        Avatar: Avatar,
+        avatarProps: () => ({
+            title: "B"
+        }),
+        name: (item) => item._id
+    },
     "artifactrepo.repository": {
         Avatar: Avatar,
         avatarProps: () => ({
@@ -58,6 +65,13 @@ const types = {
             title: "A"
         }),
         name: (item) => `${item.name} - ${item.version}`
+    },
+    "artifactrepo.backend": {
+        Avatar: Avatar,
+        avatarProps: () => ({
+            title: "B"
+        }),
+        name: (item) => item._id
     },
     "exec.job": {
         Avatar: Avatar,

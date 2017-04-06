@@ -5,10 +5,10 @@ import UserAvatar from "ui-components/user_avatar";
 import DateTime from "ui-components/datetime";
 import Tags from "ui-components/tags";
 import DataCard from "./DataCard";
-import { CodeRepoBackendIcon } from "ui-components/app_icons";
 import { CardTitle } from "react-toolbox/lib/card";
 import stateVar from "ui-lib/state_var";
 import RepositoryUri from "ui-observables/repository_uri";
+import { TypeChip } from "ui-components/data_chip";
 import * as pathBuilder from "ui-lib/path_builder";
 
 class CodeRepositoryCard extends LightComponent {
@@ -67,13 +67,13 @@ class CodeRepositoryCard extends LightComponent {
                             <tr>
                                 <td>Backend</td>
                                 <td>
-                                    <span className={this.props.theme.repoBackendIconContainer}>
-                                        <CodeRepoBackendIcon
-                                            repoId={this.props.item._id}
-                                            theme={this.props.theme}
-                                        />
-                                    </span>
-                                    {this.props.item.backend}
+                                    <TypeChip
+                                        itemRef={{
+                                            _ref: true,
+                                            type: "artifactrepo.backend",
+                                            id: this.props.item.backend
+                                        }}
+                                    />
                                 </td>
                             </tr>
                             <tr>
@@ -98,7 +98,8 @@ class CodeRepositoryCard extends LightComponent {
 
 CodeRepositoryCard.defaultProps = {
     expanded: false,
-    expandable: true
+    expandable: true,
+    clickable: false
 };
 
 CodeRepositoryCard.propTypes = {
@@ -106,6 +107,7 @@ CodeRepositoryCard.propTypes = {
     item: React.PropTypes.object.isRequired,
     expanded: React.PropTypes.bool,
     expandable: React.PropTypes.bool,
+    clickable: React.PropTypes.bool,
     linkToAdmin: React.PropTypes.bool
 };
 

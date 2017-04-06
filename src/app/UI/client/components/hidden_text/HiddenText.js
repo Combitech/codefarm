@@ -10,12 +10,17 @@ class HiddenText extends React.PureComponent {
         };
     }
 
+    onClick(event) {
+        event.stopPropagation();
+        this.setState({ show: true });
+    }
+
     render() {
         return (
             <span className={`${this.props.theme.container} ${this.props.className}`}>
                 {!this.state.show && (
                     <a
-                        onClick={() => this.setState({ show: true })}
+                        onClick={(e) => this.onClick(e)}
                         className={this.props.theme.label}
                     >
                         {this.props.label}

@@ -9,7 +9,7 @@ class CodeRepositoryList extends LightComponent {
         super(props);
 
         this.list = new CodeRepositoryListObservable({
-            sortOn: "name",
+            sortOn: "_id",
             limit: 20
         });
 
