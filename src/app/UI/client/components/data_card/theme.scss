@@ -104,10 +104,6 @@
 
 .fileListItemLink {
     vertical-align: middle;
-    overflow-wrap: break-word;
-    word-wrap: break-word;
-    -ms-word-break: break-all;
-    word-break: break-word;
 }
 
 .linkButton {
@@ -152,6 +148,18 @@
 
 .repoBackendIconContainer {
     margin-right: $unit;
+}
+
+.tableFixed {
+    table-layout: fixed;
+
+    tbody td:first-child {
+        width: 100px;
+    }
+
+    tbody td:last-child {
+        overflow: auto;
+    }
 }
 
 .table {

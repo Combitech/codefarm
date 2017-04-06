@@ -147,7 +147,7 @@ class RevisionCard extends LightComponent {
                     </span>
                 </CardText>
                 <If condition={this.state.expanded.value}>
-                    <table className={this.props.theme.table}>
+                    <table className={`${this.props.theme.table} ${this.props.theme.tableFixed}`}>
                         <tbody>
                             <tr>
                                 <td>Status</td>
@@ -240,6 +240,11 @@ class RevisionCard extends LightComponent {
                             <tr>
                                 <td>Files</td>
                                 <td className={this.props.theme.monospace}>
+                                    <div
+                                        className={this.props.theme.fileListItemLink}
+                                    >
+                                        src/app/UI/lib/managers/administration/client/components/sections/stats/StatDataExplore.js
+                                    </div>
                                     <If condition={ patch.change.files }>
                                         {patch.change.files.map((item) => (
                                             <div
