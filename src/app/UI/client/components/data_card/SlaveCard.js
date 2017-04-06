@@ -33,7 +33,7 @@ class SlaveCard extends LightComponent {
                     avatar={(
                         <UserAvatar
                             className={this.props.theme.avatar}
-                            defaultUrl="/Cheser/48x48/devices/computer.png"
+                            defaultUrl="/Cheser/48x48/places/network-server.png"
                             emblem={this.props.item.offline ? "/Cheser/32x32/emblems/emblem-dropbox-unsyncable.png" : "/Cheser/32x32/emblems/emblem-default.png" }
                         />
                     )}
