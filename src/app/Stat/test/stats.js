@@ -158,6 +158,26 @@ describe("Stat", () => {
         samples: [ 10, 10, 20 ]
     };
 
+    const chart1 = {
+        name: "Test chart",
+        statRef: {
+            _ref: true,
+            type: "stat.stat",
+            id: stat1._id
+        },
+        chartType: "line",
+        xAxisType: "number",
+        yAxisType: "number",
+        zAxisType: "number",
+        xAxisScale: "linear",
+        yAxisScale: "linear",
+        zAxisScale: "linear",
+        xFields: [ "_t" ],
+        yFields: [ "value" ],
+        zFields: [ "height" ],
+        pinned: true
+    };
+
     describe("with spec", () => {
         it("should initially list no specs", async () => {
             const data = await restList("spec");
@@ -213,7 +233,7 @@ describe("Stat", () => {
             assert.strictEqual(data.state, spec1.initialState + 1);
 
             // Check script input and output since script
-            assert.strictEqual(data.lastData.input.event, "updated");
+            assert.strictEqual(data.lastData.input.event.event, "updated");
             assert.strictEqual(data.lastData.input.state, spec1.initialState);
             assert.strictEqual(data.lastData.input.newdata._id, "type-id-1");
             assert.strictEqual(data.lastData.input.newdata.type, "service1.type1");
@@ -251,6 +271,38 @@ describe("Stat", () => {
             assert.equal(data.length, stat1.samples.length);
             const samples = data.map((item) => item.sample);
             assert.deepEqual(samples, stat1.samples);
+        });
+    });
+
+    describe("with chart", () => {
+        it("should initially list no charts", async () => {
+            const data = await restList("chart");
+            assert.equal(data.length, 0);
+        });
+
+        it("should add chart", async () => {
+            const data = await restAdd("chart", chart1);
+
+            assert.strictEqual(data.result, "success");
+            assert.property(data.data, "_id");
+            assert.property(data.data, "type");
+            const expected = Object.assign({}, data.data);
+            // Remove props added by Type
+            delete expected.type;
+            delete expected._id;
+            delete expected.created;
+            delete expected.saved;
+            delete expected.refs;
+            delete expected.commentRefs;
+            delete expected.tags;
+            delete expected.typeVersion;
+            assert.deepEqual(expected, chart1);
+        });
+
+        it("should list charts", async () => {
+            const data = await restList("chart");
+            assert.equal(data.length, 1);
+            assert.strictEqual(data[0].name, chart1.name);
         });
     });
 });

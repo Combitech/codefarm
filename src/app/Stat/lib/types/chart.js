@@ -40,6 +40,9 @@ class Chart extends Type {
         this.xAxisType = false;
         this.yAxisType = false;
         this.zAxisType = false;
+        this.xAxisScale = AXIS_SCALE.auto;
+        this.yAxisScale = AXIS_SCALE.auto;
+        this.zAxisScale = AXIS_SCALE.auto;
         this.xFields = [];
         this.yFields = [];
         this.zFields = [];

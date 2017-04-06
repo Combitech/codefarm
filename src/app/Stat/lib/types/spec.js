@@ -46,12 +46,12 @@ class Spec extends Type {
         }
     }
 
-    async run(eventData, stat) {
+    run(eventData, stat) {
         const currState = stat.state !== null ? stat.state : this.initialState;
 
         const sandbox = {
             data: {
-                event: eventData.event,
+                event: eventData,
                 newdata: eventData.newdata,
                 olddata: eventData.olddata,
                 spec: this.serialize(),
@@ -61,7 +61,8 @@ class Spec extends Type {
             moment,
             value: null,
             nextState: null,
-            fieldNames: null
+            fieldNames: null,
+            logLines: []
         };
 
         let result = {
@@ -73,16 +74,31 @@ class Spec extends Type {
         if (this.script) {
             ServiceMgr.instance.log("debug", `Spec ${this._id} running script`);
             const startTs = Date.now();
-            const script = new vm.Script(this.script);
-            script.runInNewContext(sandbox);
-            const elapsedMs = Date.now() - startTs;
-            result = {
-                value: sandbox.value,
-                state: sandbox.nextState,
-                fieldNames: sandbox.fieldNames
-            };
-
-            ServiceMgr.instance.log("verbose", `Spec ${this._id} script finished in ${elapsedMs} ms, result:`, result);
+            try {
+                const opts = {
+                    filename: `spec[${this._id}].script`,
+                    lineOffset: 0,
+                    columnOffset: 0,
+                    displayErrors: true
+                };
+                const script = new vm.Script(this.script, opts);
+                script.runInNewContext(sandbox, opts);
+                const elapsedMs = Date.now() - startTs;
+                result = {
+                    value: sandbox.value,
+                    state: sandbox.nextState,
+                    fieldNames: sandbox.fieldNames
+                };
+                ServiceMgr.instance.log("verbose", `Spec ${this._id} script finished in ${elapsedMs} ms, result:`, result);
+                if (sandbox.logLines && sandbox.logLines.length > 0) {
+                    for (const line of sandbox.logLines) {
+                        ServiceMgr.instance.log("verbose", `Spec ${this._id} script logged:`, line);
+                    }
+                }
+            } catch (error) {
+                ServiceMgr.instance.log("error", `Spec ${this._id} script throwed error:`, error.message, error.stack);
+                throw error;
+            }
         }
 
         return result;

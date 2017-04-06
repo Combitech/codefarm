@@ -1,7 +1,7 @@
 "use strict";
 
 const { ServiceMgr } = require("service");
-const { assertType, assertProp } = require("misc");
+const { assertType, assertProp, synchronize } = require("misc");
 const { Type } = require("typelib");
 const Spec = require("./spec");
 const StatData = require("../stat_data");
@@ -14,12 +14,12 @@ class Stat extends Type {
         this.lastData = null;
         this.state = null;
         this.fieldNames = null;
-        this.chartConfigs = [];
 
         if (data) {
             this.set(data);
         }
 
+        synchronize(this, "update");
         this.__statData = new StatData(`statdata_${this._id}`);
     }
 
@@ -47,10 +47,6 @@ class Stat extends Type {
         } else if (event === "update") {
             // Update
         }
-
-        if (data.chartConfigs) {
-            assertType(data.chartConfigs, "data.chartConfigs", "array");
-        }
     }
 
     async _removeHook() {
@@ -62,19 +58,22 @@ class Stat extends Type {
         if (!spec) {
             throw new Error(`Can't resolve specRef ${JSON.stringify(this.specRef)}`);
         }
-        const { value, state, fieldNames } = await spec.run(eventData, this);
+
+        const { value, state, fieldNames } = spec.run(eventData, this);
 
         let updated = false;
-        if (value !== null) {
-            this.lastData = await this.__statData.add(triggerRef, value);
-            updated = true;
-        }
         if (state !== null) {
             this.state = state;
             updated = true;
         }
+
         if (fieldNames !== null) {
             this.fieldNames = fieldNames;
+            updated = true;
+        }
+
+        if (value !== null) {
+            this.lastData = await this.__statData.add(triggerRef, value);
             updated = true;
         }
 
