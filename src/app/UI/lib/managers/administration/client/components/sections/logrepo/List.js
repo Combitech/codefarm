@@ -1,67 +1,48 @@
 
 import React from "react";
 import LightComponent from "ui-lib/light_component";
-import Input from "react-toolbox/lib/input";
-import {
-    Section as TASection,
-    List as TAList
-} from "ui-components/type_admin";
+import { ListCards } from "ui-components/type_admin";
+import LogRepositoryListObservable from "ui-observables/paged_logrepository_list";
 
-class List extends LightComponent {
+class LogRepositoryList extends LightComponent {
     constructor(props) {
         super(props);
 
+        this.list = new LogRepositoryListObservable({
+            sortOn: "_id",
+            limit: 20
+        });
+
         this.state = {
-            filter: ""
+            list: this.list.value.getValue(),
+            state: this.list.state.getValue()
         };
     }
 
+    componentDidMount() {
+        this.log("componentDidMount");
+        this.addDisposable(this.list.start());
+        this.addDisposable(this.list.value.subscribe((list) => this.setState({ list })));
+        this.addDisposable(this.list.state.subscribe((state) => this.setState({ state })));
+    }
+
     render() {
-        this.log("render", this.props, this.state);
-
-        const controls = this.props.controls.slice(0);
-
-        controls.push((
-            <Input
-                key="filter"
-                className={this.props.theme.filterInput}
-                type="text"
-                label="Filter list"
-                name="filter"
-                value={this.state.filter.value}
-                onChange={this.state.filter.set}
-            />
-        ));
-
         return (
-            <TASection
-                controls={controls}
-                breadcrumbs={this.props.breadcrumbs}
-            >
-                <TAList
-                    type={this.props.type}
-                    filter={this.state.filter.value}
-                    onSelect={(item) => {
-                        this.context.router.push({
-                            pathname: `${this.props.pathname}/${item._id}`
-                        });
-                    }}
-                />
-            </TASection>
+            <ListCards
+                items={this.state.list}
+                listObservable={this.list}
+                linkToAdmin={true}
+                {...this.props}
+            />
         );
     }
 }
 
-List.propTypes = {
+LogRepositoryList.propTypes = {
     theme: React.PropTypes.object,
     pathname: React.PropTypes.string.isRequired,
-    type: React.PropTypes.string.isRequired,
     breadcrumbs: React.PropTypes.array.isRequired,
     controls: React.PropTypes.array.isRequired
 };
 
-List.contextTypes = {
-    router: React.PropTypes.object.isRequired
-};
-
-export default List;
+export default LogRepositoryList;

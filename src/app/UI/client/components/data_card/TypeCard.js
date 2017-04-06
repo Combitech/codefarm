@@ -7,6 +7,7 @@ import ArtifactRepositoryCard from "./ArtifactRepositoryCard";
 import JobCard from "./JobCard";
 import SubJobCard from "./SubJobCard";
 import LogCard from "./LogCard";
+import LogRepositoryCard from "./LogRepositoryCard";
 import UserCard from "./UserCard";
 import TeamCard from "./TeamCard";
 import PolicyCard from "./PolicyCard";
@@ -22,6 +23,7 @@ const Cards = {
     "exec.job": JobCard,
     "exec.subjob": SubJobCard,
     "logrepo.log": LogCard,
+    "logrepo.repository": LogRepositoryCard,
     "userrepo.user": UserCard,
     "userrepo.team": TeamCard,
     "userrepo.policy": PolicyCard,

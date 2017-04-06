@@ -73,6 +73,13 @@ const types = {
         }),
         name: (item) => item._id
     },
+    "logrepo.backend": {
+        Avatar: Avatar,
+        avatarProps: () => ({
+            title: "B"
+        }),
+        name: (item) => item._id
+    },
     "exec.job": {
         Avatar: Avatar,
         avatarProps: () => ({
