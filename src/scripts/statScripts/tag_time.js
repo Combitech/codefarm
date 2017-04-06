@@ -5,8 +5,13 @@ const debug = false;
 const newdata = data.newdata;
 const olddata = data.olddata;
 const BEGIN_CG_TAGS = [ "review:approved:1", "review:skip" ];
-const BEGIN_MERGE_TAGS = [ "merged" ];
-const END_TAGS = [ "step:Build:success" ];
+const MERGE_DONE_TAGS = [ "merged" ];
+const END_TAGS = [
+    "step:Build:success",
+    "step:Regression:success",
+    "step:Lint:success",
+    "step:Deliver:success"
+];
 const newTags = newdata && newdata.tags;
 const oldTags = olddata && olddata.tags;
 
@@ -16,19 +21,26 @@ if (!newTags) {
 }
 
 const hasAnyOf = (tags, tagsToCheckFor) =>
-    tags.some((tag) => tagsToCheckFor.includes(tag))
+    tagsToCheckFor.some((tag) => tags.includes(tag))
+
+const hasAllOf = (tags, tagsToCheckFor) =>
+    tagsToCheckFor.every((tag) => tags.includes(tag))
 
 // Match if newTags has any of tags, but oldTags doesn't
 const gotAnyOf = (newTags, oldTags, tagsToCheckFor) =>
     hasAnyOf(newTags, tagsToCheckFor) &&
     (!oldTags || !hasAnyOf(oldTags, tagsToCheckFor));
 
+const gotAllOf = (newTags, oldTags, tagsToCheckFor) =>
+    hasAllOf(newTags, tagsToCheckFor) &&
+    (!oldTags || !hasAllOf(oldTags, tagsToCheckFor));
+
 const cgStarted = gotAnyOf(newTags, oldTags, BEGIN_CG_TAGS);
-const mergeStarted = gotAnyOf(newTags, oldTags, BEGIN_MERGE_TAGS);
-const ended = gotAnyOf(newTags, oldTags, END_TAGS);
+const mergeDone = gotAnyOf(newTags, oldTags, MERGE_DONE_TAGS);
+const ended = gotAllOf(newTags, oldTags, END_TAGS);
 
 // Nothing happened...
-if (!(cgStarted || mergeStarted || ended)) {
+if (!(cgStarted || mergeDone || ended)) {
     debug && logLines.push("Nothing happened");
     break script;
 }
@@ -44,19 +56,24 @@ if (cgStarted) {
     cgStartTs = state[id].cgStartTs;
 }
 
-let mergeStartTs;
-if (mergeStarted) {
-    mergeStartTs = nowTs;
-} else if (state[id] && state[id].mergeStartTs) {
-    mergeStartTs = state[id].mergeStartTs;
+let mergeDoneTs;
+if (mergeDone) {
+    mergeDoneTs = nowTs;
+} else if (state[id] && state[id].mergeDoneTs) {
+    mergeDoneTs = state[id].mergeDoneTs;
 }
 
 if (ended) {
-    value = {
-        cgToEndTimeMs: moment(nowTs).diff(cgStartTs),
-        cgToMergeTimeMs: moment(mergeStartTs).diff(cgStartTs),
-        mergeToEndTimeMs: moment(nowTs).diff(mergeStartTs)
-    };
+    value = {};
+    if (cgStartTs) {
+        value.cgToEndTimeMs = moment(nowTs).diff(cgStartTs);
+    }
+    if (mergeDoneTs && cgStartTs) {
+        value.cgToEndTimeMs = moment(mergeDoneTs).diff(cgStartTs);
+    }
+    if (mergeDoneTs) {
+        value.mergeToEndTimeMs = moment(nowTs).diff(mergeDoneTs);
+    }
     // Cleanup state
     delete state[id];
     nextState = state;
@@ -70,8 +87,8 @@ if (ended) {
     if (cgStarted) {
         state[id].cgStartTs = cgStartTs;
     }
-    if (mergeStarted) {
-        state[id].mergeStartTs = mergeStartTs;
+    if (mergeDone) {
+        state[id].mergeDoneTs = mergeDoneTs;
     }
     nextState = state;
     debug && logLines.push("State stored: " + JSON.stringify(state));
