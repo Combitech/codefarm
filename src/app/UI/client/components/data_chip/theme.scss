@@ -6,9 +6,8 @@
 
 .chip {
     background-color: $palette-grey-300 !important;
-    cursor: pointer;
     padding-left: 0 !important;
-
+    opacity: 0.7;
     transition: color 0.3s, background-color 0.3s;
 
     .avatar {
@@ -21,6 +20,11 @@
         background-color: $palette-blue-500;
         color: white;
     }
+}
+
+.clickable {
+    cursor: pointer;
+    opacity: 1;
 
     &:hover {
         background-color: $palette-grey-500;

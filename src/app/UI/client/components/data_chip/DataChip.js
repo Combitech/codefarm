@@ -28,10 +28,11 @@ class DataChip extends React.PureComponent {
         const isActive = this.props.path && this.context.router.isActive(this.props.path);
         const isClickable = !isActive && this.props.path;
         const onClick = isClickable ? (e) => this.onClick(e) : null;
+        const className = `${this.props.theme.chip} ${isClickable ? this.props.theme.clickable : ""}`;
 
         return (
             <Chip
-                className={this.props.theme.chip}
+                className={className}
                 onClick={onClick}
                 deletable={!!this.props.onDelete}
                 onDeleteClick={(e) => this.onDelete(e)}

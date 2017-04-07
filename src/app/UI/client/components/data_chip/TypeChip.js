@@ -105,6 +105,13 @@ const types = {
             "_id": "name",
             "_id_baseline": "_id"
         }
+    },
+    "baselinegen.specification": {
+        Avatar: Avatar,
+        avatarProps: () => ({
+            title: "S"
+        }),
+        name: (item) => item._id
     }
 };
 

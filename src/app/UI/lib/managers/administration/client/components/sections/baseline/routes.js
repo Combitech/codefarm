@@ -18,7 +18,7 @@ const routes = (
         component={TAView}
         List={List}
         type="baselinegen.specification"
-        label="Baselines"
+        label="Baseline Specifications"
         icon="linear_scale"
     >
         <Route

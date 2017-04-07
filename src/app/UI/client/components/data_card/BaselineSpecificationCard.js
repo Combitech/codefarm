@@ -32,7 +32,7 @@ class BaselineSpecificationCard extends LightComponent {
                     avatar={(
                         <UserAvatar
                             className={this.props.theme.avatar}
-                            defaultUrl="/Cheser/48x48/mimetypes/application-x-glade.png"
+                            defaultUrl="/Cheser/48x48/actions/document-page-setup.png"
                         />
                     )}
                     title={this.props.item._id}

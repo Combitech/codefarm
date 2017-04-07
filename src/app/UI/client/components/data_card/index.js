@@ -27,6 +27,9 @@ import StatChartCard from "./StatChartCard";
 import LogRepositoryCard from "./LogRepositoryCard";
 import SlaveCard from "./SlaveCard";
 import FlowCard from "./FlowCard";
+import BaselineSpecificationCard from "./BaselineSpecificationCard";
+import BaselineCard from "./BaselineCard";
+import CollectorCard from "./CollectorCard";
 
 const ThemedCardList = themr(DATA_CARD, theme)(CardList);
 const ThemedTypeCard = themr(DATA_CARD, theme)(TypeCard);
@@ -52,6 +55,9 @@ const ThemedStatChartCard = themr(DATA_CARD, theme)(StatChartCard);
 const ThemedLogRepositoryCard = themr(DATA_CARD, theme)(LogRepositoryCard);
 const ThemedSlaveCard = themr(DATA_CARD, theme)(SlaveCard);
 const ThemedFlowCard = themr(DATA_CARD, theme)(FlowCard);
+const ThemedBaselineSpecificationCard = themr(DATA_CARD, theme)(BaselineSpecificationCard);
+const ThemedBaselineCard = themr(DATA_CARD, theme)(BaselineCard);
+const ThemedCollectorCard = themr(DATA_CARD, theme)(CollectorCard);
 
 export { ThemedCardList as CardList };
 export { ThemedTypeCard as TypeCard };
@@ -77,3 +83,6 @@ export { ThemedStatChartCard as StatChartCard };
 export { ThemedLogRepositoryCard as LogRepositoryCard };
 export { ThemedSlaveCard as SlaveCard };
 export { ThemedFlowCard as FlowCard };
+export { ThemedBaselineSpecificationCard as BaselineSpecificationCard };
+export { ThemedBaselineCard as BaselineCard };
+export { ThemedCollectorCard as CollectorCard };

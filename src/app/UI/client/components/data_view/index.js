@@ -9,6 +9,7 @@ import ArtifactRepositoryView from "./ArtifactRepositoryView";
 import LogRepositoryView from "./LogRepositoryView";
 import SlaveView from "./SlaveView";
 import FlowView from "./FlowView";
+import BaselineSpecificationView from "./BaselineSpecificationView";
 
 const ThemedJobView = themr(DATA_VIEW, theme)(JobView);
 const ThemedCodeRepositoryView = themr(DATA_VIEW, theme)(CodeRepositoryView);
@@ -16,6 +17,7 @@ const ThemedArtifactRepositoryView = themr(DATA_VIEW, theme)(ArtifactRepositoryV
 const ThemedLogRepositoryView = themr(DATA_VIEW, theme)(LogRepositoryView);
 const ThemedSlaveView = themr(DATA_VIEW, theme)(SlaveView);
 const ThemedFlowView = themr(DATA_VIEW, theme)(FlowView);
+const ThemedBaselineSpecificationView = themr(DATA_VIEW, theme)(BaselineSpecificationView);
 
 export {
     ThemedJobView as JobView,
@@ -23,5 +25,6 @@ export {
     ThemedArtifactRepositoryView as ArtifactRepositoryView,
     ThemedLogRepositoryView as LogRepositoryView,
     ThemedSlaveView as SlaveView,
-    ThemedFlowView as FlowView
+    ThemedFlowView as FlowView,
+    ThemedBaselineSpecificationView as BaselineSpecificationView
 };
