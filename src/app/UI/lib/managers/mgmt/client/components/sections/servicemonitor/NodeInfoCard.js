@@ -3,7 +3,7 @@ import { CardTitle, CardText, CardActions } from "react-toolbox/lib/card";
 import { List, ListItem, ListDivider, ListSubHeader } from "react-toolbox/lib/list";
 import Button from "react-toolbox/lib/button";
 import LightComponent from "ui-lib/light_component";
-import ExpandableCard from "ui-components/expandable_card";
+import { ExpandableCard } from "ui-components/expandable_card";
 import ConfigDialog from "./ConfigDialog";
 import stateVar from "ui-lib/state_var";
 import STATE from "../../../../lib/types/service_state";
