@@ -87,7 +87,8 @@ describe("GithubBackend", async () => {
             },
             gitHubRepo: {
                 _id: "GitHubRepo1",
-                backend: "GitHubBackend2"
+                backend: "GitHubBackend2",
+                initialRevisionTags: [ "belongsTo_GitHubRepo1" ]
             },
             userData: [
                 { _id: "testuser" }
@@ -264,8 +265,7 @@ describe("GithubBackend", async () => {
 
             const r = await getRevision("12345");
             assert(r.status === "merged");
-            assert(r.tags.length === 1);
-            assert(r.tags[0] === "merged");
+            assert.deepEqual(r.tags, [ "belongsTo_GitHubRepo1", "merged" ]);
             assert(r.repository === "GitHubRepo1");
             assert(r.patches.length === 1);
 
@@ -285,14 +285,14 @@ describe("GithubBackend", async () => {
 
         it("shall create revision on pull-request open", async () => {
             const r = await createChangeByPullRequest("pr1");
-            assertRevision(r, "submitted", [], testInfo.gitHubRepo._id);
+            assertRevision(r, "submitted", [ "belongsTo_GitHubRepo1" ], testInfo.gitHubRepo._id);
             assert(r.patches.length === 1);
             assertPatch(r.patches[0], testInfo.userData[0]._id, false, "pr1");
         });
 
         it("shall create revision on pull-request update", async () => {
             const r = await createChangeByPullRequest("pr1", "synchronize");
-            assertRevision(r, "submitted", [], testInfo.gitHubRepo._id);
+            assertRevision(r, "submitted", [ "belongsTo_GitHubRepo1" ], testInfo.gitHubRepo._id);
             assert(r.patches.length === 2);
             assertPatch(r.patches[1], testInfo.userData[0]._id, false, "pr1");
         });
@@ -302,7 +302,7 @@ describe("GithubBackend", async () => {
             await sendToGithubBackend("pull_request", pullreq);
             const r = await getRevision("pr1");
 
-            assertRevision(r, "abandoned", [ "abandoned" ], testInfo.gitHubRepo._id);
+            assertRevision(r, "abandoned", [ "belongsTo_GitHubRepo1", "abandoned" ], testInfo.gitHubRepo._id);
             assert(r.patches.length === 2);
             assertPatch(r.patches[1], testInfo.userData[0]._id, false, "pr1");
         });
@@ -327,7 +327,7 @@ describe("GithubBackend", async () => {
             assert(deferred.resolved);
 
             const r = await getRevision("pr2");
-            assertRevision(r, "merged", [ "merged" ], testInfo.gitHubRepo._id);
+            assertRevision(r, "merged", [ "belongsTo_GitHubRepo1", "merged" ], testInfo.gitHubRepo._id);
             assert(r.patches.length === 2);
             const p = r.patches[r.patches.length - 1];
             assert(p.change.newrev === "pr2-mergeId"); // Last patch should have merge commit set
