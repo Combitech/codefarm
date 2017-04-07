@@ -1,11 +1,10 @@
 
-import { themr } from "react-css-themr";
+import { names, exporter } from "ui-lib/exporter";
 import theme from "./theme.scss";
-import { APP_PAGER } from "../identifiers";
 
-import AppPager from "./AppPager";
+const name = names.APP_PAGER;
+const exports = [
+    require("./AppPager")
+];
 
-const ThemedAppPager = themr(APP_PAGER, theme)(AppPager);
-
-export default ThemedAppPager;
-export { ThemedAppPager as AppPager };
+module.exports = exporter(name, theme, exports);

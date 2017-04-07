@@ -4,7 +4,7 @@ import DeleteIcon from "material-design-icons/action/svg/production/ic_delete_48
 import EditIcon from "material-design-icons/image/svg/production/ic_edit_48px.svg";
 import { sizes, filters } from "ui-components/svg_grid";
 
-class Generic extends React.Component {
+class StepGeneric extends React.Component {
     constructor(props) {
         super(props);
 
@@ -122,9 +122,9 @@ class Generic extends React.Component {
     }
 }
 
-Generic.propTypes = {
+StepGeneric.propTypes = {
     theme: React.PropTypes.object,
     item: React.PropTypes.object.isRequired
 };
 
-export default Generic;
+export default StepGeneric;

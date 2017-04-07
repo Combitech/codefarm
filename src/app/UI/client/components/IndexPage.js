@@ -4,9 +4,9 @@ import moment from "moment";
 import Immutable from "immutable";
 import LightComponent from "ui-lib/light_component";
 import { Header, Row, Column, Loading } from "ui-components/layout";
+import { CardList, RevisionCard, ArtifactCard } from "ui-components/data_card";
 import TypeList from "ui-observables/type_list";
 import { States as ObservableDataStates } from "ui-lib/observable_data";
-import { CardList, RevisionCard, ArtifactCard } from "ui-components/data_card";
 
 class IndexPage extends LightComponent {
     constructor(props) {

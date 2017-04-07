@@ -1,10 +1,10 @@
 
-import { themr } from "react-css-themr";
-import { APP_HEADER } from "../identifiers";
-import AppHeader from "./AppHeader";
+import { names, exporter } from "ui-lib/exporter";
 import theme from "./theme.scss";
 
-const ThemedAppHeader = themr(APP_HEADER, theme)(AppHeader);
+const name = names.APP_HEADER;
+const exports = [
+    require("./AppHeader")
+];
 
-export default ThemedAppHeader;
-export { ThemedAppHeader as AppHeader };
+module.exports = exporter(name, theme, exports);

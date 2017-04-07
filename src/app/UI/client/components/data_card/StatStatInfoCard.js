@@ -2,7 +2,7 @@
 import React from "react";
 import LightComponent from "ui-lib/light_component";
 import { CardTitle } from "react-toolbox/lib/card";
-import ExpandableCard from "ui-components/expandable_card";
+import { ExpandableCard } from "ui-components/expandable_card";
 import stateVar from "ui-lib/state_var";
 
 class StatStatInfoCard extends LightComponent {

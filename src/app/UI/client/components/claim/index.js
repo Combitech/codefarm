@@ -1,12 +1,10 @@
 
-import { themr } from "react-css-themr";
-import { CLAIM } from "../identifiers";
+import { names, exporter } from "ui-lib/exporter";
 import theme from "./theme.scss";
 
-import Claim from "./Claim";
+const name = names.CLAIM;
+const exports = [
+    require("./Claim")
+];
 
-const ThemedClaim = themr(CLAIM, theme)(Claim);
-
-export {
-    ThemedClaim as Claim
-};
+module.exports = exporter(name, theme, exports);

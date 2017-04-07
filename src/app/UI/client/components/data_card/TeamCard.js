@@ -2,8 +2,8 @@
 import React from "react";
 import Immutable from "immutable";
 import LightComponent from "ui-lib/light_component";
-import DateTime from "ui-components/datetime";
-import Tags from "ui-components/tags";
+import { DateTime } from "ui-components/datetime";
+import { Tags } from "ui-components/tags";
 import DataCard from "./DataCard";
 import { TeamAvatar } from "ui-components/user_avatar";
 import { ChipList } from "ui-components/data_chip";

@@ -1,9 +1,4 @@
 
-import { themr } from "react-css-themr";
-import { SVG_GRID } from "../identifiers";
-import theme from "./theme.scss";
-
-import SvgGrid from "./SvgGrid";
 import SvgGridArrowMarkerDef from "./SvgGridArrowMarkerDef";
 import SvgGridDefs from "./SvgGridDefs";
 import SvgGridExample from "./SvgGridExample";
@@ -12,11 +7,15 @@ import SvgGridPath from "./SvgGridPath";
 import sizes from "./sizes";
 import filters from "./filters";
 
-const ThemedSvgGrid = themr(SVG_GRID, theme)(SvgGrid);
+import { names, exporter } from "ui-lib/exporter";
+import theme from "./theme.scss";
 
-export default ThemedSvgGrid;
-export {
-    ThemedSvgGrid as SvgGrid,
+const name = names.SVG_GRID;
+const exports = [
+    require("./SvgGrid")
+];
+
+module.exports = Object.assign({
     SvgGridArrowMarkerDef,
     SvgGridDefs,
     SvgGridExample,
@@ -24,4 +23,4 @@ export {
     SvgGridPath,
     sizes,
     filters
-};
+}, exporter(name, theme, exports));

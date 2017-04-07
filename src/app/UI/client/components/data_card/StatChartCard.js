@@ -7,7 +7,7 @@ import stateVar from "ui-lib/state_var";
 import StatSamples from "ui-observables/stat_samples";
 import moment from "moment";
 import { Chart } from "ui-components/chart";
-import Tags from "ui-components/tags";
+import { Tags } from "ui-components/tags";
 
 const TIME_FIELD = "_t";
 const CONSTANT_FIELD = "_constant";

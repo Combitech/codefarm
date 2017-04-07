@@ -1,7 +1,7 @@
 
 import React from "react";
 import LightComponent from "ui-lib/light_component";
-import Tags from "ui-components/tags";
+import { Tags } from "ui-components/tags";
 import { Row, Col } from "react-flexbox-grid";
 import {
     Section as TASection,

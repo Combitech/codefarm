@@ -1,10 +1,10 @@
 
 import React from "react";
 import LightComponent from "ui-lib/light_component";
-import HiddenText from "ui-components/hidden_text";
-import UserAvatar from "ui-components/user_avatar";
-import DateTime from "ui-components/datetime";
-import Tags from "ui-components/tags";
+import { HiddenText } from "ui-components/hidden_text";
+import { UserAvatar } from "ui-components/user_avatar";
+import { DateTime } from "ui-components/datetime";
+import { Tags } from "ui-components/tags";
 import DataCard from "./DataCard";
 import { CardTitle } from "react-toolbox/lib/card";
 import { TypeChip } from "ui-components/data_chip";

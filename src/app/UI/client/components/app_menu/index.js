@@ -1,10 +1,10 @@
 
-import { themr } from "react-css-themr";
-import { APP_MENU } from "../identifiers";
-import AppMenu from "./AppMenu";
+import { names, exporter } from "ui-lib/exporter";
 import theme from "./theme.scss";
 
-const ThemedAppMenu = themr(APP_MENU, theme)(AppMenu);
+const name = names.APP_MENU;
+const exports = [
+    require("./AppMenu")
+];
 
-export default ThemedAppMenu;
-export { ThemedAppMenu as AppMenu };
+module.exports = exporter(name, theme, exports);

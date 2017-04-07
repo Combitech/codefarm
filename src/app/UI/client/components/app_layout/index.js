@@ -1,10 +1,10 @@
 
-import { themr } from "react-css-themr";
-import { APP_LAYOUT } from "../identifiers";
-import AppLayout from "./AppLayout";
+import { names, exporter } from "ui-lib/exporter";
 import theme from "./theme.scss";
 
-const ThemedAppLayout = themr(APP_LAYOUT, theme)(AppLayout);
+const name = names.APP_LAYOUT;
+const exports = [
+    require("./AppLayout")
+];
 
-export default ThemedAppLayout;
-export { ThemedAppLayout as AppLayout };
+module.exports = exporter(name, theme, exports);

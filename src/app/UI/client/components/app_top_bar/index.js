@@ -1,10 +1,10 @@
 
-import { themr } from "react-css-themr";
-import { APP_TOP_BAR } from "../identifiers";
-import AppTopBar from "./AppTopBar";
+import { names, exporter } from "ui-lib/exporter";
 import theme from "./theme.scss";
 
-const ThemedAppTopBar = themr(APP_TOP_BAR, theme)(AppTopBar);
+const name = names.APP_TOP_BAR;
+const exports = [
+    require("./AppTopBar")
+];
 
-export default ThemedAppTopBar;
-export { ThemedAppTopBar as AppTopBar };
+module.exports = exporter(name, theme, exports);

@@ -3,7 +3,7 @@ import React from "react";
 import ImmutablePropTypes from "react-immutable-proptypes";
 import { StatusIcon } from "ui-components/status";
 import statuslib from "ui-lib/statuslib";
-import DateTime from "ui-components/datetime";
+import { DateTime } from "ui-components/datetime";
 
 class Row extends React.PureComponent {
     render() {

@@ -1,15 +1,11 @@
 
-import { themr } from "react-css-themr";
-import { APP_NOTIFICATION } from "../identifiers";
-import AppNotification from "./AppNotification";
-import AppNotificationsPage from "./AppNotificationsPage";
+import { names, exporter } from "ui-lib/exporter";
 import theme from "./theme.scss";
 
-const ThemedAppNotification = themr(APP_NOTIFICATION, theme)(AppNotification);
-const ThemedAppNotificationsPage = themr(APP_NOTIFICATION, theme)(AppNotificationsPage);
+const name = names.APP_NOTIFICATION;
+const exports = [
+    require("./AppNotification"),
+    require("./AppNotificationsPage")
+];
 
-export default ThemedAppNotification;
-export {
-    ThemedAppNotification as AppNotification,
-    ThemedAppNotificationsPage as AppNotificationsPage
-};
+module.exports = exporter(name, theme, exports);

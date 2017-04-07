@@ -4,7 +4,7 @@ import LightComponent from "ui-lib/light_component";
 import { sizes } from "ui-components/svg_grid";
 import statusIcons from "ui-lib/status_icons";
 
-class Status extends LightComponent {
+class StepStatus extends LightComponent {
     constructor(props) {
         super(props);
 
@@ -108,11 +108,11 @@ class Status extends LightComponent {
     }
 }
 
-Status.propTypes = {
+StepStatus.propTypes = {
     theme: React.PropTypes.object,
     item: React.PropTypes.object.isRequired,
     job: React.PropTypes.object,
     shadowId: React.PropTypes.string
 };
 
-export default Status;
+export default StepStatus;

@@ -2,7 +2,8 @@
 /* global window */
 
 import React from "react";
-import ExpandableCard from "ui-components/expandable_card";
+import { ExpandableCard } from "ui-components/expandable_card";
+
 class DataCard extends React.PureComponent {
     onClick(event) {
         event.stopPropagation();

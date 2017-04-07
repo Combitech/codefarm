@@ -1,15 +1,11 @@
 
-import { themr } from "react-css-themr";
-import { DATA_CHIP } from "../identifiers.js";
+import { names, exporter } from "ui-lib/exporter";
 import theme from "./theme.scss";
 
-import ChipList from "./ChipList.js";
-import TypeChip from "./TypeChip.js";
+const name = names.DATA_CHIP;
+const exports = [
+    require("./TypeChip"),
+    require("./ChipList")
+];
 
-const ThemedTypeChip = themr(DATA_CHIP, theme)(TypeChip);
-const ThemedChipList = themr(DATA_CHIP, theme)(ChipList);
-
-export {
-    ThemedTypeChip as TypeChip,
-    ThemedChipList as ChipList
-};
+module.exports = exporter(name, theme, exports);

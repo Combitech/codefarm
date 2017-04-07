@@ -1,6 +1,6 @@
 import React from "react";
 import { Route, IndexRoute, IndexRedirect } from "react-router";
-import Layout from "ui-components/app_layout";
+import { AppLayout } from "ui-components/app_layout";
 import IndexPage from "ui-components/IndexPage";
 import NotFoundPage from "ui-components/NotFoundPage";
 import { AppNotificationsPage } from "ui-components/app_notification";
@@ -36,7 +36,7 @@ import mgmtPageEventMonitorRoutes from "ui-mgr/mgmt/client/components/sections/e
 import mgmtPageServiceMonitorRoutes from "ui-mgr/mgmt/client/components/sections/servicemonitor/routes";
 
 const routes = (
-    <Route path="/" component={Layout}>
+    <Route path="/" component={AppLayout}>
         <IndexRoute component={IndexPage} />
         {authRoutes}
         <Route path="admin" component={AdminPage}>

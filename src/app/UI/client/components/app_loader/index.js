@@ -1,10 +1,10 @@
 
-import { themr } from "react-css-themr";
-import { APP_LOADER } from "../identifiers.js";
-import AppLoader from "./AppLoader.js";
+import { names, exporter } from "ui-lib/exporter";
 import theme from "./theme.scss";
 
-const ThemedAppLoader = themr(APP_LOADER, theme)(AppLoader);
+const name = names.APP_LOADER;
+const exports = [
+    require("./AppLoader")
+];
 
-export default ThemedAppLoader;
-export { ThemedAppLoader as AppLoader };
+module.exports = exporter(name, theme, exports);

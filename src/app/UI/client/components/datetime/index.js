@@ -1,10 +1,10 @@
 
-import { themr } from "react-css-themr";
-import { DATE_TIME } from "../identifiers";
-import DateTime from "./DateTime";
+import { names, exporter } from "ui-lib/exporter";
 import theme from "./theme.scss";
 
-const ThemedDateTime = themr(DATE_TIME, theme)(DateTime);
+const name = names.DATE_TIME;
+const exports = [
+    require("./DateTime")
+];
 
-export default ThemedDateTime;
-export { ThemedDateTime as DateTime };
+module.exports = exporter(name, theme, exports);

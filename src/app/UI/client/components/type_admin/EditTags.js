@@ -8,7 +8,7 @@ import {
     Section as TASection,
     LoadIndicator as TALoadIndicator
 } from "ui-components/type_admin";
-import Tags from "ui-components/tags";
+import { Tags } from "ui-components/tags";
 import api from "api.io/api.io-client";
 import { isTokenValidForAccess } from "auth/lib/util";
 import Notification from "ui-observables/notification";

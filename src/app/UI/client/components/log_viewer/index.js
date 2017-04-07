@@ -1,16 +1,11 @@
 
-import { themr } from "react-css-themr";
-import { LOG_VIEWER } from "../identifiers.js";
+import { names, exporter } from "ui-lib/exporter";
 import theme from "./theme.scss";
 
-import LogViewer from "./LogViewer.js";
-import LogLines from "./LogLines.js";
+const name = names.LOG_VIEWER;
+const exports = [
+    require("./LogViewer"),
+    require("./LogLines")
+];
 
-const ThemedLogViewer = themr(LOG_VIEWER, theme)(LogViewer);
-const ThemedLogLines = themr(LOG_VIEWER, theme)(LogLines);
-
-export default ThemedLogViewer;
-export {
-    ThemedLogViewer as LogViewer,
-    ThemedLogLines as LogLines
-};
+module.exports = exporter(name, theme, exports);

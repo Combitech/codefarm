@@ -1,13 +1,10 @@
 
-import { themr } from "react-css-themr";
-import { HIDDEN_TEXT } from "../identifiers.js";
+import { names, exporter } from "ui-lib/exporter";
 import theme from "./theme.scss";
 
-import HiddenText from "./HiddenText.js";
+const name = names.HIDDEN_TEXT;
+const exports = [
+    require("./HiddenText")
+];
 
-const ThemedHiddenText = themr(HIDDEN_TEXT, theme)(HiddenText);
-
-export default ThemedHiddenText;
-export {
-    ThemedHiddenText as HiddenText
-};
+module.exports = exporter(name, theme, exports);

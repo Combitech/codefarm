@@ -2,9 +2,9 @@
 import React from "react";
 import moment from "moment";
 import LightComponent from "ui-lib/light_component";
-import HiddenText from "ui-components/hidden_text";
-import DateTime from "ui-components/datetime";
-import Tags from "ui-components/tags";
+import { HiddenText } from "ui-components/hidden_text";
+import { DateTime } from "ui-components/datetime";
+import { Tags } from "ui-components/tags";
 import DataCard from "./DataCard";
 import { StatusIcon } from "ui-components/status";
 import { Claim } from "ui-components/claim";

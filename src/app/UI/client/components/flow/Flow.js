@@ -8,7 +8,7 @@ import {
     SvgGridDefs
 } from "ui-components/svg_grid";
 import SvgShadowFilter from "ui-components/svg_grid/filters/Shadow";
-import StepVirtual from "./steps/Virtual";
+import StepVirtual from "./steps/StepVirtual";
 
 class Flow extends LightComponent {
     getAllParents(items, item) {

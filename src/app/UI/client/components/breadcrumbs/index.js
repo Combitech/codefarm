@@ -1,10 +1,10 @@
 
-import { themr } from "react-css-themr";
-import { BREADCRUMBS } from "../identifiers";
-import Breadcrumbs from "./Breadcrumbs";
+import { names, exporter } from "ui-lib/exporter";
 import theme from "./theme.scss";
 
-const ThemedBreadcrumbs = themr(BREADCRUMBS, theme)(Breadcrumbs);
+const name = names.BREADCRUMBS;
+const exports = [
+    require("./Breadcrumbs")
+];
 
-export default ThemedBreadcrumbs;
-export { ThemedBreadcrumbs as Breadcrumbs };
+module.exports = exporter(name, theme, exports);

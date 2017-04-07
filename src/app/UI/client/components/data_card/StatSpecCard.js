@@ -1,8 +1,8 @@
 
 import React from "react";
 import LightComponent from "ui-lib/light_component";
-import DateTime from "ui-components/datetime";
-import Tags from "ui-components/tags";
+import { DateTime } from "ui-components/datetime";
+import { Tags } from "ui-components/tags";
 import DataCard from "./DataCard";
 import { CardTitle } from "react-toolbox/lib/card";
 import stateVar from "ui-lib/state_var";

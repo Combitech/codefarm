@@ -1,9 +1,9 @@
 
 import React from "react";
 import LightComponent from "ui-lib/light_component";
-import AppLoader from "ui-components/app_loader";
-import AppTopBar from "ui-components/app_top_bar";
-import AppNotification from "ui-components/app_notification";
+import { AppLoader } from "ui-components/app_loader";
+import { AppTopBar } from "ui-components/app_top_bar";
+import { AppNotification } from "ui-components/app_notification";
 
 class AppLayout extends LightComponent {
     render() {

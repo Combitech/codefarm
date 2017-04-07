@@ -1,10 +1,10 @@
 
-import { themr } from "react-css-themr";
-import { EXPANDABLE_CARD } from "../identifiers";
-import ExpandableCard from "./ExpandableCard";
+import { names, exporter } from "ui-lib/exporter";
 import theme from "./theme.scss";
 
-const ThemedExpandableCard = themr(EXPANDABLE_CARD, theme)(ExpandableCard);
+const name = names.EXPANDABLE_CARD;
+const exports = [
+    require("./ExpandableCard")
+];
 
-export default ThemedExpandableCard;
-export { ThemedExpandableCard as ExpandableCard };
+module.exports = exporter(name, theme, exports);

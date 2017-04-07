@@ -6,7 +6,7 @@ import { Menu, MenuItem, MenuDivider } from "react-toolbox/lib/menu";
 import LightComponent from "ui-lib/light_component";
 import { CodeFarmIcon } from "ui-components/app_icons";
 import ActiveUser from "ui-observables/active_user";
-import UserAvatar from "ui-components/user_avatar";
+import { UserAvatar } from "ui-components/user_avatar";
 import { signout } from "ui-lib/auth";
 
 class AppTopBar extends LightComponent {

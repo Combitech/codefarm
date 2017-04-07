@@ -2,11 +2,11 @@
 import React from "react";
 import LightComponent from "ui-lib/light_component";
 import { CardText, CardTitle } from "react-toolbox/lib/card";
-import HiddenText from "ui-components/hidden_text";
-import DateTime from "ui-components/datetime";
-import Tags from "ui-components/tags";
+import { HiddenText } from "ui-components/hidden_text";
+import { DateTime } from "ui-components/datetime";
+import { Tags } from "ui-components/tags";
 import DataCard from "./DataCard";
-import UserAvatar from "ui-components/user_avatar";
+import { UserAvatar } from "ui-components/user_avatar";
 import stateVar from "ui-lib/state_var";
 import { LogLines } from "ui-components/log_viewer";
 

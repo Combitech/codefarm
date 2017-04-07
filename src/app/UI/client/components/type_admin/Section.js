@@ -1,6 +1,6 @@
 
 import React from "react";
-import Breadcrumbs from "ui-components/breadcrumbs";
+import { Breadcrumbs } from "ui-components/breadcrumbs";
 import LightComponent from "ui-lib/light_component";
 
 class Section extends LightComponent {

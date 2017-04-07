@@ -2,10 +2,10 @@
 import React from "react";
 import LightComponent from "ui-lib/light_component";
 import { CardText, CardTitle } from "react-toolbox/lib/card";
-import UserAvatar from "ui-components/user_avatar";
-import DateTime from "ui-components/datetime";
+import { UserAvatar } from "ui-components/user_avatar";
+import { DateTime } from "ui-components/datetime";
 import DataCard from "./DataCard";
-import UserName from "ui-components/user_name";
+import { UserName } from "ui-components/user_name";
 import { TypeChip } from "ui-components/data_chip";
 import stateVar from "ui-lib/state_var";
 

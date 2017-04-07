@@ -1,6 +1,6 @@
 
 import React from "react";
-import Tags from "ui-components/tags";
+import { Tags } from "ui-components/tags";
 import LightComponent from "ui-lib/light_component";
 import { ListItem } from "react-toolbox/lib/list";
 

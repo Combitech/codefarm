@@ -1,12 +1,10 @@
 
-import { themr } from "react-css-themr";
-import { BASELINE_CONTENT } from "../identifiers";
+import { names, exporter } from "ui-lib/exporter";
 import theme from "./theme.scss";
 
-import BaselineContent from "./BaselineContent";
+const name = names.BASELINE_CONTENT;
+const exports = [
+    require("./BaselineContent")
+];
 
-const ThemedBaselineContent = themr(BASELINE_CONTENT, theme)(BaselineContent);
-
-export {
-    ThemedBaselineContent as BaselineContent
-};
+module.exports = exporter(name, theme, exports);

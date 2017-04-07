@@ -2,10 +2,10 @@
 import React from "react";
 import Immutable from "immutable";
 import LightComponent from "ui-lib/light_component";
-import DateTime from "ui-components/datetime";
-import Tags from "ui-components/tags";
+import { DateTime } from "ui-components/datetime";
+import { Tags } from "ui-components/tags";
 import DataCard from "./DataCard";
-import UserAvatar from "ui-components/user_avatar";
+import { UserAvatar } from "ui-components/user_avatar";
 import { CardTitle } from "react-toolbox/lib/card";
 import { ChipList } from "ui-components/data_chip";
 import stateVar from "ui-lib/state_var";

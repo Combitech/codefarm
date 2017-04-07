@@ -1,10 +1,10 @@
 
-import { themr } from "react-css-themr";
-import { APP_TABS } from "../identifiers";
-import AppTabs from "./AppTabs";
+import { names, exporter } from "ui-lib/exporter";
 import theme from "./theme.scss";
 
-const ThemedAppTabs = themr(APP_TABS, theme)(AppTabs);
+const name = names.APP_TABS;
+const exports = [
+    require("./AppTabs")
+];
 
-export default ThemedAppTabs;
-export { ThemedAppTabs as AppTabs };
+module.exports = exporter(name, theme, exports);

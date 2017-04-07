@@ -1,7 +1,7 @@
 
 import React from "react";
 import { SvgGridExample } from "ui-components/svg_grid";
-import AppHeader from "ui-components/app_header";
+import { AppHeader } from "ui-components/app_header";
 import LightComponent from "ui-lib/light_component";
 
 class Page extends LightComponent {

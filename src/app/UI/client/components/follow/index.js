@@ -1,15 +1,11 @@
 
-import { themr } from "react-css-themr";
-import { FOLLOW } from "../identifiers.js";
+import { names, exporter } from "ui-lib/exporter";
 import theme from "./theme.scss";
 
-import Follow from "./Follow.js";
-import List from "./List.js";
+const name = names.FOLLOW;
+const exports = [
+    require("./Follow"),
+    require("./List")
+];
 
-const ThemedFollow = themr(FOLLOW, theme)(Follow);
-const ThemedList = themr(FOLLOW, theme)(List);
-
-export {
-    ThemedFollow as Follow,
-    ThemedList as List
-};
+module.exports = exporter(name, theme, exports);

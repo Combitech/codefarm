@@ -1,10 +1,10 @@
 
-import { themr } from "react-css-themr";
-import { TAGS } from "../identifiers";
-import Tags from "./Tags";
+import { names, exporter } from "ui-lib/exporter";
 import theme from "./theme.scss";
 
-const ThemedTags = themr(TAGS, theme)(Tags);
+const name = names.TAGS;
+const exports = [
+    require("./Tags")
+];
 
-export default ThemedTags;
-export { ThemedTags as Tags };
+module.exports = exporter(name, theme, exports);

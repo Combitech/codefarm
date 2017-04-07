@@ -1,7 +1,7 @@
 
 import React from "react";
 
-class Virtual extends React.Component {
+class StepVirtual extends React.Component {
     render() {
         return (
             <g
@@ -19,9 +19,9 @@ class Virtual extends React.Component {
     }
 }
 
-Virtual.propTypes = {
+StepVirtual.propTypes = {
     theme: React.PropTypes.object,
     item: React.PropTypes.object.isRequired
 };
 
-export default Virtual;
+export default StepVirtual;
