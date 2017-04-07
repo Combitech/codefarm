@@ -418,11 +418,7 @@ class Control {
                 criteria: `${slave._id}`,
                 requeueOnFailure: false,
                 script: `echo My job is to verify slave ${slave._id}`,
-                baseline: {
-                    _id: "dummy-baseline-1",
-                    name: `Dummy baseline to verify slave ${slave._id}`,
-                    content: []
-                },
+                baseline: false,
                 workspaceCleanup: Job.CLEANUP_POLICY.REMOVE_ON_SUCCESS
             });
             const finishedJobPromise = this._waitForJobCompletion(job._id);

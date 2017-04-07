@@ -29,17 +29,19 @@ class JobTab extends LightComponent {
                         />
                     </Section>
                 </Column>
-                <Column xs={12} md={6}>
-                    <Header label="In this run" />
-                    <BaselineContent
-                        theme={this.props.theme}
-                        baselineRef={{
-                            _ref: true,
-                            id: this.props.job.baseline._id,
-                            type: this.props.job.baseline.type
-                        }}
-                    />
-                </Column>
+                <If condition={this.props.job.baseline !== false}>
+                    <Column xs={12} md={6}>
+                        <Header label="In this run" />
+                        <BaselineContent
+                            theme={this.props.theme}
+                            baselineRef={{
+                                _ref: true,
+                                id: this.props.job.baseline._id,
+                                type: this.props.job.baseline.type
+                            }}
+                        />
+                    </Column>
+                </If>
             </Row>
         );
     }

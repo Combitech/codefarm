@@ -68,13 +68,22 @@ class JobCard extends LightComponent {
                             <tr>
                                 <td>Baseline</td>
                                 <td>
-                                    <TypeChip
-                                        itemRef={{
-                                            _ref: true,
-                                            type: "baselinegen.baseline",
-                                            id: this.props.item.baseline._id
-                                        }}
-                                    />
+                                    <Choose>
+                                        <When condition={this.props.item.baseline !== false}>
+                                            <TypeChip
+                                                itemRef={{
+                                                    _ref: true,
+                                                    type: "baselinegen.baseline",
+                                                    id: this.props.item.baseline._id
+                                                }}
+                                            />
+                                        </When>
+                                        <Otherwise>
+                                            <div className={this.props.theme.noPropertyValue}>
+                                                No baseline set
+                                            </div>
+                                        </Otherwise>
+                                    </Choose>
                                 </td>
                             </tr>
                             <tr>

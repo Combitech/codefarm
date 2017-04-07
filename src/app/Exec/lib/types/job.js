@@ -112,11 +112,14 @@ class Job extends Type {
             assertProp(data, "script", true);
             assertType(data.script, "data.script", "string");
             assertProp(data, "baseline", true);
-            assertType(data.baseline, "data.baseline", "object");
-            assertProp(data.baseline, "_id", true);
-            assertProp(data.baseline, "name", true);
-            assertProp(data.baseline, "content", true);
-            assertType(data.baseline.content, "data.baseline.content", "object");
+            // baseline can be false or object
+            if (data.baseline !== false) {
+                assertType(data.baseline, "data.baseline", "object");
+                assertProp(data.baseline, "_id", true);
+                assertProp(data.baseline, "name", true);
+                assertProp(data.baseline, "content", true);
+                assertType(data.baseline.content, "data.baseline.content", "object");
+            }
         }
     }
 
