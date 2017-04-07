@@ -16,7 +16,8 @@ const Apis = [
     require("./apis/auth"),
     require("./apis/rest"),
     require("./apis/type"),
-    require("./apis/log")
+    require("./apis/log"),
+    require("./apis/info")
 ];
 
 class Main extends Service {
@@ -80,7 +81,7 @@ class Main extends Service {
         ServiceProxy.instance.addProxyRoute("get", "read", "artifactrepo.artifact", "download");
 
         for (const Api of Apis) {
-            await Api.instance.start(this.config);
+            await Api.instance.start(this.config, this.name, this.version);
             this.addDisposable(Api.instance);
         }
 
