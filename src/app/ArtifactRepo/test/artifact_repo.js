@@ -285,7 +285,7 @@ describe("ArtifactRepo", () => {
             } catch (error) {
                 assert.strictEqual(error.statusCode, 400);
                 assert.strictEqual(error.error.result, "fail");
-                assert.strictEqual(error.error.error, "Invalid version scheme non-existing-scheme");
+                assert.match(error.error.error, /versionScheme must be one of/);
             }
         });
 
