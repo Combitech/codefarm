@@ -20,7 +20,7 @@
     "weak-value-map": "^0.2.0"
   },
   "devDependencies": {
-    "babel-eslint": "^7.2.0",
-    "eslint": "^3.18.0"
+    "babel-eslint": "^7.2.1",
+    "eslint": "^3.19.0"
   }
 }
