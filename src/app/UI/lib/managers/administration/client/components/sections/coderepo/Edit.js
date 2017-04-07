@@ -27,6 +27,11 @@ class Edit extends LightComponent {
                 required: () => true,
                 defaultValue: ""
             },
+            "initialRevisionTags": {
+                editable: true,
+                required: () => false,
+                defaultValue: []
+            },
             "tags": {
                 editable: true,
                 required: () => false,
@@ -106,6 +111,15 @@ class Edit extends LightComponent {
                         onChange={this.state.backend.set}
                         source={backends}
                         value={this.state.backend.value}
+                    />
+                    <Autocomplete
+                        selectedPosition="below"
+                        allowCreate={true}
+                        label="Tags to add to revisions"
+                        disabled={this.props.item && !this.itemProperties.initialRevisionTags.editable}
+                        onChange={this.state.initialRevisionTags.set}
+                        source={this.state.initialRevisionTags.value}
+                        value={this.state.initialRevisionTags.value}
                     />
                     <Autocomplete
                         selectedPosition="below"

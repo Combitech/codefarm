@@ -211,7 +211,12 @@ class GithubBackend extends AsyncEventEmitter {
         const patch = await this._createPatch(event, repository._id);
 
         // This will create a new revision or patch on existing revision
-        const revision = await this.Revision.allocate(repository._id, event.pull_request.id.toString(), patch);
+        const revision = await this.Revision.allocate(
+            repository._id,
+            event.pull_request.id.toString(),
+            patch,
+            repository.initialRevisionTags
+        );
 
         // Check if title contains SKIP_REVIEW and if so set the review:skip tag
         const commit = await this._getCommit(event.repository.name, event.pull_request.head.sha);
@@ -298,7 +303,12 @@ class GithubBackend extends AsyncEventEmitter {
                 }
             };
 
-            revision = await this.Revision.allocate(repository._id, commit.id, patch);
+            revision = await this.Revision.allocate(
+                repository._id,
+                commit.id,
+                patch,
+                repository.initialRevisionTags
+            );
             revision.setMerged();
         }
         ServiceMgr.instance.log("verbose", `Merged ${event.commits.length} commits to ${repository._id}`);

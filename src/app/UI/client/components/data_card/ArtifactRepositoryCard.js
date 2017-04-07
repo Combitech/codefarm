@@ -68,6 +68,12 @@ class ArtifactRepositoryCard extends LightComponent {
                                 <td>{this.props.item.hashAlgorithms.join(", ")}</td>
                             </tr>
                             <tr>
+                                <td>Initial artifact tags</td>
+                                <td>
+                                    <Tags list={this.props.item.initialArtifactTags} />
+                                </td>
+                            </tr>
+                            <tr>
                                 <td>Tags</td>
                                 <td>
                                     <Tags list={this.props.item.tags} />

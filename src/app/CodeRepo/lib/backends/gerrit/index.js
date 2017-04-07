@@ -216,7 +216,7 @@ class GerritBackend extends AsyncEventEmitter {
                 log.error(`Gerrit backend failed to set files for change ${changeId} at patchset-created:`, error);
             }
 
-            await this.Revision.allocate(repository._id, changeId, patch);
+            await this.Revision.allocate(repository._id, changeId, patch, repository.initialRevisionTags);
             log.info(`Gerrit event allocated revision ${changeId}`);
         }
     }

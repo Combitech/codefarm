@@ -39,7 +39,7 @@ class List extends LightComponent {
                 breadcrumbs={this.props.breadcrumbs}
             >
                 <TAPagedList
-                    type={this.props.type}
+                    type={this.props.route.type}
                     filter={this.state.filter.value}
                     limit={10}
                     ListItemComponent={this.props.route.ListItemComponent}
@@ -57,7 +57,7 @@ class List extends LightComponent {
 List.propTypes = {
     theme: React.PropTypes.object,
     pathname: React.PropTypes.string.isRequired,
-    type: React.PropTypes.string.isRequired,
+    route: React.PropTypes.object.isRequired,
     breadcrumbs: React.PropTypes.array.isRequired,
     controls: React.PropTypes.array.isRequired
 };

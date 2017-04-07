@@ -76,6 +76,8 @@ class Artifact extends Type {
                 const latestVersion = latest ? latest.version : "";
                 this.version = versionGen.next(latestVersion);
             }
+            // Add initial tags configured per repository
+            this.tags.splice(this.tags.length, 0, ...repository.initialArtifactTags);
             this.state = STATE.CREATED;
         }
     }

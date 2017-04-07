@@ -1,7 +1,7 @@
 "use strict";
 
 const { ServiceMgr } = require("service");
-const { assertType } = require("misc");
+const { assertType, assertProp, assertAnyOf } = require("misc");
 const { Type } = require("typelib");
 const { VERSION_SCHEMES } = require("version");
 const BackendProxy = require("../backend_proxy");
@@ -13,6 +13,7 @@ class Repository extends Type {
         this.backend = false;
         this.versionScheme = "default";
         this.hashAlgorithms = [ "md5", "sha1" ];
+        this.initialArtifactTags = [];
 
         if (data) {
             this.set(data);
@@ -52,12 +53,17 @@ class Repository extends Type {
             assertType(data.backend, "data.backend", "string");
             // Check that backend exists
             BackendProxy.instance.getBackend(data.backend);
-
-            if (data.versionScheme && !VERSION_SCHEMES.includes(data.versionScheme)) {
-                throw new Error(`Invalid version scheme ${data.versionScheme}`);
-            }
         } else if (event === "update") {
-            // TODO: Do some real check here
+            assertProp(data, "_id", false);
+            assertProp(data, "backend", false);
+        }
+
+        if (data.versionScheme) {
+            assertAnyOf(data, "versionScheme", "data.versionScheme", VERSION_SCHEMES);
+        }
+
+        if (data.hasOwnProperty("initialRevisionTags")) {
+            assertType(data.initialRevisionTags, "data.initialRevisionTags", "array");
         }
     }
 }

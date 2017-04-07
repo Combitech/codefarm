@@ -279,7 +279,7 @@ class EditStep extends LightComponent {
                     <Autocomplete
                         selectedPosition="below"
                         allowCreate={true}
-                        label="Tags to assign to jobs"
+                        label="Tags to add to jobs"
                         disabled={this.props.item && !this.itemProperties.initialJobTags.editable}
                         onChange={this.state.initialJobTags.set}
                         source={this.state.initialJobTags.value}

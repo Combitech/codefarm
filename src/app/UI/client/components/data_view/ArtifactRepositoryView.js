@@ -69,10 +69,14 @@ class ArtifactRepositoryView extends LightComponent {
                 <Column xs={12} md={6}>
                     <Header label="Artifacts" />
                     <Loading show={this.state.artifactsState === ObservableDataStates.LOADING}/>
-                    <CardList list={Immutable.fromJS(artifacts)} />
-                    <ListPager
-                        pagedList={this.artifacts}
-                        pagingInfo={this.artifacts.pagingInfo.getValue()}
+                    <CardList
+                        list={Immutable.fromJS(artifacts)}
+                        pager={
+                            <ListPager
+                                pagedList={this.artifacts}
+                                pagingInfo={this.artifacts.pagingInfo.getValue()}
+                            />
+                        }
                     />
                 </Column>
             </Row>

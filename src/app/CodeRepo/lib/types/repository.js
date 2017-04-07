@@ -10,6 +10,7 @@ class Repository extends Type {
         super();
 
         this.backend = false;
+        this.initialRevisionTags = [];
 
         if (data) {
             this.set(data);
@@ -56,7 +57,13 @@ class Repository extends Type {
             assertProp(data, "_id", false);
             assertProp(data, "backend", false);
         }
-        await BackendProxy.instance.validateRepository(data.backend, event, data);
+        if (data.hasOwnProperty("initialRevisionTags")) {
+            assertType(data.initialRevisionTags, "data.initialRevisionTags", "array");
+        }
+        if (data.backend) {
+            // TODO: Doesn't work for updates where backend parameter is not allowed...
+            await BackendProxy.instance.validateRepository(data.backend, event, data);
+        }
     }
 
     async getUri() {

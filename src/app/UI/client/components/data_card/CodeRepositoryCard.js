@@ -83,6 +83,12 @@ class CodeRepositoryCard extends LightComponent {
                                 </td>
                             </tr>
                             <tr>
+                                <td>Initial revision tags</td>
+                                <td>
+                                    <Tags list={this.props.item.initialRevisionTags} />
+                                </td>
+                            </tr>
+                            <tr>
                                 <td>Tags</td>
                                 <td>
                                     <Tags list={this.props.item.tags} />

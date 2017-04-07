@@ -69,10 +69,14 @@ class CodeRepositoryView extends LightComponent {
                 <Column xs={12} md={6}>
                     <Header label="Revisions" />
                     <Loading show={this.state.revisionsState === ObservableDataStates.LOADING}/>
-                    <CardList list={Immutable.fromJS(revisions)} />
-                    <ListPager
-                        pagedList={this.revisions}
-                        pagingInfo={this.revisions.pagingInfo.getValue()}
+                    <CardList
+                        list={Immutable.fromJS(revisions)}
+                        pager={
+                            <ListPager
+                                pagedList={this.revisions}
+                                pagingInfo={this.revisions.pagingInfo.getValue()}
+                            />
+                        }
                     />
                 </Column>
             </Row>

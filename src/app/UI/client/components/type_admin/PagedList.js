@@ -8,7 +8,7 @@ import ListPager from "./ListPager";
 import PagedTypeList from "ui-observables/paged_type_list";
 import { States as ObservableDataStates } from "ui-lib/observable_data";
 
-class PagedListComponent extends LightComponent {
+class PagedList extends LightComponent {
     constructor(props) {
         super(props);
 
@@ -110,7 +110,7 @@ class PagedListComponent extends LightComponent {
     }
 }
 
-PagedListComponent.defaultProps = {
+PagedList.defaultProps = {
     ListComponent: ListComponent,
     ListItemComponent: ListComponentItem,
     query: {},
@@ -122,7 +122,7 @@ PagedListComponent.defaultProps = {
     filterFields: []
 };
 
-PagedListComponent.propTypes = {
+PagedList.propTypes = {
     theme: React.PropTypes.object,
     type: React.PropTypes.string.isRequired,
     filter: React.PropTypes.string,
@@ -139,9 +139,9 @@ PagedListComponent.propTypes = {
     sortDesc: React.PropTypes.bool
 };
 
-PagedListComponent.contextTypes = {
+PagedList.contextTypes = {
     // Required by state_var when linkToLocation is used
     router: React.PropTypes.object.isRequired
 };
 
-export default PagedListComponent;
+export default PagedList;

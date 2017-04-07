@@ -6,7 +6,7 @@ const { Controller } = require("servicecom");
 
 class Repositories extends Controller {
     constructor() {
-        super(Repository, [ "read", "create", "remove", "tag", "ref" ]);
+        super(Repository);
 
         this._addGetter("uri", this._uri);
         this._addGetter("flows", this._flows);

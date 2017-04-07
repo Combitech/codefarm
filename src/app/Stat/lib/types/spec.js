@@ -92,7 +92,7 @@ class Spec extends Type {
                 ServiceMgr.instance.log("verbose", `Spec ${this._id} script finished in ${elapsedMs} ms, result:`, result);
                 if (sandbox.logLines && sandbox.logLines.length > 0) {
                     for (const line of sandbox.logLines) {
-                        ServiceMgr.instance.log("verbose", `Spec ${this._id} script logged:`, line);
+                        ServiceMgr.instance.log("info", `Spec ${this._id} script logged:`, line);
                     }
                 }
             } catch (error) {

@@ -29,6 +29,11 @@ class Edit extends LightComponent {
                 required: () => true,
                 defaultValue: ""
             },
+            "initialArtifactTags": {
+                editable: true,
+                required: () => false,
+                defaultValue: []
+            },
             "tags": {
                 editable: true,
                 required: () => false,
@@ -180,6 +185,15 @@ class Edit extends LightComponent {
                             );
                         })}
                     </div>
+                    <Autocomplete
+                        selectedPosition="below"
+                        allowCreate={true}
+                        label="Tags to add to artifacts"
+                        disabled={this.props.item && !this.itemProperties.initialArtifactTags.editable}
+                        onChange={this.state.initialArtifactTags.set}
+                        source={this.state.initialArtifactTags.value}
+                        value={this.state.initialArtifactTags.value}
+                    />
                     <Autocomplete
                         selectedPosition="below"
                         allowCreate={true}

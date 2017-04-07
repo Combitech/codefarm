@@ -32,11 +32,11 @@ const routes = (
             Item={Item}
             type="coderepo.repository"
         >
-            {/* <Route
+            <Route
                 path="edit"
                 component={TAEdit}
                 Edit={Edit}
-            />*/}
+            />
             <Route
                 path="remove"
                 component={TARemove}

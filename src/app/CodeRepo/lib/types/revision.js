@@ -49,13 +49,14 @@ class Revision extends Type {
         return ServiceMgr.instance.msgBus;
     }
 
-    static async allocate(repoId, id, patch) {
+    static async allocate(repoId, id, patch, initialTags = []) {
         let revision = await this.findOne({ _id: id });
 
         if (!revision) {
             revision = new Revision({
                 _id: id,
-                repository: repoId
+                repository: repoId,
+                tags: initialTags.slice()
             });
         }
 
