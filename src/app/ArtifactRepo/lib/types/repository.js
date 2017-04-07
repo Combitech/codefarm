@@ -62,8 +62,8 @@ class Repository extends Type {
             assertAnyOf(data, "versionScheme", "data.versionScheme", VERSION_SCHEMES);
         }
 
-        if (data.hasOwnProperty("initialRevisionTags")) {
-            assertType(data.initialRevisionTags, "data.initialRevisionTags", "array");
+        if (data.hasOwnProperty("initialArtifactTags")) {
+            assertType(data.initialArtifactTags, "data.initialArtifactTags", "array");
         }
     }
 }

@@ -76,6 +76,7 @@ describe("ArtifactRepo", () => {
         assert.strictEqual(data._id, expId);
         assert.strictEqual(data.backend, testInfo.backend1._id);
         assert.strictEqual(data.versionScheme, expVersionScheme);
+        assert.deepEqual(data.initialArtifactTags, [ `belongsTo_${expId}` ]);
         assert.lengthOf(data.tags, 0);
         assert.property(data, "created");
         assert.property(data, "saved");
@@ -90,7 +91,7 @@ describe("ArtifactRepo", () => {
         assert.strictEqual(data.version, expVersion);
         assert.property(data, "fileMeta");
         assert(data.parentIds.length >= 0);
-        assert.lengthOf(data.tags, 0);
+        assert.deepEqual(data.tags, [ `belongsTo_${expRepoId}` ]);
         assert.property(data, "created");
         assert.property(data, "saved");
     };
@@ -171,7 +172,8 @@ describe("ArtifactRepo", () => {
         it("shall add a repository", async () => {
             await addRepo({
                 _id: "repo1",
-                backend: testInfo.backend1._id
+                backend: testInfo.backend1._id,
+                initialArtifactTags: [ "belongsTo_repo1" ]
             });
         });
 
@@ -197,7 +199,8 @@ describe("ArtifactRepo", () => {
         it("shall add another repo", async () => {
             await addRepo({
                 _id: "repo2",
-                backend: testInfo.backend1._id
+                backend: testInfo.backend1._id,
+                initialArtifactTags: [ "belongsTo_repo2" ]
             });
         });
 
@@ -314,7 +317,8 @@ describe("ArtifactRepo", () => {
         before(async () => {
             repo1Path = await addRepo({
                 _id: repo1Id,
-                backend: testInfo.backend1._id
+                backend: testInfo.backend1._id,
+                initialArtifactTags: [ `belongsTo_${repo1Id}` ]
             });
         });
 
@@ -584,7 +588,8 @@ describe("ArtifactRepo", () => {
             repo2Path = await addRepo({
                 _id: repo2Id,
                 backend: testInfo.backend1._id,
-                versionScheme: "rstate"
+                versionScheme: "rstate",
+                initialArtifactTags: [ `belongsTo_${repo2Id}` ]
             });
         });
 
