@@ -28,11 +28,45 @@ const params = {
     secure: location.protocol.includes("https")
 };
 
+const serverInfo = {};
+
+const checkServerInfo = () => {
+    api.info.get()
+    .then((info) => {
+        console.log(`Server version is ${info.version}`);
+
+        if (serverInfo.version && serverInfo.version !== info.version) {
+            console.log("Server has updated to new version, reloading...");
+            document.location.reload();
+
+            return;
+        }
+
+        Object.assign(serverInfo, info);
+    })
+    .catch((error) => {
+        console.error("Failed to check server info", error);
+    });
+};
+
 window.onload = () => {
     console.log("Connecting to backend...", params);
-    api.connect(params)
+    api.connect(params, (status, message) => {
+        if (status === "timeout") {
+            console.error(message);
+        } else if (status === "disconnect") {
+            console.error("Disconnected from server, will attempt to reconnect...");
+        } else if (status === "reconnect") {
+            console.log("Reconnected to server");
+
+            checkServerInfo();
+        }
+    })
     .then(() => {
         console.log(`Connected to backend, available APIs are ${Object.keys(JSON.parse(JSON.stringify(api))).join(", ")}`);
+
+        checkServerInfo();
+
         ActiveUser.instance.start();
         ReactDOM.render(<AppRoutes routes={routes} />, document.getElementById("main"));
     })
