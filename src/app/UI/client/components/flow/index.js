@@ -3,14 +3,14 @@ import { names, exporter } from "ui-lib/exporter";
 import theme from "./theme.scss";
 
 const name = names.FLOW;
-const exports = [
-    require("./Flows"),
-    require("./Flow"),
-    require("./JobFlow"),
-    require("./steps/StepVirtual"),
-    require("./steps/StepGeneric"),
-    require("./steps/StepCreate"),
-    require("./steps/StepStatus")
-];
+const exports = {
+    Flows: require("./Flows"),
+    Flow: require("./Flow"),
+    JobFlow: require("./JobFlow"),
+    StepVirtual: require("./steps/StepVirtual"),
+    StepGeneric: require("./steps/StepGeneric"),
+    StepCreate: require("./steps/StepCreate"),
+    StepStatus: require("./steps/StepStatus")
+};
 
 module.exports = exporter(name, theme, exports);

@@ -5,22 +5,22 @@ import { names, exporter } from "ui-lib/exporter";
 import theme from "./theme.scss";
 
 const name = names.TYPE_ADMIN;
-const exports = [
-    require("./ControlButton"),
-    require("./View"),
-    require("./Edit"),
-    require("./List"),
-    require("./ListComponent"),
-    require("./PagedList"),
-    require("./Remove"),
-    require("./Form"),
-    require("./LoadIndicator"),
-    require("./Section"),
-    require("./ListItemIcon"),
-    require("./ListPager"),
-    require("./ListCards"),
-    require("./EditTags")
-];
+const exports = {
+    ControlButton: require("./ControlButton"),
+    View: require("./View"),
+    Edit: require("./Edit"),
+    List: require("./List"),
+    ListComponent: require("./ListComponent"),
+    PagedList: require("./PagedList"),
+    Remove: require("./Remove"),
+    Form: require("./Form"),
+    LoadIndicator: require("./LoadIndicator"),
+    Section: require("./Section"),
+    ListItemIcon: require("./ListItemIcon"),
+    ListPager: require("./ListPager"),
+    ListCards: require("./ListCards"),
+    EditTags: require("./EditTags")
+};
 
 module.exports = Object.assign({
     utils

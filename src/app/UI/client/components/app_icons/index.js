@@ -11,11 +11,11 @@ import { names, exporter } from "ui-lib/exporter";
 import theme from "./theme.scss";
 
 const name = names.APP_ICON;
-const exports = [
-    require("./GitHubMarkerIcon"),
-    require("./CodeRepoBackendIcon"),
-    require("./ArtifactRepoBackendIcon")
-];
+const exports = {
+    GitHubMarkerIcon: require("./GitHubMarkerIcon"),
+    CodeRepoBackendIcon: require("./CodeRepoBackendIcon"),
+    ArtifactRepoBackendIcon: require("./ArtifactRepoBackendIcon")
+};
 
 module.exports = Object.assign({
     IconStyler,

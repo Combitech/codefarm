@@ -3,14 +3,14 @@ import { names, exporter } from "ui-lib/exporter";
 import theme from "./theme.scss";
 
 const name = names.DATA_VIEW;
-const exports = [
-    require("./JobView"),
-    require("./CodeRepositoryView"),
-    require("./ArtifactRepositoryView"),
-    require("./LogRepositoryView"),
-    require("./SlaveView"),
-    require("./FlowView"),
-    require("./BaselineSpecificationView")
-];
+const exports = {
+    JobView: require("./JobView"),
+    CodeRepositoryView: require("./CodeRepositoryView"),
+    ArtifactRepositoryView: require("./ArtifactRepositoryView"),
+    LogRepositoryView: require("./LogRepositoryView"),
+    SlaveView: require("./SlaveView"),
+    FlowView: require("./FlowView"),
+    BaselineSpecificationView: require("./BaselineSpecificationView")
+};
 
 module.exports = exporter(name, theme, exports);

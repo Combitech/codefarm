@@ -11,9 +11,9 @@ import { names, exporter } from "ui-lib/exporter";
 import theme from "./theme.scss";
 
 const name = names.SVG_GRID;
-const exports = [
-    require("./SvgGrid")
-];
+const exports = {
+    SvgGrid: require("./SvgGrid")
+};
 
 module.exports = Object.assign({
     SvgGridArrowMarkerDef,

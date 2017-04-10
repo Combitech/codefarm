@@ -1,6 +1,7 @@
 import React from "react";
 import { Route, IndexRoute, IndexRedirect } from "react-router";
 import { AppLayout } from "ui-components/app_layout";
+
 import IndexPage from "ui-components/IndexPage";
 import NotFoundPage from "ui-components/NotFoundPage";
 import { AppNotificationsPage } from "ui-components/app_notification";

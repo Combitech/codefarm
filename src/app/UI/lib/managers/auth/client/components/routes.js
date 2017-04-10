@@ -1,18 +1,18 @@
 
 import React from "react";
 import { Route } from "react-router";
-import Page from "./Page";
+import { AuthPage } from "./index";
 
 const routes = [
     <Route
         key="signin"
         path="/signin"
-        component={Page}
+        component={AuthPage}
     />,
     <Route
         key="signout"
         path="/signout"
-        component={Page}
+        component={AuthPage}
     />
 ];
 
