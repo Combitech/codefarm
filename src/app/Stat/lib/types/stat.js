@@ -113,6 +113,15 @@ class Stat extends Type {
 
         return this.__statData.getSamples(fields, opts);
     }
+
+    async aggregate(pipeline = false, opts = {}) {
+        // If no pipeline given, return nothing...
+        if (!pipeline || pipeline.length === 0) {
+            return [];
+        }
+
+        return this.__statData.aggregate(pipeline, opts);
+    }
 }
 
 module.exports = Stat;

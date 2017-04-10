@@ -11,6 +11,7 @@ class Stats extends Controller {
 
         this._addGetter("info", this._info, "Get info");
         this._addGetter("samples", this._samples, "Get samples");
+        this._addGetter("aggregate", this._aggregate, "Aggregate data");
     }
 
     async _info(ctx, id, data = {}) {
@@ -90,6 +91,25 @@ class Stats extends Controller {
         const obj = await this._getTypeInstance(id);
 
         return await obj.getSamples(fields, opts);
+    }
+
+    async _aggregate(ctx, id, data = {}) {
+        this._isAllowed(ctx, "read");
+        let pipeline = data.pipeline || false;
+        const opts = data.opts || {};
+        if (ctx.reqType === "http") {
+            const queryPar = qs.parse(ctx.httpCtx.query);
+            if (queryPar.hasOwnProperty("pipeline")) {
+                if (queryPar.pipeline !== "false") {
+                    pipeline = ensureArray(queryPar.pipeline);
+                    pipeline = pipeline.map((stage) => JSON.parse(stage));
+                }
+            }
+        }
+
+        const obj = await this._getTypeInstance(id);
+
+        return await obj.aggregate(pipeline, opts);
     }
 }
 

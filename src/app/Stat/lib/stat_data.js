@@ -95,6 +95,12 @@ class StatData {
             limit: opts.limit
         });
     }
+
+    async aggregate(pipeline) {
+        const db = await ServiceMgr.instance.use("db");
+
+        return await db.aggregate(this._collection, pipeline);
+    }
 }
 
 module.exports = StatData;
