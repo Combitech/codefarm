@@ -53,7 +53,8 @@ class Control {
         });
 
         notification.on("step.removed", async (step) => {
-            await step.abortJobs();
+            // Do not save step since that will re-create it...
+            await step.abortJobs(false);
 
             // TODO: Remove substep
         });

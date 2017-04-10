@@ -170,12 +170,14 @@ class Step extends Type {
         }
     }
 
-    async abortJobs() {
+    async abortJobs(save = true) {
         const client = ServiceComBus.instance.getClient("exec");
 
         const jobIds = this.jobs.map((job) => job.jobId);
         this.jobs.length = 0;
-        await this.save();
+        if (save) {
+            await this.save();
+        }
 
         for (const jobId of jobIds) {
             await client.remove("job", jobId);
