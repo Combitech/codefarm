@@ -49,6 +49,8 @@ class Slave extends Type {
             assertType(data.uri, "data.uri", "string");
             assertProp(data, "executors", true);
             assertType(data.executors, "data.executors", "number");
+            assertProp(data, "backend", true);
+            assertType(data.backend, "data.backend", "string");
             if (isNaN(data.executors)) {
                 throw new Error("executors must be a number");
             }
@@ -62,6 +64,7 @@ class Slave extends Type {
             }
         } else {
             assertProp(data, "_id", false);
+            assertProp(data, "backend", false);
         }
     }
 

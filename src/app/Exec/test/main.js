@@ -181,6 +181,65 @@ describe("Exec", () => {
     });
 
     describe("Test slave REST API", () => {
+        it("should list zero backends", async () => {
+            const data = await rp({
+                url: `http://localhost:${testInfo.config.web.port}/backend`,
+                json: true
+            });
+
+            assert.equal(data.length, 0);
+        });
+
+        it("should create a backend", async () => {
+            const data = await rp({
+                method: "POST",
+                url: `http://localhost:${testInfo.config.web.port}/backend`,
+                json: true,
+                body: {
+                    _id: "Backend1",
+                    backendType: "direct",
+                    privateKeyPath: "dummyKeyPath"
+                }
+            });
+
+            assert.equal(data.result, "success");
+            assert.equal(data.data.type, "exec.backend");
+            assert.equal(data.data._id, "Backend1");
+            assert.equal(data.data.backendType, "direct");
+            assert.equal(data.data.privateKeyPath, "dummyKeyPath");
+        });
+
+        it("should get a backend", async () => {
+            const data = await rp({
+                url: `http://localhost:${testInfo.config.web.port}/backend/Backend1`,
+                json: true
+            });
+
+            assert.equal(data.type, "exec.backend");
+            assert.equal(data._id, "Backend1");
+            assert.equal(data.backendType, "direct");
+            assert.equal(data.privateKeyPath, "dummyKeyPath");
+        });
+
+        it("should delete a backend", async () => {
+            const data = await rp({
+                method: "DELETE",
+                url: `http://localhost:${testInfo.config.web.port}/backend/Backend1`,
+                json: true
+            });
+
+            assert.equal(data.result, "success");
+        });
+
+        it("should list zero backends", async () => {
+            const data = await rp({
+                url: `http://localhost:${testInfo.config.web.port}/backend`,
+                json: true
+            });
+
+            assert.equal(data.length, 0);
+        });
+
         it("should list zero slaves", async () => {
             const data = await rp({
                 url: `http://localhost:${testInfo.config.web.port}/slave`,
@@ -190,7 +249,7 @@ describe("Exec", () => {
             assert.equal(data.length, 0);
         });
 
-        let id;
+        let slaveId;
 
         it("should create a slave", async () => {
             const data = await rp({
@@ -202,6 +261,7 @@ describe("Exec", () => {
                     uri: `ssh://${process.env.USER}@localhost:${slavesDir}`,
                     tags: [ "tag1", "tag2" ],
                     executors: 1,
+                    backend: "Backend1",
                     privateKeyPath: privateKeyPath,
                     workspaceCleanup: "remove_on_finish"
                 }
@@ -210,19 +270,20 @@ describe("Exec", () => {
             assert.equal(data.result, "success");
             assert.equal(data.data.uri, `ssh://${process.env.USER}@localhost:${slavesDir}`);
             assert.deepEqual(data.data.tags, [ "tag1", "tag2", data.data._id ]);
+            assert.equal(data.data.backend, "Backend1");
             assert.equal(data.data.executors, 1);
             assert.equal(data.data.privateKeyPath, privateKeyPath);
 
-            id = data.data._id;
+            slaveId = data.data._id;
         });
 
         it("should get a slave", async () => {
             const data = await rp({
-                url: `http://localhost:${testInfo.config.web.port}/slave/${id}`,
+                url: `http://localhost:${testInfo.config.web.port}/slave/${slaveId}`,
                 json: true
             });
 
-            assert.equal(data._id, id);
+            assert.equal(data._id, slaveId);
             assert.equal(data.uri, `ssh://${process.env.USER}@localhost:${slavesDir}`);
             assert.deepEqual(data.tags, [ "tag1", "tag2", data._id ]);
             assert.equal(data.executors, 1);
@@ -241,7 +302,7 @@ describe("Exec", () => {
         it("should delete a slave", async () => {
             const data = await rp({
                 method: "DELETE",
-                url: `http://localhost:${testInfo.config.web.port}/slave/${id}`,
+                url: `http://localhost:${testInfo.config.web.port}/slave/${slaveId}`,
                 qs: {
                     force: true
                 },
@@ -266,6 +327,25 @@ describe("Exec", () => {
     });
 
     describe("Test job REST API", () => {
+        it("should create a backend", async () => {
+            const data = await rp({
+                method: "POST",
+                url: `http://localhost:${testInfo.config.web.port}/backend`,
+                json: true,
+                body: {
+                    _id: "Backend1",
+                    backendType: "direct",
+                    privateKeyPath: "dummyKeyPath"
+                }
+            });
+
+            assert.equal(data.result, "success");
+            assert.equal(data.data.type, "exec.backend");
+            assert.equal(data.data._id, "Backend1");
+            assert.equal(data.data.backendType, "direct");
+            assert.equal(data.data.privateKeyPath, "dummyKeyPath");
+        });
+
         it("should create a slave", async () => {
             const data = await rp({
                 method: "POST",
@@ -276,6 +356,7 @@ describe("Exec", () => {
                     uri: `ssh://${process.env.USER}@localhost:${slavesDir}`,
                     tags: [ "tag1", "tag2" ],
                     executors: 1,
+                    backend: "Backend1",
                     privateKeyPath: privateKeyPath,
                     workspaceCleanup: "remove_on_finish"
                 }
@@ -291,6 +372,7 @@ describe("Exec", () => {
         const testScript1 = `#!/bin/bash -e
             echo I will succeed
         `;
+
         it("should create a job", async (ctx) => {
             ctx.timeout(DEFAULT_JOB_TIMEOUT); // eslint-disable-line no-invalid-this
             const data = await rp({

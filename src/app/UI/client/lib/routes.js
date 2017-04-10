@@ -32,6 +32,8 @@ import mgmtPageUserrepoPolicyRoutes from "ui-mgr/mgmt/client/components/sections
 import mgmtPageCoderepoRoutes from "ui-mgr/mgmt/client/components/sections/coderepo/routes";
 import mgmtPageArtifactrepoRoutes from "ui-mgr/mgmt/client/components/sections/artifactrepo/routes";
 import mgmtPageLogrepoRoutes from "ui-mgr/mgmt/client/components/sections/logrepo/routes";
+import mgmtPageExecRoutes from "ui-mgr/mgmt/client/components/sections/exec/routes";
+
 import mgmtPageEventMonitorRoutes from "ui-mgr/mgmt/client/components/sections/eventmonitor/routes";
 import mgmtPageServiceMonitorRoutes from "ui-mgr/mgmt/client/components/sections/servicemonitor/routes";
 
@@ -61,6 +63,7 @@ const routes = (
             {mgmtPageCoderepoRoutes}
             {mgmtPageArtifactrepoRoutes}
             {mgmtPageLogrepoRoutes}
+            {mgmtPageExecRoutes}
         </Route>
         <Route path="code" component={CodePage}>
             {codePageRoutes}

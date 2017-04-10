@@ -10,6 +10,10 @@ const Slaves = require("./controllers/slaves");
 const Jobs = require("./controllers/jobs");
 const SubJobs = require("./controllers/sub_jobs");
 const Control = require("./control");
+const Backends = require("./controllers/backends");
+const BackendProxy = require("./backend_proxy");
+const DirectExecutor = require("./backends/direct/executor");
+const JenkinsExecutor = require("./backends/jenkins/executor");
 
 class Main extends Service {
     constructor(name, version) {
@@ -29,7 +33,7 @@ class Main extends Service {
     }
 
     async onOnline() {
-        const routes = [].concat(Slaves.instance.routes, Jobs.instance.routes, SubJobs.instance.routes, this.routes);
+        const routes = [].concat(Slaves.instance.routes, Backends.instance.routes, Jobs.instance.routes, SubJobs.instance.routes, this.routes);
 
         await ServiceComBus.instance.start(Object.assign({
             name: this.name,
@@ -42,6 +46,7 @@ class Main extends Service {
             Slaves.instance,
             Jobs.instance,
             SubJobs.instance,
+            Backends.instance,
             this.statesControllerInstance
         ]);
 
@@ -49,6 +54,14 @@ class Main extends Service {
             uri: this.config.msgbus
         }, this.config.loglib));
         this.addDisposable(RawLogClient.instance);
+
+        const executorClasses = {
+            direct: DirectExecutor,
+            jenkins: JenkinsExecutor
+        };
+
+        await BackendProxy.instance.start(this.config.backends, executorClasses, this.config.backendsConfig);
+        this.addDisposable(BackendProxy.instance);
 
         await Control.instance.start();
         this.addDisposable(Control.instance);

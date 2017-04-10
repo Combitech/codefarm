@@ -3,17 +3,25 @@ import React from "react";
 import sillyname from "sillyname";
 import LightComponent from "ui-lib/light_component";
 import Input from "react-toolbox/lib/input";
+import Dropdown from "react-toolbox/lib/dropdown";
 import Slider from "react-toolbox/lib/slider";
 import Autocomplete from "react-toolbox/lib/autocomplete";
 import {
     Form as TAForm,
     Section as TASection,
+    LoadIndicator as TALoadIndicator,
     utils as tautils
 } from "ui-components/type_admin";
+import TypeList from "ui-observables/type_list";
+import { States as ObservableDataStates } from "ui-lib/observable_data";
 
 class Edit extends LightComponent {
     constructor(props) {
         super(props);
+
+        this.backendList = new TypeList({
+            type: "exec.backend"
+        });
 
         this.itemProperties = {
             "_id": {
@@ -25,6 +33,11 @@ class Edit extends LightComponent {
                 editable: true,
                 required: () => false,
                 defaultValue: []
+            },
+            "backend": {
+                editable: false,
+                required: () => true,
+                defaultValue: ""
             },
             "uri": {
                 editable: true,
@@ -43,7 +56,23 @@ class Edit extends LightComponent {
             }
         };
 
-        this.state = tautils.createStateProperties(this, this.itemProperties, this.props.item);
+        this.state = Object.assign({
+            backends: this.backendList.value.getValue(),
+            backendsState: this.backendList.state.getValue()
+        }, tautils.createStateProperties(this, this.itemProperties, this.props.item));
+    }
+
+    componentDidMount() {
+        this.log("componentDidMount", this.props, this.state);
+        this.addDisposable(this.backendList.start());
+        this.addDisposable(this.backendList.value.subscribe((backends) => this.setState({ backends })));
+        this.addDisposable(this.backendList.state.subscribe((backendsState) => this.setState({ backendsState })));
+    }
+
+    getBackends() {
+        return this.state.backends.toJS().map((backend) => ({
+            value: backend._id, label: backend._id
+        }));
     }
 
     async onConfirm() {
@@ -55,6 +84,14 @@ class Edit extends LightComponent {
 
     render() {
         this.log("render", this.props, this.state);
+
+        if (this.state.backendsState === ObservableDataStates.LOADING) {
+            return (
+                <TALoadIndicator />
+            );
+        }
+
+        const backends = this.getBackends();
 
         return (
             <TASection
@@ -78,6 +115,14 @@ class Edit extends LightComponent {
                         disabled={this.props.item && !this.itemProperties._id.editable}
                         value={this.state._id.value}
                         onChange={this.state._id.set}
+                    />
+                    <Dropdown
+                        label="Backend"
+                        required={this.itemProperties.backend.required()}
+                        disabled={this.props.item && !this.itemProperties.backend.editable}
+                        onChange={this.state.backend.set}
+                        source={backends}
+                        value={this.state.backend.value}
                     />
                     <Input
                         type="text"

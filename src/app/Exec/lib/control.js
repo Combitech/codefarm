@@ -350,7 +350,7 @@ class Control {
         }
 
         // Allocate executor
-        let executor = new Executor();
+        let executor = Executor.construct({ backend: leastUtlizedSlave.backend });
         this.executors.push(executor);
         try {
             // allocate on an executor will trigger the event executor.allocated which

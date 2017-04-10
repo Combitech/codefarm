@@ -12,6 +12,7 @@ const run = async () => {
         body: {
             uri: `ssh://${process.env.USER}@localhost/tmp/workspaces`,
             executors: 1,
+            backend: "direct",
             privateKeyPath: path.join("/external_data", "id_rsa"),
             tags: [ "TheSlave" ]
         },
