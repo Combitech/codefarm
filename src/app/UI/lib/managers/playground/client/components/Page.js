@@ -9,17 +9,21 @@ class Page extends LightComponent {
         return (
             <div>
                 <AppHeader
+                    theme={this.props.theme}
                     primaryText="Playground"
                     secondaryText="The place where anything can happen"
                     icon="child_friendly"
                 />
-                <SvgGridExample />
+                <SvgGridExample
+                    theme={this.props.theme}
+                />
             </div>
         );
     }
 }
 
 Page.propTypes = {
+    theme: React.PropTypes.object
 };
 
 export default Page;

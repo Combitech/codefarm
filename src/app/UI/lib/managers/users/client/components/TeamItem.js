@@ -9,7 +9,7 @@ import { Row, Column, Header, Section } from "ui-components/layout";
 import { CardList, TeamCard, UserCard } from "ui-components/data_card";
 import TypeList from "ui-observables/type_list";
 
-class Item extends LightComponent {
+class TeamItem extends LightComponent {
     constructor(props) {
         super(props);
 
@@ -82,7 +82,7 @@ class Item extends LightComponent {
     }
 }
 
-Item.propTypes = {
+TeamItem.propTypes = {
     theme: React.PropTypes.object,
     item: React.PropTypes.object.isRequired,
     pathname: React.PropTypes.string.isRequired,
@@ -90,8 +90,8 @@ Item.propTypes = {
     controls: React.PropTypes.array.isRequired
 };
 
-Item.contextTypes = {
+TeamItem.contextTypes = {
     router: React.PropTypes.object.isRequired
 };
 
-export default Item;
+export default TeamItem;

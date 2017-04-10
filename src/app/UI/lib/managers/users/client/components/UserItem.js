@@ -15,7 +15,7 @@ import { isTokenValidForAccess } from "auth/lib/util";
 import MetaDataList from "ui-observables/paged_metadata_list";
 import RevisionList from "ui-observables/paged_revision_list";
 
-class Item extends LightComponent {
+class UserItem extends LightComponent {
     constructor(props) {
         super(props);
 
@@ -279,7 +279,7 @@ class Item extends LightComponent {
     }
 }
 
-Item.propTypes = {
+UserItem.propTypes = {
     theme: React.PropTypes.object,
     item: React.PropTypes.object.isRequired,
     pathname: React.PropTypes.string.isRequired,
@@ -288,8 +288,8 @@ Item.propTypes = {
     activeUser: ImmutablePropTypes.map.isRequired
 };
 
-Item.contextTypes = {
+UserItem.contextTypes = {
     router: React.PropTypes.object.isRequired
 };
 
-export default Item;
+export default UserItem;

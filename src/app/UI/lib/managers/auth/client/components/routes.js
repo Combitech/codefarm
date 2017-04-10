@@ -1,7 +1,7 @@
 
 import React from "react";
 import { Route } from "react-router";
-import Page from ".";
+import Page from "./Page";
 
 const routes = [
     <Route

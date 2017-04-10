@@ -1,6 +1,10 @@
 
 import React from "react";
-import { SvgGrid, SvgGridItem, SvgGridPath, SvgGridDefs, SvgGridArrowMarkerDef } from "./index";
+import SvgGrid from "./SvgGrid";
+import SvgGridItem from "./SvgGridItem";
+import SvgGridPath from "./SvgGridPath";
+import SvgGridDefs from "./SvgGridDefs";
+import SvgGridArrowMarkerDef from "./SvgGridArrowMarkerDef";
 
 class SvgGridExample extends React.Component {
     constructor(props) {

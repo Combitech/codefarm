@@ -2,14 +2,14 @@
 import React from "react";
 import { Tags } from "ui-components/tags";
 import LightComponent from "ui-lib/light_component";
-import { ListItem } from "react-toolbox/lib/list";
+import { ListItem as TBListItem } from "react-toolbox/lib/list";
 
-class ListComponentItem extends LightComponent {
+class ListItem extends LightComponent {
     render() {
         const item = this.props.item;
 
         return (
-            <ListItem
+            <TBListItem
                 onClick={() => {
                     if (this.props.onClick) {
                         this.props.onClick(item);
@@ -24,11 +24,11 @@ class ListComponentItem extends LightComponent {
     }
 }
 
-ListComponentItem.propTypes = {
+ListItem.propTypes = {
     theme: React.PropTypes.object,
     item: React.PropTypes.object.isRequired,
     itemContext: React.PropTypes.any,
     onClick: React.PropTypes.func
 };
 
-export default ListComponentItem;
+export default ListItem;

@@ -3,11 +3,9 @@ import React from "react";
 import ImmutablePropTypes from "react-immutable-proptypes";
 import LightComponent from "ui-lib/light_component";
 import Autocomplete from "react-toolbox/lib/autocomplete";
-import {
-    Form as TAForm,
-    Section as TASection,
-    LoadIndicator as TALoadIndicator
-} from "ui-components/type_admin";
+import Form from "./Form";
+import Section from "./Section";
+import LoadIndicator from "./LoadIndicator";
 import { Tags } from "ui-components/tags";
 import api from "api.io/api.io-client";
 import { isTokenValidForAccess } from "auth/lib/util";
@@ -16,7 +14,7 @@ import TypeItem from "ui-observables/type_item";
 import { States as ObservableDataStates } from "ui-lib/observable_data";
 import arrayToSentence from "array-to-sentence";
 
-const VALID_TAG_REGEX = /^[\w:\.]+$/;
+const VALID_TAG_REGEX = /^[\w:\.-]+$/;
 
 class EditTags extends LightComponent {
     constructor(props) {
@@ -210,7 +208,7 @@ class EditTags extends LightComponent {
 
         if (this.state.itemState === ObservableDataStates.LOADING) {
             return (
-                <TALoadIndicator
+                <LoadIndicator
                     theme={this.props.theme}
                 />
             );
@@ -236,7 +234,8 @@ class EditTags extends LightComponent {
         }
 
         return (
-            <TASection
+            <Section
+                theme={this.props.theme}
                 breadcrumbs={this.props.breadcrumbs}
                 controls={this.props.controls}
             >
@@ -246,7 +245,8 @@ class EditTags extends LightComponent {
                     </When>
                     <When condition={ this.state.tags }>
                         <div className={this.props.theme.container}>
-                            <TAForm
+                            <Form
+                                theme={this.props.theme}
                                 confirmAllowed={this._confirmAllowed()}
                                 confirmText={"Apply changes"}
                                 primaryText={"Update tags"}
@@ -285,11 +285,11 @@ class EditTags extends LightComponent {
                                         </tbody>
                                     </table>
                                 </div>
-                            </TAForm>
+                            </Form>
                         </div>
                     </When>
                 </Choose>
-            </TASection>
+            </Section>
         );
     }
 }

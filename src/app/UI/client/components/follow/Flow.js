@@ -7,7 +7,7 @@ import StepListObservable from "ui-observables/step_list";
 import { JobFlow, StepStatus } from "ui-components/flow";
 import { Loading } from "ui-components/layout";
 
-class FlowComponent extends LightComponent {
+class Flow extends LightComponent {
     constructor(props) {
         super(props);
 
@@ -102,7 +102,7 @@ class FlowComponent extends LightComponent {
     }
 }
 
-FlowComponent.propTypes = {
+Flow.propTypes = {
     theme: React.PropTypes.object,
     item: React.PropTypes.object.isRequired,
     itemExt: React.PropTypes.object.isRequired,
@@ -112,8 +112,8 @@ FlowComponent.propTypes = {
     onStepSelect: React.PropTypes.func
 };
 
-FlowComponent.contextTypes = {
+Flow.contextTypes = {
     router: React.PropTypes.object.isRequired
 };
 
-export default FlowComponent;
+export default Flow;
