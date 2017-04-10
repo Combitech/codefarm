@@ -39,6 +39,21 @@ class Edit extends LightComponent {
                 editable: true,
                 required: () => this.state.backendType.value === BACKEND_TYPE.DIRECT,
                 defaultValue: ""
+            },
+            "hostUrl": {
+                editable: true,
+                required: () => this.state.backendType.value === BACKEND_TYPE.JENKINS,
+                defaultValue: ""
+            },
+            "authUser": {
+                editable: true,
+                required: () => this.state.backendType.value === BACKEND_TYPE.JENKINS,
+                defaultValue: ""
+            },
+            "authToken": {
+                editable: true,
+                required: () => this.state.backendType.value === BACKEND_TYPE.JENKINS,
+                defaultValue: ""
             }
         };
 
@@ -106,6 +121,40 @@ class Edit extends LightComponent {
                                 disabled={this.props.item && !this.itemProperties.privateKeyPath.editable}
                                 value={this.state.privateKeyPath.value}
                                 onChange={this.state.privateKeyPath.set}
+                            />
+                        </div>
+                    }
+                    {this.state.backendType.value === BACKEND_TYPE.JENKINS &&
+                        <div>
+                            <Input
+                                type="text"
+                                label="Jenkins host URL"
+                                name="hostUrl"
+                                floating={true}
+                                required={this.itemProperties.hostUrl.required()}
+                                disabled={this.props.item && !this.itemProperties.hostUrl.editable}
+                                value={this.state.hostUrl.value}
+                                onChange={this.state.hostUrl.set}
+                            />
+                            <Input
+                                type="text"
+                                label="Jenkins user to authenticate as"
+                                name="authUser"
+                                floating={true}
+                                required={this.itemProperties.authUser.required()}
+                                disabled={this.props.item && !this.itemProperties.authUser.editable}
+                                value={this.state.authUser.value}
+                                onChange={this.state.authUser.set}
+                            />
+                            <Input
+                                type="text"
+                                label="Jenkins user token to authenticate with"
+                                name="authToken"
+                                floating={true}
+                                required={this.itemProperties.authToken.required()}
+                                disabled={this.props.item && !this.itemProperties.authToken.editable}
+                                value={this.state.authToken.value}
+                                onChange={this.state.authToken.set}
                             />
                         </div>
                     }

@@ -52,7 +52,9 @@ class Backend extends Type {
                 assertType(data.privateKeyPath, "data.privateKeyPath", "string");
                 break;
             case "jenkins":
-                assertType(data.host, "data.host", "string");
+                assertType(data.hostUrl, "data.hostUrl", "string");
+                assertType(data.authUser, "data.authUser", "string");
+                assertType(data.authToken, "data.authToken", "string");
                 break;
             default:
                 throw new Error(`Unknown backend type ${data.backendType}`);
