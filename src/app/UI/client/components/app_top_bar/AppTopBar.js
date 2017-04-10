@@ -1,4 +1,6 @@
 
+/* global window */
+
 import React from "react";
 import AppBar from "react-toolbox/lib/app_bar";
 import { Button, IconButton } from "react-toolbox/lib/button";
@@ -24,7 +26,11 @@ class AppTopBar extends LightComponent {
     }
 
     onClick(pathname) {
-        this.context.router.push({ pathname });
+        if (pathname.match(/^https?:/)) {
+            window.open(pathname);
+        } else {
+            this.context.router.push({ pathname });
+        }
     }
 
     signOut() {
@@ -86,7 +92,7 @@ class AppTopBar extends LightComponent {
                                 </If>
                                 <MenuItem
                                     icon="feedback"
-                                    value="/feedback"
+                                    value="https://github.com/Combitech/codefarm"
                                     caption="Feedback"
                                 />
                                 <MenuItem
