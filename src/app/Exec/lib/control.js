@@ -8,7 +8,6 @@ const Slave = require("./types/slave");
 const Job = require("./types/job");
 const Executor = require("./types/executor");
 const { ServiceMgr } = require("service");
-const BackendProxy = require("./backend_proxy");
 
 class Control {
     constructor() {
