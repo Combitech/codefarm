@@ -288,12 +288,14 @@ class Type {
         await notification.emit(`${this.constructor.typeName}.untagged`, this, remTags);
     }
 
-    async clearTags(tagStartsWith, save = true) {
+    async clearTags(tagStartsWith, ignoreTags = [], save = true) {
         if (!tagStartsWith) {
             throw new Error("Can not clear tags with start pattern 'null'");
         }
 
-        const matchingTags = this.tags.filter((tag) => tag.startsWith(tagStartsWith));
+        const matchingTags = this.tags.filter((tag) =>
+            tag.startsWith(tagStartsWith) && !ignoreTags.includes(tag)
+        );
         const indicesToRemove = matchingTags.map((match) => this.tags.indexOf(match));
 
         if (indicesToRemove.length === 0) {
