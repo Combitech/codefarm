@@ -44,7 +44,9 @@ class TeamItem extends LightComponent {
             time: 0,
             item: item,
             Card: UserCard,
-            props: {}
+            props: {
+                clickable: true
+            }
         }));
 
         return (
@@ -66,7 +68,6 @@ class TeamItem extends LightComponent {
                                         largeIcon={true}
                                     />
                                 </Section>
-
                             </Column>
                             <Column xs={12} md={7}>
                                 <Section>
