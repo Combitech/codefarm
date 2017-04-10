@@ -54,6 +54,11 @@ class Edit extends LightComponent {
                 editable: true,
                 required: () => this.state.backendType.value === BACKEND_TYPE.JENKINS,
                 defaultValue: ""
+            },
+            "port": {
+                editable: true,
+                required: () => this.state.backendType.value === BACKEND_TYPE.JENKINS,
+                defaultValue: ""
             }
         };
 
@@ -155,6 +160,16 @@ class Edit extends LightComponent {
                                 disabled={this.props.item && !this.itemProperties.authToken.editable}
                                 value={this.state.authToken.value}
                                 onChange={this.state.authToken.set}
+                            />
+                            <Input
+                                type="number"
+                                label="Notification port for Jenkins events"
+                                name="port"
+                                floating={true}
+                                required={this.itemProperties.port.required()}
+                                disabled={this.props.item && !this.itemProperties.port.editable}
+                                value={this.state.port.value}
+                                onChange={this.state.port.set}
                             />
                         </div>
                     }

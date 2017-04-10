@@ -52,6 +52,10 @@ class Backend extends Type {
                 assertType(data.privateKeyPath, "data.privateKeyPath", "string");
                 break;
             case "jenkins":
+                if (data.port) {
+                    data.port = parseInt(data.port, 10);
+                }
+                assertType(data.port, "data.port", "number");
                 assertType(data.hostUrl, "data.hostUrl", "string");
                 assertType(data.authUser, "data.authUser", "string");
                 assertType(data.authToken, "data.authToken", "string");
