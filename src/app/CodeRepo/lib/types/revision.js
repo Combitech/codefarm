@@ -51,8 +51,10 @@ class Revision extends Type {
 
     static async allocate(repoId, id, patch, initialTags = []) {
         let revision = await this.findOne({ _id: id });
+        let isNewRevision = false;
 
         if (!revision) {
+            isNewRevision = true;
             revision = new Revision({
                 _id: id,
                 repository: repoId,
@@ -66,7 +68,9 @@ class Revision extends Type {
 
         // If we get a new patch we should restart the flow and thus need
         // to remove all tags set by steps.
-        await revision.clearTags("step:", false);
+        if (!isNewRevision) {
+            await revision.clearTags("step:", false);
+        }
 
         await revision.save();
 

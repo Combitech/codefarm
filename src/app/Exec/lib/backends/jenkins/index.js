@@ -47,7 +47,7 @@ class JenkinsBackend extends AsyncEventEmitter {
         return rp(options);
     }
 
-    async startJob(jobName) {
+    async startJob(/* jobName */) {
 
     }
 
