@@ -17,7 +17,7 @@ class Remove extends LightComponent {
             >
                 <TAForm
                     confirmText="Remove"
-                    primaryText="Remove code repository backend"
+                    primaryText="Remove execution backend"
                     secondaryText={`Area you sure you want to remove ${this.props.item._id}?`}
                     onConfirm={async () => {
                         await this.props.onRemove(this.props.item.type, this.props.item._id);

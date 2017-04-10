@@ -38,7 +38,7 @@ class Executor extends Type {
 
         this.jobId = false;
         this.slaveId = false;
-        this.backendId = false;
+        this.backend = false;
 
         this.port = 0;
         this.privateKeyPath = false;
@@ -50,15 +50,12 @@ class Executor extends Type {
         this.executing = false;
 
         if (data) {
-            delete data.ssh;
-            delete data.com;
-
             this.set(data);
         }
     }
 
     static construct(data) {
-        return BackendProxy.instance.createExecutor(data.backendId, data);
+        return BackendProxy.instance.createExecutor(data.backend, data);
     }
 
     static get serviceName() {
@@ -156,7 +153,6 @@ class Executor extends Type {
         this.jobId = job._id;
         this.jobName = job.name;
         this.slaveId = slave._id;
-        this.backendId = slave.backend;
 
         await this._logln(`Allocating executor on slave ${this.slaveId} for job ${this.jobId}`);
 

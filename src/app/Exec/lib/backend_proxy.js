@@ -16,9 +16,11 @@ class BackendProxy extends BackendProxyBase {
     }
 
     createExecutor(backend, data = null) {
-        const backendType = this.getBackend(backend).backend.backendType;
-        if (Object.keys(this.executorClasses).indexOf(backendType) > -1) {
-            return new this.executorClasses[backendType](data);
+        const backendType = this.getBackend(backend).backendType;
+        if (backendType in this.executorClasses) {
+            const createData = Object.assign({ backend }, data);
+
+            return new this.executorClasses[backendType](createData);
         }
 
         throw Error(`Cannot find executor for backend '${backend}'`);

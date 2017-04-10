@@ -351,7 +351,7 @@ class Control {
         }
 
         // Allocate executor
-        let executor = BackendProxy.instance.createExecutor(leastUtlizedSlave.backend);
+        let executor = Executor.construct({ backend: leastUtlizedSlave.backend });
         this.executors.push(executor);
         try {
             // allocate on an executor will trigger the event executor.allocated which

@@ -15,6 +15,10 @@ class DirectBackend extends AsyncEventEmitter {
 
     async dispose() {
     }
+
+    get backendType() {
+        return this.backend.backendType;
+    }
 }
 
 module.exports = DirectBackend;
