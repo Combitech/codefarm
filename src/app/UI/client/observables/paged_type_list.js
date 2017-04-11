@@ -122,6 +122,8 @@ class PagedTypeList extends TypeList {
     async _fetch(opts, query) {
         const list = await super._fetch(opts, query);
 
+        console.log("list", list, list.length);
+
         // If relative search direction doesn't match sort, reverse list
         if (opts.sortDesc !== opts.isRelativeFrom) {
             list.reverse();

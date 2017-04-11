@@ -6,6 +6,7 @@ class SlaveList extends PagedTypeList {
         const defaultOpts = {
             type: "exec.slave",
             sortOn: "_id",
+            sortOnType: "String",
             query: {},
             filter: "",
             filterFields: [ "_id", "uri", "tags" ]

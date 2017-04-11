@@ -5,6 +5,7 @@ class JobList extends PagedTypeList {
     constructor(initialOpts, debug = false) {
         const defaultOpts = {
             type: "exec.job",
+            sortOn: "created",
             query: {},
             sortDesc: true,
             filter: "",

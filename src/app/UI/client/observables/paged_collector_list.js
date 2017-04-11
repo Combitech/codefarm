@@ -5,7 +5,7 @@ class CollectorList extends PagedTypeList {
     constructor(initialOpts, debug = false) {
         const defaultOpts = {
             type: "baselinegen.collector",
-            sortOn: "name",
+            sortOn: "created",
             query: {},
             filter: "",
             filterFields: [ "name" ]

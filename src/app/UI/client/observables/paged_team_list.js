@@ -5,7 +5,7 @@ class UserList extends PagedTypeList {
     constructor(initialOpts, debug = false) {
         const defaultOpts = {
             type: "userrepo.team",
-            sortOn: "name",
+            sortOn: "_id",
             sortOnType: "String",
             filter: "",
             filterFields: [ "_id", "name", "email" ]

@@ -7,6 +7,7 @@ class ArtifactRepositoryList extends PagedTypeList {
             type: "artifactrepo.repository",
             query: {},
             sortOn: "_id",
+            sortOnType: "String",
             sortDesc: true,
             filter: "",
             filterFields: [ "_id" ]

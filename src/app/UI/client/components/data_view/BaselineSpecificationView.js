@@ -22,7 +22,7 @@ class BaselineSpecificationView extends LightComponent {
         });
 
         this.collectors = new CollectorListObservable({
-            limit: 100,
+            limit: 10,
             query: {
                 baseline: props.item._id
             }
