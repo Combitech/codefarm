@@ -26,7 +26,7 @@ class ArtifactoryBackend {
         return `${artifact._id}/${artifact.name}-${artifact.version}`;
     }
 
-    async _request(path, opts) {
+    async _request(path, opts = {}) {
         const artifactoryUrlInfo = url.parse(this.params.uri);
         let auth;
         if (artifactoryUrlInfo.auth) {
@@ -57,16 +57,16 @@ class ArtifactoryBackend {
         const path = `${repository._id}/${this._getTargetFilePath(artifact)}`;
         const res = await this._request(path, {
             method: "PUT",
-            json: true,
-            formData: {
-                artifact: fileStream
-            }
+            body: fileStream
         });
 
-        return Object.assign({}, res);
+        return Object.assign({}, JSON.parse(res));
     }
 
-    async getArtifactReadStream(/* repository, artifact */) {
+    async getArtifactReadStream(repository, artifact) {
+        const path = `${repository._id}/${this._getTargetFilePath(artifact)}`;
+
+        return this._request(path);
     }
 
     async removeArtifact(/* repository, artifact */) {
