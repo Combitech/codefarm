@@ -15,6 +15,11 @@ import {
 import TypeList from "ui-observables/type_list";
 import { States as ObservableDataStates } from "ui-lib/observable_data";
 
+const BACKEND_TYPE = {
+    FS: "fs",
+    ARTIFACTORY: "artifactory"
+};
+
 class Edit extends LightComponent {
     constructor(props) {
         super(props);
@@ -51,7 +56,7 @@ class Edit extends LightComponent {
             },
             "hashAlgorithms": {
                 editable: true,
-                required: () => true,
+                required: () => this.getBackendType() === BACKEND_TYPE.FS,
                 defaultValue: []
             }
         };
@@ -100,6 +105,19 @@ class Edit extends LightComponent {
         await this.props.onSave("artifactrepo.repository", data, {
             create: !this.props.item
         });
+    }
+
+    getBackendType() {
+        if (this.state.backendsState === ObservableDataStates.LOADING) {
+            return null;
+        }
+
+        const backend = this.state.backends.toJS().find((backend) => backend._id === this.state.backend.value);
+        if (!backend) {
+            return null;
+        }
+
+        return backend.backendType;
     }
 
     render() {
@@ -155,36 +173,40 @@ class Edit extends LightComponent {
                         source={versionSchemes}
                         value={this.state.versionScheme.value}
                     />
-                    <div>
-                        <div className={this.props.theme.subtitle}>Hash Algorithms *</div>
-                        {hashAlgorithms.map((item) => {
-                            const checked = this.state.hashAlgorithms.value.includes(item.value);
+                    <Choose>
+                        <When condition={backend && backend.backendType === BACKEND_TYPE.FS}>
+                            <div>
+                                <div className={this.props.theme.subtitle}>Hash Algorithms *</div>
+                                {hashAlgorithms.map((item) => {
+                                    const checked = this.state.hashAlgorithms.value.includes(item.value);
 
-                            return (
-                                <Checkbox
-                                    key={item.value}
-                                    checked={checked}
-                                    label={item.label}
-                                    disabled={this.props.item && !this.itemProperties.hashAlgorithms.editable}
-                                    onChange={(value) => {
-                                        if (value.constructor !== Boolean || value === checked) {
-                                            return;
-                                        }
+                                    return (
+                                        <Checkbox
+                                            key={item.value}
+                                            checked={checked}
+                                            label={item.label}
+                                            disabled={this.props.item && !this.itemProperties.hashAlgorithms.editable}
+                                            onChange={(value) => {
+                                                if (value.constructor !== Boolean || value === checked) {
+                                                    return;
+                                                }
 
-                                        let list = this.state.hashAlgorithms.value.slice(0);
+                                                let list = this.state.hashAlgorithms.value.slice(0);
 
-                                        if (value) {
-                                            list.push(item.value);
-                                        } else {
-                                            list = list.filter((i) => i !== item.value);
-                                        }
+                                                if (value) {
+                                                    list.push(item.value);
+                                                } else {
+                                                    list = list.filter((i) => i !== item.value);
+                                                }
 
-                                        this.state.hashAlgorithms.set(list);
-                                    }}
-                                />
-                            );
-                        })}
-                    </div>
+                                                this.state.hashAlgorithms.set(list);
+                                            }}
+                                        />
+                                    );
+                                })}
+                            </div>
+                        </When>
+                    </Choose>
                     <Autocomplete
                         selectedPosition="below"
                         allowCreate={true}

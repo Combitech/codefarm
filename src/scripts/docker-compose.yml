@@ -32,6 +32,11 @@ services:
         network_mode: "host"
         environment:
             - AUTH_TYPE=DEVELOPMENT_BECOME_ANY_ACCOUNT
+    artifactory:
+        build:
+            context: ../containers/artifactory
+        image: codefarm/artifactory:0.0.0
+        network_mode: "host"
     mgmt:
         build:
             context: ../app/Mgmt

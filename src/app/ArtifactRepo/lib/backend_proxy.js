@@ -1,11 +1,13 @@
 "use strict";
 
 const { BackendProxy: BackendProxyBase } = require("backend");
-const BackendFs = require("./backends/fs/index");
+const FsBackend = require("./backends/fs/index");
+const ArtifactoryBackend = require("./backends/artifactory/index");
 const Backend = require("./types/backend");
 
 const BackendTypes = {
-    fs: BackendFs
+    fs: FsBackend,
+    artifactory: ArtifactoryBackend
 };
 
 class BackendProxy extends BackendProxyBase {

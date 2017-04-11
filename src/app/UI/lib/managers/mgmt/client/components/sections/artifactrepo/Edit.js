@@ -11,7 +11,8 @@ import {
 } from "ui-components/type_admin";
 
 const BACKEND_TYPE = {
-    FS: "fs"
+    FS: "fs",
+    ARTIFACTORY: "artifactory"
 };
 
 class Edit extends LightComponent {
@@ -38,6 +39,11 @@ class Edit extends LightComponent {
                 editable: true,
                 required: () => this.state.backendType.value === BACKEND_TYPE.FS,
                 defaultValue: ""
+            },
+            "uri": {
+                editable: true,
+                required: () => this.state.backendType.value === BACKEND_TYPE.ARTIFACTORY,
+                defaultValue: ""
             }
         };
 
@@ -46,7 +52,8 @@ class Edit extends LightComponent {
 
     getBackendTypes() {
         return [
-            { value: BACKEND_TYPE.FS, label: "Filesystem" }
+            { value: BACKEND_TYPE.FS, label: "Filesystem" },
+            { value: BACKEND_TYPE.ARTIFACTORY, label: "Artifactory" }
         ];
     }
 
@@ -93,8 +100,8 @@ class Edit extends LightComponent {
                         source={backendTypes}
                         value={this.state.backendType.value}
                     />
-                    {this.state.backendType.value === BACKEND_TYPE.FS &&
-                        <div>
+                    <Choose>
+                        <When condition={this.state.backendType.value === BACKEND_TYPE.FS}>
                             <Input
                                 type="text"
                                 label="Path to store repositories"
@@ -105,8 +112,20 @@ class Edit extends LightComponent {
                                 value={this.state.path.value}
                                 onChange={this.state.path.set}
                             />
-                        </div>
-                    }
+                        </When>
+                        <When condition={this.state.backendType.value === BACKEND_TYPE.ARTIFACTORY}>
+                            <Input
+                                type="url"
+                                label="URI to use when connecting to artifactory"
+                                name="uri"
+                                floating={true}
+                                required={this.itemProperties.uri.required()}
+                                disabled={this.props.item && !this.itemProperties.uri.editable}
+                                value={this.state.uri.value}
+                                onChange={this.state.uri.set}
+                            />
+                        </When>
+                    </Choose>
                     <Autocomplete
                         selectedPosition="below"
                         allowCreate={true}

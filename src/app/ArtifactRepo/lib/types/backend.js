@@ -39,8 +39,17 @@ class Backend extends Type {
     static async validate(event, data) {
         if (event === "create") {
             assertType(data._id, "data._id", "string");
-            assertType(data.path, "data.path", "string");
-            // backendType is optional
+            assertType(data.backendType, "data.backendType", "string");
+            switch (data.backendType) {
+            case "fs":
+                assertType(data.path, "data.path", "string");
+                break;
+            case "artifactory":
+                assertType(data.uri, "data.uri", "string");
+                break;
+            default:
+                throw new Error(`Unknown backend type ${data.backendType}`);
+            }
         } else if (event === "update") {
             assertProp(data, "_id", false);
             assertProp(data, "backendType", false);

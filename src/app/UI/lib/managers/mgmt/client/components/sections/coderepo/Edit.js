@@ -131,8 +131,8 @@ class Edit extends LightComponent {
                         source={backendTypes}
                         value={this.state.backendType.value}
                     />
-                    {this.state.backendType.value === BACKEND_TYPE.GERRIT &&
-                        <div>
+                    <Choose>
+                        <When condition={this.state.backendType.value === BACKEND_TYPE.GERRIT}>
                             <Input
                                 type="url"
                                 label="URI to use when connecting to gerrit"
@@ -153,10 +153,8 @@ class Edit extends LightComponent {
                                 value={this.state.privateKeyPath.value}
                                 onChange={this.state.privateKeyPath.set}
                             />
-                        </div>
-                    }
-                    {this.state.backendType.value === BACKEND_TYPE.GITHUB &&
-                        <div>
+                        </When>
+                        <When condition={this.state.backendType.value === BACKEND_TYPE.GITHUB}>
                             <Input
                                 type="text"
                                 label="GitHub target (organization or user)"
@@ -216,8 +214,8 @@ class Edit extends LightComponent {
                                 value={this.state.port.value}
                                 onChange={this.state.port.set}
                             />
-                        </div>
-                    }
+                        </When>
+                    </Choose>
                     <Autocomplete
                         selectedPosition="below"
                         allowCreate={true}
