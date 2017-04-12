@@ -1,3 +1,5 @@
+
+export const APP_INDEX = "CFAppIndex";
 export const APP_LAYOUT = "CFAppLayout";
 export const APP_HEADER = "CFAppHeader";
 export const APP_LOADER = "CFAppLoader";

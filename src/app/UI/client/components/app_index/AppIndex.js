@@ -8,7 +8,7 @@ import { CardList, RevisionCard, ArtifactCard } from "ui-components/data_card";
 import TypeList from "ui-observables/type_list";
 import { States as ObservableDataStates } from "ui-lib/observable_data";
 
-class IndexPage extends LightComponent {
+class AppIndex extends LightComponent {
     constructor(props) {
         super(props);
 
@@ -16,14 +16,14 @@ class IndexPage extends LightComponent {
             type: "coderepo.revision",
             query: { status: { $ne: "abandoned" } },
             sortOn: "statusSetAt",
-            limit: 10
+            limit: 5
         });
 
         this.artifacts = new TypeList({
             type: "artifactrepo.artifact",
             query: { state: "commited" },
             sortOn: "created",
-            limit: 10
+            limit: 5
         });
 
         this.state = {
@@ -92,4 +92,4 @@ class IndexPage extends LightComponent {
     }
 }
 
-export default IndexPage;
+export default AppIndex;

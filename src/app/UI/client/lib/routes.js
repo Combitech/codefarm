@@ -2,8 +2,7 @@ import React from "react";
 import { Route, IndexRoute, IndexRedirect } from "react-router";
 import { AppLayout } from "ui-components/app_layout";
 
-import IndexPage from "ui-components/IndexPage";
-import NotFoundPage from "ui-components/NotFoundPage";
+import { AppIndex, NotFoundPage } from "ui-components/app_index";
 import { AppNotificationsPage } from "ui-components/app_notification";
 import CodePage from "ui-mgr/code/client/components";
 import ArtifactsPage from "ui-mgr/artifacts/client/components";
@@ -40,7 +39,7 @@ import mgmtPageServiceMonitorRoutes from "ui-mgr/mgmt/client/components/sections
 
 const routes = (
     <Route path="/" component={AppLayout}>
-        <IndexRoute component={IndexPage} />
+        <IndexRoute component={AppIndex} />
         {authRoutes}
         <Route path="admin" component={AdminPage}>
             <IndexRedirect to={adminPageCoderepoRoutes.props.path} />
