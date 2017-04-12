@@ -17,6 +17,9 @@ ENV appRoot ${farmerHome}/codefarm
 
 RUN groupadd --system $user && useradd --system --create-home --gid $user $user
 
+# Dependency weak-value-map needs node-gyp
+RUN npm install -g node-gyp
+
 USER ${user}
 
 ENV DISABLE_LINK_LIBS "npm installation disabled"
@@ -39,7 +42,6 @@ ONBUILD RUN ln -s ${farmerHome}/.config/yarn/global/node_modules ${farmerHome}/.
 
 ONBUILD ENV gitroot ${appRoot}
 ONBUILD RUN test -f package.json && \
-# yarn --production doesn't work for some reason...
   yarn --production || \
   echo "No package.json"
 
