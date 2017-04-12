@@ -34,7 +34,7 @@ class CommentList extends LightComponent {
 
     componentWillReceiveProps(nextProps) {
         this.comments.setOpts({
-            creatorRef: {
+            targetRef: {
                 _ref: true,
                 type: nextProps.item.type,
                 id: nextProps.item._id
