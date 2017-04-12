@@ -24,17 +24,10 @@ const createComment = async (comment, targetTypeInstance) => {
             id: signedInUser.id
         }
     }, comment);
+
     try {
-        const createdComment = await api.rest.post("metadata.comment", commentData);
-        if (createdComment) {
-            const commentRef = {
-                _ref: true,
-                id: createdComment._id,
-                type: createdComment.type
-            };
-            await api.rest.action(targetTypeInstance.type, targetTypeInstance._id, "comment", commentRef);
-            Notification.instance.publish("Comment added successfully!");
-        }
+        await api.rest.post("metadata.comment", commentData);
+        Notification.instance.publish("Comment added successfully!");
     } catch (error) {
         Notification.instance.publish(`Failed to publish comment: ${error.message || error}`, "warning");
         console.error("comment failed", error);

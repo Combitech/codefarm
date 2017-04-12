@@ -41,9 +41,6 @@ class Controller {
 
         this._addAction("addref", this._addRef);
 
-        this._addAction("comment", this._comment);
-        this._addAction("uncomment", this._uncomment);
-
         this._addAction(ROUTE_WILDCARD, this._invalid, "Invalid action catcher");
         this._addGetter(ROUTE_WILDCARD, this._invalid, "Invalid getter catcher");
     }
@@ -421,30 +418,6 @@ class Controller {
         const obj = await this._getTypeInstance(id);
         const refs = ensureArray(data.ref);
         await obj.addRef(refs);
-
-        return obj.serialize();
-    }
-
-    async _comment(ctx, id, data) {
-        this._isAllowed(ctx, "comment");
-
-        !data.id && this._throw("No comment id supplied", 400);
-
-        const obj = await this._getTypeInstance(id);
-        await obj.comment({
-            _ref: true,
-            id: data.id,
-            type: "metadata.comment"
-        });
-
-        return obj.serialize();
-    }
-
-    async _uncomment(ctx, id, data) {
-        this._isAllowed(ctx, "comment");
-
-        const obj = await this._getTypeInstance(id);
-        await obj.uncomment(data.id);
 
         return obj.serialize();
     }

@@ -5,31 +5,40 @@ import moment from "moment";
 import stateVar from "ui-lib/state_var";
 import LightComponent from "ui-lib/light_component";
 import { CardList, CommentCard, AddCommentCard } from "ui-components/data_card";
-import CommentListObservable from "ui-observables/comment_list";
+import MetaDataList from "ui-observables/paged_metadata_list";
 import { createComment } from "ui-lib/comment";
 
 class CommentList extends LightComponent {
     constructor(props) {
         super(props);
 
-        this.commentList = new CommentListObservable({
-            commentRefs: (props.item && props.item.commentRefs) || []
+        this.comments = new MetaDataList({
+            type: "metadata.comment",
+            targetRef: {
+                _ref: true,
+                type: this.props.item.type,
+                id: this.props.item._id
+            }
         });
 
         this.state = {
             comment: stateVar(this, "comment", ""),
-            comments: this.commentList.value.getValue()
+            comments: this.comments.value.getValue()
         };
     }
 
     componentDidMount() {
-        this.addDisposable(this.commentList.start());
-        this.addDisposable(this.commentList.value.subscribe((comments) => this.setState({ comments })));
+        this.addDisposable(this.comments.start());
+        this.addDisposable(this.comments.value.subscribe((comments) => this.setState({ comments })));
     }
 
     componentWillReceiveProps(nextProps) {
-        this.commentList.setOpts({
-            commentRefs: (nextProps.item && nextProps.item.commentRefs) || []
+        this.comments.setOpts({
+            creatorRef: {
+                _ref: true,
+                type: nextProps.item.type,
+                id: nextProps.item._id
+            }
         });
     }
 
