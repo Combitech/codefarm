@@ -171,7 +171,7 @@ module.exports = function(options) {
                     ]
                 },
                 {
-                    test: /\.png$/,
+                    test: /\.png$|\.jpg$/,
                     use: [
                         {
                             loader: "url-loader",

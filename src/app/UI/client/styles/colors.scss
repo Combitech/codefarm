@@ -3,11 +3,14 @@
 $cf-color-background:           #fafbff;
 $cf-color-topbar-background:    $palette-indigo-700;
 $cf-color-topbar-background2:   $palette-indigo-500;
+$cf-color-header-background:    $palette-red-300;
+$cf-color-header-background2:   $cf-color-header-background;
+$cf-color-header-text:          $color-white;
 $cf-color-selected:             $palette-indigo-500;
 $cf-color-tags:                 $palette-indigo-700;
 $cf-color-pane-border:          $palette-grey-300;
 $cf-color-pane-background:      $color-white;
-$cf-color-pane-background2:     $color-white;
+$cf-color-pane-background2:     $cf-color-pane-background;
 $cf-color-pane-header-background:$color-white;
 $cf-color-pane-header-text:     $palette-indigo-700;
 $cf-color-pane-text:            $color-black;

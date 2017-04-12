@@ -5,7 +5,7 @@ import FontIcon from "react-toolbox/lib/font_icon";
 class AppHeader extends React.PureComponent {
     render() {
         return (
-            <div className={this.props.theme.appHeader}>
+            <div className={`${this.props.theme.appHeader} ${this.props.className || ""}`}>
                 <Choose>
                     <When condition={ typeof this.props.icon === "string" }>
                         <FontIcon
@@ -28,6 +28,7 @@ class AppHeader extends React.PureComponent {
 }
 
 AppHeader.propTypes = {
+    className: React.PropTypes.string,
     children: React.PropTypes.node,
     primaryText: React.PropTypes.string.isRequired,
     secondaryText: React.PropTypes.string.isRequired,
