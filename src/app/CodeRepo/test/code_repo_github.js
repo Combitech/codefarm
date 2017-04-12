@@ -4,6 +4,7 @@
 
 const { assert } = require("chai");
 const getPort = require("get-port");
+const { ServiceComBus } = require("servicecom");
 const { mochaPatch, RestStub, serviceComStub } = require("testsupport");
 const Main = require("../lib/main");
 const rp = require("request-promise");
@@ -200,7 +201,7 @@ describe("GithubBackend", async () => {
         await main.awaitOnline();
 
         // Set up response to user query from github backend
-        serviceComStub("list", "user", "success", testInfo.userData);
+        serviceComStub(ServiceComBus, "list", "user", "success", testInfo.userData);
 
         await addBackend(testInfo.gitHubBackend);
 

@@ -16,9 +16,7 @@
     "node": ">= 7.0.0"
   },
   "libraries": [
-    "emitter",
-    "misc",
-    "servicecom"
+    "emitter"
   ],
   "dependencies": {
     "koa": "^2.2.0",
