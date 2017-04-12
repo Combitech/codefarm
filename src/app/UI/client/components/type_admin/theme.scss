@@ -149,7 +149,7 @@
         .subtitle {
             font-size: $font-size-small;
             font-weight: $font-weight-normal;
-            color: rgba($color-black, 0.26);
+            color: $color-text-secondary;
             padding-bottom: $layout-gutter-width-sm;
             padding-top: $layout-gutter-width;
         }
@@ -158,6 +158,16 @@
             .inputElement {
                 font-family: "Roboto Mono";
             }
+        }
+
+        .longDescription {
+            font-weight: $font-weight-normal;
+            font-size: $font-size-small;
+            color: $color-text-secondary;
+            // Since description is placed below input element
+            // move it a bit upwards...
+            margin-top: -$layout-gutter-width-sm / 2;
+            margin-bottom: $layout-gutter-width-sm;
         }
     }
 

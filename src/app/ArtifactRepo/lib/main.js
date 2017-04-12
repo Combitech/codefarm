@@ -9,6 +9,8 @@ const Repositories = require("./controllers/repositories");
 const Artifacts = require("./controllers/artifacts");
 const Backends = require("./controllers/backends");
 const BackendProxy = require("./backend_proxy");
+const Repository = require("./types/repository");
+const Artifact = require("./types/artifact");
 
 class Main extends Service {
     constructor(name, version) {
@@ -40,7 +42,7 @@ class Main extends Service {
             this.statesControllerInstance
         ]);
 
-        await BackendProxy.instance.start(this.config.backends);
+        await BackendProxy.instance.start(this.config.backends, Repository, Artifact);
         this.addDisposable(BackendProxy.instance);
 
         await Web.instance.start(this.config.web, routes);

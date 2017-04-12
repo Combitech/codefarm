@@ -178,25 +178,31 @@ class Artifact extends Type {
 
         const repository = await Repository.findOne({ _id: this.repository });
         // Hash streams will store their digest in hashDigests
-        const hashDigests = {};
-        const hashStreams = this._getHashStreams(hashDigests, repository.hashAlgorithms);
-
-        const readStream = await BackendProxy.instance.getArtifactReadStream(repository, this);
-        const hashFileStream = chainStreams(readStream, ...hashStreams);
-
-        await new Promise((resolve, reject) => {
-            hashFileStream
-                .on("finish", resolve)
-                .on("error", reject);
-        });
-
         const res = {};
-        for (const hashAlg of Object.keys(this.fileMeta.hashes)) {
-            const expectedHash = this.fileMeta.hashes[hashAlg];
-            res[hashAlg] = expectedHash === hashDigests[hashAlg];
+        if (repository.hashAlgorithms.length > 0) {
+            const hashDigests = {};
+            const hashStreams = this._getHashStreams(hashDigests, repository.hashAlgorithms);
+
+            const readStream = await BackendProxy.instance.getArtifactReadStream(repository, this);
+            const hashFileStream = chainStreams(readStream, ...hashStreams);
+
+            await new Promise((resolve, reject) => {
+                hashFileStream
+                    .on("finish", resolve)
+                    .on("error", reject);
+            });
+
+            for (const hashAlg of Object.keys(this.fileMeta.hashes)) {
+                const expectedHash = this.fileMeta.hashes[hashAlg];
+                res[hashAlg] = expectedHash === hashDigests[hashAlg];
+            }
         }
 
         return res;
+    }
+
+    isCommited() {
+        return this.state === STATE.COMMITED;
     }
 
     /**

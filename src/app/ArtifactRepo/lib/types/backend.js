@@ -37,6 +37,10 @@ class Backend extends Type {
     }
 
     static async validate(event, data) {
+        if (data.hasOwnProperty("pollInterval")) {
+            data.pollInterval = parseInt(data.pollInterval, 10);
+        }
+
         if (event === "create") {
             assertType(data._id, "data._id", "string");
             assertType(data.backendType, "data.backendType", "string");
@@ -46,6 +50,7 @@ class Backend extends Type {
                 break;
             case "artifactory":
                 assertType(data.uri, "data.uri", "string");
+                assertType(data.pollInterval, "data.pollInterval", "number");
                 break;
             default:
                 throw new Error(`Unknown backend type ${data.backendType}`);

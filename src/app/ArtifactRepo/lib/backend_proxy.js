@@ -15,9 +15,9 @@ class BackendProxy extends BackendProxyBase {
         super(Backend);
     }
 
-    async start(config = {}) {
+    async start(config = {}, ...args) {
         const backendTypes = Object.assign({}, BackendTypes, config.types);
-        await super.start({ types: backendTypes });
+        await super.start({ types: backendTypes }, ...args);
     }
 
     async createRepo(repository) {

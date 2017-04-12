@@ -15,6 +15,8 @@ const BACKEND_TYPE = {
     ARTIFACTORY: "artifactory"
 };
 
+const DEFAULT_POLL_INTERVAL_IN_MINUTES = 5;
+
 class Edit extends LightComponent {
     constructor(props) {
         super(props);
@@ -44,6 +46,11 @@ class Edit extends LightComponent {
                 editable: true,
                 required: () => this.state.backendType.value === BACKEND_TYPE.ARTIFACTORY,
                 defaultValue: ""
+            },
+            "pollInterval": {
+                editable: true,
+                required: () => this.state.backendType.value === BACKEND_TYPE.ARTIFACTORY,
+                defaultValue: DEFAULT_POLL_INTERVAL_IN_MINUTES
             }
         };
 
@@ -123,6 +130,16 @@ class Edit extends LightComponent {
                                 disabled={this.props.item && !this.itemProperties.uri.editable}
                                 value={this.state.uri.value}
                                 onChange={this.state.uri.set}
+                            />
+                            <Input
+                                type="number"
+                                label="Interval in minutes to poll for updates"
+                                name="pollInterval"
+                                floating={true}
+                                required={this.itemProperties.pollInterval.required()}
+                                disabled={this.props.item && !this.itemProperties.pollInterval.editable}
+                                value={this.state.pollInterval.value}
+                                onChange={this.state.pollInterval.set}
                             />
                         </When>
                     </Choose>

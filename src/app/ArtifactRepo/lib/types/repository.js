@@ -14,6 +14,8 @@ class Repository extends Type {
         this.versionScheme = "default";
         this.hashAlgorithms = [ "md5", "sha1" ];
         this.initialArtifactTags = [];
+        this.artifactoryFilePathTemplate = "uploads/ARTIFACT_NAME-ARTIFACT_VERSION";
+        this.artifactoryFilePathRegex = "^.*\\/(\\w+)-(\\d+\\.\\d+\\.\\d+)$";
 
         if (data) {
             this.set(data);
@@ -64,6 +66,14 @@ class Repository extends Type {
 
         if (data.hasOwnProperty("initialArtifactTags")) {
             assertType(data.initialArtifactTags, "data.initialArtifactTags", "array");
+        }
+
+        if (data.artifactoryFilePathRegex) {
+            assertType(data.artifactoryFilePathRegex, "data.artifactoryFilePathRegex", "string");
+        }
+
+        if (data.artifactoryFilePathTemplate) {
+            assertType(data.artifactoryFilePathTemplate, "data.artifactoryFilePathTemplate", "string");
         }
     }
 }

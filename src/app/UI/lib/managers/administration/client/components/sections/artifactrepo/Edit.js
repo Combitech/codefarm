@@ -58,6 +58,16 @@ class Edit extends LightComponent {
                 editable: true,
                 required: () => this.getBackendType() === BACKEND_TYPE.FS,
                 defaultValue: []
+            },
+            "artifactoryFilePathTemplate": {
+                editable: true,
+                required: () => this.getBackendType() === BACKEND_TYPE.ARTIFACTORY,
+                defaultValue: "uploads/ARTIFACT_NAME-ARTIFACT_VERSION"
+            },
+            "artifactoryFilePathRegex": {
+                editable: true,
+                required: () => this.getBackendType() === BACKEND_TYPE.ARTIFACTORY,
+                defaultValue: "^.*\\/(\\w+)-(\\d+\\.\\d+\\.\\d+)$"
             }
         };
 
@@ -205,6 +215,42 @@ class Edit extends LightComponent {
                                     );
                                 })}
                             </div>
+                        </When>
+                        <When condition={backend && backend.backendType === BACKEND_TYPE.ARTIFACTORY}>
+                            <Input
+                                type="text"
+                                label="File path template"
+                                name="artifactoryFilePathTemplate"
+                                floating={true}
+                                required={this.itemProperties.artifactoryFilePathTemplate.required()}
+                                disabled={this.props.item && !this.itemProperties.artifactoryFilePathTemplate.editable}
+                                value={this.state.artifactoryFilePathTemplate.value}
+                                onChange={this.state.artifactoryFilePathTemplate.set}
+                            />
+                            <p className={this.props.theme.longDescription}>
+                                File path used in artifactory repository when artifacts
+                                is created by CodeFarm.
+                                Available template strings are:
+                                <em> ARTIFACT_NAME</em>, <em>ARTIFACT_VERSION</em> and <em>REPOSITORY_ID</em>.
+                            </p>
+                            <Input
+                                type="text"
+                                label="File path regular expression"
+                                hint=""
+                                name="artifactoryFilePathRegex"
+                                floating={true}
+                                required={this.itemProperties.artifactoryFilePathRegex.required()}
+                                disabled={this.props.item && !this.itemProperties.artifactoryFilePathRegex.editable}
+                                value={this.state.artifactoryFilePathRegex.value}
+                                onChange={this.state.artifactoryFilePathRegex.set}
+                            />
+                            <p className={this.props.theme.longDescription}>
+                                Regular expression used to translate from artifactory
+                                repository <em>file path</em> to CodeFarm artifact <em>name</em> and <em>version</em>
+                                when new artifacts discovered in watched artifactory repository.
+                                <em> First matching group</em> required to match <em>artifact name</em>,
+                                <em> Second matching group</em> required to match <em>artifact version</em>.
+                            </p>
                         </When>
                     </Choose>
                     <Autocomplete
