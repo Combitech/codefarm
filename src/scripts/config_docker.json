@@ -1,0 +1,91 @@
+{
+    "flowctrl": {
+        "msgbus": "amqp://rabbitmq:5672",
+        "web": {
+            "port": 19191
+        }
+    },
+    "baselinegen": {
+        "msgbus": "amqp://rabbitmq:5672",
+        "web": {
+            "port": 19797
+        }
+    },
+    "userrepo": {
+        "msgbus": "amqp://rabbitmq:5672",
+        "web": {
+            "port": 19292
+        }
+    },
+    "eventrepo": {
+        "msgbus": "amqp://rabbitmq:5672",
+        "web": {
+            "port": 19090
+        }
+    },
+    "logrepo": {
+        "msgbus": "amqp://rabbitmq:5672",
+        "web": {
+            "port": 19696
+        }
+    },
+    "coderepo": {
+        "msgbus": "amqp://rabbitmq:5672",
+        "web": {
+            "port": 19393
+        },
+        "backendsConfig": {
+            "github": {
+                "baseUrl": "https://github.com",
+                "apiBaseUrl": "https://api.github.com"
+            },
+            "gerrit": {
+                "defaultPort": 29418,
+                "defaultTimeoutMs": 60000
+            }
+        }
+    },
+    "artifactrepo": {
+        "msgbus": "amqp://rabbitmq:5672",
+        "web": {
+            "port": 19999
+        }
+    },
+    "exec": {
+        "msgbus": "amqp://rabbitmq:5672",
+        "web": {
+            "port": 19494
+        }
+    },
+    "ui": {
+        "msgbus": "amqp://rabbitmq:5672",
+        "web": {
+            "auth": {
+                "guestUser": {
+                    "id": "guest",
+                    "password": "guestguest"
+                },
+                "jwtCookieName": "codefarm/jwt/token"
+            },
+            "port": 19898
+        }
+    },
+    "dataresolve": {
+        "msgbus": "amqp://rabbitmq:5672",
+        "web": {
+            "port": 18989
+        }
+    },
+    "metadata": {
+        "msgbus": "amqp://rabbitmq:5672",
+        "web": {
+            "port": 18888
+        }
+    },
+    "stat": {
+        "msgbus": "amqp://rabbitmq:5672",
+        "web": {
+            "port": 18787
+        }
+    }
+}

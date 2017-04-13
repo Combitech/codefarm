@@ -16,15 +16,16 @@ services:
         build:
             context: ../containers/mongo
         image: codefarm/mongo:0.0.0
-        network_mode: "host"
+        ports:
+            - "27017:27017"
     rabbitmq:
         build:
             context: ../containers/rabbitmq
         image: codefarm/rabbitmq:0.0.0
-        # Doesn't work good with port mapping, use host network_mode instead.
-        # Port mapping causes unexpected socket close in client if
-        # client connects before rabbitmq is fully up and running.
-        network_mode: "host"
+        ports:
+            - "8082:15672"
+            - "5671:5671"
+            - "5672:5672"
     gerrit:
         build:
             context: ../containers/gerrit
@@ -44,9 +45,13 @@ services:
         depends_on:
             - appnodebase
             - rabbitmq
-        network_mode: "host"
         volumes:
             - ./jwtKeys:/home/farmer/.ssh:ro
+        ports:
+            - "19595:19595"
+        links:
+            - "mongo"
+            - "rabbitmq"
     eventrepo:
         build:
             context: ../app/EventRepo
@@ -55,7 +60,11 @@ services:
             - appnodebase
             - mongo
             - rabbitmq
-        network_mode: "host"
+        links:
+            - "mongo"
+            - "rabbitmq"
+        ports:
+            - "19090:19090"
     userrepo:
         build:
             context: ../app/UserRepo
@@ -64,7 +73,11 @@ services:
             - appnodebase
             - mongo
             - rabbitmq
-        network_mode: "host"
+        links:
+            - "mongo"
+            - "rabbitmq"
+        ports:
+            - "19292:19292"
     artifactrepo:
         build:
             context: ../app/ArtifactRepo
@@ -73,7 +86,11 @@ services:
             - appnodebase
             - mongo
             - rabbitmq
-        network_mode: "host"
+        links:
+            - "mongo"
+            - "rabbitmq"
+        ports:
+            - "19999:19999"
     coderepo:
         build:
             context: ../app/CodeRepo
@@ -82,7 +99,11 @@ services:
             - appnodebase
             - mongo
             - rabbitmq
-        network_mode: "host"
+        links:
+            - "mongo"
+            - "rabbitmq"
+        ports:
+            - "19393:19393"
     logrepo:
         build:
             context: ../app/LogRepo
@@ -91,7 +112,11 @@ services:
             - appnodebase
             - mongo
             - rabbitmq
-        network_mode: "host"
+        links:
+            - "mongo"
+            - "rabbitmq"
+        ports:
+            - "19696:19696"
     exec:
         build:
             context: ../app/Exec
@@ -100,9 +125,13 @@ services:
             - appnodebase
             - mongo
             - rabbitmq
-        network_mode: "host"
         volumes:
             - ~/docker_data:/external_data/:ro
+        links:
+            - "mongo"
+            - "rabbitmq"
+        ports:
+            - "19494:19494"
     baselinegen:
         build:
             context: ../app/BaselineGen
@@ -111,7 +140,11 @@ services:
             - appnodebase
             - mongo
             - rabbitmq
-        network_mode: "host"
+        links:
+            - "mongo"
+            - "rabbitmq"
+        ports:
+            - "19797:19797"
     flowctrl:
         build:
             context: ../app/FlowCtrl
@@ -120,7 +153,11 @@ services:
             - appnodebase
             - mongo
             - rabbitmq
-        network_mode: "host"
+        links:
+            - "mongo"
+            - "rabbitmq"
+        ports:
+            - "19191:19191"
     ui:
         build:
             context: ../app/UI
@@ -129,7 +166,11 @@ services:
             - appnodebase
             - mongo
             - rabbitmq
-        network_mode: "host"
+        links:
+            - "mongo"
+            - "rabbitmq"
+        ports:
+            - "19898:19898"
     dataresolve:
         build:
             context: ../app/DataResolve
@@ -138,7 +179,11 @@ services:
             - appnodebase
             - mongo
             - rabbitmq
-        network_mode: "host"
+        links:
+            - "mongo"
+            - "rabbitmq"
+        ports:
+            - "18989:18989"
     metadata:
         build:
             context: ../app/MetaData
@@ -147,7 +192,11 @@ services:
             - appnodebase
             - mongo
             - rabbitmq
-        network_mode: "host"
+        links:
+            - "mongo"
+            - "rabbitmq"
+        ports:
+            - "18888:18888"
     stat:
         build:
             context: ../app/Stat
@@ -156,4 +205,8 @@ services:
             - appnodebase
             - mongo
             - rabbitmq
-        network_mode: "host"
+        links:
+            - "mongo"
+            - "rabbitmq"
+        ports:
+            - "18787:18787"

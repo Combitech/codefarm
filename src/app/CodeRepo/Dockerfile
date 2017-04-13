@@ -10,3 +10,10 @@ RUN set -x \
 	&& apt-get install -y netcat-openbsd
 
 USER ${user}
+
+CMD [ \
+    "node", \
+    "--harmony_async_await", \
+    ".", \
+    "--bus", "amqp://rabbitmq/codefarm" \
+]
