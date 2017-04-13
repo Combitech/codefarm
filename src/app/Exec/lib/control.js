@@ -438,15 +438,26 @@ class Control {
 
     async dispose() {
         notification.removeAllListeners("slave.created");
+        notification.removeAllListeners("slave.updated");
         notification.removeAllListeners("job.created");
+        notification.removeAllListeners("job.requeued");
         notification.removeAllListeners("slave.tagged");
         notification.removeAllListeners("slave.untagged");
+        notification.removeAllListeners("slave.online");
+        notification.removeAllListeners("slave.offline");
         notification.removeAllListeners("slave.removed");
         notification.removeAllListeners("job.removed");
         notification.removeAllListeners("executor.removed");
         notification.removeAllListeners("executor.allocated");
+        notification.removeAllListeners("executor.started");
         notification.removeAllListeners("executor.finished");
         notification.removeAllListeners("executor.failure");
+        notification.removeAllListeners("executor.type_read");
+        notification.removeAllListeners("executor.type_create");
+        notification.removeAllListeners("executor.type_action");
+        notification.removeAllListeners("executor.type_update");
+        notification.removeAllListeners("executor.file_upload");
+        notification.removeAllListeners("executor.revision_merge");
 
         for (const executor of this.executors) {
             await executor.detach();
