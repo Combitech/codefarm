@@ -46,8 +46,7 @@ services:
             - rabbitmq
         network_mode: "host"
         volumes:
-            - ./keys/jwtRS256.key:/home/farmer/.ssh/id_rsa
-            - ./keys/jwtRS256.key.pub:/home/farmer/.ssh/id_rsa.pem.pub
+            - ./jwtKeys:/home/farmer/.ssh:ro
     eventrepo:
         build:
             context: ../app/EventRepo
