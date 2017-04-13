@@ -20,7 +20,7 @@ const exports = {
     ArtifactRepositoryCard: require("./ArtifactRepositoryCard"),
     UserCard: require("./UserCard"),
     TeamCard: require("./TeamCard"),
-    PolicyCard: require("./PolicyCard"),
+    UserPolicyCard: require("./UserPolicyCard"),
     StatSpecCard: require("./StatSpecCard"),
     StatStatCard: require("./StatStatCard"),
     StatStatInfoCard: require("./StatStatInfoCard"),

@@ -10,7 +10,8 @@ const exports = {
     LogRepositoryView: require("./LogRepositoryView"),
     SlaveView: require("./SlaveView"),
     FlowView: require("./FlowView"),
-    BaselineSpecificationView: require("./BaselineSpecificationView")
+    BaselineSpecificationView: require("./BaselineSpecificationView"),
+    UserPolicyView: require("./UserPolicyView")
 };
 
 module.exports = exporter(name, theme, exports);

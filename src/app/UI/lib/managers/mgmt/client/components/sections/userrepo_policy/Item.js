@@ -3,33 +3,20 @@ import React from "react";
 import {
     Section as TASection
 } from "ui-components/type_admin";
-import { Row, Column, Header, Section } from "ui-components/layout";
-import { PolicyCard } from "ui-components/data_card";
-import LightComponent from "ui-lib/light_component";
+import { UserPolicyView } from "ui-components/data_view";
 
-class Item extends LightComponent {
+class Item extends React.PureComponent {
     render() {
-        console.log("ItemLocal-RENDER", this.props);
-
         return (
             <TASection
                 controls={this.props.controls}
                 breadcrumbs={this.props.breadcrumbs}
             >
                 <div className={this.props.theme.container}>
-                    <Row>
-                        <Column xs={12} md={5}>
-                            <Section>
-                                <Header label="Properties" />
-                                <PolicyCard
-                                    theme={this.props.theme}
-                                    item={this.props.item}
-                                    expandable={false}
-                                    expanded={true}
-                                />
-                            </Section>
-                        </Column>
-                    </Row>
+                    <UserPolicyView
+                        theme={this.props.theme}
+                        item={this.props.item}
+                    />
                 </div>
             </TASection>
         );
@@ -42,6 +29,10 @@ Item.propTypes = {
     pathname: React.PropTypes.string.isRequired,
     breadcrumbs: React.PropTypes.array.isRequired,
     controls: React.PropTypes.array.isRequired
+};
+
+Item.contextTypes = {
+    router: React.PropTypes.object.isRequired
 };
 
 export default Item;

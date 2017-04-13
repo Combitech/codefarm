@@ -10,7 +10,7 @@ import LogCard from "./LogCard";
 import LogRepositoryCard from "./LogRepositoryCard";
 import UserCard from "./UserCard";
 import TeamCard from "./TeamCard";
-import PolicyCard from "./PolicyCard";
+import UserPolicyCard from "./UserPolicyCard";
 import StatSpecCard from "./StatSpecCard";
 import StatStatCard from "./StatStatCard";
 import StatChartCard from "./StatChartCard";
@@ -31,7 +31,7 @@ const Cards = {
     "logrepo.repository": LogRepositoryCard,
     "userrepo.user": UserCard,
     "userrepo.team": TeamCard,
-    "userrepo.policy": PolicyCard,
+    "userrepo.policy": UserPolicyCard,
     "stat.spec": StatSpecCard,
     "stat.stat": StatStatCard,
     "stat.chart": StatChartCard,
