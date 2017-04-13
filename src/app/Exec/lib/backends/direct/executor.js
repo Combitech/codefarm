@@ -61,12 +61,7 @@ class DirectExecutor extends Executor {
         super();
 
         this.port = 0;
-        this.uri = false;
-        this.logId = false;
         this.workspace = false;
-        this.started = false;
-        this.finished = false;
-        this.executing = false;
 
         this.__ssh = new SshClient();
 

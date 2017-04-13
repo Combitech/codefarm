@@ -40,11 +40,8 @@ class Executor extends Type {
         this.slaveId = false;
         this.backend = false;
 
-        this.port = 0;
-        this.privateKeyPath = false;
         this.uri = false;
         this.logId = false;
-        this.workspace = false;
         this.started = false;
         this.finished = false;
         this.executing = false;

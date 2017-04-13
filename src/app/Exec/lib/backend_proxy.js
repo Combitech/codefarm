@@ -26,6 +26,14 @@ class BackendProxy extends BackendProxyBase {
         throw Error(`Cannot find executor for backend '${backend}'`);
     }
 
+    async startJob(executor, job) {
+        return this.getBackend(executor.backend).startJob(executor, job);
+    }
+
+    async verifySlaveJob(slave) {
+        return this.getBackend(slave.backend).verifySlaveJob(slave);
+    }
+
     async start(config = {}, executorClasses, ...args) {
         const backendTypes = Object.assign({}, BackendTypes, config.types);
         this.executorClasses = executorClasses;
