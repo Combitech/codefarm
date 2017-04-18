@@ -45,7 +45,7 @@ ONBUILD RUN test -f package.json && \
 ONBUILD COPY . ${appRoot}/src/app/me
 
 ONBUILD USER root
-ONBUILD RUN find ${appRoot} -path './node_modules' -prune -o -exec chown $user {} \;
+ONBUILD RUN find ${appRoot}/src/app/me -path './node_modules' -prune -o -print0 | xargs -0 chown $user
 ONBUILD USER $user
 
 ENV gitroot ${appRoot}

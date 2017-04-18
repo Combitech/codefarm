@@ -12,6 +12,17 @@ module.exports = function(options) {
         /node_modules\/recharts/,
         /node_modules\/d3/
     ];
+    // List of regexes matching CodeFarm libraries that shall be transpiled
+    const explicitCodeFarmLibIncludes = (options && options.global_modules_dir) ? [
+        // When libs installed as global modules
+        /node_modules\/misc\//,
+        /node_modules\/auth\//,
+        /node_modules\/singleton\//
+    ] : [
+        // When libs imported using links
+        /\/src\/lib\/[^\/]+\//
+    ];
+
     const extractStyles = new ExtractTextPlugin("[name].css");
 
     const cfg = {
@@ -35,12 +46,13 @@ module.exports = function(options) {
                     include: [
                         __dirname,
                         /\/managers\/[^\/]+\/client\//,
-                        /\/src\/lib\/[^\/]+\//,
+                        ...explicitCodeFarmLibIncludes,
                         ...explicitModuleIncludes
                     ],
                     exclude: (absPath) => {
                         const isNodeModule = /node_modules/.test(absPath);
                         const isExplicitInclude = explicitModuleIncludes
+                            .concat(explicitCodeFarmLibIncludes)
                             .map((re) => re.test(absPath))
                             .filter((m) => m)
                             .length > 0;
