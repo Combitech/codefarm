@@ -30,9 +30,11 @@ services:
         build:
             context: ../containers/gerrit
         image: codefarm/gerrit:0.0.0
-        network_mode: "host"
         environment:
             - AUTH_TYPE=DEVELOPMENT_BECOME_ANY_ACCOUNT
+        ports:
+            - "8083:8080"
+            - "29418:29418"
     artifactory:
         build:
             context: ../containers/artifactory
@@ -99,6 +101,8 @@ services:
             - appnodebase
             - mongo
             - rabbitmq
+        volumes:
+            - ./codeKeys:/home/farmer/codeKeys:ro
         links:
             - "mongo"
             - "rabbitmq"
