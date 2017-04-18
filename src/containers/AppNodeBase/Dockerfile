@@ -30,7 +30,7 @@ RUN for i in $(ls -1 ${depTmpRoot}/src/lib/*/package.json); do \
   rm -rf ${depTmpRoot}
 
 # 1. Add app dependency specification. This is done first to utilize docker caching.
-ONBUILD COPY package.json ${appRoot}/src/app/me
+ONBUILD COPY [ "package.json", "yarn.lock", "${appRoot}/src/app/me/" ]
 
 ONBUILD USER root
 ONBUILD RUN chown $user --recursive ${appRoot}
@@ -43,8 +43,9 @@ ONBUILD RUN test -f package.json && \
 
 # 2. Add app source
 ONBUILD COPY . ${appRoot}/src/app/me
+
 ONBUILD USER root
-ONBUILD RUN chown $user --recursive ${appRoot}
+ONBUILD RUN find ${appRoot} -path './node_modules' -prune -o -exec chown $user {} \;
 ONBUILD USER $user
 
 ENV gitroot ${appRoot}
