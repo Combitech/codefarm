@@ -1,4 +1,9 @@
 version: '2'
+
+volumes:
+    logvolume:
+    artifactvolume:
+
 services:
     nodebase:
         build:
@@ -54,19 +59,6 @@ services:
         links:
             - "mongo"
             - "rabbitmq"
-    eventrepo:
-        build:
-            context: ../app/EventRepo
-        image: codefarm/eventrepo:0.0.0
-        depends_on:
-            - appnodebase
-            - mongo
-            - rabbitmq
-        links:
-            - "mongo"
-            - "rabbitmq"
-        ports:
-            - "19090:19090"
     userrepo:
         build:
             context: ../app/UserRepo
@@ -88,6 +80,8 @@ services:
             - appnodebase
             - mongo
             - rabbitmq
+        volumes:
+            - artifactvolume:/home/farmer/data
         links:
             - "mongo"
             - "rabbitmq"
@@ -106,6 +100,7 @@ services:
         links:
             - "mongo"
             - "rabbitmq"
+            - "gerrit"
         ports:
             - "19393:19393"
     logrepo:
@@ -116,6 +111,8 @@ services:
             - appnodebase
             - mongo
             - rabbitmq
+        volumes:
+            - logvolume:/home/farmer/data
         links:
             - "mongo"
             - "rabbitmq"
@@ -130,7 +127,7 @@ services:
             - mongo
             - rabbitmq
         volumes:
-            - ~/docker_data:/external_data/:ro
+            - ./execKeys:/home/farmer/execKeys:ro
         links:
             - "mongo"
             - "rabbitmq"

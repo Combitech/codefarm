@@ -24,6 +24,9 @@ USER ${user}
 
 ENV DISABLE_LINK_LIBS "npm installation disabled"
 
+# Create data directory where default volume can be mounted
+RUN mkdir -p $farmerHome/data && chown -R $user $farmerHome/data -R && chgrp -R $user $farmerHome/data
+
 # Create app directory
 RUN mkdir -p ${appRoot}/src/app/me
 WORKDIR ${appRoot}/src/app/me
