@@ -6,14 +6,11 @@ RUN mkdir /var/run/sshd
 
 WORKDIR $farmerHome
 
-USER $user
 RUN mkdir -p $farmerHome/.ssh
 
-# Copy authorized_keys
+# Copy authorized_keys and set access for $user
 COPY [ "authorized_keys", "$farmerHome/.ssh/" ]
-RUN chmod 644 .ssh/authorized_keys
-
-USER root
+RUN chmod 644 .ssh/authorized_keys && chown -R $user $farmerHome/.ssh && chgrp -R $user $farmerHome/.ssh
 
 EXPOSE 22
 
