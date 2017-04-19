@@ -45,6 +45,14 @@ services:
             context: ../containers/artifactory
         image: codefarm/artifactory:0.0.0
         network_mode: "host"
+    execslave:
+        build:
+            context: ../containers/ExecSlave
+        image: codefarm/execslave:0.0.0
+        ports:
+            - "8022:22"
+        depends_on:
+            - nodebase
     mgmt:
         build:
             context: ../app/Mgmt

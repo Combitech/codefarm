@@ -1,0 +1,13 @@
+{
+  "name": "ExecSlave",
+  "version": "0.0.0",
+  "description": "CodeFarm Exec Slave listening to SSH connections",
+  "scripts": {
+    "build": "../../bs/build.sh",
+    "extract": "../../bs/extract.sh",
+    "load": "../../bs/load.sh",
+    "unload": "../../bs/unload.sh"
+  },
+  "author": "Marcus Christensson <marcus.christensson@combitech.se>",
+  "license": "MIT"
+}
