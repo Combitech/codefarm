@@ -1,3 +1,4 @@
+"use strict";
 
 const { Bus } = require("buslib");
 const singleton = require("singleton");

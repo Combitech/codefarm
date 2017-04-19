@@ -4,6 +4,7 @@ const Job = require("../../types/job");
 const { notification } = require("typelib");
 const BackendProxy = require("../../backend_proxy");
 const Executor = require("../../types/executor");
+const moment = require("moment");
 
 const LEVEL = {
     INFO: "info",
@@ -27,6 +28,7 @@ class JenkinsExecutor extends Executor {
 
     async _onJobStarted(event) {
         if (event.queuenr === this.queuenr) {
+            this.logId = await this.allocateLog("interactive", [ "stdout", "stderr" ]);
             this.started = true;
             await this.save();
             await notification.emit(`${this.constructor.typeName}.started`, this);
@@ -43,6 +45,13 @@ class JenkinsExecutor extends Executor {
         }
     }
 
+    async _onConsoleText(event) {
+        if (event.queuenr === this.queuenr) {
+            const time = moment().utc().format();
+            await this._log(event.response.body, LEVEL.STDOUT, "exe", time);
+        }
+    }
+
     async start(job) {
         await this._logln(`Starting/Queueing execution of ${this.jobName} on Jenkins`);
         try {
@@ -51,6 +60,7 @@ class JenkinsExecutor extends Executor {
             const jenkinsBackend = BackendProxy.instance.getBackend(this.backend);
             jenkinsBackend.addListener("job_started", this._onJobStarted.bind(this));
             jenkinsBackend.addListener("job_completed", this._onJobCompleted.bind(this));
+            jenkinsBackend.addListener("job_consoletext", this._onConsoleText.bind(this));
             this.queuenr = await jenkinsBackend.startJob(this, job);
         } catch (error) {
             await this._logln("Error while trying to start execution", LEVEL.ERROR);
