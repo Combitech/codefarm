@@ -75,7 +75,7 @@ class Cytoscape extends React.Component {
             name: LAYOUT,
             // Sort nodes to get same layout each time
             sort: sortById
-        });
+        }).run();
     }
 
     componentWillReceiveProps(nextProps) {

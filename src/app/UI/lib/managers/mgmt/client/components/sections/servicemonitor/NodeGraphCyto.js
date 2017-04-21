@@ -179,7 +179,7 @@ class NodeGraphCyto extends LightComponent {
     }
 
     nodeEventHandler(serviceHandler, event) {
-        const nodeId = event.cyTarget.id();
+        const nodeId = event.target.id();
         const service = this.props.services.filter((service) => service.id === nodeId)[0];
         if (service) {
             serviceHandler(service);
