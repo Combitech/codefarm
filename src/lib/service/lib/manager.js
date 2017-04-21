@@ -565,7 +565,7 @@ class Manager {
             const activeConfigs = await this._awaitWithAbort(
                 cfgRestClient.list("config", {
                     name: this.app.name,
-                    tags: "active"
+                    tags: ACTIVE_CONFIG_TAG
                 })
             );
             if (activeConfigs.length === 1) {
