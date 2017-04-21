@@ -1,5 +1,6 @@
 
 import React from "react";
+import PropTypes from "prop-types";
 import ImmutablePropTypes from "react-immutable-proptypes";
 import { UserAvatar } from "ui-components/user_avatar";
 import { StatusIcon } from "ui-components/status";
@@ -53,10 +54,10 @@ class Row extends React.PureComponent {
 }
 
 Row.propTypes = {
-    theme: React.PropTypes.object,
+    theme: PropTypes.object,
     item: ImmutablePropTypes.map.isRequired,
     steps: ImmutablePropTypes.list,
-    onClick: React.PropTypes.func
+    onClick: PropTypes.func
 };
 
 export default Row;

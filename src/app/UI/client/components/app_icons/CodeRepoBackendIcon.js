@@ -1,5 +1,6 @@
 
 import React from "react";
+import PropTypes from "prop-types";
 import LightComponent from "ui-lib/light_component";
 import GerritDiffyIcon from "./diffymute.svg";
 import GitHubMarkerIcon from "./GitHubMarkerIcon";
@@ -63,9 +64,9 @@ class CodeRepoBackendIcon extends LightComponent {
 }
 
 CodeRepoBackendIcon.propTypes = {
-    theme: React.PropTypes.object,
-    repoId: React.PropTypes.string,
-    backendType: React.PropTypes.string
+    theme: PropTypes.object,
+    repoId: PropTypes.string,
+    backendType: PropTypes.string
 };
 
 export default CodeRepoBackendIcon;

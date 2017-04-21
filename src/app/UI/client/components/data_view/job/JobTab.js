@@ -1,5 +1,6 @@
 
 import React from "react";
+import PropTypes from "prop-types";
 import LightComponent from "ui-lib/light_component";
 import { JobCard } from "ui-components/data_card";
 import { Row, Column, Header, Section } from "ui-components/layout";
@@ -48,8 +49,8 @@ class JobTab extends LightComponent {
 }
 
 JobTab.propTypes = {
-    theme: React.PropTypes.object,
-    job: React.PropTypes.object.isRequired
+    theme: PropTypes.object,
+    job: PropTypes.object.isRequired
 };
 
 export default JobTab;

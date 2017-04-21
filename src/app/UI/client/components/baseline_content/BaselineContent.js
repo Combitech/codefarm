@@ -1,5 +1,6 @@
 
 import React from "react";
+import PropTypes from "prop-types";
 import Immutable from "immutable";
 import LightComponent from "ui-lib/light_component";
 import { States as ObservableDataStates } from "ui-lib/observable_data";
@@ -71,8 +72,8 @@ class BaselineContent extends LightComponent {
 }
 
 BaselineContent.propTypes = {
-    theme: React.PropTypes.object,
-    baselineRef: React.PropTypes.object.isRequired
+    theme: PropTypes.object,
+    baselineRef: PropTypes.object.isRequired
 };
 
 export default BaselineContent;

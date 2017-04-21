@@ -1,5 +1,6 @@
 
 import React from "react";
+import PropTypes from "prop-types";
 import LightComponent from "ui-lib/light_component";
 import { States as ObservableDataStates } from "ui-lib/observable_data";
 import { ListPager } from "ui-components/type_admin";
@@ -134,19 +135,19 @@ List.defaultProps = {
 };
 
 List.propTypes = {
-    theme: React.PropTypes.object,
-    query: React.PropTypes.object.isRequired,
-    filter: React.PropTypes.string,
-    pathname: React.PropTypes.string.isRequired,
-    limit: React.PropTypes.number,
-    ObservableList: React.PropTypes.func.isRequired,
-    RowComponent: React.PropTypes.func.isRequired,
-    HeaderComponent: React.PropTypes.func.isRequired,
-    flowId: React.PropTypes.string.isRequired
+    theme: PropTypes.object,
+    query: PropTypes.object.isRequired,
+    filter: PropTypes.string,
+    pathname: PropTypes.string.isRequired,
+    limit: PropTypes.number,
+    ObservableList: PropTypes.func.isRequired,
+    RowComponent: PropTypes.func.isRequired,
+    HeaderComponent: PropTypes.func.isRequired,
+    flowId: PropTypes.string.isRequired
 };
 
 List.contextTypes = {
-    router: React.PropTypes.object.isRequired
+    router: PropTypes.object.isRequired
 };
 
 export default List;

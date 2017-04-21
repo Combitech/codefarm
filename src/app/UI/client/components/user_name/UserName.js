@@ -1,5 +1,6 @@
 
 import React from "react";
+import PropTypes from "prop-types";
 import LightComponent from "ui-lib/light_component";
 import UserItem from "ui-observables/user_item";
 import { States as ObservableDataStates } from "ui-lib/observable_data";
@@ -93,17 +94,17 @@ UserName.defaultProps = {
 };
 
 UserName.propTypes = {
-    className: React.PropTypes.string,
-    theme: React.PropTypes.object,
-    userId: React.PropTypes.any,
-    notFoundText: React.PropTypes.string,
-    prefixText: React.PropTypes.string,
-    suffixText: React.PropTypes.string,
-    isLink: React.PropTypes.bool
+    className: PropTypes.string,
+    theme: PropTypes.object,
+    userId: PropTypes.any,
+    notFoundText: PropTypes.string,
+    prefixText: PropTypes.string,
+    suffixText: PropTypes.string,
+    isLink: PropTypes.bool
 };
 
 UserName.contextTypes = {
-    router: React.PropTypes.object.isRequired
+    router: PropTypes.object.isRequired
 };
 
 export default UserName;

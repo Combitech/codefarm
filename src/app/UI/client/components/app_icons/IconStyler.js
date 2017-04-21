@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 
 class IconStyler extends React.Component {
     render() {
@@ -18,9 +19,9 @@ class IconStyler extends React.Component {
 }
 
 IconStyler.propTypes = {
-    white: React.PropTypes.bool,
-    color: React.PropTypes.string,
-    children: React.PropTypes.element.isRequired
+    white: PropTypes.bool,
+    color: PropTypes.string,
+    children: PropTypes.element.isRequired
 };
 
 export default IconStyler;

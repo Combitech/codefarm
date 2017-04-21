@@ -1,5 +1,6 @@
 
 import React from "react";
+import PropTypes from "prop-types";
 import { Col as ColItem } from "react-flexbox-grid";
 
 class Column extends React.PureComponent {
@@ -21,9 +22,9 @@ Column.defaultProps = {
 };
 
 Column.propTypes = {
-    theme: React.PropTypes.object,
-    children: React.PropTypes.node,
-    className: React.PropTypes.string
+    theme: PropTypes.object,
+    children: PropTypes.node,
+    className: PropTypes.string
 };
 
 export default Column;

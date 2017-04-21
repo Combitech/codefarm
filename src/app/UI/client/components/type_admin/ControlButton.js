@@ -1,5 +1,6 @@
 
 import React from "react";
+import PropTypes from "prop-types";
 import { Button } from "react-toolbox/lib/button";
 
 class ControlButton extends React.Component {
@@ -32,15 +33,15 @@ ControlButton.defaultProps = {
 };
 
 ControlButton.propTypes = {
-    theme: React.PropTypes.object,
-    pathname: React.PropTypes.string,
-    onClick: React.PropTypes.func,
-    label: React.PropTypes.string.isRequired,
-    disabled: React.PropTypes.bool
+    theme: PropTypes.object,
+    pathname: PropTypes.string,
+    onClick: PropTypes.func,
+    label: PropTypes.string.isRequired,
+    disabled: PropTypes.bool
 };
 
 ControlButton.contextTypes = {
-    router: React.PropTypes.object.isRequired
+    router: PropTypes.object.isRequired
 };
 
 export default ControlButton;

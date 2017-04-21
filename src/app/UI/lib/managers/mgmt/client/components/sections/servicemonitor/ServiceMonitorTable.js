@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 import { Button } from "react-toolbox/lib/button";
 import { Card, CardText } from "react-toolbox/lib/card";
 import Table from "react-toolbox/lib/table";
@@ -77,7 +78,7 @@ class ServiceMonitorTable extends React.Component {
 }
 
 ServiceMonitorTable.propTypes = {
-    services: React.PropTypes.array.isRequired
+    services: PropTypes.array.isRequired
 };
 
 export default ServiceMonitorTable;

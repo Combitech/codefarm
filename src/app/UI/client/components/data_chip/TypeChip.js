@@ -1,5 +1,6 @@
 
 import React from "react";
+import PropTypes from "prop-types";
 import { UserAvatar, TeamAvatar } from "ui-components/user_avatar";
 import Avatar from "react-toolbox/lib/avatar";
 import DataChip from "./DataChip";
@@ -177,9 +178,9 @@ class TypeChip extends LightComponent {
 }
 
 TypeChip.propTypes = {
-    theme: React.PropTypes.object,
-    itemRef: React.PropTypes.object.isRequired,
-    onDelete: React.PropTypes.func
+    theme: PropTypes.object,
+    itemRef: PropTypes.object.isRequired,
+    onDelete: PropTypes.func
 };
 
 export default TypeChip;

@@ -1,5 +1,6 @@
 
 import React from "react";
+import PropTypes from "prop-types";
 import Immutable from "immutable";
 import LightComponent from "ui-lib/light_component";
 import Input from "react-toolbox/lib/input";
@@ -81,11 +82,11 @@ class ListCards extends LightComponent {
 }
 
 ListCards.propTypes = {
-    theme: React.PropTypes.object,
-    breadcrumbs: React.PropTypes.array.isRequired,
-    controls: React.PropTypes.array.isRequired,
-    Observable: React.PropTypes.func.isRequired,
-    linkToAdmin: React.PropTypes.bool
+    theme: PropTypes.object,
+    breadcrumbs: PropTypes.array.isRequired,
+    controls: PropTypes.array.isRequired,
+    Observable: PropTypes.func.isRequired,
+    linkToAdmin: PropTypes.bool
 };
 
 export default ListCards;

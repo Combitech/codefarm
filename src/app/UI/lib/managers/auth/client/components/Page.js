@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 import LightComponent from "ui-lib/light_component";
 import SignInForm from "./SignInForm";
 import SignOutForm from "./SignOutForm";
@@ -43,7 +44,7 @@ class Page extends LightComponent {
 }
 
 Page.propTypes = {
-    theme: React.PropTypes.object
+    theme: PropTypes.object
 };
 
 export default Page;

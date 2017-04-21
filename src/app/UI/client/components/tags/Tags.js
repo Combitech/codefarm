@@ -1,5 +1,6 @@
 
 import React from "react";
+import PropTypes from "prop-types";
 
 class Tags extends React.PureComponent {
     render() {
@@ -24,9 +25,9 @@ class Tags extends React.PureComponent {
 }
 
 Tags.propTypes = {
-    theme: React.PropTypes.object,
-    className: React.PropTypes.string,
-    list: React.PropTypes.array.isRequired
+    theme: PropTypes.object,
+    className: PropTypes.string,
+    list: PropTypes.array.isRequired
 };
 
 export default Tags;

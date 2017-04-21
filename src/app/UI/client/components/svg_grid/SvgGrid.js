@@ -1,5 +1,6 @@
 
 import React from "react";
+import PropTypes from "prop-types";
 import { flattenArray } from "misc";
 import LightComponent from "ui-lib/light_component";
 import SvgGridItem from "./SvgGridItem";
@@ -284,14 +285,14 @@ class SvgGrid extends LightComponent {
 }
 
 SvgGrid.propTypes = {
-    children: React.PropTypes.node,
-    theme: React.PropTypes.object.isRequired,
-    width: React.PropTypes.number.isRequired,
-    height: React.PropTypes.number.isRequired,
-    columns: React.PropTypes.number.isRequired,
-    rows: React.PropTypes.number.isRequired,
-    border: React.PropTypes.bool,
-    style: React.PropTypes.object
+    children: PropTypes.node,
+    theme: PropTypes.object.isRequired,
+    width: PropTypes.number.isRequired,
+    height: PropTypes.number.isRequired,
+    columns: PropTypes.number.isRequired,
+    rows: PropTypes.number.isRequired,
+    border: PropTypes.bool,
+    style: PropTypes.object
 };
 
 export default SvgGrid;

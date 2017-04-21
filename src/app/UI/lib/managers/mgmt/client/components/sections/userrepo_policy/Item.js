@@ -1,5 +1,6 @@
 
 import React from "react";
+import PropTypes from "prop-types";
 import {
     Section as TASection
 } from "ui-components/type_admin";
@@ -24,15 +25,15 @@ class Item extends React.PureComponent {
 }
 
 Item.propTypes = {
-    theme: React.PropTypes.object,
-    item: React.PropTypes.object.isRequired,
-    pathname: React.PropTypes.string.isRequired,
-    breadcrumbs: React.PropTypes.array.isRequired,
-    controls: React.PropTypes.array.isRequired
+    theme: PropTypes.object,
+    item: PropTypes.object.isRequired,
+    pathname: PropTypes.string.isRequired,
+    breadcrumbs: PropTypes.array.isRequired,
+    controls: PropTypes.array.isRequired
 };
 
 Item.contextTypes = {
-    router: React.PropTypes.object.isRequired
+    router: PropTypes.object.isRequired
 };
 
 export default Item;

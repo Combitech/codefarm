@@ -2,6 +2,7 @@
 /* global Image */
 
 import React from "react";
+import PropTypes from "prop-types";
 import LightComponent from "ui-lib/light_component";
 import Avatar from "react-toolbox/lib/avatar";
 
@@ -104,12 +105,12 @@ AvatarBase.defaultProps = {
 };
 
 AvatarBase.propTypes = {
-    className: React.PropTypes.string,
-    identifier: React.PropTypes.any,
-    defaultUrl: React.PropTypes.string.isRequired,
-    avatarType: React.PropTypes.oneOf(values(AVATAR_TYPE)).isRequired,
-    forceAvatar: React.PropTypes.bool,
-    large: React.PropTypes.bool
+    className: PropTypes.string,
+    identifier: PropTypes.any,
+    defaultUrl: PropTypes.string.isRequired,
+    avatarType: PropTypes.oneOf(values(AVATAR_TYPE)).isRequired,
+    forceAvatar: PropTypes.bool,
+    large: PropTypes.bool
 };
 
 export default AvatarBase;

@@ -1,5 +1,6 @@
 
 import React from "react";
+import PropTypes from "prop-types";
 import ImmutablePropTypes from "react-immutable-proptypes";
 import LightComponent from "ui-lib/light_component";
 import Input from "react-toolbox/lib/input";
@@ -117,16 +118,16 @@ class UserUpdatePassword extends LightComponent {
 }
 
 UserUpdatePassword.propTypes = {
-    theme: React.PropTypes.object,
-    parentItems: React.PropTypes.array.isRequired,
-    pathname: React.PropTypes.string.isRequired,
-    breadcrumbs: React.PropTypes.array.isRequired,
-    controls: React.PropTypes.array.isRequired,
+    theme: PropTypes.object,
+    parentItems: PropTypes.array.isRequired,
+    pathname: PropTypes.string.isRequired,
+    breadcrumbs: PropTypes.array.isRequired,
+    controls: PropTypes.array.isRequired,
     activeUser: ImmutablePropTypes.map.isRequired
 };
 
 UserUpdatePassword.contextTypes = {
-    router: React.PropTypes.object.isRequired
+    router: PropTypes.object.isRequired
 };
 
 export default UserUpdatePassword;

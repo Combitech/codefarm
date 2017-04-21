@@ -1,5 +1,6 @@
 
 import React from "react";
+import PropTypes from "prop-types";
 import LightComponent from "ui-lib/light_component";
 import { CardTitle } from "react-toolbox/lib/card";
 import { ExpandableCard } from "ui-components/expandable_card";
@@ -69,14 +70,14 @@ StatStatInfoCard.defaultProps = {
 };
 
 StatStatInfoCard.propTypes = {
-    theme: React.PropTypes.object,
-    item: React.PropTypes.object.isRequired,
-    expanded: React.PropTypes.bool,
-    expandable: React.PropTypes.bool
+    theme: PropTypes.object,
+    item: PropTypes.object.isRequired,
+    expanded: PropTypes.bool,
+    expandable: PropTypes.bool
 };
 
 StatStatInfoCard.contextTypes = {
-    router: React.PropTypes.object.isRequired
+    router: PropTypes.object.isRequired
 };
 
 export default StatStatInfoCard;

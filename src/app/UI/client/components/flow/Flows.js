@@ -1,5 +1,6 @@
 
 import React from "react";
+import PropTypes from "prop-types";
 import { Tab, Tabs } from "react-toolbox";
 import LightComponent from "ui-lib/light_component";
 
@@ -68,14 +69,14 @@ class Flows extends LightComponent {
 }
 
 Flows.propTypes = {
-    theme: React.PropTypes.object,
-    item: React.PropTypes.object.isRequired,
-    itemExt: React.PropTypes.object.isRequired,
-    pathname: React.PropTypes.string.isRequired,
-    step: React.PropTypes.string,
-    onStepSelect: React.PropTypes.func,
-    flows: React.PropTypes.array,
-    FlowComponent: React.PropTypes.func.isRequired
+    theme: PropTypes.object,
+    item: PropTypes.object.isRequired,
+    itemExt: PropTypes.object.isRequired,
+    pathname: PropTypes.string.isRequired,
+    step: PropTypes.string,
+    onStepSelect: PropTypes.func,
+    flows: PropTypes.array,
+    FlowComponent: PropTypes.func.isRequired
 };
 
 export default Flows;

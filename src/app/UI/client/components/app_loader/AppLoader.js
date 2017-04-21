@@ -1,5 +1,6 @@
 
 import React from "react";
+import PropTypes from "prop-types";
 import ProgressBar from "react-toolbox/lib/progress_bar";
 import LightComponent from "ui-lib/light_component";
 import loader from "ui-lib/loader";
@@ -31,7 +32,7 @@ class AppLoader extends LightComponent {
 }
 
 AppLoader.propTypes = {
-    theme: React.PropTypes.object
+    theme: PropTypes.object
 };
 
 export default AppLoader;

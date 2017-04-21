@@ -1,5 +1,6 @@
 
 import React from "react";
+import PropTypes from "prop-types";
 import SvgGrid from "./SvgGrid";
 import SvgGridItem from "./SvgGridItem";
 import SvgGridPath from "./SvgGridPath";
@@ -258,7 +259,7 @@ class SvgGridExample extends React.Component {
 }
 
 SvgGridExample.propTypes = {
-    theme: React.PropTypes.object
+    theme: PropTypes.object
 };
 
 export default SvgGridExample;

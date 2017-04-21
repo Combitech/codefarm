@@ -1,5 +1,6 @@
 
 import React from "react";
+import PropTypes from "prop-types";
 import LightComponent from "ui-lib/light_component";
 import { sizes } from "ui-components/svg_grid";
 import statusIcons from "ui-lib/status_icons";
@@ -109,10 +110,10 @@ class StepStatus extends LightComponent {
 }
 
 StepStatus.propTypes = {
-    theme: React.PropTypes.object,
-    item: React.PropTypes.object.isRequired,
-    job: React.PropTypes.object,
-    shadowId: React.PropTypes.string
+    theme: PropTypes.object,
+    item: PropTypes.object.isRequired,
+    job: PropTypes.object,
+    shadowId: PropTypes.string
 };
 
 export default StepStatus;

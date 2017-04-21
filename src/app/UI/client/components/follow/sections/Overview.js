@@ -1,5 +1,6 @@
 
 import React from "react";
+import PropTypes from "prop-types";
 import Immutable from "immutable";
 import moment from "moment";
 import LightComponent from "ui-lib/light_component";
@@ -132,10 +133,10 @@ class Overview extends LightComponent {
 }
 
 Overview.propTypes = {
-    theme: React.PropTypes.object,
-    item: React.PropTypes.object.isRequired,
-    itemExt: React.PropTypes.object.isRequired,
-    label: React.PropTypes.string.isRequired
+    theme: PropTypes.object,
+    item: PropTypes.object.isRequired,
+    itemExt: PropTypes.object.isRequired,
+    label: PropTypes.string.isRequired
 };
 
 export default Overview;

@@ -1,5 +1,6 @@
 
 import React from "react";
+import PropTypes from "prop-types";
 import Immutable from "immutable";
 import LightComponent from "ui-lib/light_component";
 import {
@@ -84,15 +85,15 @@ class TeamItem extends LightComponent {
 }
 
 TeamItem.propTypes = {
-    theme: React.PropTypes.object,
-    item: React.PropTypes.object.isRequired,
-    pathname: React.PropTypes.string.isRequired,
-    breadcrumbs: React.PropTypes.array.isRequired,
-    controls: React.PropTypes.array.isRequired
+    theme: PropTypes.object,
+    item: PropTypes.object.isRequired,
+    pathname: PropTypes.string.isRequired,
+    breadcrumbs: PropTypes.array.isRequired,
+    controls: PropTypes.array.isRequired
 };
 
 TeamItem.contextTypes = {
-    router: React.PropTypes.object.isRequired
+    router: PropTypes.object.isRequired
 };
 
 export default TeamItem;

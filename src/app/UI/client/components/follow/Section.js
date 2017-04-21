@@ -1,5 +1,6 @@
 
 import React from "react";
+import PropTypes from "prop-types";
 import moment from "moment";
 import LightComponent from "ui-lib/light_component";
 import OverviewSection from "./sections/Overview";
@@ -56,11 +57,11 @@ class Section extends LightComponent {
 }
 
 Section.propTypes = {
-    theme: React.PropTypes.object,
-    item: React.PropTypes.object.isRequired,
-    itemExt: React.PropTypes.object.isRequired,
-    step: React.PropTypes.string,
-    label: React.PropTypes.string.isRequired
+    theme: PropTypes.object,
+    item: PropTypes.object.isRequired,
+    itemExt: PropTypes.object.isRequired,
+    step: PropTypes.string,
+    label: PropTypes.string.isRequired
 };
 
 export default Section;

@@ -1,5 +1,6 @@
 
 import React from "react";
+import PropTypes from "prop-types";
 import ProgressBar from "react-toolbox/lib/progress_bar";
 
 class LoadIndicator extends React.Component {
@@ -22,7 +23,7 @@ class LoadIndicator extends React.Component {
 }
 
 LoadIndicator.propTypes = {
-    theme: React.PropTypes.object
+    theme: PropTypes.object
 };
 
 export default LoadIndicator;

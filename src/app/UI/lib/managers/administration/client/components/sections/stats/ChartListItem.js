@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 import LightComponent from "ui-lib/light_component";
 import { ListItem } from "react-toolbox/lib/list";
 import { ListItemIcon } from "ui-components/type_admin";
@@ -32,10 +33,10 @@ class StatListItem extends LightComponent {
 }
 
 StatListItem.propTypes = {
-    theme: React.PropTypes.object,
-    item: React.PropTypes.object.isRequired,
-    itemContext: React.PropTypes.array,
-    onClick: React.PropTypes.func
+    theme: PropTypes.object,
+    item: PropTypes.object.isRequired,
+    itemContext: PropTypes.array,
+    onClick: PropTypes.func
 };
 
 export default StatListItem;

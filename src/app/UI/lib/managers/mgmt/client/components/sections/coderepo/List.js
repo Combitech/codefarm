@@ -1,5 +1,6 @@
 
 import React from "react";
+import PropTypes from "prop-types";
 import LightComponent from "ui-lib/light_component";
 import Input from "react-toolbox/lib/input";
 import {
@@ -53,15 +54,15 @@ class List extends LightComponent {
 }
 
 List.propTypes = {
-    theme: React.PropTypes.object,
-    pathname: React.PropTypes.string.isRequired,
-    type: React.PropTypes.string.isRequired,
-    breadcrumbs: React.PropTypes.array.isRequired,
-    controls: React.PropTypes.array.isRequired
+    theme: PropTypes.object,
+    pathname: PropTypes.string.isRequired,
+    type: PropTypes.string.isRequired,
+    breadcrumbs: PropTypes.array.isRequired,
+    controls: PropTypes.array.isRequired
 };
 
 List.contextTypes = {
-    router: React.PropTypes.object.isRequired
+    router: PropTypes.object.isRequired
 };
 
 export default List;

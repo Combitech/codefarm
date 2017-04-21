@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 import Table from "react-toolbox/lib/table";
 import Switch from "react-toolbox/lib/switch";
 import LightComponent from "ui-lib/light_component";
@@ -40,8 +41,8 @@ class EventData extends LightComponent {
 }
 
 EventData.propTypes = {
-    event: React.PropTypes.object.isRequired,
-    theme: React.PropTypes.object
+    event: PropTypes.object.isRequired,
+    theme: PropTypes.object
 };
 
 class EventTable extends LightComponent {
@@ -78,9 +79,9 @@ class EventTable extends LightComponent {
 }
 
 EventTable.propTypes = {
-    events: React.PropTypes.array.isRequired,
-    filter: React.PropTypes.string.isRequired,
-    theme: React.PropTypes.object
+    events: PropTypes.array.isRequired,
+    filter: PropTypes.string.isRequired,
+    theme: PropTypes.object
 };
 
 
@@ -157,10 +158,10 @@ class EventMonitor extends LightComponent {
 }
 
 EventMonitor.propTypes = {
-    filter: React.PropTypes.string.isRequired,
-    running: React.PropTypes.bool.isRequired,
-    eventHistoryLength: React.PropTypes.number.isRequired,
-    theme: React.PropTypes.object
+    filter: PropTypes.string.isRequired,
+    running: PropTypes.bool.isRequired,
+    eventHistoryLength: PropTypes.number.isRequired,
+    theme: PropTypes.object
 };
 
 export default EventMonitor;

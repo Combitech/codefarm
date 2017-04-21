@@ -2,6 +2,7 @@
 /* global window */
 
 import React from "react";
+import PropTypes from "prop-types";
 import Chip from "react-toolbox/lib/chip";
 
 class DataChip extends React.PureComponent {
@@ -48,15 +49,15 @@ DataChip.defaultProps = {
 };
 
 DataChip.propTypes = {
-    theme: React.PropTypes.object,
-    children: React.PropTypes.node,
-    onDelete: React.PropTypes.func,
-    path: React.PropTypes.string,
-    openInNew: React.PropTypes.bool
+    theme: PropTypes.object,
+    children: PropTypes.node,
+    onDelete: PropTypes.func,
+    path: PropTypes.string,
+    openInNew: PropTypes.bool
 };
 
 DataChip.contextTypes = {
-    router: React.PropTypes.object.isRequired
+    router: PropTypes.object.isRequired
 };
 
 export default DataChip;

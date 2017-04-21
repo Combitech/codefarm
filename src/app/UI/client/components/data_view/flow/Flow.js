@@ -1,5 +1,6 @@
 
 import React from "react";
+import PropTypes from "prop-types";
 import LightComponent from "ui-lib/light_component";
 import { Flow as FlowFlow, StepGeneric, StepCreate } from "ui-components/flow";
 
@@ -91,16 +92,16 @@ class Flow extends LightComponent {
 }
 
 Flow.propTypes = {
-    theme: React.PropTypes.object,
-    context: React.PropTypes.object.isRequired,
-    item: React.PropTypes.object.isRequired,
-    pathname: React.PropTypes.string.isRequired,
-    steps: React.PropTypes.array.isRequired,
-    selected: React.PropTypes.object.isRequired
+    theme: PropTypes.object,
+    context: PropTypes.object.isRequired,
+    item: PropTypes.object.isRequired,
+    pathname: PropTypes.string.isRequired,
+    steps: PropTypes.array.isRequired,
+    selected: PropTypes.object.isRequired
 };
 
 Flow.contextTypes = {
-    router: React.PropTypes.object.isRequired
+    router: PropTypes.object.isRequired
 };
 
 export default Flow;

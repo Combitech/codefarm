@@ -1,5 +1,6 @@
 
 import React from "react";
+import PropTypes from "prop-types";
 import LightComponent from "ui-lib/light_component";
 import { States as ObservableDataStates } from "ui-lib/observable_data";
 import ExtendedItem from "ui-observables/extended_item";
@@ -90,10 +91,10 @@ class Follow extends LightComponent {
 }
 
 Follow.propTypes = {
-    theme: React.PropTypes.object,
-    item: React.PropTypes.object.isRequired,
-    pathname: React.PropTypes.string.isRequired,
-    label: React.PropTypes.string.isRequired
+    theme: PropTypes.object,
+    item: PropTypes.object.isRequired,
+    pathname: PropTypes.string.isRequired,
+    label: PropTypes.string.isRequired
 };
 
 export default Follow;

@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 import cytoscape from "cytoscape";
 
 const cyStyle = {
@@ -104,13 +105,13 @@ class Cytoscape extends React.Component {
 }
 
 Cytoscape.propTypes = {
-    elements: React.PropTypes.array.isRequired,
-    width: React.PropTypes.string,
-    height: React.PropTypes.string,
-    nodeSize: React.PropTypes.number,
-    userZoomingEnabled: React.PropTypes.bool,
-    userPanningEnabled: React.PropTypes.bool,
-    muiTheme: React.PropTypes.object
+    elements: PropTypes.array.isRequired,
+    width: PropTypes.string,
+    height: PropTypes.string,
+    nodeSize: PropTypes.number,
+    userZoomingEnabled: PropTypes.bool,
+    userPanningEnabled: PropTypes.bool,
+    muiTheme: PropTypes.object
 };
 
 export default Cytoscape;

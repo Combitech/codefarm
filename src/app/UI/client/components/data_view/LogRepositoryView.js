@@ -1,5 +1,6 @@
 
 import React from "react";
+import PropTypes from "prop-types";
 import moment from "moment";
 import Immutable from "immutable";
 import LightComponent from "ui-lib/light_component";
@@ -81,8 +82,8 @@ class LogRepositoryView extends LightComponent {
 }
 
 LogRepositoryView.propTypes = {
-    theme: React.PropTypes.object,
-    item: React.PropTypes.object
+    theme: PropTypes.object,
+    item: PropTypes.object
 };
 
 export default LogRepositoryView;

@@ -1,5 +1,6 @@
 
 import React from "react";
+import PropTypes from "prop-types";
 import { Row, Column } from "ui-components/layout";
 
 class CardColumns extends React.PureComponent {
@@ -35,12 +36,12 @@ CardColumns.defaultProps = {
 };
 
 CardColumns.propTypes = {
-    children: React.PropTypes.any,
-    useColumns: React.PropTypes.bool,
-    xs: React.PropTypes.number,
-    sm: React.PropTypes.number,
-    md: React.PropTypes.number,
-    lg: React.PropTypes.number
+    children: PropTypes.any,
+    useColumns: PropTypes.bool,
+    xs: PropTypes.number,
+    sm: PropTypes.number,
+    md: PropTypes.number,
+    lg: PropTypes.number
 };
 
 export default CardColumns;

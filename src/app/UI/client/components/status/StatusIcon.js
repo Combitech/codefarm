@@ -1,5 +1,6 @@
 
 import React from "react";
+import PropTypes from "prop-types";
 import LightComponent from "ui-lib/light_component";
 import statusIcons from "ui-lib/status_icons";
 
@@ -44,10 +45,10 @@ class StatusIcon extends LightComponent {
 }
 
 StatusIcon.propTypes = {
-    theme: React.PropTypes.object,
-    className: React.PropTypes.string,
-    status: React.PropTypes.string.isRequired,
-    size: React.PropTypes.number.isRequired
+    theme: PropTypes.object,
+    className: PropTypes.string,
+    status: PropTypes.string.isRequired,
+    size: PropTypes.number.isRequired
 };
 
 export default StatusIcon;

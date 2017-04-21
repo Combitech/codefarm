@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 import ServiceMonitorTable from "./ServiceMonitorTable";
 import NodeGraphCyto from "./NodeGraphCyto";
 import LightComponent from "ui-lib/light_component";
@@ -61,8 +62,8 @@ class ServiceMonitor extends LightComponent {
 }
 
 ServiceMonitor.propTypes = {
-    theme: React.PropTypes.object,
-    view: React.PropTypes.oneOf([ VIEW_TYPE.GRAPH, VIEW_TYPE.TABLE ]).isRequired
+    theme: PropTypes.object,
+    view: PropTypes.oneOf([ VIEW_TYPE.GRAPH, VIEW_TYPE.TABLE ]).isRequired
 };
 
 export default ServiceMonitor;

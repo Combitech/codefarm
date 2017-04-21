@@ -1,5 +1,6 @@
 
 import React from "react";
+import PropTypes from "prop-types";
 import LightComponent from "ui-lib/light_component";
 import statusIcons from "ui-lib/status_icons";
 import Flow from "./Flow";
@@ -66,14 +67,14 @@ class JobFlow extends LightComponent {
 }
 
 JobFlow.propTypes = {
-    theme: React.PropTypes.object,
-    jobRefs: React.PropTypes.array.isRequired,
-    steps: React.PropTypes.array.isRequired,
-    firstStep: React.PropTypes.object
+    theme: PropTypes.object,
+    jobRefs: PropTypes.array.isRequired,
+    steps: PropTypes.array.isRequired,
+    firstStep: PropTypes.object
 };
 
 JobFlow.contextTypes = {
-    router: React.PropTypes.object.isRequired
+    router: PropTypes.object.isRequired
 };
 
 export default JobFlow;

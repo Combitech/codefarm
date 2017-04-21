@@ -1,5 +1,6 @@
 
 import React from "react";
+import PropTypes from "prop-types";
 import DeleteIcon from "material-design-icons/action/svg/production/ic_delete_48px.svg";
 import EditIcon from "material-design-icons/image/svg/production/ic_edit_48px.svg";
 import { sizes, filters } from "ui-components/svg_grid";
@@ -123,8 +124,8 @@ class StepGeneric extends React.Component {
 }
 
 StepGeneric.propTypes = {
-    theme: React.PropTypes.object,
-    item: React.PropTypes.object.isRequired
+    theme: PropTypes.object,
+    item: PropTypes.object.isRequired
 };
 
 export default StepGeneric;

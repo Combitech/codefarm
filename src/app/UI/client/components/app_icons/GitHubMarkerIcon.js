@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 
 /* GitHub marker icon
  * source: https://github.com/logos
@@ -22,8 +23,8 @@ class GitHubMarkerIcon extends React.PureComponent {
 }
 
 GitHubMarkerIcon.propTypes = {
-    theme: React.PropTypes.object.isRequired,
-    className: React.PropTypes.string
+    theme: PropTypes.object.isRequired,
+    className: PropTypes.string
 };
 
 export default GitHubMarkerIcon;

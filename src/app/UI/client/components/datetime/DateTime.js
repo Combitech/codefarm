@@ -1,5 +1,6 @@
 
 import React from "react";
+import PropTypes from "prop-types";
 import moment from "moment";
 
 class DateTime extends React.PureComponent {
@@ -50,14 +51,14 @@ DateTime.defaultProps = {
 };
 
 DateTime.propTypes = {
-    theme: React.PropTypes.object,
-    className: React.PropTypes.string,
-    value: React.PropTypes.any,
-    defaultText: React.PropTypes.string,
-    showRaw: React.PropTypes.bool,
-    showDate: React.PropTypes.bool,
-    showTime: React.PropTypes.bool,
-    niceDate: React.PropTypes.bool
+    theme: PropTypes.object,
+    className: PropTypes.string,
+    value: PropTypes.any,
+    defaultText: PropTypes.string,
+    showRaw: PropTypes.bool,
+    showDate: PropTypes.bool,
+    showTime: PropTypes.bool,
+    niceDate: PropTypes.bool
 };
 
 export default DateTime;

@@ -1,5 +1,6 @@
 
 import React from "react";
+import PropTypes from "prop-types";
 
 class SvgGridDefs extends React.Component {
     constructor(props) {
@@ -12,7 +13,7 @@ class SvgGridDefs extends React.Component {
 }
 
 SvgGridDefs.propTypes = {
-    children: React.PropTypes.node.isRequired
+    children: PropTypes.node.isRequired
 };
 
 export default SvgGridDefs;

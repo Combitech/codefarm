@@ -1,5 +1,6 @@
 
 import React from "react";
+import PropTypes from "prop-types";
 import LightComponent from "ui-lib/light_component";
 import { CardTitle } from "react-toolbox/lib/card";
 import { Button } from "react-toolbox/lib/button";
@@ -75,8 +76,8 @@ class AddCommentCard extends LightComponent {
 }
 
 AddCommentCard.propTypes = {
-    theme: React.PropTypes.object,
-    onComment: React.PropTypes.func.isRequired
+    theme: PropTypes.object,
+    onComment: PropTypes.func.isRequired
 };
 
 export default AddCommentCard;

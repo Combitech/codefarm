@@ -1,5 +1,6 @@
 
 import React from "react";
+import PropTypes from "prop-types";
 import filters from "../filters";
 
 class Shadow extends React.Component {
@@ -29,7 +30,7 @@ Shadow.defaultProps = {
 };
 
 Shadow.propTypes = {
-    id: React.PropTypes.string
+    id: PropTypes.string
 };
 
 export default Shadow;

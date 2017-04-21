@@ -1,5 +1,6 @@
 
 import React from "react";
+import PropTypes from "prop-types";
 import { Row as RowItem } from "react-flexbox-grid";
 
 class Row extends React.PureComponent {
@@ -21,9 +22,9 @@ Row.defaultProps = {
 };
 
 Row.propTypes = {
-    theme: React.PropTypes.object,
-    children: React.PropTypes.node,
-    className: React.PropTypes.string
+    theme: PropTypes.object,
+    children: PropTypes.node,
+    className: PropTypes.string
 };
 
 export default Row;

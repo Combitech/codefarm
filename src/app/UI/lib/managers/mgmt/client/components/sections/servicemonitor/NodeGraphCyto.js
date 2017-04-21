@@ -1,5 +1,6 @@
 import moment from "moment";
 import React from "react";
+import PropTypes from "prop-types";
 import { Row, Col } from "react-flexbox-grid";
 import { Card, CardText } from "react-toolbox/lib/card";
 import Switch from "react-toolbox/lib/switch";
@@ -325,9 +326,9 @@ class NodeGraphCyto extends LightComponent {
 }
 
 NodeGraphCyto.propTypes = {
-    services: React.PropTypes.array,
-    stateColors: React.PropTypes.object.isRequired,
-    theme: React.PropTypes.object
+    services: PropTypes.array,
+    stateColors: PropTypes.object.isRequired,
+    theme: PropTypes.object
 };
 
 export default NodeGraphCyto;

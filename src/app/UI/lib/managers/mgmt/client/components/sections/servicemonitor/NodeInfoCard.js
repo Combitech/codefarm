@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 import { CardTitle, CardText, CardActions } from "react-toolbox/lib/card";
 import { List, ListItem, ListDivider, ListSubHeader } from "react-toolbox/lib/list";
 import Button from "react-toolbox/lib/button";
@@ -184,8 +185,8 @@ class NodeInfoCard extends LightComponent {
 }
 
 NodeInfoCard.propTypes = {
-    service: React.PropTypes.object,
-    onClose: React.PropTypes.func
+    service: PropTypes.object,
+    onClose: PropTypes.func
 };
 
 export default NodeInfoCard;

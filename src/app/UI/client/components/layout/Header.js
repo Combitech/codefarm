@@ -1,5 +1,6 @@
 
 import React from "react";
+import PropTypes from "prop-types";
 
 class Header extends React.PureComponent {
     render() {
@@ -17,10 +18,10 @@ Header.defaultProps = {
 };
 
 Header.propTypes = {
-    theme: React.PropTypes.object,
-    children: React.PropTypes.node,
-    className: React.PropTypes.string,
-    label: React.PropTypes.string.isRequired
+    theme: PropTypes.object,
+    children: PropTypes.node,
+    className: PropTypes.string,
+    label: PropTypes.string.isRequired
 };
 
 export default Header;

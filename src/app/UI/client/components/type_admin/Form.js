@@ -1,5 +1,6 @@
 
 import React from "react";
+import PropTypes from "prop-types";
 import { Button } from "react-toolbox/lib/button";
 import { Row, Col } from "react-flexbox-grid";
 import { Card, CardTitle, CardText, CardActions } from "react-toolbox/lib/card";
@@ -59,14 +60,14 @@ Form.defaultProps = {
 };
 
 Form.propTypes = {
-    theme: React.PropTypes.object,
-    confirmAllowed: React.PropTypes.bool,
-    confirmText: React.PropTypes.string.isRequired,
-    primaryText: React.PropTypes.string.isRequired,
-    secondaryText: React.PropTypes.string,
-    onConfirm: React.PropTypes.func.isRequired,
-    onCancel: React.PropTypes.func.isRequired,
-    children: React.PropTypes.node
+    theme: PropTypes.object,
+    confirmAllowed: PropTypes.bool,
+    confirmText: PropTypes.string.isRequired,
+    primaryText: PropTypes.string.isRequired,
+    secondaryText: PropTypes.string,
+    onConfirm: PropTypes.func.isRequired,
+    onCancel: PropTypes.func.isRequired,
+    children: PropTypes.node
 };
 
 export default Form;

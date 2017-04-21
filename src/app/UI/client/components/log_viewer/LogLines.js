@@ -1,5 +1,6 @@
 
 import React from "react";
+import PropTypes from "prop-types";
 import LightComponent from "ui-lib/light_component";
 import { Button } from "react-toolbox/lib/button";
 import { Loading } from "ui-components/layout";
@@ -70,9 +71,9 @@ LogLines.defaultProps = {
 };
 
 LogLines.propTypes = {
-    theme: React.PropTypes.object,
-    id: React.PropTypes.string.isRequired,
-    numberOfLines: React.PropTypes.number
+    theme: PropTypes.object,
+    id: PropTypes.string.isRequired,
+    numberOfLines: PropTypes.number
 };
 
 export default LogLines;

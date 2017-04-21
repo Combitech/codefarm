@@ -1,5 +1,6 @@
 
 import React from "react";
+import PropTypes from "prop-types";
 import LightComponent from "ui-lib/light_component";
 import {
     Form as TAForm,
@@ -49,13 +50,13 @@ class SignOutForm extends LightComponent {
 }
 
 SignOutForm.propTypes = {
-    theme: React.PropTypes.object,
-    userId: React.PropTypes.string,
-    userName: React.PropTypes.string
+    theme: PropTypes.object,
+    userId: PropTypes.string,
+    userName: PropTypes.string
 };
 
 SignOutForm.contextTypes = {
-    router: React.PropTypes.object.isRequired
+    router: PropTypes.object.isRequired
 };
 
 export default SignOutForm;

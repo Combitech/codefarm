@@ -1,5 +1,6 @@
 
 import React from "react";
+import PropTypes from "prop-types";
 import { ensureArray } from "misc";
 import LightComponent from "ui-lib/light_component";
 import { States as ObservableDataStates } from "ui-lib/observable_data";
@@ -103,17 +104,17 @@ class Flow extends LightComponent {
 }
 
 Flow.propTypes = {
-    theme: React.PropTypes.object,
-    item: React.PropTypes.object.isRequired,
-    itemExt: React.PropTypes.object.isRequired,
-    pathname: React.PropTypes.string.isRequired,
-    flow: React.PropTypes.object.isRequired,
-    step: React.PropTypes.string,
-    onStepSelect: React.PropTypes.func
+    theme: PropTypes.object,
+    item: PropTypes.object.isRequired,
+    itemExt: PropTypes.object.isRequired,
+    pathname: PropTypes.string.isRequired,
+    flow: PropTypes.object.isRequired,
+    step: PropTypes.string,
+    onStepSelect: PropTypes.func
 };
 
 Flow.contextTypes = {
-    router: React.PropTypes.object.isRequired
+    router: PropTypes.object.isRequired
 };
 
 export default Flow;

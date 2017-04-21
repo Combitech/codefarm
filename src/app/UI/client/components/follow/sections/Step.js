@@ -1,5 +1,6 @@
 
 import React from "react";
+import PropTypes from "prop-types";
 import statuslib from "ui-lib/statuslib";
 import { Header } from "ui-components/layout";
 import { StepResultCard } from "ui-components/data_card";
@@ -25,9 +26,9 @@ class Step extends React.PureComponent {
 }
 
 Step.propTypes = {
-    theme: React.PropTypes.object,
-    item: React.PropTypes.object.isRequired,
-    step: React.PropTypes.string.isRequired
+    theme: PropTypes.object,
+    item: PropTypes.object.isRequired,
+    step: PropTypes.string.isRequired
 };
 
 export default Step;

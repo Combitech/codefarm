@@ -1,5 +1,6 @@
 
 import React from "react";
+import PropTypes from "prop-types";
 import LightComponent from "ui-lib/light_component";
 import { DateTime } from "ui-components/datetime";
 import { Tags } from "ui-components/tags";
@@ -93,14 +94,14 @@ StatSpecCard.defaultProps = {
 };
 
 StatSpecCard.propTypes = {
-    theme: React.PropTypes.object,
-    item: React.PropTypes.object.isRequired,
-    expanded: React.PropTypes.bool,
-    expandable: React.PropTypes.bool
+    theme: PropTypes.object,
+    item: PropTypes.object.isRequired,
+    expanded: PropTypes.bool,
+    expandable: PropTypes.bool
 };
 
 StatSpecCard.contextTypes = {
-    router: React.PropTypes.object.isRequired
+    router: PropTypes.object.isRequired
 };
 
 export default StatSpecCard;

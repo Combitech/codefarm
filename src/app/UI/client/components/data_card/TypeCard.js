@@ -1,5 +1,6 @@
 
 import React from "react";
+import PropTypes from "prop-types";
 import RevisionCard from "./RevisionCard";
 import CodeRepositoryCard from "./CodeRepositoryCard";
 import ArtifactCard from "./ArtifactCard";
@@ -59,10 +60,10 @@ class TypeCard extends React.PureComponent {
 }
 
 TypeCard.propTypes = {
-    theme: React.PropTypes.object,
-    item: React.PropTypes.object.isRequired,
-    expanded: React.PropTypes.bool,
-    expandable: React.PropTypes.bool
+    theme: PropTypes.object,
+    item: PropTypes.object.isRequired,
+    expanded: PropTypes.bool,
+    expandable: PropTypes.bool
 };
 
 export default TypeCard;

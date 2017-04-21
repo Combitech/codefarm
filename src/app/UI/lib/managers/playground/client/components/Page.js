@@ -1,5 +1,6 @@
 
 import React from "react";
+import PropTypes from "prop-types";
 import { SvgGridExample } from "ui-components/svg_grid";
 import { AppHeader } from "ui-components/app_header";
 import LightComponent from "ui-lib/light_component";
@@ -23,7 +24,7 @@ class Page extends LightComponent {
 }
 
 Page.propTypes = {
-    theme: React.PropTypes.object
+    theme: PropTypes.object
 };
 
 export default Page;

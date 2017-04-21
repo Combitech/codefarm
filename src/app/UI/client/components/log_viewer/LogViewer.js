@@ -1,5 +1,6 @@
 
 import React from "react";
+import PropTypes from "prop-types";
 import LightComponent from "ui-lib/light_component";
 
 class LogViewer extends LightComponent {
@@ -27,9 +28,9 @@ class LogViewer extends LightComponent {
 }
 
 LogViewer.propTypes = {
-    theme: React.PropTypes.object,
-    className: React.PropTypes.string,
-    log: React.PropTypes.object.isRequired
+    theme: PropTypes.object,
+    className: PropTypes.string,
+    log: PropTypes.object.isRequired
 };
 
 export default LogViewer;

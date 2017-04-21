@@ -1,5 +1,6 @@
 
 import React from "react";
+import PropTypes from "prop-types";
 import { Button } from "react-toolbox/lib/button";
 
 class AppPager extends React.PureComponent {
@@ -46,10 +47,10 @@ class AppPager extends React.PureComponent {
 }
 
 AppPager.propTypes = {
-    theme: React.PropTypes.object.isRequired,
-    pageIndex: React.PropTypes.object.isRequired,
-    numPages: React.PropTypes.number.isRequired,
-    initialPageIndex: React.PropTypes.number.isRequired
+    theme: PropTypes.object.isRequired,
+    pageIndex: PropTypes.object.isRequired,
+    numPages: PropTypes.number.isRequired,
+    initialPageIndex: PropTypes.number.isRequired
 };
 
 export default AppPager;

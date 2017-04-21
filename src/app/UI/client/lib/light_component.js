@@ -1,5 +1,6 @@
 
 import React from "react";
+import PropTypes from "prop-types";
 
 let instanceCounter = 0;
 
@@ -75,9 +76,9 @@ class LightComponent extends React.PureComponent {
 
 
 LightComponent.propTypes = {
-    routes: React.PropTypes.array,
-    route: React.PropTypes.any,
-    params: React.PropTypes.object
+    routes: PropTypes.array,
+    route: PropTypes.any,
+    params: PropTypes.object
 };
 
 export default LightComponent;

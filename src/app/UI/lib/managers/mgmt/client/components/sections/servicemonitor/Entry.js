@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 
 class Entry extends React.Component {
     constructor(props) {
@@ -31,11 +32,11 @@ class Entry extends React.Component {
 }
 
 Entry.propTypes = {
-    theme: React.PropTypes.object,
-    label: React.PropTypes.string.isRequired,
-    pathname: React.PropTypes.string.isRequired,
-    ServiceMonitorComponent: React.PropTypes.func,
-    children: React.PropTypes.node
+    theme: PropTypes.object,
+    label: PropTypes.string.isRequired,
+    pathname: PropTypes.string.isRequired,
+    ServiceMonitorComponent: PropTypes.func,
+    children: PropTypes.node
 };
 
 export default Entry;

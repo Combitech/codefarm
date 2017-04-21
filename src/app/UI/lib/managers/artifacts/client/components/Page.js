@@ -1,5 +1,6 @@
 
 import React from "react";
+import PropTypes from "prop-types";
 import { States as ObservableDataStates } from "ui-lib/observable_data";
 import LightComponent from "ui-lib/light_component";
 import { AppMenu } from "ui-components/app_menu";
@@ -63,13 +64,13 @@ class Page extends LightComponent {
 }
 
 Page.propTypes = {
-    theme: React.PropTypes.object,
-    children: React.PropTypes.node,
-    route: React.PropTypes.object.isRequired
+    theme: PropTypes.object,
+    children: PropTypes.node,
+    route: PropTypes.object.isRequired
 };
 
 Page.contextTypes = {
-    router: React.PropTypes.object.isRequired
+    router: PropTypes.object.isRequired
 };
 
 export default Page;

@@ -1,5 +1,6 @@
 
 import React from "react";
+import PropTypes from "prop-types";
 import { Router, browserHistory } from "react-router";
 
 /* global window */
@@ -18,7 +19,7 @@ class AppRoutes extends React.Component {
 
 
 AppRoutes.propTypes = {
-    routes: React.PropTypes.element.isRequired
+    routes: PropTypes.element.isRequired
 };
 
 export default AppRoutes;

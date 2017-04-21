@@ -1,5 +1,6 @@
 
 import React from "react";
+import PropTypes from "prop-types";
 import LightComponent from "ui-lib/light_component";
 import DataCard from "./DataCard";
 import { StatusIcon } from "ui-components/status";
@@ -45,10 +46,10 @@ StepResultCard.defaultProps = {
 };
 
 StepResultCard.propTypes = {
-    theme: React.PropTypes.object,
-    item: React.PropTypes.object.isRequired,
-    expanded: React.PropTypes.bool,
-    expandable: React.PropTypes.bool
+    theme: PropTypes.object,
+    item: PropTypes.object.isRequired,
+    expanded: PropTypes.bool,
+    expandable: PropTypes.bool
 };
 
 export default StepResultCard;

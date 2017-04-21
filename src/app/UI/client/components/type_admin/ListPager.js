@@ -1,5 +1,6 @@
 
 import React from "react";
+import PropTypes from "prop-types";
 import ImmutablePropTypes from "react-immutable-proptypes";
 import { Button } from "react-toolbox/lib/button";
 
@@ -39,8 +40,8 @@ class ListPager extends React.PureComponent {
 }
 
 ListPager.propTypes = {
-    theme: React.PropTypes.object,
-    pagedList: React.PropTypes.object.isRequired,
+    theme: PropTypes.object,
+    pagedList: PropTypes.object.isRequired,
     pagingInfo: ImmutablePropTypes.map.isRequired
 };
 

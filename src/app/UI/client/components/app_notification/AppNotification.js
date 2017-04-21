@@ -1,5 +1,6 @@
 
 import React from "react";
+import PropTypes from "prop-types";
 import LightComponent from "ui-lib/light_component";
 import Snackbar from "react-toolbox/lib/snackbar";
 import Notification from "ui-observables/notification";
@@ -45,7 +46,7 @@ class AppNotification extends LightComponent {
 }
 
 AppNotification.propTypes = {
-    theme: React.PropTypes.object
+    theme: PropTypes.object
 };
 
 export default AppNotification;

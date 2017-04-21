@@ -1,5 +1,6 @@
 
 import React from "react";
+import PropTypes from "prop-types";
 import LightComponent from "ui-lib/light_component";
 import { Section } from "ui-components/type_admin";
 import Dropdown from "react-toolbox/lib/dropdown";
@@ -63,15 +64,15 @@ class MonitorPage extends LightComponent {
 }
 
 MonitorPage.propTypes = {
-    theme: React.PropTypes.object,
-    pathname: React.PropTypes.string /* .isRequired */,
-    type: React.PropTypes.string /* .isRequired */,
-    breadcrumbs: React.PropTypes.array /* .isRequired */,
-    ServiceMonitorComponent: React.PropTypes.func /* .isRequired */
+    theme: PropTypes.object,
+    pathname: PropTypes.string /* .isRequired */,
+    type: PropTypes.string /* .isRequired */,
+    breadcrumbs: PropTypes.array /* .isRequired */,
+    ServiceMonitorComponent: PropTypes.func /* .isRequired */
 };
 
 MonitorPage.contextTypes = {
-    router: React.PropTypes.object.isRequired
+    router: PropTypes.object.isRequired
 };
 
 export default MonitorPage;

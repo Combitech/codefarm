@@ -1,5 +1,6 @@
 
 import React from "react";
+import PropTypes from "prop-types";
 import TypeItem from "ui-observables/type_item";
 import { States as ObservableDataStates } from "ui-lib/observable_data";
 import stateVar from "ui-lib/state_var";
@@ -240,15 +241,15 @@ View.defaultProps = {
 };
 
 View.propTypes = {
-    theme: React.PropTypes.object,
-    parentItems: React.PropTypes.array,
-    item: React.PropTypes.object,
-    params: React.PropTypes.object.isRequired,
-    route: React.PropTypes.object.isRequired,
-    location: React.PropTypes.object.isRequired,
-    children: React.PropTypes.node,
-    breadcrumbs: React.PropTypes.array,
-    context: React.PropTypes.object
+    theme: PropTypes.object,
+    parentItems: PropTypes.array,
+    item: PropTypes.object,
+    params: PropTypes.object.isRequired,
+    route: PropTypes.object.isRequired,
+    location: PropTypes.object.isRequired,
+    children: PropTypes.node,
+    breadcrumbs: PropTypes.array,
+    context: PropTypes.object
 };
 
 export default View;

@@ -1,5 +1,6 @@
 
 import React from "react";
+import PropTypes from "prop-types";
 import moment from "moment";
 import LightComponent from "ui-lib/light_component";
 import {
@@ -57,7 +58,7 @@ class NotificationList extends LightComponent {
 }
 
 NotificationList.propTypes = {
-    theme: React.PropTypes.object
+    theme: PropTypes.object
 };
 
 export default NotificationList;

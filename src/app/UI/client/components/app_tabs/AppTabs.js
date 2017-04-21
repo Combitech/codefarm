@@ -1,5 +1,6 @@
 
 import React from "react";
+import PropTypes from "prop-types";
 import { Tabs } from "react-toolbox/lib/tabs";
 import LightComponent from "ui-lib/light_component";
 
@@ -27,9 +28,9 @@ class AppTabs extends LightComponent {
 }
 
 AppTabs.propTypes = {
-    children: React.PropTypes.node,
-    theme: React.PropTypes.object,
-    selected: React.PropTypes.object.isRequired
+    children: PropTypes.node,
+    theme: PropTypes.object,
+    selected: PropTypes.object.isRequired
 };
 
 export default AppTabs;

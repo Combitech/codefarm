@@ -1,5 +1,6 @@
 
 import React from "react";
+import PropTypes from "prop-types";
 import moment from "moment";
 import Immutable from "immutable";
 import LightComponent from "ui-lib/light_component";
@@ -77,9 +78,9 @@ class OutputTab extends LightComponent {
 }
 
 OutputTab.propTypes = {
-    theme: React.PropTypes.object,
-    artifactRefs: React.PropTypes.array.isRequired,
-    revisionRefs: React.PropTypes.array.isRequired
+    theme: PropTypes.object,
+    artifactRefs: PropTypes.array.isRequired,
+    revisionRefs: PropTypes.array.isRequired
 };
 
 export default OutputTab;

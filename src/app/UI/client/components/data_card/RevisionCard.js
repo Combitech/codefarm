@@ -1,5 +1,6 @@
 
 import React from "react";
+import PropTypes from "prop-types";
 import LightComponent from "ui-lib/light_component";
 import { CardTitle, CardText } from "react-toolbox/lib/card";
 import { Button } from "react-toolbox/lib/button";
@@ -289,16 +290,16 @@ RevisionCard.defaultProps = {
 };
 
 RevisionCard.propTypes = {
-    theme: React.PropTypes.object,
-    item: React.PropTypes.object.isRequired,
-    patchIndex: React.PropTypes.number,
-    expanded: React.PropTypes.bool,
-    expandable: React.PropTypes.bool,
-    clickable: React.PropTypes.bool
+    theme: PropTypes.object,
+    item: PropTypes.object.isRequired,
+    patchIndex: PropTypes.number,
+    expanded: PropTypes.bool,
+    expandable: PropTypes.bool,
+    clickable: PropTypes.bool
 };
 
 RevisionCard.contextTypes = {
-    router: React.PropTypes.object.isRequired
+    router: PropTypes.object.isRequired
 };
 
 export default RevisionCard;

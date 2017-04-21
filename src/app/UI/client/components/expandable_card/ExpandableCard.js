@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 import { Card as RTCard } from "react-toolbox/lib/card";
 import { IconButton } from "react-toolbox/lib/button";
 import LightComponent from "ui-lib/light_component";
@@ -55,20 +56,20 @@ ExpandableCard.defaultProps = {
 };
 
 ExpandableCard.propTypes = {
-    theme: React.PropTypes.object,
-    className: React.PropTypes.string,
-    children: React.PropTypes.node,
-    iconExpand: React.PropTypes.oneOfType([
-        React.PropTypes.string,
-        React.PropTypes.element
+    theme: PropTypes.object,
+    className: PropTypes.string,
+    children: PropTypes.node,
+    iconExpand: PropTypes.oneOfType([
+        PropTypes.string,
+        PropTypes.element
     ]),
-    iconCollapse: React.PropTypes.oneOfType([
-        React.PropTypes.string,
-        React.PropTypes.element
+    iconCollapse: PropTypes.oneOfType([
+        PropTypes.string,
+        PropTypes.element
     ]),
-    expandable: React.PropTypes.bool,
-    expanded: React.PropTypes.object.isRequired,
-    onClick: React.PropTypes.func
+    expandable: PropTypes.bool,
+    expanded: PropTypes.object.isRequired,
+    onClick: PropTypes.func
 };
 
 export default ExpandableCard;

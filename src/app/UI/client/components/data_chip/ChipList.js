@@ -1,5 +1,6 @@
 
 import React from "react";
+import PropTypes from "prop-types";
 import ImmutablePropTypes from "react-immutable-proptypes";
 import TypeChip from "./TypeChip";
 
@@ -21,7 +22,7 @@ class ChipList extends React.PureComponent {
 }
 
 ChipList.propTypes = {
-    theme: React.PropTypes.object,
+    theme: PropTypes.object,
     list: ImmutablePropTypes.list.isRequired
 };
 

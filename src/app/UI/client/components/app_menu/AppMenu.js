@@ -1,5 +1,6 @@
 
 import React from "react";
+import PropTypes from "prop-types";
 import { Button } from "react-toolbox/lib/button";
 
 class AppMenu extends React.Component {
@@ -61,14 +62,14 @@ class AppMenu extends React.Component {
 }
 
 AppMenu.propTypes = {
-    primaryText: React.PropTypes.string.isRequired,
-    items: React.PropTypes.array.isRequired,
-    icon: React.PropTypes.string.isRequired,
-    theme: React.PropTypes.object.isRequired
+    primaryText: PropTypes.string.isRequired,
+    items: PropTypes.array.isRequired,
+    icon: PropTypes.string.isRequired,
+    theme: PropTypes.object.isRequired
 };
 
 AppMenu.contextTypes = {
-    router: React.PropTypes.object.isRequired
+    router: PropTypes.object.isRequired
 };
 
 export default AppMenu;

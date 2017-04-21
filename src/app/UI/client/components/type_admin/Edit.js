@@ -1,5 +1,6 @@
 
 import React from "react";
+import PropTypes from "prop-types";
 import api from "api.io/api.io-client";
 import LightComponent from "ui-lib/light_component";
 
@@ -88,17 +89,17 @@ class Edit extends LightComponent {
 }
 
 Edit.propTypes = {
-    theme: React.PropTypes.object,
-    pathname: React.PropTypes.string /* .isRequired */,
-    breadcrumbs: React.PropTypes.array /* .isRequired */,
-    parentItems: React.PropTypes.array /* .isRequired */,
-    item: React.PropTypes.object,
-    context: React.PropTypes.object,
-    route: React.PropTypes.object.isRequired
+    theme: PropTypes.object,
+    pathname: PropTypes.string /* .isRequired */,
+    breadcrumbs: PropTypes.array /* .isRequired */,
+    parentItems: PropTypes.array /* .isRequired */,
+    item: PropTypes.object,
+    context: PropTypes.object,
+    route: PropTypes.object.isRequired
 };
 
 Edit.contextTypes = {
-    router: React.PropTypes.object.isRequired
+    router: PropTypes.object.isRequired
 };
 
 export default Edit;

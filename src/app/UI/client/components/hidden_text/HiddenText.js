@@ -1,5 +1,6 @@
 
 import React from "react";
+import PropTypes from "prop-types";
 
 class HiddenText extends React.PureComponent {
     constructor(props) {
@@ -35,10 +36,10 @@ class HiddenText extends React.PureComponent {
 }
 
 HiddenText.propTypes = {
-    theme: React.PropTypes.object,
-    className: React.PropTypes.string,
-    text: React.PropTypes.string.isRequired,
-    label: React.PropTypes.string.isRequired
+    theme: PropTypes.object,
+    className: PropTypes.string,
+    text: PropTypes.string.isRequired,
+    label: PropTypes.string.isRequired
 };
 
 export default HiddenText;

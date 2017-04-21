@@ -1,5 +1,6 @@
 
 import React from "react";
+import PropTypes from "prop-types";
 import FontIcon from "react-toolbox/lib/font_icon";
 
 class AppHeader extends React.PureComponent {
@@ -28,15 +29,15 @@ class AppHeader extends React.PureComponent {
 }
 
 AppHeader.propTypes = {
-    className: React.PropTypes.string,
-    children: React.PropTypes.node,
-    primaryText: React.PropTypes.string.isRequired,
-    secondaryText: React.PropTypes.string.isRequired,
-    icon: React.PropTypes.oneOfType([
-        React.PropTypes.string,
-        React.PropTypes.element
+    className: PropTypes.string,
+    children: PropTypes.node,
+    primaryText: PropTypes.string.isRequired,
+    secondaryText: PropTypes.string.isRequired,
+    icon: PropTypes.oneOfType([
+        PropTypes.string,
+        PropTypes.element
     ]),
-    theme: React.PropTypes.object
+    theme: PropTypes.object
 };
 
 export default AppHeader;

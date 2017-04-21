@@ -1,5 +1,6 @@
 
 import React from "react";
+import PropTypes from "prop-types";
 import LightComponent from "ui-lib/light_component";
 import { Row, Column, Header, Section, Loading } from "ui-components/layout";
 import { FlowCard } from "ui-components/data_card";
@@ -80,10 +81,10 @@ class FlowView extends LightComponent {
 }
 
 FlowView.propTypes = {
-    theme: React.PropTypes.object,
-    item: React.PropTypes.object,
-    context: React.PropTypes.object,
-    pathname: React.PropTypes.string
+    theme: PropTypes.object,
+    item: PropTypes.object,
+    context: PropTypes.object,
+    pathname: PropTypes.string
 };
 
 export default FlowView;

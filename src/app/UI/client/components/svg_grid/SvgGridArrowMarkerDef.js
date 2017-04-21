@@ -1,5 +1,6 @@
 
 import React from "react";
+import PropTypes from "prop-types";
 
 class SvgGridArrowMarkerDef extends React.Component {
     constructor(props) {
@@ -34,11 +35,11 @@ class SvgGridArrowMarkerDef extends React.Component {
 }
 
 SvgGridArrowMarkerDef.propTypes = {
-    id: React.PropTypes.string.isRequired,
-    color: React.PropTypes.string,
-    width: React.PropTypes.number,
-    height: React.PropTypes.number,
-    isStart: React.PropTypes.bool
+    id: PropTypes.string.isRequired,
+    color: PropTypes.string,
+    width: PropTypes.number,
+    height: PropTypes.number,
+    isStart: PropTypes.bool
 };
 
 export default SvgGridArrowMarkerDef;

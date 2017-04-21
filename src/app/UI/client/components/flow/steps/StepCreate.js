@@ -1,5 +1,6 @@
 
 import React from "react";
+import PropTypes from "prop-types";
 import { sizes } from "ui-components/svg_grid";
 
 class StepCreate extends React.Component {
@@ -59,8 +60,8 @@ class StepCreate extends React.Component {
 }
 
 StepCreate.propTypes = {
-    theme: React.PropTypes.object,
-    item: React.PropTypes.object.isRequired
+    theme: PropTypes.object,
+    item: PropTypes.object.isRequired
 };
 
 export default StepCreate;

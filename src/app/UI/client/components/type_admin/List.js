@@ -1,5 +1,6 @@
 
 import React from "react";
+import PropTypes from "prop-types";
 import LightComponent from "ui-lib/light_component";
 import LoadIndicator from "./LoadIndicator";
 import ListComponentItem from "./ListItem";
@@ -84,15 +85,15 @@ List.defaultProps = {
 };
 
 List.propTypes = {
-    theme: React.PropTypes.object,
-    type: React.PropTypes.string.isRequired,
-    filter: React.PropTypes.string,
-    filterFields: React.PropTypes.array,
-    query: React.PropTypes.object,
-    onSelect: React.PropTypes.func,
-    ListComponent: React.PropTypes.func.isRequired,
-    ListItemComponent: React.PropTypes.func.isRequired,
-    listItemContext: React.PropTypes.any
+    theme: PropTypes.object,
+    type: PropTypes.string.isRequired,
+    filter: PropTypes.string,
+    filterFields: PropTypes.array,
+    query: PropTypes.object,
+    onSelect: PropTypes.func,
+    ListComponent: PropTypes.func.isRequired,
+    ListItemComponent: PropTypes.func.isRequired,
+    listItemContext: PropTypes.any
 };
 
 export default List;

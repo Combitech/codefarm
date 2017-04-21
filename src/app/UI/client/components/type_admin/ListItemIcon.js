@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 import FontIcon from "react-toolbox/lib/font_icon";
 
 class ListItemIcon extends React.Component {
@@ -20,9 +21,9 @@ class ListItemIcon extends React.Component {
 }
 
 ListItemIcon.propTypes = {
-    theme: React.PropTypes.object,
-    icon: React.PropTypes.string,
-    className: React.PropTypes.string
+    theme: PropTypes.object,
+    icon: PropTypes.string,
+    className: PropTypes.string
 };
 
 export default ListItemIcon;

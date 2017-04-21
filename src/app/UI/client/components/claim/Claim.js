@@ -1,5 +1,6 @@
 
 import React from "react";
+import PropTypes from "prop-types";
 import Immutable from "immutable";
 import LightComponent from "ui-lib/light_component";
 import { createClaim, removeClaim } from "ui-lib/claim";
@@ -88,8 +89,8 @@ class Claim extends LightComponent {
 }
 
 Claim.propTypes = {
-    theme: React.PropTypes.object,
-    targetRef: React.PropTypes.object.isRequired
+    theme: PropTypes.object,
+    targetRef: PropTypes.object.isRequired
 };
 
 export default Claim;

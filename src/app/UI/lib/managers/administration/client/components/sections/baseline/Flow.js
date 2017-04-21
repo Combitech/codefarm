@@ -1,5 +1,6 @@
 
 import React from "react";
+import PropTypes from "prop-types";
 import LightComponent from "ui-lib/light_component";
 import { JobFlow, StepStatus } from "ui-components/flow";
 import { ensureArray } from "misc";
@@ -137,18 +138,18 @@ FlowComponent.defaultProps = {
 };
 
 FlowComponent.propTypes = {
-    theme: React.PropTypes.object,
-    item: React.PropTypes.object.isRequired,
-    itemExt: React.PropTypes.object.isRequired,
-    pathname: React.PropTypes.string.isRequired,
-    flow: React.PropTypes.object.isRequired,
-    step: React.PropTypes.string,
-    firstStepName: React.PropTypes.string,
-    onStepSelect: React.PropTypes.func
+    theme: PropTypes.object,
+    item: PropTypes.object.isRequired,
+    itemExt: PropTypes.object.isRequired,
+    pathname: PropTypes.string.isRequired,
+    flow: PropTypes.object.isRequired,
+    step: PropTypes.string,
+    firstStepName: PropTypes.string,
+    onStepSelect: PropTypes.func
 };
 
 FlowComponent.contextTypes = {
-    router: React.PropTypes.object.isRequired
+    router: PropTypes.object.isRequired
 };
 
 export default FlowComponent;

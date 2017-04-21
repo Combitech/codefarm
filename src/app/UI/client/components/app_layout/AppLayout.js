@@ -1,5 +1,6 @@
 
 import React from "react";
+import PropTypes from "prop-types";
 import LightComponent from "ui-lib/light_component";
 import { AppLoader } from "ui-components/app_loader";
 import { AppTopBar } from "ui-components/app_top_bar";
@@ -19,8 +20,8 @@ class AppLayout extends LightComponent {
 }
 
 AppLayout.propTypes = {
-    children: React.PropTypes.node,
-    theme: React.PropTypes.object
+    children: PropTypes.node,
+    theme: PropTypes.object
 };
 
 export default AppLayout;

@@ -1,5 +1,6 @@
 
 import React from "react";
+import PropTypes from "prop-types";
 import LightComponent from "ui-lib/light_component";
 import Entry from "./Entry";
 import ServiceMonitor from "./ServiceMonitor";
@@ -21,9 +22,9 @@ class Page extends LightComponent {
 }
 
 Page.propTypes = {
-    theme: React.PropTypes.object,
-    children: React.PropTypes.node,
-    route: React.PropTypes.object.isRequired
+    theme: PropTypes.object,
+    children: PropTypes.node,
+    route: PropTypes.object.isRequired
 };
 
 export default Page;

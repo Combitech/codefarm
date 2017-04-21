@@ -1,5 +1,6 @@
 
 import React from "react";
+import PropTypes from "prop-types";
 import ImmutablePropTypes from "react-immutable-proptypes";
 
 class Header extends React.PureComponent {
@@ -28,7 +29,7 @@ class Header extends React.PureComponent {
 
 Header.propTypes = {
     steps: ImmutablePropTypes.list,
-    theme: React.PropTypes.object
+    theme: PropTypes.object
 };
 
 export default Header;

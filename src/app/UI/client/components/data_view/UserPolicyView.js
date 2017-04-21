@@ -1,5 +1,6 @@
 
 import React from "react";
+import PropTypes from "prop-types";
 import Immutable from "immutable";
 import LightComponent from "ui-lib/light_component";
 import { Row, Column, Header, Section, Loading } from "ui-components/layout";
@@ -84,8 +85,8 @@ class UserPolicyView extends LightComponent {
 }
 
 UserPolicyView.propTypes = {
-    theme: React.PropTypes.object,
-    item: React.PropTypes.object
+    theme: PropTypes.object,
+    item: PropTypes.object
 };
 
 export default UserPolicyView;

@@ -1,5 +1,6 @@
 
 import React from "react";
+import PropTypes from "prop-types";
 import moment from "moment";
 import Immutable from "immutable";
 import LightComponent from "ui-lib/light_component";
@@ -47,8 +48,8 @@ class LogTab extends LightComponent {
 }
 
 LogTab.propTypes = {
-    theme: React.PropTypes.object,
-    logRefs: React.PropTypes.array.isRequired
+    theme: PropTypes.object,
+    logRefs: PropTypes.array.isRequired
 };
 
 export default LogTab;

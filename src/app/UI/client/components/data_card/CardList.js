@@ -1,5 +1,6 @@
 
 import React from "react";
+import PropTypes from "prop-types";
 import ImmutablePropTypes from "react-immutable-proptypes";
 import CardColumns from "./CardColumns";
 
@@ -62,15 +63,15 @@ CardList.defaultProps = {
 };
 
 CardList.propTypes = {
-    theme: React.PropTypes.object,
+    theme: PropTypes.object,
     list: ImmutablePropTypes.list.isRequired,
-    expanded: React.PropTypes.bool,
-    expandable: React.PropTypes.bool,
-    inline: React.PropTypes.bool,
-    showEmpty: React.PropTypes.bool,
-    emptyLabel: React.PropTypes.string,
-    pager: React.PropTypes.element,
-    columns: React.PropTypes.number
+    expanded: PropTypes.bool,
+    expandable: PropTypes.bool,
+    inline: PropTypes.bool,
+    showEmpty: PropTypes.bool,
+    emptyLabel: PropTypes.string,
+    pager: PropTypes.element,
+    columns: PropTypes.number
 };
 
 export default CardList;

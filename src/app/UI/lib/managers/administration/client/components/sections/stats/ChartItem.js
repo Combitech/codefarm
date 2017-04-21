@@ -1,5 +1,6 @@
 
 import React from "react";
+import PropTypes from "prop-types";
 import LightComponent from "ui-lib/light_component";
 import StatDataExplore from "./StatDataExplore";
 import TypeItem from "ui-observables/type_item";
@@ -46,11 +47,11 @@ class ChartItem extends LightComponent {
 }
 
 ChartItem.propTypes = {
-    theme: React.PropTypes.object,
-    item: React.PropTypes.object.isRequired,
-    pathname: React.PropTypes.string.isRequired,
-    breadcrumbs: React.PropTypes.array.isRequired,
-    controls: React.PropTypes.array.isRequired
+    theme: PropTypes.object,
+    item: PropTypes.object.isRequired,
+    pathname: PropTypes.string.isRequired,
+    breadcrumbs: PropTypes.array.isRequired,
+    controls: PropTypes.array.isRequired
 };
 
 export default ChartItem;

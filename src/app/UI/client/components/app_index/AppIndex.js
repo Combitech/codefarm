@@ -1,5 +1,6 @@
 
 import React from "react";
+import PropTypes from "prop-types";
 import moment from "moment";
 import Immutable from "immutable";
 import LightComponent from "ui-lib/light_component";
@@ -110,7 +111,7 @@ class AppIndex extends LightComponent {
 }
 
 AppIndex.propTypes = {
-    theme: React.PropTypes.object
+    theme: PropTypes.object
 };
 
 export default AppIndex;

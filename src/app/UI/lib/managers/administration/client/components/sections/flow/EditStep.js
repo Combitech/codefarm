@@ -1,5 +1,6 @@
 
 import React from "react";
+import PropTypes from "prop-types";
 import LightComponent from "ui-lib/light_component";
 import Input from "react-toolbox/lib/input";
 import Slider from "react-toolbox/lib/slider";
@@ -310,15 +311,15 @@ class EditStep extends LightComponent {
 }
 
 EditStep.propTypes = {
-    theme: React.PropTypes.object,
-    item: React.PropTypes.object,
-    parentItems: React.PropTypes.array,
-    pathname: React.PropTypes.string.isRequired,
-    breadcrumbs: React.PropTypes.array.isRequired,
-    controls: React.PropTypes.array.isRequired,
-    onSave: React.PropTypes.func.isRequired,
-    onCancel: React.PropTypes.func.isRequired,
-    context: React.PropTypes.object.isRequired
+    theme: PropTypes.object,
+    item: PropTypes.object,
+    parentItems: PropTypes.array,
+    pathname: PropTypes.string.isRequired,
+    breadcrumbs: PropTypes.array.isRequired,
+    controls: PropTypes.array.isRequired,
+    onSave: PropTypes.func.isRequired,
+    onCancel: PropTypes.func.isRequired,
+    context: PropTypes.object.isRequired
 };
 
 export default EditStep;

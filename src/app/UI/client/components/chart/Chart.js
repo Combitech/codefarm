@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 // import ImmutablePropTypes from "react-immutable-proptypes";
 import LightComponent from "ui-lib/light_component";
 import {
@@ -237,20 +238,20 @@ Chart.defaultProps = {
 };
 
 Chart.propTypes = {
-    theme: React.PropTypes.object,
-    samples: React.PropTypes.array.isRequired,
-    xFields: React.PropTypes.array.isRequired,
-    yFields: React.PropTypes.array.isRequired,
-    zFields: React.PropTypes.array.isRequired,
-    chartType: React.PropTypes.string.isRequired,
-    xAxisType: React.PropTypes.string,
-    yAxisType: React.PropTypes.string,
-    zAxisType: React.PropTypes.string,
-    xAxisScale: React.PropTypes.string,
-    yAxisScale: React.PropTypes.string,
-    zAxisScale: React.PropTypes.string,
-    width: React.PropTypes.string,
-    aspectRatio: React.PropTypes.number
+    theme: PropTypes.object,
+    samples: PropTypes.array.isRequired,
+    xFields: PropTypes.array.isRequired,
+    yFields: PropTypes.array.isRequired,
+    zFields: PropTypes.array.isRequired,
+    chartType: PropTypes.string.isRequired,
+    xAxisType: PropTypes.string,
+    yAxisType: PropTypes.string,
+    zAxisType: PropTypes.string,
+    xAxisScale: PropTypes.string,
+    yAxisScale: PropTypes.string,
+    zAxisScale: PropTypes.string,
+    width: PropTypes.string,
+    aspectRatio: PropTypes.number
 };
 
 export default Chart;

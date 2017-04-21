@@ -1,5 +1,6 @@
 
 import React from "react";
+import PropTypes from "prop-types";
 import Immutable from "immutable";
 import moment from "moment";
 import stateVar from "ui-lib/state_var";
@@ -78,8 +79,8 @@ class CommentList extends LightComponent {
 }
 
 CommentList.propTypes = {
-    theme: React.PropTypes.object,
-    item: React.PropTypes.object.isRequired
+    theme: PropTypes.object,
+    item: PropTypes.object.isRequired
 };
 
 export default CommentList;

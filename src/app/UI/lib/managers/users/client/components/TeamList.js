@@ -1,5 +1,6 @@
 
 import React from "react";
+import PropTypes from "prop-types";
 import { ListCards } from "ui-components/type_admin";
 import Observable from "ui-observables/paged_team_list";
 
@@ -16,9 +17,9 @@ class TeamList extends React.PureComponent {
 }
 
 TeamList.propTypes = {
-    theme: React.PropTypes.object,
-    breadcrumbs: React.PropTypes.array.isRequired,
-    controls: React.PropTypes.array.isRequired
+    theme: PropTypes.object,
+    breadcrumbs: PropTypes.array.isRequired,
+    controls: PropTypes.array.isRequired
 };
 
 export default TeamList;

@@ -1,5 +1,6 @@
 
 import React from "react";
+import PropTypes from "prop-types";
 import LightComponent from "ui-lib/light_component";
 import Input from "react-toolbox/lib/input";
 import Switch from "react-toolbox/lib/switch";
@@ -433,16 +434,16 @@ StatDataExplorer.defaultProps = {
 };
 
 StatDataExplorer.propTypes = {
-    theme: React.PropTypes.object,
-    chartItem: React.PropTypes.object,
-    statItem: React.PropTypes.object,
-    pathname: React.PropTypes.string.isRequired,
-    breadcrumbs: React.PropTypes.array.isRequired,
-    controls: React.PropTypes.array.isRequired
+    theme: PropTypes.object,
+    chartItem: PropTypes.object,
+    statItem: PropTypes.object,
+    pathname: PropTypes.string.isRequired,
+    breadcrumbs: PropTypes.array.isRequired,
+    controls: PropTypes.array.isRequired
 };
 
 StatDataExplorer.contextTypes = {
-    router: React.PropTypes.object.isRequired
+    router: PropTypes.object.isRequired
 };
 
 export default StatDataExplorer;

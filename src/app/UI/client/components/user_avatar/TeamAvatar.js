@@ -1,5 +1,6 @@
 
 import React from "react";
+import PropTypes from "prop-types";
 import AvatarBase, { AVATAR_TYPE } from "./AvatarBase";
 
 class TeamAvatar extends React.PureComponent {
@@ -23,11 +24,11 @@ TeamAvatar.defaultProps = {
 };
 
 TeamAvatar.propTypes = {
-    theme: React.PropTypes.object,
-    className: React.PropTypes.string,
-    teamId: React.PropTypes.any,
-    defaultUrl: React.PropTypes.string,
-    large: React.PropTypes.bool
+    theme: PropTypes.object,
+    className: PropTypes.string,
+    teamId: PropTypes.any,
+    defaultUrl: PropTypes.string,
+    large: PropTypes.bool
 };
 
 export default TeamAvatar;

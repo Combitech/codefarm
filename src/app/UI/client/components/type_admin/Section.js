@@ -1,5 +1,6 @@
 
 import React from "react";
+import PropTypes from "prop-types";
 import { Breadcrumbs } from "ui-components/breadcrumbs";
 import LightComponent from "ui-lib/light_component";
 
@@ -25,10 +26,10 @@ class Section extends LightComponent {
 }
 
 Section.propTypes = {
-    theme: React.PropTypes.object,
-    children: React.PropTypes.node,
-    controls: React.PropTypes.node,
-    breadcrumbs: React.PropTypes.array
+    theme: PropTypes.object,
+    children: PropTypes.node,
+    controls: PropTypes.node,
+    breadcrumbs: PropTypes.array
 };
 
 export default Section;

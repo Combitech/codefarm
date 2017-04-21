@@ -1,5 +1,6 @@
 
 import React from "react";
+import PropTypes from "prop-types";
 import LightComponent from "ui-lib/light_component";
 import LoadIndicator from "./LoadIndicator";
 import ListComponentItem from "./ListItem";
@@ -123,25 +124,25 @@ PagedList.defaultProps = {
 };
 
 PagedList.propTypes = {
-    theme: React.PropTypes.object,
-    type: React.PropTypes.string.isRequired,
-    filter: React.PropTypes.string,
-    filterFields: React.PropTypes.array,
-    query: React.PropTypes.object,
-    onSelect: React.PropTypes.func,
-    ListComponent: React.PropTypes.func.isRequired,
-    listContext: React.PropTypes.any,
-    ListItemComponent: React.PropTypes.func.isRequired,
-    listItemContext: React.PropTypes.any,
-    limit: React.PropTypes.number,
-    sortOn: React.PropTypes.string,
-    sortOnType: React.PropTypes.string,
-    sortDesc: React.PropTypes.bool
+    theme: PropTypes.object,
+    type: PropTypes.string.isRequired,
+    filter: PropTypes.string,
+    filterFields: PropTypes.array,
+    query: PropTypes.object,
+    onSelect: PropTypes.func,
+    ListComponent: PropTypes.func.isRequired,
+    listContext: PropTypes.any,
+    ListItemComponent: PropTypes.func.isRequired,
+    listItemContext: PropTypes.any,
+    limit: PropTypes.number,
+    sortOn: PropTypes.string,
+    sortOnType: PropTypes.string,
+    sortDesc: PropTypes.bool
 };
 
 PagedList.contextTypes = {
     // Required by state_var when linkToLocation is used
-    router: React.PropTypes.object.isRequired
+    router: PropTypes.object.isRequired
 };
 
 export default PagedList;

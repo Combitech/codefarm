@@ -1,5 +1,6 @@
 
 import React from "react";
+import PropTypes from "prop-types";
 
 class Section extends React.PureComponent {
     render() {
@@ -16,9 +17,9 @@ Section.defaultProps = {
 };
 
 Section.propTypes = {
-    theme: React.PropTypes.object,
-    children: React.PropTypes.node,
-    className: React.PropTypes.string
+    theme: PropTypes.object,
+    children: PropTypes.node,
+    className: PropTypes.string
 };
 
 export default Section;

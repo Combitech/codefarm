@@ -1,6 +1,7 @@
 
 
 import React from "react";
+import PropTypes from "prop-types";
 import LightComponent from "ui-lib/light_component";
 import { UserAvatar } from "ui-components/user_avatar";
 import { DateTime } from "ui-components/datetime";
@@ -85,11 +86,11 @@ SlaveCard.defaultProps = {
 };
 
 SlaveCard.propTypes = {
-    theme: React.PropTypes.object,
-    item: React.PropTypes.object.isRequired,
-    expanded: React.PropTypes.bool,
-    expandable: React.PropTypes.bool,
-    clickable: React.PropTypes.bool
+    theme: PropTypes.object,
+    item: PropTypes.object.isRequired,
+    expanded: PropTypes.bool,
+    expandable: PropTypes.bool,
+    clickable: PropTypes.bool
 };
 
 export default SlaveCard;

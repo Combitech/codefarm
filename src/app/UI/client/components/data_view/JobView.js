@@ -1,5 +1,6 @@
 
 import React from "react";
+import PropTypes from "prop-types";
 import LightComponent from "ui-lib/light_component";
 import stateVar from "ui-lib/state_var";
 import { Tab, Tabs } from "react-toolbox/lib/tabs";
@@ -154,8 +155,8 @@ class JobView extends LightComponent {
 }
 
 JobView.propTypes = {
-    theme: React.PropTypes.object,
-    item: React.PropTypes.object
+    theme: PropTypes.object,
+    item: PropTypes.object
 };
 
 export default JobView;

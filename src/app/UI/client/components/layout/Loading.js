@@ -1,5 +1,6 @@
 
 import React from "react";
+import PropTypes from "prop-types";
 import ProgressBar from "react-toolbox/lib/progress_bar";
 
 class Loading extends React.PureComponent {
@@ -26,9 +27,9 @@ Loading.defaultProps = {
 };
 
 Loading.propTypes = {
-    theme: React.PropTypes.object,
-    className: React.PropTypes.string,
-    show: React.PropTypes.bool
+    theme: PropTypes.object,
+    className: PropTypes.string,
+    show: PropTypes.bool
 };
 
 export default Loading;

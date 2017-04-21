@@ -1,5 +1,6 @@
 
 import React from "react";
+import PropTypes from "prop-types";
 
 class SvgGridItem extends React.Component {
     constructor(props) {
@@ -16,10 +17,10 @@ class SvgGridItem extends React.Component {
 }
 
 SvgGridItem.propTypes = {
-    children: React.PropTypes.node,
-    column: React.PropTypes.number.isRequired,
-    row: React.PropTypes.number.isRequired,
-    onClick: React.PropTypes.func
+    children: PropTypes.node,
+    column: PropTypes.number.isRequired,
+    row: PropTypes.number.isRequired,
+    onClick: PropTypes.func
 };
 
 export default SvgGridItem;

@@ -1,5 +1,6 @@
 
 import React from "react";
+import PropTypes from "prop-types";
 import LightComponent from "ui-lib/light_component";
 import {
     SvgGrid,
@@ -257,14 +258,14 @@ Flow.defaultProps = {
 };
 
 Flow.propTypes = {
-    theme: React.PropTypes.object,
-    steps: React.PropTypes.array.isRequired,
-    border: React.PropTypes.bool,
-    gridSize: React.PropTypes.number,
-    columnSpan: React.PropTypes.number,
-    rowSpan: React.PropTypes.number,
-    rowSpacing: React.PropTypes.number,
-    pathSpan: React.PropTypes.number
+    theme: PropTypes.object,
+    steps: PropTypes.array.isRequired,
+    border: PropTypes.bool,
+    gridSize: PropTypes.number,
+    columnSpan: PropTypes.number,
+    rowSpan: PropTypes.number,
+    rowSpacing: PropTypes.number,
+    pathSpan: PropTypes.number
 };
 
 export default Flow;

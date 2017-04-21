@@ -1,5 +1,6 @@
 
 import React from "react";
+import PropTypes from "prop-types";
 import LightComponent from "ui-lib/light_component";
 import { Input } from "react-toolbox/lib/input";
 import {
@@ -68,11 +69,11 @@ class SignInForm extends LightComponent {
 }
 
 SignInForm.propTypes = {
-    theme: React.PropTypes.object
+    theme: PropTypes.object
 };
 
 SignInForm.contextTypes = {
-    router: React.PropTypes.object.isRequired
+    router: PropTypes.object.isRequired
 };
 
 export default SignInForm;

@@ -1,5 +1,6 @@
 
 import React from "react";
+import PropTypes from "prop-types";
 import { Tags } from "ui-components/tags";
 import LightComponent from "ui-lib/light_component";
 import { ListItem as TBListItem } from "react-toolbox/lib/list";
@@ -25,10 +26,10 @@ class ListItem extends LightComponent {
 }
 
 ListItem.propTypes = {
-    theme: React.PropTypes.object,
-    item: React.PropTypes.object.isRequired,
-    itemContext: React.PropTypes.any,
-    onClick: React.PropTypes.func
+    theme: PropTypes.object,
+    item: PropTypes.object.isRequired,
+    itemContext: PropTypes.any,
+    onClick: PropTypes.func
 };
 
 export default ListItem;

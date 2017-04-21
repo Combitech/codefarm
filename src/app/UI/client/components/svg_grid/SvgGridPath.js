@@ -1,5 +1,6 @@
 
 import React from "react";
+import PropTypes from "prop-types";
 
 class SvgGridPath extends React.Component {
     constructor(props) {
@@ -27,13 +28,13 @@ SvgGridPath.defaultProps = {
 };
 
 SvgGridPath.propTypes = {
-    fromKey: React.PropTypes.string.isRequired,
-    toKey: React.PropTypes.string.isRequired,
-    markerStart: React.PropTypes.string,
-    markerEnd: React.PropTypes.string,
-    markerMid: React.PropTypes.string,
-    toMargin: React.PropTypes.number,
-    fromMargin: React.PropTypes.number,
+    fromKey: PropTypes.string.isRequired,
+    toKey: PropTypes.string.isRequired,
+    markerStart: PropTypes.string,
+    markerEnd: PropTypes.string,
+    markerMid: PropTypes.string,
+    toMargin: PropTypes.number,
+    fromMargin: PropTypes.number,
     toDir: isValidDirection,
     fromDir: isValidDirection
 };

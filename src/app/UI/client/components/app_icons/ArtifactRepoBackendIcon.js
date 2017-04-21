@@ -1,5 +1,6 @@
 
 import React from "react";
+import PropTypes from "prop-types";
 import LightComponent from "ui-lib/light_component";
 import CodeFarmIcon from "./ic_codefarm_black_48px.svg";
 import ArtifactRepoAndBackend from "ui-observables/artifact_repo_and_backend";
@@ -55,9 +56,9 @@ class ArtifactRepoBackendIcon extends LightComponent {
 }
 
 ArtifactRepoBackendIcon.propTypes = {
-    theme: React.PropTypes.object,
-    repoId: React.PropTypes.string,
-    backendType: React.PropTypes.string
+    theme: PropTypes.object,
+    repoId: PropTypes.string,
+    backendType: PropTypes.string
 };
 
 export default ArtifactRepoBackendIcon;

@@ -1,5 +1,6 @@
 
 import React from "react";
+import PropTypes from "prop-types";
 
 class Breadcrumbs extends React.Component {
     constructor(props) {
@@ -48,12 +49,12 @@ class Breadcrumbs extends React.Component {
 }
 
 Breadcrumbs.propTypes = {
-    theme: React.PropTypes.object,
-    items: React.PropTypes.array.isRequired
+    theme: PropTypes.object,
+    items: PropTypes.array.isRequired
 };
 
 Breadcrumbs.contextTypes = {
-    router: React.PropTypes.object.isRequired
+    router: PropTypes.object.isRequired
 };
 
 export default Breadcrumbs;

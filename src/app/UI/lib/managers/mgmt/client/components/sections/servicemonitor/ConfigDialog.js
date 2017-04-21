@@ -1,5 +1,6 @@
 
 import React from "react";
+import PropTypes from "prop-types";
 import Dialog from "react-toolbox/lib/dialog";
 
 class JsonDisplay extends React.Component {
@@ -14,7 +15,7 @@ class JsonDisplay extends React.Component {
 }
 
 JsonDisplay.propTypes = {
-    data: React.PropTypes.any.isRequired
+    data: PropTypes.any.isRequired
 };
 
 class ConfigDialog extends React.Component {
@@ -47,10 +48,10 @@ class ConfigDialog extends React.Component {
 }
 
 ConfigDialog.propTypes = {
-    open: React.PropTypes.object.isRequired,
-    titleText: React.PropTypes.string.isRequired,
-    cancelText: React.PropTypes.string,
-    configData: React.PropTypes.any.isRequired
+    open: PropTypes.object.isRequired,
+    titleText: PropTypes.string.isRequired,
+    cancelText: PropTypes.string,
+    configData: PropTypes.any.isRequired
 };
 
 export default ConfigDialog;

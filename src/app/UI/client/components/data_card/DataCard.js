@@ -2,6 +2,7 @@
 /* global window */
 
 import React from "react";
+import PropTypes from "prop-types";
 import { ExpandableCard } from "ui-components/expandable_card";
 
 class DataCard extends React.PureComponent {
@@ -52,18 +53,18 @@ DataCard.defaultProps = {
 };
 
 DataCard.propTypes = {
-    theme: React.PropTypes.object,
-    children: React.PropTypes.node,
-    expanded: React.PropTypes.object,
-    expandable: React.PropTypes.bool,
-    inline: React.PropTypes.bool,
-    column: React.PropTypes.bool,
-    path: React.PropTypes.string,
-    openInNew: React.PropTypes.bool
+    theme: PropTypes.object,
+    children: PropTypes.node,
+    expanded: PropTypes.object,
+    expandable: PropTypes.bool,
+    inline: PropTypes.bool,
+    column: PropTypes.bool,
+    path: PropTypes.string,
+    openInNew: PropTypes.bool
 };
 
 DataCard.contextTypes = {
-    router: React.PropTypes.object.isRequired
+    router: PropTypes.object.isRequired
 };
 
 export default DataCard;

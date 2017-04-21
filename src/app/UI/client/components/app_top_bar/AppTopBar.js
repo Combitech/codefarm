@@ -2,6 +2,7 @@
 /* global window */
 
 import React from "react";
+import PropTypes from "prop-types";
 import AppBar from "react-toolbox/lib/app_bar";
 import { Button, IconButton } from "react-toolbox/lib/button";
 import { Menu, MenuItem, MenuDivider } from "react-toolbox/lib/menu";
@@ -189,12 +190,12 @@ class AppTopBar extends LightComponent {
 }
 
 AppTopBar.propTypes = {
-    children: React.PropTypes.node,
-    theme: React.PropTypes.object
+    children: PropTypes.node,
+    theme: PropTypes.object
 };
 
 AppTopBar.contextTypes = {
-    router: React.PropTypes.object.isRequired
+    router: PropTypes.object.isRequired
 };
 
 export default AppTopBar;

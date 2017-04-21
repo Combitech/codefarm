@@ -1,5 +1,6 @@
 
 import React from "react";
+import PropTypes from "prop-types";
 
 class StepVirtual extends React.Component {
     render() {
@@ -20,8 +21,8 @@ class StepVirtual extends React.Component {
 }
 
 StepVirtual.propTypes = {
-    theme: React.PropTypes.object,
-    item: React.PropTypes.object.isRequired
+    theme: PropTypes.object,
+    item: PropTypes.object.isRequired
 };
 
 export default StepVirtual;

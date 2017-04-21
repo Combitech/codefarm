@@ -1,5 +1,6 @@
 
 import React from "react";
+import PropTypes from "prop-types";
 import LightComponent from "ui-lib/light_component";
 import { CardText, CardTitle } from "react-toolbox/lib/card";
 import { HiddenText } from "ui-components/hidden_text";
@@ -109,10 +110,10 @@ LogCard.defaultProps = {
 };
 
 LogCard.propTypes = {
-    theme: React.PropTypes.object,
-    item: React.PropTypes.object.isRequired,
-    expanded: React.PropTypes.bool,
-    expandable: React.PropTypes.bool
+    theme: PropTypes.object,
+    item: PropTypes.object.isRequired,
+    expanded: PropTypes.bool,
+    expandable: PropTypes.bool
 };
 
 export default LogCard;
