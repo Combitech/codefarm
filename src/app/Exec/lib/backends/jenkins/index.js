@@ -4,6 +4,25 @@ const { AsyncEventEmitter } = require("emitter");
 const { ServiceMgr } = require("service");
 const rp = require("request-promise");
 const JenkinsEventEmitter = require("./jenkins_event_emitter");
+const Job = require("../../types/job");
+
+/*
+To get started with Jenkins integration:
+1. Create a new functional user, make sure they have authority to start jobs
+2. Make sure the Notification plugin is installed
+    https://wiki.jenkins-ci.org/display/JENKINS/Notification+Plugin
+3. Edit the jobs you wish to run via jenkins to send notifications
+   You will need to fill in the url and port to the jenkins backend you create
+
+Creating a new Jenkins backend:
+
+Example configuration:
+    host -> "http://myjenkins.mycompany.com"
+
+    The above will ...
+*/
+
+const CONSOLE_POLL_INTERVAL = 2000;
 
 class JenkinsBackend extends AsyncEventEmitter {
     constructor(id, backend) {
@@ -11,6 +30,7 @@ class JenkinsBackend extends AsyncEventEmitter {
         this.id = id;
         this.backend = backend;
         this.crumb = false;
+        this.crumbRequestField = false;
         this.locks = {};
         this.jenkinsEmitter = new JenkinsEventEmitter(
             ServiceMgr.instance.log.bind(ServiceMgr.instance)
@@ -22,54 +42,94 @@ class JenkinsBackend extends AsyncEventEmitter {
         const url = `${this.backend.hostUrl}/crumbIssuer/api/json`;
 
         try {
-            const response = await this._sendRequest(url);
+            const response = await this._sendRequest(url, "GET", null, false);
             // TODO: What if crumb expires?
             this.crumb = response.crumb;
+            this.crumbRequestField = response.crumbRequestField;
             ServiceMgr.instance.log("verbose", "Crumb retrieved");
         } catch (err) {
             ServiceMgr.instance.log("error", `Failed to retrieve crumb: ${err}`);
         }
 
-        // Start event monitoring towards jenkins
+        // Start event monitoring towards jenkins and towards console text events
         try {
             const result = await this._startMonitorEventStream();
             ServiceMgr.instance.log("verbose", result);
+            this.addListener("consoleText", this._onJobConsoleText.bind(this));
         } catch (err) {
             ServiceMgr.instance.log("error", `Failed to setup Jenkins notification server: ${err}`);
         }
     }
 
-    async _sendRequest(uri, body = null, method = "GET") {
-        const token = this.crumb || this.backend.authToken; // Token is used first time to retrieve crumb
-        const auth = Buffer.from(`${this.backend.authUser}:${token}`).toString("base64");
+    _createRequest(uri, method = "POST", body = null) {
+        const auth = Buffer.from(`${this.backend.authUser}:${this.backend.authToken}`).toString("base64");
+        const headers = {
+            "User-Agent": "Code Farm",
+            "Authorization": `Basic ${auth}`
+        };
+
+        // Use crumb if available (retrieved on start)
+        if (this.crumb) {
+            headers[this.crumbRequestField] = this.crumb;
+        }
+
         const options = {
-            method: method,
-            uri: uri,
-            headers: {
-                "User-Agent": "Code Farm",
-                "Authorization": `Basic ${auth}`
-            },
-            body: body,
+            method,
+            uri,
+            headers,
+            body,
             json: true // Automatically stringifies the body to JSON
         };
+
+        return options;
+    }
+
+    async _sendRequest(uri, method = "POST", body = null, fullResponse = true) {
+        const options = this._createRequest(uri, method, body);
+        options.resolveWithFullResponse = fullResponse;
 
         return rp(options);
     }
 
-    // Start/Queue job and send along job id as parameter
-    async queueJob(job, jenkinsJobName) {
-        const params = `CODEFARM_JOB_ID=${job._id}`;
-        const url = `${this.backend.hostUrl}/job/${jenkinsJobName}/buildWithParameters?${params}`;
+    // Get the console text log for a building job as a stream
+    async getConsoleText(queuenr, jobUrl, offset) {
+        const url = `${jobUrl}logText/progressiveText?start=${offset}`;
+        console.log(url);
+        const response = await this._sendRequest(url, "GET");
+        this.emit("consoleText", { queuenr, jobUrl, offset, response });
+    }
 
-        return await this._sendRequest(url, null, "POST");
+    // Start/Queue job
+    async startJob(executor, job) {
+        const jenkinsJobName = job.script;
+        // TODO: Send parameters in form
+        const url = `${this.backend.hostUrl}/job/${jenkinsJobName}/build`;
+        const response = await this._sendRequest(url);
+        // Parse response to get queuenr from header
+        const parts = response.headers.location.split("/");
+
+        return parts[parts.length - 2];
+    }
+
+    async verifySlaveJob(slave) {
+        return new Job({
+            name: `Verify_slave_${slave._id}`,
+            // All slaves have their ID as a tag... This will match a specific slave
+            criteria: `${slave._id}`,
+            requeueOnFailure: false,
+            script: "testJob",
+            baseline: false
+        });
     }
 
     _createEvent(event) {
         const obj = {
             jenkinsname: event.name,
             jenkinsurl: `${this.backend.hostUrl}/${event.build.url}`,
-            jobid: event.build.parameters.JOB_ID
+            queuenr: event.build.queue_id.toString(),
+            status: event.build.status ? event.build.status.toLowerCase() : "unknown"
         };
+
         ServiceMgr.instance.log("debug", JSON.stringify(obj, null, 2));
 
         return obj;
@@ -78,19 +138,39 @@ class JenkinsBackend extends AsyncEventEmitter {
     async _onJobStarted(event) {
         ServiceMgr.instance.log("verbose", "job_started event received");
         ServiceMgr.instance.log("debug", JSON.stringify(event, null, 2));
-        this.emit("job_started", this._createEvent(event));
+        const outevent = this._createEvent(event);
+        await this.emit("job_started", outevent);
+
+        // Start polling console text, this will emit consoleText event
+        this.getConsoleText(outevent.queuenr, outevent.jenkinsurl, 0);
     }
 
     async _onJobCompleted(event) {
         ServiceMgr.instance.log("verbose", "job_completed event received");
         ServiceMgr.instance.log("debug", JSON.stringify(event, null, 2));
-        this.emit("job_completed", this._createEvent(event));
+        await this.emit("job_completed", this._createEvent(event));
     }
 
     async _onJobFinalized(event) {
         ServiceMgr.instance.log("verbose", "job_finalized event received");
         ServiceMgr.instance.log("debug", JSON.stringify(event, null, 2));
-        this.emit("job_finalized", this._createEvent(event));
+        await this.emit("job_finalized", this._createEvent(event));
+    }
+
+    async _onJobConsoleText(event) {
+        ServiceMgr.instance.log("verbose", "console text event received");
+        ServiceMgr.instance.log("debug", JSON.stringify(event, null, 2));
+
+        await this.emit("job_consoletext", event);
+
+        // If more data indicated: poll after interval
+        if (event.response.headers["x-more-data"]) {
+            const offset = parseInt(event.response.headers["x-text-size"], 10);
+            setTimeout(() => {
+                ServiceMgr.instance.log("debug", "Polling jenkins console");
+                this.getConsoleText(event.queuenr, event.jobUrl, offset);
+            }, CONSOLE_POLL_INTERVAL);
+        }
     }
 
     async _startMonitorEventStream() {
