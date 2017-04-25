@@ -26,13 +26,11 @@ class Main extends Service {
             uri: this.config.mongo
         });
         await this.provide("MsgBus", {
-            uri: this.config.msgbus
+            uri: this.config.bus.uri
         });
-        await this.provide("LogBus", {
-            uri: this.config.msgbus
-        });
+
         // Push msgBus dependency to get rid of circular require dependency
-        Config.setMb(this.mgr.msgBus);
+        Config.setMb(this.mgr.bus.uri);
     }
 
     async _createToken() {
@@ -70,7 +68,7 @@ class Main extends Service {
 
         await ServiceComBus.instance.start(Object.assign({
             name: this.name,
-            uri: this.config.msgbus,
+            uri: this.config.bus.uri,
             publicKey: keys && keys.public,
             token: await Config.createToken(this.name)
         }, this.config.servicecom));

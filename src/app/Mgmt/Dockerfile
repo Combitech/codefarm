@@ -3,7 +3,6 @@ CMD [ \
     "node", \
     "--harmony_async_await", \
     ".", \
-    "--bus", "amqp://rabbitmq/codefarm", \
-    "--mongo", "mongodb://mongo:27017", \
-    "--msgbus", "amqp://rabbitmq:5672" \
+    "--bus", "amqp://rabbitmq:5672/codefarm", \
+    "--mongo", "mongodb://mongo:27017" \
 ]
