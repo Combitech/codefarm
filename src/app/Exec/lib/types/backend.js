@@ -44,6 +44,10 @@ class Backend extends Type {
         assertProp(data, "hostPrivateKeys", false);
 
         if (event === "create") {
+            assertProp(data, "_id", true);
+            assertProp(data, "backendType", true);
+            assertProp(data, "authUser", true);
+
             assertType(data._id, "data._id", "string");
             assertType(data.backendType, "data.backendType", "string");
             assertType(data.authUser, "data.authUser", "string");

@@ -198,6 +198,7 @@ describe("Exec", () => {
                 body: {
                     _id: "Backend1",
                     backendType: "direct",
+                    authUser: "dummyUser",
                     privateKeyPath: "dummyKeyPath"
                 }
             });
@@ -207,6 +208,7 @@ describe("Exec", () => {
             assert.equal(data.data._id, "Backend1");
             assert.equal(data.data.backendType, "direct");
             assert.equal(data.data.privateKeyPath, "dummyKeyPath");
+            assert.equal(data.data.authUser, "dummyUser");
         });
 
         it("should get a backend", async () => {
@@ -219,6 +221,7 @@ describe("Exec", () => {
             assert.equal(data._id, "Backend1");
             assert.equal(data.backendType, "direct");
             assert.equal(data.privateKeyPath, "dummyKeyPath");
+            assert.equal(data.authUser, "dummyUser");
         });
 
         it("should delete a backend", async () => {
@@ -258,21 +261,19 @@ describe("Exec", () => {
                 json: true,
                 body: {
                     _id: "Slave1",
-                    uri: `ssh://${process.env.USER}@localhost:${slavesDir}`,
+                    uri: `ssh://localhost:${slavesDir}`,
                     tags: [ "tag1", "tag2" ],
                     executors: 1,
                     backend: "Backend1",
-                    privateKeyPath: privateKeyPath,
                     workspaceCleanup: "remove_on_finish"
                 }
             });
 
             assert.equal(data.result, "success");
-            assert.equal(data.data.uri, `ssh://${process.env.USER}@localhost:${slavesDir}`);
+            assert.equal(data.data.uri, `ssh://localhost:${slavesDir}`);
             assert.deepEqual(data.data.tags, [ "tag1", "tag2", data.data._id ]);
             assert.equal(data.data.backend, "Backend1");
             assert.equal(data.data.executors, 1);
-            assert.equal(data.data.privateKeyPath, privateKeyPath);
 
             slaveId = data.data._id;
         });
@@ -284,10 +285,9 @@ describe("Exec", () => {
             });
 
             assert.equal(data._id, slaveId);
-            assert.equal(data.uri, `ssh://${process.env.USER}@localhost:${slavesDir}`);
+            assert.equal(data.uri, `ssh://localhost:${slavesDir}`);
             assert.deepEqual(data.tags, [ "tag1", "tag2", data._id ]);
             assert.equal(data.executors, 1);
-            assert.equal(data.privateKeyPath, privateKeyPath);
         });
 
         it("should list one slave", async () => {
@@ -310,10 +310,9 @@ describe("Exec", () => {
             });
 
             assert.equal(data.result, "success");
-            assert.equal(data.data.uri, `ssh://${process.env.USER}@localhost:${slavesDir}`);
+            assert.equal(data.data.uri, `ssh://localhost:${slavesDir}`);
             assert.deepEqual(data.data.tags, [ "tag1", "tag2", data.data._id ]);
             assert.equal(data.data.executors, 1);
-            assert.equal(data.data.privateKeyPath, privateKeyPath);
         });
 
         it("should list zero slaves", async () => {
@@ -335,7 +334,8 @@ describe("Exec", () => {
                 body: {
                     _id: "Backend1",
                     backendType: "direct",
-                    privateKeyPath: "dummyKeyPath"
+                    authUser: process.env.USER,
+                    privateKeyPath
                 }
             });
 
@@ -343,7 +343,7 @@ describe("Exec", () => {
             assert.equal(data.data.type, "exec.backend");
             assert.equal(data.data._id, "Backend1");
             assert.equal(data.data.backendType, "direct");
-            assert.equal(data.data.privateKeyPath, "dummyKeyPath");
+            assert.equal(data.data.privateKeyPath, privateKeyPath);
         });
 
         it("should create a slave", async () => {
@@ -353,20 +353,18 @@ describe("Exec", () => {
                 json: true,
                 body: {
                     _id: "Slave2",
-                    uri: `ssh://${process.env.USER}@localhost:${slavesDir}`,
+                    uri: `ssh://localhost:${slavesDir}`,
                     tags: [ "tag1", "tag2" ],
                     executors: 1,
                     backend: "Backend1",
-                    privateKeyPath: privateKeyPath,
                     workspaceCleanup: "remove_on_finish"
                 }
             });
 
             assert.equal(data.result, "success");
-            assert.equal(data.data.uri, `ssh://${process.env.USER}@localhost:${slavesDir}`);
+            assert.equal(data.data.uri, `ssh://localhost:${slavesDir}`);
             assert.deepEqual(data.data.tags, [ "tag1", "tag2", data.data._id ]);
             assert.equal(data.data.executors, 1);
-            assert.equal(data.data.privateKeyPath, privateKeyPath);
         });
 
         const testScript1 = `#!/bin/bash -e
