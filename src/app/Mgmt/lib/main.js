@@ -30,7 +30,7 @@ class Main extends Service {
         });
 
         // Push msgBus dependency to get rid of circular require dependency
-        Config.setMb(this.mgr.bus.uri);
+        Config.setMb(this.mgr.msgBus);
     }
 
     async _createToken() {
