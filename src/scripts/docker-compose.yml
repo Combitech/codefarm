@@ -49,6 +49,8 @@ services:
         build:
             context: ../containers/ExecSlave
         image: codefarm/execslave:0.0.0
+        volumes:
+            - ../:/home/farmer/codefarm:ro
         ports:
             - "8022:22"
         depends_on:
