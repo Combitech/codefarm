@@ -108,9 +108,9 @@ services:
         links:
             - "mongo"
             - "rabbitmq"
-            - "gerrit"
         ports:
             - "19393:19393"
+            - "9000:9000"
     logrepo:
         build:
             context: ../app/LogRepo
