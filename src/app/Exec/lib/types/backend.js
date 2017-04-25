@@ -46,6 +46,7 @@ class Backend extends Type {
         if (event === "create") {
             assertType(data._id, "data._id", "string");
             assertType(data.backendType, "data.backendType", "string");
+            assertType(data.authUser, "data.authUser", "string");
 
             switch (data.backendType) {
             case "direct":
@@ -57,7 +58,6 @@ class Backend extends Type {
                 }
                 assertType(data.port, "data.port", "number");
                 assertType(data.hostUrl, "data.hostUrl", "string");
-                assertType(data.authUser, "data.authUser", "string");
                 assertType(data.authToken, "data.authToken", "string");
                 break;
             default:

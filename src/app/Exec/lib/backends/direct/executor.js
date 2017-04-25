@@ -9,6 +9,7 @@ const { SlaveCom } = require("../../slavecom");
 const { ObjSerialize } = require("misc");
 const Job = require("../../types/job");
 const Executor = require("../../types/executor");
+const BackendProxy = require("../../backend_proxy");
 
 const LEVEL = {
     INFO: "info",
@@ -60,7 +61,6 @@ class DirectExecutor extends Executor {
         super();
 
         this.port = 0;
-        this.privateKeyPath = false;
         this.uri = false;
         this.logId = false;
         this.workspace = false;
@@ -108,15 +108,19 @@ class DirectExecutor extends Executor {
 
     async _connect() {
         const info = url.parse(this.uri);
-        const privateKey = await fs.readFileAsync(this.privateKeyPath);
+        const directBackend = BackendProxy.instance.getBackend(this.backend);
+        const privateKeyPath = directBackend.getPrivateKeyPath();
+        const privateKey = await fs.readFileAsync(privateKeyPath);
+        const authUser = directBackend.getAuthUser();
 
         await this._logln(`Connecting to ssh, ${this.uri}`);
+
 
         await this.__ssh.connect({
             host: info.hostname,
             port: info.port || 22,
-            username: info.auth || process.env.USER,
-            privateKey: privateKey,
+            username: authUser || process.env.USER,
+            privateKey,
             useSftp: true
         }, async (error) => {
             await this._logln(`SSH error: ${JSON.stringify(error, null, 2)}`, LEVEL.ERROR);

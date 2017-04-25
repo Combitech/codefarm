@@ -48,7 +48,7 @@ class Edit extends LightComponent {
             },
             "authUser": {
                 editable: true,
-                required: () => this.state.backendType.value === BACKEND_TYPE.JENKINS,
+                required: () => true,
                 defaultValue: ""
             },
             "authToken": {
@@ -127,6 +127,16 @@ class Edit extends LightComponent {
                                 disabled={this.props.item && !this.itemProperties.privateKeyPath.editable}
                                 value={this.state.privateKeyPath.value}
                                 onChange={this.state.privateKeyPath.set}
+                            />
+                            <Input
+                                type="text"
+                                label="User to authenticate as"
+                                name="authUser"
+                                floating={true}
+                                required={this.itemProperties.authUser.required()}
+                                disabled={this.props.item && !this.itemProperties.authUser.editable}
+                                value={this.state.authUser.value}
+                                onChange={this.state.authUser.set}
                             />
                         </div>
                     }

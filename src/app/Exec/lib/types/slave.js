@@ -10,7 +10,6 @@ class Slave extends Type {
 
         this.uri = false;
         this.executors = 1;
-        this.privateKeyPath = false;
         this.offline = false;
 
         if (data) {
@@ -54,8 +53,6 @@ class Slave extends Type {
             if (isNaN(data.executors)) {
                 throw new Error("executors must be a number");
             }
-            assertProp(data, "privateKeyPath", true);
-            assertType(data.privateKeyPath, "data.privateKeyPath", "string");
 
             // Add id as tag
             data.tags = data.tags || [];

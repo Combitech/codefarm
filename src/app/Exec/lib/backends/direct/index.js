@@ -16,6 +16,14 @@ class DirectBackend extends AsyncEventEmitter {
     async dispose() {
     }
 
+    getPrivateKeyPath() {
+        return this.backend.privateKeyPath;
+    }
+
+    getAuthUser() {
+        return this.backend.authUser;
+    }
+
     get backendType() {
         return this.backend.backendType;
     }

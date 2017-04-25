@@ -45,11 +45,6 @@ class Edit extends LightComponent {
                 required: () => true,
                 defaultValue: ""
             },
-            "privateKeyPath": {
-                editable: true,
-                required: () => true,
-                defaultValue: ""
-            },
             "executors": {
                 editable: true,
                 required: () => true,
@@ -129,22 +124,12 @@ class Edit extends LightComponent {
                         type="text"
                         label="URI"
                         name="uri"
-                        hint="ssh://<username>@<hostname>:<port>/<workspace container path>"
+                        hint="ssh://<hostname>:<port>/<workspace container path>"
                         floating={true}
                         required={this.itemProperties.uri.required()}
                         disabled={this.props.item && !this.itemProperties.uri.editable}
                         value={this.state.uri.value}
                         onChange={this.state.uri.set}
-                    />
-                    <Input
-                        type="text"
-                        label="Private Key Path"
-                        name="privateKeyPath"
-                        floating={true}
-                        required={this.itemProperties.privateKeyPath.required()}
-                        disabled={this.props.item && !this.itemProperties.privateKeyPath.editable}
-                        value={this.state.privateKeyPath.value}
-                        onChange={this.state.privateKeyPath.set}
                     />
                     <div>
                         <div className={this.props.theme.subtitle}>Executors *</div>
