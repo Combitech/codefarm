@@ -47,7 +47,7 @@ class Main extends Service {
 
         await ServiceComBus.instance.start(Object.assign({
             name: this.name,
-            uri: this.config.msgbus,
+            uri: this.config.bus.uri,
             publicKey: this.config.publicKey,
             token: this.config.token
         }, this.config.servicecom));
@@ -57,7 +57,7 @@ class Main extends Service {
         ]);
 
         await LogClient.instance.start(Object.assign({
-            uri: this.config.msgbus
+            uri: this.config.bus.uri
         }, this.config.loglib));
         this.addDisposable(LogClient.instance);
 

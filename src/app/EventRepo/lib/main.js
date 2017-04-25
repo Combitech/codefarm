@@ -29,7 +29,7 @@ class Main extends Service {
 
         await ServiceComBus.instance.start(Object.assign({
             name: this.name,
-            uri: this.config.msgbus,
+            uri: this.config.bus.uri,
             publicKey: this.config.publicKey,
             token: this.config.token
         }, this.config.servicecom));

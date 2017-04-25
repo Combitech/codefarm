@@ -15,5 +15,5 @@ CMD [ \
     "node", \
     "--harmony_async_await", \
     ".", \
-    "--bus", "amqp://rabbitmq/codefarm" \
+    "--bus", "amqp://rabbitmq:5672/codefarm" \
 ]
