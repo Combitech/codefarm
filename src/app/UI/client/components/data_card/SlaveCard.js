@@ -58,6 +58,10 @@ class SlaveCard extends LightComponent {
                                 <td>{this.props.item.offline ? "No" : "Yes"}</td>
                             </tr>
                             <tr>
+                                <td>Backend</td>
+                                <td>{this.props.item.backend}</td>
+                            </tr>
+                            <tr>
                                 <td>Executors</td>
                                 <td>{this.props.item.executors}</td>
                             </tr>
