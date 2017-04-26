@@ -8,6 +8,7 @@ const Slave = require("./types/slave");
 const Job = require("./types/job");
 const Executor = require("./types/executor");
 const { ServiceMgr } = require("service");
+const BackendProxy = require("./backend_proxy");
 
 class Control {
     constructor() {
@@ -344,7 +345,7 @@ class Control {
         const tagCriteria = new TagCriteria(job.criteria);
         const leastUtlizedSlave = await this._getLeastUtilizedSlave(tagCriteria);
         if (!leastUtlizedSlave) {
-            ServiceMgr.instance.log("verbose", `_allocateJob - found no slave matching criteria ${job.criteria}`);
+            ServiceMgr.instance.log("verbose", `_allocateJob - found no available slave matching criteria ${job.criteria}`);
 
             return false;
         }
@@ -412,15 +413,7 @@ class Control {
         let slaveOk = false;
         let msg = "";
         if (!slave.offline) {
-            const job = new Job({
-                name: `Verify_slave_${slave._id}`,
-                // All slaves have their ID as a tag... This will match a specific slave
-                criteria: `${slave._id}`,
-                requeueOnFailure: false,
-                script: `echo My job is to verify slave ${slave._id}`,
-                baseline: false,
-                workspaceCleanup: Job.CLEANUP_POLICY.REMOVE_ON_SUCCESS
-            });
+            const job = await BackendProxy.instance.verifySlaveJob(slave);
             const finishedJobPromise = this._waitForJobCompletion(job._id);
             job.save();
 
