@@ -5,6 +5,7 @@ import LightComponent from "ui-lib/light_component";
 import Input from "react-toolbox/lib/input";
 import Dropdown from "react-toolbox/lib/dropdown";
 import Autocomplete from "react-toolbox/lib/autocomplete";
+import Slider from "react-toolbox/lib/slider";
 import {
     Form as TAForm,
     Section as TASection,
@@ -60,6 +61,11 @@ class Edit extends LightComponent {
                 editable: true,
                 required: () => this.state.backendType.value === BACKEND_TYPE.JENKINS,
                 defaultValue: ""
+            },
+            "pollDelay": {
+                editable: true,
+                required: () => this.state.backendType.value === BACKEND_TYPE.JENKINS,
+                defaultValue: 5000
             }
         };
 
@@ -182,6 +188,20 @@ class Edit extends LightComponent {
                                 value={this.state.port.value}
                                 onChange={this.state.port.set}
                             />
+                            <div>
+                                <div className={this.props.theme.subtitle}>Jenkins console poll delay (msec)</div>
+                                <Slider
+                                    pinned={true}
+                                    snaps={true}
+                                    min={1000}
+                                    max={25000}
+                                    step={1000}
+                                    required={this.itemProperties.pollDelay.required()}
+                                    editable={!(this.props.item && !this.itemProperties.pollDelay.editable)}
+                                    value={this.state.pollDelay.value}
+                                    onChange={this.state.pollDelay.set}
+                                />
+                            </div>
                         </div>
                     }
                     <Autocomplete

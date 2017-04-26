@@ -396,7 +396,7 @@ class DirectExecutor extends Executor {
         }
 
         await this.__ssh.disconnect();
-        await this._logln(`Detached, reason ${reason}`);
+        await this._logln(`Detached, reason: ${reason}`);
     }
 
     async abort() {
