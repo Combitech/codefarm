@@ -62,10 +62,6 @@ class SlaveCard extends LightComponent {
                                 <td>{this.props.item.executors}</td>
                             </tr>
                             <tr>
-                                <td>Private Key</td>
-                                <td className={this.props.theme.monospace}>{this.props.item.privateKeyPath}</td>
-                            </tr>
-                            <tr>
                                 <td>Tags</td>
                                 <td>
                                     <Tags list={this.props.item.tags} />
