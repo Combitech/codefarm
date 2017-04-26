@@ -20,14 +20,22 @@ class EditStep extends LightComponent {
     constructor(props) {
         super(props);
 
+        const flowId = props.parentItems[props.parentItems.length - 1]._id;
+
         this.stepList = new TypeList({
             type: "flowctrl.step",
             query: {
-                "flow.id": props.parentItems[props.parentItems.length - 1]._id
+                "flow.id": flowId
             }
         });
         this.baselineList = new TypeList({
             type: "baselinegen.specification"
+        });
+        this.flowList = new TypeList({
+            type: "flowctrl.flow",
+            query: {
+                "_id": { $ne: flowId }
+            }
         });
 
         this.itemProperties = {
@@ -92,6 +100,11 @@ class EditStep extends LightComponent {
                 editable: true,
                 required: () => false,
                 defaultValue: true
+            },
+            "connectedFlow": {
+                editable: true,
+                required: () => false,
+                defaultValue: false
             }
         };
 
@@ -99,12 +112,13 @@ class EditStep extends LightComponent {
             steps: this.stepList.value.getValue(),
             stepsState: this.stepList.state.getValue(),
             baselines: this.baselineList.value.getValue(),
-            baselinesState: this.baselineList.state.getValue()
+            baselinesState: this.baselineList.state.getValue(),
+            flows: this.flowList.value.getValue(),
+            flowsState: this.flowList.state.getValue()
         }, tautils.createStateProperties(this, this.itemProperties, this.props.item));
     }
 
     componentDidMount() {
-        this.log("componentDidMount", this.props, this.state);
         this.addDisposable(this.stepList.start());
         this.addDisposable(this.stepList.value.subscribe((steps) => this.setState({ steps })));
         this.addDisposable(this.stepList.state.subscribe((stepsState) => this.setState({ stepsState })));
@@ -112,6 +126,10 @@ class EditStep extends LightComponent {
         this.addDisposable(this.baselineList.start());
         this.addDisposable(this.baselineList.value.subscribe((baselines) => this.setState({ baselines })));
         this.addDisposable(this.baselineList.state.subscribe((baselinesState) => this.setState({ baselinesState })));
+
+        this.addDisposable(this.flowList.start());
+        this.addDisposable(this.flowList.value.subscribe((flows) => this.setState({ flows })));
+        this.addDisposable(this.flowList.state.subscribe((flowsState) => this.setState({ flowsState })));
     }
 
     getSteps() {
@@ -133,6 +151,16 @@ class EditStep extends LightComponent {
         }));
     }
 
+    getFlows() {
+        return this.state.flows.toJS().map((flow) => ({
+            value: flow._id,
+            label: flow._id
+        })).concat({
+            value: null,
+            label: "No connected flow"
+        });
+    }
+
     async onConfirm() {
         const data = tautils.serialize(this.state, this.itemProperties, this.props.item);
         data.flow = {
@@ -151,7 +179,8 @@ class EditStep extends LightComponent {
         this.log("render", this.props, this.state);
 
         if (this.state.stepsState === ObservableDataStates.LOADING ||
-            this.state.baselinesState === ObservableDataStates.LOADING) {
+            this.state.baselinesState === ObservableDataStates.LOADING ||
+            this.state.flowsState === ObservableDataStates.LOADING) {
             return (
                 <TALoadIndicator />
             );
@@ -159,6 +188,7 @@ class EditStep extends LightComponent {
 
         const steps = this.getSteps();
         const baselines = this.getBaselines();
+        const flows = this.getFlows();
         const cleanupPolicies = [
             { value: "keep", label: "Do not remove" },
             { value: "remove_on_finish", label: "Remove on finish" },
@@ -303,6 +333,14 @@ class EditStep extends LightComponent {
                         onChange={this.state.workspaceCleanup.set}
                         source={cleanupPolicies}
                         value={this.state.workspaceCleanup.value}
+                    />
+                    <Dropdown
+                        label="Connected Flow"
+                        required={this.itemProperties.connectedFlow.required()}
+                        disabled={this.props.item && !this.itemProperties.connectedFlow.editable}
+                        onChange={this.state.connectedFlow.set}
+                        source={flows}
+                        value={this.state.connectedFlow.value || null}
                     />
                 </TAForm>
             </TASection>

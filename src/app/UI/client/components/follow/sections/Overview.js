@@ -8,6 +8,7 @@ import { Row, Column, Header } from "ui-components/layout";
 import { CardList, RevisionCard, AddCommentCard, CommentCard, ReviewCard, JobCard, TypeCard } from "ui-components/data_card";
 import { createComment } from "ui-lib/comment";
 import MetaDataList from "ui-observables/paged_metadata_list";
+import TypeList from "ui-observables/type_list";
 
 class Overview extends LightComponent {
     constructor(props) {
@@ -17,19 +18,36 @@ class Overview extends LightComponent {
             type: "metadata.comment",
             targetRef: {
                 _ref: true,
-                type: this.props.item.type,
-                id: this.props.item._id
+                type: props.item.type,
+                id: props.item._id
             }
         });
 
+        this.jobList = new TypeList({
+            type: "exec.job",
+            query: this.getQuery(props)
+        });
+
         this.state = {
+            jobs: this.jobList.value.getValue(),
             comments: this.comments.value.getValue()
         };
+    }
+
+    getQuery(props) {
+        const ids = props.item.refs
+        .filter((ref) => ref.type === "exec.job")
+        .map((ref) => ref.id);
+
+        return ids.length > 0 ? { _id: { $in: ids } } : false;
     }
 
     componentDidMount() {
         this.addDisposable(this.comments.start());
         this.addDisposable(this.comments.value.subscribe((comments) => this.setState({ comments })));
+
+        this.addDisposable(this.jobList.start());
+        this.addDisposable(this.jobList.value.subscribe((jobs) => this.setState({ jobs })));
     }
 
     componentWillReceiveProps(nextProps) {
@@ -39,6 +57,11 @@ class Overview extends LightComponent {
                 type: nextProps.item.type,
                 id: nextProps.item._id
             }
+        });
+
+        this.jobList.setOpts({
+            type: "exec.job",
+            query: this.getQuery(nextProps)
         });
     }
 
@@ -99,11 +122,8 @@ class Overview extends LightComponent {
             });
         }
 
-        const jobs = this.props.itemExt.data.refs
-        .filter((ref) => ref.data && ref.data.type === "exec.job")
-        .map((ref) => ref.data);
-
-        for (const job of jobs) {
+        this.state.jobs.forEach((item) => {
+            const job = item.toJS();
             list.push({
                 id: job._id,
                 time: moment(job.finished ? job.finished : job.saved).unix(),
@@ -111,7 +131,7 @@ class Overview extends LightComponent {
                 Card: JobCard,
                 props: {}
             });
-        }
+        });
 
         return (
             <Row>
@@ -135,7 +155,6 @@ class Overview extends LightComponent {
 Overview.propTypes = {
     theme: PropTypes.object,
     item: PropTypes.object.isRequired,
-    itemExt: PropTypes.object.isRequired,
     label: PropTypes.string.isRequired
 };
 

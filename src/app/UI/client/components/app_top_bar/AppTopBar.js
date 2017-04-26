@@ -70,22 +70,21 @@ class AppTopBar extends LightComponent {
                             onClick={() => this._toggleUserMenu()}
                             flat={true}
                             inverse={true}
-                            label={(
-                                <span>
-                                    <span>{activeUser.username}</span>
-                                    <FontIcon
-                                        style={{ verticalAlign: "middle" }}
-                                        value="arrow_drop_down"
-                                    />
-                                </span>
-                            )}
                             icon={
                                 <UserAvatar
                                     className={this.props.theme.userAvatar}
                                     userId={activeUser.id}
                                 />
                             }
-                        />
+                        >
+                            <span>
+                                <span>{activeUser.username}</span>
+                                <FontIcon
+                                    style={{ verticalAlign: "middle" }}
+                                    value="arrow_drop_down"
+                                />
+                            </span>
+                        </Button>
                         <div className={this.props.theme.menuContainer}>
                             <Menu
                                 active={this.state.userMenuOpen}

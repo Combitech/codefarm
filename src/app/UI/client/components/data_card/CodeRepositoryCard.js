@@ -71,7 +71,7 @@ class CodeRepositoryCard extends LightComponent {
                                     <TypeChip
                                         itemRef={{
                                             _ref: true,
-                                            type: "artifactrepo.backend",
+                                            type: "coderepo.backend",
                                             id: this.props.item.backend
                                         }}
                                     />

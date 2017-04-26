@@ -26,7 +26,7 @@ class Flows extends LightComponent {
                 <this.props.FlowComponent
                     theme={this.props.theme}
                     item={this.props.item}
-                    itemExt={this.props.itemExt}
+                    jobs={this.props.jobs}
                     pathname={this.props.pathname}
                     flow={this.props.flows[0]}
                     step={this.props.step}
@@ -48,7 +48,7 @@ class Flows extends LightComponent {
                             <this.props.FlowComponent
                                 theme={this.props.theme}
                                 item={this.props.item}
-                                itemExt={this.props.itemExt}
+                                jobs={this.props.jobs}
                                 pathname={this.props.pathname}
                                 flow={flow}
                                 step={this.props.step}
@@ -71,7 +71,7 @@ class Flows extends LightComponent {
 Flows.propTypes = {
     theme: PropTypes.object,
     item: PropTypes.object.isRequired,
-    itemExt: PropTypes.object.isRequired,
+    jobs: PropTypes.object.isRequired,
     pathname: PropTypes.string.isRequired,
     step: PropTypes.string,
     onStepSelect: PropTypes.func,

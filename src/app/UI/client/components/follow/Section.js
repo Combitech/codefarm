@@ -3,19 +3,56 @@ import React from "react";
 import PropTypes from "prop-types";
 import moment from "moment";
 import LightComponent from "ui-lib/light_component";
-import OverviewSection from "./sections/Overview";
+import { States as ObservableDataStates } from "ui-lib/observable_data";
 import { JobView } from "ui-components/data_view";
+import { Loading } from "ui-components/layout";
+import OverviewSection from "./sections/Overview";
 import StepSection from "./sections/Step";
+import TypeList from "ui-observables/type_list";
 
 class Section extends LightComponent {
+    constructor(props) {
+        super(props);
+
+        this.jobList = new TypeList({
+            type: "exec.job",
+            query: this.getQuery(props)
+        });
+
+        this.state = {
+            jobs: this.jobList.value.getValue(),
+            jobsState: this.jobList.state.getValue()
+        };
+    }
+
+    getQuery(props) {
+        const ids = props.item.refs
+        .filter((ref) => ref.name === props.step && ref.type === "exec.job")
+        .map((ref) => ref.id);
+
+        return ids.length > 0 ? { _id: { $in: ids } } : false;
+    }
+
+    componentDidMount() {
+        this.addDisposable(this.jobList.start());
+        this.addDisposable(this.jobList.value.subscribe((jobs) => this.setState({ jobs })));
+        this.addDisposable(this.jobList.state.subscribe((jobsState) => this.setState({ jobsState })));
+    }
+
+    componentWillReceiveProps(nextProps) {
+        this.jobList.setOpts({
+            type: "exec.job",
+            query: this.getQuery(nextProps)
+        });
+    }
+
     findJob() {
-        const jobRefs = this.props.itemExt.data.refs
-            .filter((ref) => ref.name === this.props.step && ref.type === "exec.job");
+        const jobs = this.state.jobs.toJS();
 
-        if (jobRefs.length > 0) {
-            jobRefs.sort((a, b) => moment(a.data.created).isBefore(b.data.created) ? 1 : -1);
+        if (jobs.length > 0) {
+            jobs.sort((a, b) => moment(a.created).isBefore(b.created) ? 1 : -1);
 
-            return jobRefs[0] ? jobRefs[0].data : false;
+            return jobs[0];
         }
 
         return false;
@@ -24,12 +61,17 @@ class Section extends LightComponent {
     render() {
         this.log("render", this.props, this.state);
 
+        if (this.state.jobsState === ObservableDataStates.LOADING) {
+            return (
+                <Loading />
+            );
+        }
+
         if (!this.props.step) {
             return (
                 <OverviewSection
                     theme={this.props.theme}
                     item={this.props.item}
-                    itemExt={this.props.itemExt}
                     label={this.props.label}
                 />
             );
@@ -59,7 +101,6 @@ class Section extends LightComponent {
 Section.propTypes = {
     theme: PropTypes.object,
     item: PropTypes.object.isRequired,
-    itemExt: PropTypes.object.isRequired,
     step: PropTypes.string,
     label: PropTypes.string.isRequired
 };

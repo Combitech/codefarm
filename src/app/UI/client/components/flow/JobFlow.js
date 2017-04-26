@@ -11,19 +11,22 @@ class JobFlow extends LightComponent {
         this.log("render", this.props, JSON.stringify(this.state, null, 2));
 
         const statuses = new Set();
+        const jobs = this.props.jobs.toJS();
 
         for (const step of this.props.steps) {
             // Skip first step
             if (step.id === this.props.firstStep.id) {
                 continue;
             }
-            const jobRefs = this.props.jobRefs.filter((ref) => ref.name === step.name);
+            const jobRefs = jobs.filter((job) => job.name === step.name);
 
             let status = false;
             let job = false;
             if (jobRefs.length > 0) {
-                jobRefs.sort((a, b) => moment(a.data.created).isBefore(b.data.created) ? 1 : -1);
-                job = jobRefs[0] ? jobRefs[0].data : false;
+                jobRefs.sort((a, b) => moment(a.created).isBefore(b.created) ? 1 : -1);
+
+                job = jobRefs[0];
+
                 if (job) {
                     status = job.status;
                 }
@@ -68,7 +71,7 @@ class JobFlow extends LightComponent {
 
 JobFlow.propTypes = {
     theme: PropTypes.object,
-    jobRefs: PropTypes.array.isRequired,
+    jobs: PropTypes.object.isRequired,
     steps: PropTypes.array.isRequired,
     firstStep: PropTypes.object
 };

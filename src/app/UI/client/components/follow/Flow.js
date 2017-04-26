@@ -1,7 +1,6 @@
 
 import React from "react";
 import PropTypes from "prop-types";
-import { ensureArray } from "misc";
 import LightComponent from "ui-lib/light_component";
 import { States as ObservableDataStates } from "ui-lib/observable_data";
 import StepListObservable from "ui-observables/step_list";
@@ -86,15 +85,10 @@ class Flow extends LightComponent {
 
         steps.push(firstStep);
 
-        const jobRefs = [];
-        for (const data of ensureArray(this.props.itemExt.data)) {
-            jobRefs.push(...data.refs);
-        }
-
         return (
             <JobFlow
                 theme={this.props.theme}
-                jobRefs={jobRefs}
+                jobs={this.props.jobs}
                 firstStep={firstStep}
                 steps={steps}
                 columnSpan={8}
@@ -106,7 +100,7 @@ class Flow extends LightComponent {
 Flow.propTypes = {
     theme: PropTypes.object,
     item: PropTypes.object.isRequired,
-    itemExt: PropTypes.object.isRequired,
+    jobs: PropTypes.object.isRequired,
     pathname: PropTypes.string.isRequired,
     flow: PropTypes.object.isRequired,
     step: PropTypes.string,
