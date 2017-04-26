@@ -293,6 +293,7 @@ describe("Stat", () => {
             delete expected.created;
             delete expected.saved;
             delete expected.refs;
+            delete expected.ancestors;
             delete expected.tags;
             delete expected.typeVersion;
             assert.deepEqual(expected, chart1);
