@@ -136,7 +136,7 @@ class Overview extends LightComponent {
         return (
             <Row>
                 <Column xs={12} md={6}>
-                    <Header label={this.props.label} />
+                    <Header label="Properties" />
                     <TypeCard
                         item={this.props.item}
                         expanded={true}
@@ -154,8 +154,7 @@ class Overview extends LightComponent {
 
 Overview.propTypes = {
     theme: PropTypes.object,
-    item: PropTypes.object.isRequired,
-    label: PropTypes.string.isRequired
+    item: PropTypes.object.isRequired
 };
 
 export default Overview;

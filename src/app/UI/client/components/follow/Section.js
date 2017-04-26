@@ -72,7 +72,6 @@ class Section extends LightComponent {
                 <OverviewSection
                     theme={this.props.theme}
                     item={this.props.item}
-                    label={this.props.label}
                 />
             );
         }
@@ -101,8 +100,7 @@ class Section extends LightComponent {
 Section.propTypes = {
     theme: PropTypes.object,
     item: PropTypes.object.isRequired,
-    step: PropTypes.string,
-    label: PropTypes.string.isRequired
+    step: PropTypes.string
 };
 
 export default Section;

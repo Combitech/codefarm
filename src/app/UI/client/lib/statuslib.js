@@ -23,6 +23,17 @@ const statuslib = {
         }
 
         return status;
+    },
+    mood: (statuses) => {
+        if (statuses.includes("fail") || statuses.includes("aborted")) {
+            return "unhappy";
+        } else if (statuses.includes("unknown") || statuses.includes("allocated") || statuses.includes("queued") || statuses.includes("ongoing")) {
+            return "neutral";
+        } else if (statuses.includes("success") || statuses.includes("skip")) {
+            return "happy";
+        }
+
+        return "neutral";
     }
 };
 

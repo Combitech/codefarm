@@ -26,8 +26,6 @@ class Flows extends LightComponent {
                 <this.props.FlowComponent
                     theme={this.props.theme}
                     item={this.props.item}
-                    jobs={this.props.jobs}
-                    pathname={this.props.pathname}
                     flow={this.props.flows[0]}
                     step={this.props.step}
                     onStepSelect={this.props.onStepSelect}
@@ -40,7 +38,7 @@ class Flows extends LightComponent {
                     onChange={(flow) => this.setState({ flow })}
                     fixed={true}
                 >
-                    {this.props.flows.map((flow) => (
+                    <For each="flow" of={this.props.flows}>
                         <Tab
                             label={flow._id}
                             key={flow._id}
@@ -48,14 +46,12 @@ class Flows extends LightComponent {
                             <this.props.FlowComponent
                                 theme={this.props.theme}
                                 item={this.props.item}
-                                jobs={this.props.jobs}
-                                pathname={this.props.pathname}
                                 flow={flow}
                                 step={this.props.step}
                                 onStepSelect={this.props.onStepSelect}
                             />
                         </Tab>
-                    ))}
+                    </For>
                 </Tabs>
             );
         }
@@ -71,8 +67,6 @@ class Flows extends LightComponent {
 Flows.propTypes = {
     theme: PropTypes.object,
     item: PropTypes.object.isRequired,
-    jobs: PropTypes.object.isRequired,
-    pathname: PropTypes.string.isRequired,
     step: PropTypes.string,
     onStepSelect: PropTypes.func,
     flows: PropTypes.array,

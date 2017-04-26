@@ -44,7 +44,7 @@ class StepStatus extends LightComponent {
 
         const selectedClassName = this.props.item.active() ? this.props.theme.statusBoxSelected : "";
 
-        const status = this.props.item.meta.job ? this.props.item.meta.job.status : (this.props.item.meta.status || "unknown");
+        const status = this.props.item.meta.status || "unknown";
         const statusIcon = statusIcons[status];
 
         return (
@@ -112,7 +112,6 @@ class StepStatus extends LightComponent {
 StepStatus.propTypes = {
     theme: PropTypes.object,
     item: PropTypes.object.isRequired,
-    job: PropTypes.object,
     shadowId: PropTypes.string
 };
 

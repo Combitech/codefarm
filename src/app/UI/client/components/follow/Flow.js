@@ -1,11 +1,14 @@
 
 import React from "react";
+import moment from "moment";
 import PropTypes from "prop-types";
 import LightComponent from "ui-lib/light_component";
 import { States as ObservableDataStates } from "ui-lib/observable_data";
-import StepListObservable from "ui-observables/step_list";
-import { JobFlow, StepStatus } from "ui-components/flow";
+import { StepStatus, Flow as JobFlow } from "ui-components/flow";
 import { Loading } from "ui-components/layout";
+import statuslib from "ui-lib/statuslib";
+import TypeList from "ui-observables/type_list";
+import StepListObservable from "ui-observables/step_list";
 
 class Flow extends LightComponent {
     constructor(props) {
@@ -17,29 +20,65 @@ class Flow extends LightComponent {
             subscribe: false
         });
 
+        this.jobList = new TypeList({
+            type: "exec.job",
+            query: this.getQuery(props)
+        });
+
         this.state = {
             steps: this.steps.value.getValue(),
-            state: this.steps.state.getValue()
+            stepsState: this.steps.state.getValue(),
+            jobs: this.jobList.value.getValue(),
+            jobsState: this.jobList.state.getValue()
         };
+    }
+
+    getQuery(props) {
+        const ids = props.item.refs
+        .filter((ref) => ref.type === "exec.job")
+        .map((ref) => ref.id);
+
+        return ids.length > 0 ? { _id: { $in: ids } } : false;
     }
 
     componentDidMount() {
         this.addDisposable(this.steps.start());
 
         this.addDisposable(this.steps.value.subscribe((steps) => this.setState({ steps })));
-        this.addDisposable(this.steps.state.subscribe((state) => this.setState({ state })));
+        this.addDisposable(this.steps.state.subscribe((stepsState) => this.setState({ stepsState })));
+
+        this.addDisposable(this.jobList.start());
+        this.addDisposable(this.jobList.value.subscribe((jobs) => this.setState({ jobs })));
+        this.addDisposable(this.jobList.state.subscribe((jobsState) => this.setState({ jobsState })));
     }
 
     componentWillReceiveProps(nextProps) {
         this.steps.setOpts({
             flowId: nextProps.flow._id
         });
+
+        this.jobList.setOpts({
+            type: "exec.job",
+            query: this.getQuery(nextProps)
+        });
+    }
+
+    getJobStatus(jobs, name) {
+        const matchedJobs = jobs.filter((job) => job.name === name);
+
+        if (matchedJobs.length === 0) {
+            return false;
+        }
+
+        matchedJobs.sort((a, b) => moment(a.created).isBefore(b.created) ? 1 : -1);
+
+        return matchedJobs[0].status;
     }
 
     render() {
         this.log("render", this.props, this.state);
 
-        if (this.state.state === ObservableDataStates.LOADING) {
+        if (this.state.stepsState === ObservableDataStates.LOADING) {
             return (<Loading />);
         }
 
@@ -58,12 +97,18 @@ class Flow extends LightComponent {
             }
         };
 
+        const statuses = [];
+        const jobs = this.state.jobs.toJS();
         const steps = this.state.steps.toJS().map((step) => {
             const parentIds = step.parentSteps.slice(0);
 
             if (parentIds.length === 0) {
                 parentIds.push(firstStep.id);
             }
+
+            const status = this.getJobStatus(jobs, step.name) || statuslib.guess(this.props.item, step.name);
+
+            statuses.push(status);
 
             return {
                 id: step._id,
@@ -72,7 +117,8 @@ class Flow extends LightComponent {
                 meta: {
                     item: this.props.item,
                     flow: this.props.flow,
-                    step: step
+                    step: step,
+                    status: status
                 },
                 disabled: () => false,
                 active: () => this.props.step === step.name,
@@ -83,13 +129,12 @@ class Flow extends LightComponent {
             };
         });
 
+        firstStep.meta.status = statuslib.mood(statuses);
+
         steps.push(firstStep);
 
         return (
             <JobFlow
-                theme={this.props.theme}
-                jobs={this.props.jobs}
-                firstStep={firstStep}
                 steps={steps}
                 columnSpan={8}
             />
@@ -100,15 +145,9 @@ class Flow extends LightComponent {
 Flow.propTypes = {
     theme: PropTypes.object,
     item: PropTypes.object.isRequired,
-    jobs: PropTypes.object.isRequired,
-    pathname: PropTypes.string.isRequired,
     flow: PropTypes.object.isRequired,
     step: PropTypes.string,
     onStepSelect: PropTypes.func
-};
-
-Flow.contextTypes = {
-    router: PropTypes.object.isRequired
 };
 
 export default Flow;
