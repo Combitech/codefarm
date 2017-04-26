@@ -6,6 +6,7 @@ import PropTypes from "prop-types";
 import AppBar from "react-toolbox/lib/app_bar";
 import { Button, IconButton } from "react-toolbox/lib/button";
 import { Menu, MenuItem, MenuDivider } from "react-toolbox/lib/menu";
+import FontIcon from "react-toolbox/lib/font_icon";
 import LightComponent from "ui-lib/light_component";
 import { CodeFarmIcon } from "ui-components/app_icons";
 import ActiveUser from "ui-observables/active_user";
@@ -69,7 +70,15 @@ class AppTopBar extends LightComponent {
                             onClick={() => this._toggleUserMenu()}
                             flat={true}
                             inverse={true}
-                            label={activeUser.username}
+                            label={(
+                                <span>
+                                    <span>{activeUser.username}</span>
+                                    <FontIcon
+                                        style={{ verticalAlign: "middle" }}
+                                        value="arrow_drop_down"
+                                    />
+                                </span>
+                            )}
                             icon={
                                 <UserAvatar
                                     className={this.props.theme.userAvatar}
