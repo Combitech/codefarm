@@ -17,6 +17,7 @@ class Type {
         this.saved = false;
         this.tags = [];
         this.refs = [];
+        this.ancestors = [];
 
         synchronize(this, "save");
         synchronize(this, "remove");
@@ -24,6 +25,7 @@ class Type {
         synchronize(this, "untag");
         synchronize(this, "clearTags");
         synchronize(this, "addRef");
+        synchronize(this, "addAncestorRef");
     }
 
     static getType() {
@@ -339,6 +341,37 @@ class Type {
 
         await this.save();
         await notification.emit(`${this.constructor.typeName}.ref_added`, this, ref);
+    }
+
+    async addAncestorRef(ref) {
+        if (!ref) {
+            throw new Error("Can not add null ref");
+        }
+
+        if (typeof ref !== "object") {
+            throw new Error("ref is not an object");
+        }
+
+        const newRefs = ensureArray(ref);
+        for (const newRef of newRefs) {
+            // Check valid ref object
+            assertProp(newRef, "id", true);
+            assertProp(newRef, "type", true);
+            assertProp(newRef, "name", true);
+
+            if (!((typeof newRef.id === "string") || (newRef.id instanceof Array))) {
+                throw new Error("ref.id must be an array or of type string");
+            }
+
+            assertType(newRef.type, "ref.type", "string");
+            assertType(newRef.name, "ref.name", "string");
+            newRef._ref = true;
+        }
+
+        this.ancestors.splice(this.ancestors.length, 0, ...newRefs);
+
+        await this.save();
+        await notification.emit(`${this.constructor.typeName}.ancestor_added`, this, ref);
     }
 }
 
