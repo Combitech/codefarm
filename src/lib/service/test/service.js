@@ -138,6 +138,7 @@ describe("A Service", () => {
             type: `${testInfo.name}.state`,
             typeVersion: 1,
             tags: [],
+            ancestors: [],
             refs: [],
             saved: false,
             name: testInfo.name,
