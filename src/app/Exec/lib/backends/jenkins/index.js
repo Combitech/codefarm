@@ -22,7 +22,13 @@ Example configuration:
     The above will ...
 */
 
-const CONSOLE_POLL_INTERVAL = 2000;
+// Translation table Jenkins job codes => Codefarm job codes
+const RESULTCODES = {
+    "SUCCESS": "success",
+    "FAILURE": "fail",
+    "ABORTED": "aborted",
+    "BUILDING": "ongoing"
+};
 
 class JenkinsBackend extends AsyncEventEmitter {
     constructor(id, backend) {
@@ -94,13 +100,12 @@ class JenkinsBackend extends AsyncEventEmitter {
     // Get the console text log for a building job as a stream
     async getConsoleText(queuenr, jobUrl, offset) {
         const url = `${jobUrl}logText/progressiveText?start=${offset}`;
-        console.log(url);
         const response = await this._sendRequest(url, "GET");
         this.emit("consoleText", { queuenr, jobUrl, offset, response });
     }
 
     // Start/Queue job
-    async startJob(executor, job) {
+    async startJob(job) {
         const jenkinsJobName = job.script;
         // TODO: Send parameters in form
         const url = `${this.backend.hostUrl}/job/${jenkinsJobName}/build`;
@@ -109,6 +114,18 @@ class JenkinsBackend extends AsyncEventEmitter {
         const parts = response.headers.location.split("/");
 
         return parts[parts.length - 2];
+    }
+
+    async stopJob(url) {
+        const stopUrl = `${url}stop`;
+
+        return await this._sendRequest(stopUrl, "POST", null, false);
+    }
+
+    async dequeueJob(queuenr) {
+        const dequeueUrl = `${this.backend.hostUrl}/queue/cancelItem?id=${queuenr}`
+
+        return await this._sendRequest(dequeueUrl, "POST", null, false)
     }
 
     async verifySlaveJob(slave) {
@@ -120,6 +137,16 @@ class JenkinsBackend extends AsyncEventEmitter {
             script: "testJob",
             baseline: false
         });
+    }
+
+    async getJobStatus(url) {
+        const jsonUrl = `${url}api/json`;
+        const response = await this._sendRequest(jsonUrl, "GET", null, false);
+        if (response.building) {
+            return RESULTCODES.BUILDING;
+        }
+
+        return RESULTCODES[response.result];
     }
 
     _createEvent(event) {
@@ -167,9 +194,9 @@ class JenkinsBackend extends AsyncEventEmitter {
         if (event.response.headers["x-more-data"]) {
             const offset = parseInt(event.response.headers["x-text-size"], 10);
             setTimeout(() => {
-                ServiceMgr.instance.log("debug", "Polling jenkins console");
+                ServiceMgr.instance.log("debug", `Polling jenkins console (interval: ${this.backend.pollDelay})`);
                 this.getConsoleText(event.queuenr, event.jobUrl, offset);
-            }, CONSOLE_POLL_INTERVAL);
+            }, this.backend.pollDelay);
         }
     }
 
@@ -182,6 +209,10 @@ class JenkinsBackend extends AsyncEventEmitter {
 
     get backendType() {
         return this.backend.backendType;
+    }
+
+    get jenkinsUrl() {
+        return this.backend.hostUrl;
     }
 
     async dispose() {

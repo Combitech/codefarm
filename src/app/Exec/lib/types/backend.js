@@ -63,6 +63,7 @@ class Backend extends Type {
                 assertType(data.port, "data.port", "number");
                 assertType(data.hostUrl, "data.hostUrl", "string");
                 assertType(data.authToken, "data.authToken", "string");
+                assertType(data.pollDelay, "data.pollDelay", "number");
                 break;
             default:
                 throw new Error(`Unknown backend type ${data.backendType}`);

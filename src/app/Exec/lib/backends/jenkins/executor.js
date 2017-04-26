@@ -20,6 +20,7 @@ class JenkinsExecutor extends Executor {
 
         this.host = false;
         this.queuenr = false;
+        this.consoleOffset = 0;
 
         if (data) {
             this.set(data);
@@ -30,25 +31,45 @@ class JenkinsExecutor extends Executor {
         if (event.queuenr === this.queuenr) {
             this.logId = await this.allocateLog("interactive", [ "stdout", "stderr" ]);
             this.started = true;
+            this.jenkinsJobUrl = event.jenkinsurl;
             await this.save();
             await notification.emit(`${this.constructor.typeName}.started`, this);
         }
     }
 
-    async _onJobCompleted(event) {
-        if (event.queuenr === this.queuenr) {
-            await this._logln(`Job completed with result: ${event.status}`);
-            this.finished = true;
-            await this.save();
-            await notification.emit(`${this.constructor.typeName}.finished`, this, event.status);
-            await this.remove();
-        }
-    }
-
+    // NOTE: We wait for the console log to end before getting the job result
+    // This is to simplify resuming, avoiding race conditions when resuming
+    // and making sure the complete log is downloaded before removing ourselves
     async _onConsoleText(event) {
         if (event.queuenr === this.queuenr) {
             const time = moment().utc().format();
             await this._log(event.response.body, LEVEL.STDOUT, "exe", time);
+            // Save offset for if something goes wrong and we need to resume
+            this.consoleOffset = parseInt(event.response.headers["x-text-size"], 10);
+            await this.save();
+
+            // If the log is at an end, resolve job status
+            if (!event.response.headers["x-more-data"]) {
+                await this._logln("Jenkins console log ended, resolving finished job status");
+                await this._resolveFinishedStatus();
+            }
+        }
+    }
+
+    async _resolveFinishedStatus() {
+        const jenkinsBackend = BackendProxy.instance.getBackend(this.backend);
+        const status = await jenkinsBackend.getJobStatus(this.jenkinsJobUrl);
+        if (status === "ongoing") {
+            await this._logln("Error while trying to resolve finished Jenkins job status", LEVEL.ERROR);
+            await this._logln(`Did not expect status ${status}`, LEVEL.ERROR);
+            await notification.emit(`${this.constructor.typeName}.failure`, this);
+            await this.remove();
+        } else {
+            this.finished = true;
+            await this.save();
+            await notification.emit(`${this.constructor.typeName}.finished`, this, status);
+            await this.detach(`finished_with_${status}`);
+            await this.remove();
         }
     }
 
@@ -59,13 +80,13 @@ class JenkinsExecutor extends Executor {
 
             const jenkinsBackend = BackendProxy.instance.getBackend(this.backend);
             jenkinsBackend.addListener("job_started", this._onJobStarted.bind(this));
-            jenkinsBackend.addListener("job_completed", this._onJobCompleted.bind(this));
             jenkinsBackend.addListener("job_consoletext", this._onConsoleText.bind(this));
-            this.queuenr = await jenkinsBackend.startJob(this, job);
+            this.queuenr = await jenkinsBackend.startJob(job);
         } catch (error) {
             await this._logln("Error while trying to start execution", LEVEL.ERROR);
             await this._logln(error, LEVEL.ERROR);
             await notification.emit(`${this.constructor.typeName}.failure`, this);
+            await this.detach("failed_to_start");
             await this.remove();
             throw error;
         }
@@ -77,8 +98,21 @@ class JenkinsExecutor extends Executor {
                 await this.remove();
             }
 
-            const job = await Job.findOne({ _id: this.jobId });
-            await this.start(job);
+            const jenkinsBackend = BackendProxy.instance.getBackend(this.backend);
+
+            if (this.started) {
+                await this._logln(`Job resumed as started, requesting log from offset: ${this.consoleOffset}`);
+                jenkinsBackend.addListener("job_consoletext", this._onConsoleText.bind(this));
+                await jenkinsBackend.getConsoleText(this.queuenr, this.jenkinsJobUrl, this.consoleOffset);
+            } else if (this.queuenr) {
+                await this._logln("Job resumed with queue number, listening for start");
+                jenkinsBackend.addListener("job_started", this._onJobStarted.bind(this));
+                jenkinsBackend.addListener("job_consoletext", this._onConsoleText.bind(this));
+            } else {
+                await this._logln("Job resumed without queue number, rerunning");
+                const job = await Job.findOne({ _id: this.jobId });
+                await this.start(job);
+            }
         } catch (error) {
             await this._logln("Error while trying to resume execution", LEVEL.ERROR);
             await this._logln(error, LEVEL.ERROR);
@@ -90,34 +124,32 @@ class JenkinsExecutor extends Executor {
     }
 
     async detach(reason) {
-        throw new Error("detach not implemented", reason);
+        const jenkinsBackend = BackendProxy.instance.getBackend(this.backend);
+        jenkinsBackend.removeListener("job_started", this._onJobStarted);
+        jenkinsBackend.removeListener("job_consoletext", this._onConsoleText);
+        await this._logln(`Detached, reason: ${reason}`);
     }
 
     async abort() {
-        throw new Error("abort not implemented");
+        await this._logln("Abort requested");
+
+        const jenkinsBackend = BackendProxy.instance.getBackend(this.backend);
+
+        if (this.started) {
+            await jenkinsBackend.stopJob(this.jenkinsJobUrl);
+        } else {
+            await jenkinsBackend.dequeueUrl(this.queuenr);
+        }
+
+        this.finished = true;
+        await this.save();
+        notification.emit(`${this.constructor.typeName}.finished`, this, "aborted");
+        await this.detach("aborted");
+        await this.remove();
     }
 
     async downloadFileAsStream(remotePath) {
         throw new Error("downloadFileAsStream not implemented", remotePath);
-    }
-
-    // TODO: Better function naming, notifyEvent is already taken by base-class Type
-    async notifyInfo(event, contextId = false, obj = null) {
-        if (!this.__com) {
-            return;
-        }
-
-        await this._logln(`Notify event ${event} in context ${contextId}: ${JSON.stringify(obj)}`);
-        await this.__com.sendCommand(`notify_${event}`, obj, contextId);
-    }
-
-    async notifyError(contextId = false, obj = null) {
-        if (!this.__com) {
-            return;
-        }
-
-        await this._logln(`Notify error in context ${contextId}: ${JSON.stringify(obj)}`);
-        await this.__com.sendCommand("notify_error", obj, contextId);
     }
 }
 
