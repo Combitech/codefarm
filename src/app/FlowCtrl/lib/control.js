@@ -5,6 +5,27 @@ const { notification } = require("typelib");
 const singleton = require("singleton");
 const Step = require("./types/step");
 
+const getNewJobCreatedRefs = (data) => {
+    const oldRefs = [];
+    const newRefs = [];
+
+    if (data.olddata) {
+        for (const run of data.olddata.runs) {
+            oldRefs = oldRefs.concat(run.createdRefs);
+        }
+    }
+
+    for (const run of data.newdata.runs) {
+        for (const newRef of run.createdRefs) {
+            if (oldRefs.every((ref) => ref.id !== newRef.id && ref.type !== newRef.type)) {
+                newRefs.push(newRef);
+            }
+        }
+    }
+
+    return newRefs;
+}
+
 class Control {
     constructor() {
     }
@@ -47,6 +68,21 @@ class Control {
                         await step.jobStatusUpdated(data.newdata._id, data.newdata.status);
                     } catch (error) {
                         ServiceMgr.instance.log("error", `Job status update failed for step ${step._id}`, JSON.stringify(error, null, 2));
+                    }
+                }
+            } else if (data.type === "exec.job" &&
+                       data.event === "updated") {
+                const newCreatedRefs = getNewJobCreatedRefs(data);
+
+                if (newCreatedRefs.length > 0) {
+                    const steps = await Step.findMany({ "jobs.jobId": data.newdata._id });
+
+                    for (const step of steps) {
+                        try {
+                            await step.jobNewCreatedRefs(data.newdata._id, newCreatedRefs);
+                        } catch (error) {
+                            ServiceMgr.instance.log("error", `Job new created refs failed for step ${step._id}`, JSON.stringify(error, null, 2));
+                        }
                     }
                 }
             }

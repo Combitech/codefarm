@@ -17,7 +17,7 @@ class Type {
         this.saved = false;
         this.tags = [];
         this.refs = [];
-        this.ancestors = [];
+        this.derivatives = [];
 
         synchronize(this, "save");
         synchronize(this, "remove");
@@ -26,7 +26,7 @@ class Type {
         synchronize(this, "clearTags");
         synchronize(this, "replaceTag");
         synchronize(this, "addRef");
-        synchronize(this, "addAncestorRef");
+        synchronize(this, "addDerivativeRef");
     }
 
     static getType() {
@@ -349,7 +349,7 @@ class Type {
         await notification.emit(`${this.constructor.typeName}.ref_added`, this, ref);
     }
 
-    async addAncestorRef(ref) {
+    async addDerivativeRef(ref) {
         if (!ref) {
             throw new Error("Can not add null ref");
         }
@@ -374,10 +374,10 @@ class Type {
             newRef._ref = true;
         }
 
-        this.ancestors.splice(this.ancestors.length, 0, ...newRefs);
+        this.derivatives.splice(this.derivatives.length, 0, ...newRefs);
 
         await this.save();
-        await notification.emit(`${this.constructor.typeName}.ancestor_added`, this, ref);
+        await notification.emit(`${this.constructor.typeName}.derivative_added`, this, ref);
     }
 }
 

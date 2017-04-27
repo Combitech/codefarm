@@ -41,6 +41,7 @@ class Controller {
         this._addAction("replacetag", this._replacetag);
 
         this._addAction("addref", this._addRef);
+        this._addAction("addderivativeref", this._addDerivativeRef);
 
         this._addAction(ROUTE_WILDCARD, this._invalid, "Invalid action catcher");
         this._addGetter(ROUTE_WILDCARD, this._invalid, "Invalid getter catcher");
@@ -431,6 +432,18 @@ class Controller {
         const obj = await this._getTypeInstance(id);
         const refs = ensureArray(data.ref);
         await obj.addRef(refs);
+
+        return obj.serialize();
+    }
+
+    async _addDerivativeRef(ctx, id, data) {
+        this._isAllowed(ctx, "ref");
+
+        !data.ref && this._throw("No ref supplied", 400);
+
+        const obj = await this._getTypeInstance(id);
+        const refs = ensureArray(data.ref);
+        await obj.addDerivativeRef(refs);
 
         return obj.serialize();
     }
