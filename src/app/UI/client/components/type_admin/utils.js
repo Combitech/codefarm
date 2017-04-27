@@ -81,6 +81,10 @@ const utils = {
         return data;
     },
     serializeRef(id, type, name) {
+        if (!id) {
+            return false;
+        }
+
         return {
             _ref: true,
             id: id,
@@ -89,7 +93,7 @@ const utils = {
         };
     },
     deserializeRef(ref) {
-        return ref.id;
+        return ref ? ref.id : "";
     }
 };
 

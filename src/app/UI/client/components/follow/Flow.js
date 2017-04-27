@@ -8,7 +8,7 @@ import { StepStatus, Flow as JobFlow } from "ui-components/flow";
 import { Loading } from "ui-components/layout";
 import statuslib from "ui-lib/statuslib";
 import TypeList from "ui-observables/type_list";
-import StepListObservable from "ui-observables/step_list";
+import StepListObservable from "ui-observables/recursive_step_list";
 
 class Flow extends LightComponent {
     constructor(props) {
@@ -16,7 +16,6 @@ class Flow extends LightComponent {
 
         this.steps = new StepListObservable({
             flowId: props.flow._id,
-            visible: true,
             subscribe: false
         });
 

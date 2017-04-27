@@ -54,6 +54,7 @@ class FlowView extends LightComponent {
                                 <Flow
                                     theme={this.props.theme}
                                     context={this.props.context}
+                                    pathname={this.props.pathname}
                                     item={this.props.item}
                                     steps={this.state.stepList.toJS()}
                                     selected={this.state.selected}
@@ -82,7 +83,8 @@ class FlowView extends LightComponent {
 FlowView.propTypes = {
     theme: PropTypes.object,
     item: PropTypes.object,
-    context: PropTypes.object
+    context: PropTypes.object,
+    pathname: PropTypes.string
 };
 
 export default FlowView;

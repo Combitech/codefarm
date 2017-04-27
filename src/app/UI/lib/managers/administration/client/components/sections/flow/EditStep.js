@@ -104,7 +104,9 @@ class EditStep extends LightComponent {
             "connectedFlow": {
                 editable: true,
                 required: () => false,
-                defaultValue: false
+                defaultValue: "",
+                serialize: (id) => tautils.serializeRef(id, "flowctrl.flow"),
+                deserialize: (ref) => tautils.deserializeRef(ref)
             }
         };
 
@@ -156,7 +158,7 @@ class EditStep extends LightComponent {
             value: flow._id,
             label: flow._id
         })).concat({
-            value: null,
+            value: "",
             label: "No connected flow"
         });
     }
@@ -340,7 +342,7 @@ class EditStep extends LightComponent {
                         disabled={this.props.item && !this.itemProperties.connectedFlow.editable}
                         onChange={this.state.connectedFlow.set}
                         source={flows}
-                        value={this.state.connectedFlow.value || null}
+                        value={this.state.connectedFlow.value}
                     />
                 </TAForm>
             </TASection>

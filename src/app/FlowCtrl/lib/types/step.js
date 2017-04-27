@@ -147,7 +147,15 @@ class Step extends Type {
             baseline: baseline,
             workspaceName: this.workspaceName,
             workspaceCleanup: this.workspaceCleanup,
-            tags: this.initialJobTags
+            tags: this.initialJobTags,
+            refs: [
+                {
+                    _ref: true,
+                    type: this.type,
+                    id: this._id,
+                    name: "step"
+                }
+            ]
         });
 
         this.jobs.push({ jobId: data._id, baseline: baseline });

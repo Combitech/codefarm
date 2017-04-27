@@ -101,13 +101,16 @@ class TypeList extends ObservableData {
         }
 
         const list = await api.type.get(opts.type, query);
+
         if (trackMoreData) {
             let hasMoreData = false;
+
             if (list.length > opts.limit) {
                 hasMoreData = true;
                 // Since we fetched one item too much, remove it
                 list.length = opts.limit;
             }
+
             if (this._hasMoreData.getValue() !== hasMoreData) {
                 this._hasMoreData.next(hasMoreData);
             }
