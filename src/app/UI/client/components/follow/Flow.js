@@ -1,7 +1,6 @@
 
 import React from "react";
 import PropTypes from "prop-types";
-import moment from "moment";
 import LightComponent from "ui-lib/light_component";
 import { States as ObservableDataStates } from "ui-lib/observable_data";
 import { StepStatus, Flow as JobFlow } from "ui-components/flow";
