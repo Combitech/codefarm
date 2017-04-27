@@ -6,7 +6,7 @@ const singleton = require("singleton");
 const Step = require("./types/step");
 
 const getNewJobCreatedRefs = (data) => {
-    const oldRefs = [];
+    let oldRefs = [];
     const newRefs = [];
 
     if (data.olddata) {
@@ -17,14 +17,14 @@ const getNewJobCreatedRefs = (data) => {
 
     for (const run of data.newdata.runs) {
         for (const newRef of run.createdRefs) {
-            if (oldRefs.every((ref) => ref.id !== newRef.id && ref.type !== newRef.type)) {
+            if (oldRefs.every((ref) => ref.id !== newRef.id || ref.type !== newRef.type)) {
                 newRefs.push(newRef);
             }
         }
     }
 
     return newRefs;
-}
+};
 
 class Control {
     constructor() {

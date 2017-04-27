@@ -212,7 +212,7 @@ class Step extends Type {
 
         if (job) {
             await this._doActionOnBaseline(job.baseline, async (client, typeName, ref) => {
-                await client.addderivative(typeName, ref.id, {
+                await client.addderivativeref(typeName, ref.id, {
                     ref: createdRefs
                 });
             });

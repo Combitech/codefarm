@@ -359,6 +359,7 @@ class Type {
         }
 
         const newRefs = ensureArray(ref);
+        const refsToAdd = [];
         for (const newRef of newRefs) {
             // Check valid ref object
             assertProp(newRef, "id", true);
@@ -372,12 +373,19 @@ class Type {
             assertType(newRef.type, "ref.type", "string");
             assertType(newRef.name, "ref.name", "string");
             newRef._ref = true;
+
+            // Duplicate refs will be silently ignored
+            // Ref to myself will be silently ignored
+            if ((newRef.id !== this._id || newRef.type !== this.type) &&
+                (this.derivatives.every((ref) => ref.id !== newRef.id || ref.type !== newRef.type))) {
+                refsToAdd.push(newRef);
+            }
         }
 
-        this.derivatives.splice(this.derivatives.length, 0, ...newRefs);
+        this.derivatives.splice(this.derivatives.length, 0, ...refsToAdd);
 
         await this.save();
-        await notification.emit(`${this.constructor.typeName}.derivative_added`, this, ref);
+        await notification.emit(`${this.constructor.typeName}.derivative_added`, this, refsToAdd);
     }
 }
 
