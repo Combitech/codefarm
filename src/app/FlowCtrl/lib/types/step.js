@@ -22,6 +22,7 @@ class Step extends Type {
         this.schedule = false;
         this.concurrency = 1;
         this.baseline = false;
+        this.connectedFlow = false;
         this.criteria = false;
         this.script = false;
         this.tagScript = false;
@@ -73,6 +74,10 @@ class Step extends Type {
             assertType(data.baseline, "data.baseline", "ref");
             // assertType(data.script, "data.parentSteps", "array"); TODO: This does not work correctly
             // TODO: Check workspace and cleanup policy
+        }
+
+        if (data.connectedFlow) { // False is allowed
+            assertType(data.connectedFlow, "data.connectedFlow", "ref");
         }
 
         if (data.hasOwnProperty("initialJobTags")) {
@@ -194,11 +199,23 @@ class Step extends Type {
         await this.notifyStatus(baseline, data.status);
     }
 
-    async jobStatusUpdated(jobStatus, status) {
-        const jobs = this.jobs;
+    async jobStatusUpdated(jobId, status) {
+        const job = this.jobs.find((job) => job.jobId === jobId);
 
-        for (const job of jobs) {
+        if (job) {
             await this.notifyStatus(job.baseline, status);
+        }
+    }
+
+    async jobNewCreatedRefs(jobId, createdRefs) {
+        const job = this.jobs.find((job) => job.jobId === jobId);
+
+        if (job) {
+            await this._doActionOnBaseline(job.baseline, async (client, typeName, ref) => {
+                await client.addderivative(typeName, ref.id, {
+                    ref: createdRefs
+                });
+            });
         }
     }
 

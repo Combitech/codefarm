@@ -133,7 +133,8 @@ class Job extends Type {
                 artifacts: [],
                 logs: [],
                 revisions: [],
-                subJobs: []
+                subJobs: [],
+                createdRefs: [] // FlowCtrl uses this to connect items
             };
         }
 
@@ -172,6 +173,14 @@ class Job extends Type {
             repository: artifactRepo,
             version: artifactVersion
         });
+
+        this.currentRun.createdRefs.push({
+            _ref: true,
+            type: "artifactrepo.artifact",
+            id: artifactId,
+            name: artifactName
+        });
+
         await this.save();
     }
 
@@ -179,6 +188,7 @@ class Job extends Type {
         if (values(REVISION_STATE).indexOf(state) === -1) {
             throw new Error(`Illegal Job revision state ${state}`);
         }
+
         this.currentRun.revisions.push({
             name: "revision",
             id: revisionId,
@@ -187,6 +197,14 @@ class Job extends Type {
             _ref: true,
             state: state
         });
+
+        this.currentRun.createdRefs.push({
+            _ref: true,
+            type: "coderepo.revision",
+            id: revisionId,
+            name: "revision"
+        });
+
         await this.save();
     }
 
