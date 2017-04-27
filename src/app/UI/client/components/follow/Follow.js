@@ -52,15 +52,15 @@ class Follow extends LightComponent {
                 <Flows
                     theme={this.props.theme}
                     item={this.props.item}
-                    step={this.state.params.toJS().step || ""}
-                    onStepSelect={(step) => LocationQuery.instance.setParams({ step })}
+                    selected={this.state.params.toJS().job || ""}
+                    onSelect={(job) => LocationQuery.instance.setParams({ job })}
                     flows={flows}
                     FlowComponent={Flow}
                 />
                 <Section
                     theme={this.props.theme}
                     item={this.props.item}
-                    step={this.state.params.toJS().step || ""}
+                    selected={this.state.params.toJS().job || ""}
                 />
             </div>
         );

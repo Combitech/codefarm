@@ -58,8 +58,6 @@ class RecursiveStepList extends TypeList {
             }
         }
 
-        console.log(list);
-
         return list;
     }
 }

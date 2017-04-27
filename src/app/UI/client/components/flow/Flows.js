@@ -27,8 +27,8 @@ class Flows extends LightComponent {
                     theme={this.props.theme}
                     item={this.props.item}
                     flow={this.props.flows[0]}
-                    step={this.props.step}
-                    onStepSelect={this.props.onStepSelect}
+                    selected={this.props.selected}
+                    onSelect={this.props.onSelect}
                 />
             );
         } else {
@@ -47,8 +47,8 @@ class Flows extends LightComponent {
                                 theme={this.props.theme}
                                 item={this.props.item}
                                 flow={flow}
-                                step={this.props.step}
-                                onStepSelect={this.props.onStepSelect}
+                                selected={this.props.selected}
+                                onSelect={this.props.onSelect}
                             />
                         </Tab>
                     </For>
@@ -67,8 +67,8 @@ class Flows extends LightComponent {
 Flows.propTypes = {
     theme: PropTypes.object,
     item: PropTypes.object.isRequired,
-    step: PropTypes.string,
-    onStepSelect: PropTypes.func,
+    selected: PropTypes.string,
+    onSelect: PropTypes.func,
     flows: PropTypes.array,
     FlowComponent: PropTypes.func.isRequired
 };
