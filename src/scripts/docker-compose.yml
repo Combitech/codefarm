@@ -51,8 +51,6 @@ services:
         image: codefarm/execslave:0.0.0
         volumes:
             - ../../:/home/farmer/codefarm:ro
-        ports:
-            - "8022:22"
         depends_on:
             - nodebase
     mgmt:
@@ -141,6 +139,7 @@ services:
         links:
             - "mongo"
             - "rabbitmq"
+            - "execslave"
         ports:
             - "19494:19494"
     baselinegen:
