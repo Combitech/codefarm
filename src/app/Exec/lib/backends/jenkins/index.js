@@ -21,6 +21,7 @@ Example configuration:
 
     The above will ...
 */
+const BACKEND_SLAVE_TEST_JOB = "codefarm_slave_test";
 
 // Translation table Jenkins job codes => Codefarm job codes
 const RESULTCODES = {
@@ -134,7 +135,7 @@ class JenkinsBackend extends AsyncEventEmitter {
             // All slaves have their ID as a tag... This will match a specific slave
             criteria: `${slave._id}`,
             requeueOnFailure: false,
-            script: "testJob",
+            script: BACKEND_SLAVE_TEST_JOB,
             baseline: false
         });
     }
