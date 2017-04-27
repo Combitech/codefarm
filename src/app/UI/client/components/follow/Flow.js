@@ -104,9 +104,8 @@ class Flow extends LightComponent {
             statuses.push(status);
 
             if (item) {
-                const jobRefs = item.refs.filter((ref) => ref.name === step.name);
-
-                jobRefs.sort((a, b) => moment(a.created).isBefore(b.created) ? 1 : -1);
+                // Refs are written in order, not sure if it is reliable over time
+                const jobRefs = item.refs.filter((ref) => ref.name === step.name).reverse();
 
                 jobId = jobRefs[0] ? jobRefs[0].id : false;
             }
