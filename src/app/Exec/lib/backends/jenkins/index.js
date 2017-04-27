@@ -124,9 +124,9 @@ class JenkinsBackend extends AsyncEventEmitter {
     }
 
     async dequeueJob(queuenr) {
-        const dequeueUrl = `${this.backend.hostUrl}/queue/cancelItem?id=${queuenr}`
+        const dequeueUrl = `${this.backend.hostUrl}/queue/cancelItem?id=${queuenr}`;
 
-        return await this._sendRequest(dequeueUrl, "POST", null, false)
+        return await this._sendRequest(dequeueUrl, "POST", null, false);
     }
 
     async verifySlaveJob(slave) {
