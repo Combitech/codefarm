@@ -393,7 +393,7 @@ class Control {
     }
 
     async _waitForJobCompletion(jobId) {
-        return new Promise((resolve) => {
+        return new Promise((resolve, reject) => {
             let oldJobStatus = "queued";
             const jobUpdatedHandler = (job) => {
                 if (job._id === jobId) {
@@ -401,6 +401,10 @@ class Control {
                         // Transition from ongoing means that job have executed...
                         notification.removeListener("job.updated", jobUpdatedHandler);
                         resolve(job);
+                    } else if (job.status === "aborted") {
+                        // Transition from ongoing means that job have executed...
+                        notification.removeListener("job.updated", jobUpdatedHandler);
+                        reject(new Error("Job aborted"));
                     }
                     oldJobStatus = job.status;
                 }

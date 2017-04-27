@@ -115,7 +115,7 @@ class JobCard extends LightComponent {
                                     />
                                 </td>
                             </tr>
-                            <If condition={this.props.item.finished}>
+                            <If condition={this.props.item.started && this.props.item.finished}>
                                 <tr>
                                     <td>Duration</td>
                                     <td>

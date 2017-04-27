@@ -23,55 +23,67 @@ class JobView extends LightComponent {
 
         const job = this.props.item;
         const run = job.runs[this.props.item.lastRunId];
+        const tabs = [ (
+            <Tab
+                key="info"
+                label="Job"
+            >
+                <JobTab
+                    theme={this.props.theme}
+                    job={job}
+                />
+            </Tab>
+        ) ];
+
+        if (run && run.logs && run.logs.length > 0) {
+            tabs.push(
+                <Tab
+                    key="logs"
+                    label="Logs"
+                >
+                    <LogTab
+                        theme={this.props.theme}
+                        logRefs={run && run.logs}
+                    />
+                </Tab>
+            );
+        }
+
+        if (run && run.subJobs && run.subJobs.length > 0) {
+            tabs.push(
+                <Tab
+                    key="subjobs"
+                    label="Sub-Jobs"
+                >
+                    <SubJobTab
+                        theme={this.props.theme}
+                        subJobRefs={run.subJobs}
+                    />
+                </Tab>
+            );
+        }
+
+        if (run && (run.artifacts.length || run.revisions.length)) {
+            tabs.push(
+                <Tab
+                    key="output"
+                    label="Output"
+                >
+                    <OutputTab
+                        theme={this.props.theme}
+                        artifactRefs={run.artifacts}
+                        revisionRefs={run.revisions}
+                    />
+                </Tab>
+            );
+        }
 
         return (
             <Tabs
                 index={parseInt(this.state.tabIndex.value, 10)}
                 onChange={(index) => this.state.tabIndex.set(`${index}`)}
             >
-                <Tab
-                    key="info"
-                    label="Job"
-                >
-                    <JobTab
-                        theme={this.props.theme}
-                        job={job}
-                    />
-                </Tab>
-                {(run && run.logs.length) && (
-                    <Tab
-                        key="logs"
-                        label="Logs"
-                    >
-                        <LogTab
-                            theme={this.props.theme}
-                            logRefs={run.logs}
-                        />
-                    </Tab>
-                )}
-                {(run && run.subJobs.length) && (
-                    <Tab
-                        key="subjobs"
-                        label="Sub-Jobs"
-                    >
-                        <SubJobTab
-                            theme={this.props.theme}
-                            subJobRefs={run.subJobs}
-                        />
-                    </Tab>
-                )}
-                {(run && (run.artifacts.length || run.revisions.length)) && (
-                    <Tab
-                        key="output"
-                        label="Output"
-                    >
-                        <OutputTab
-                            theme={this.props.theme}
-                            artifactRefs={run.artifacts}
-                            revisionRefs={run.revisions}
-                        />
-                    </Tab>
-                )}
+                {tabs}
             </Tabs>
         );
 /*

@@ -7,6 +7,8 @@ const { LogClient } = require("loglib");
 const BackendProxy = require("../backend_proxy");
 const Repository = require("./repository");
 
+const DEFAULT_REPOSITORY_ID = "Default";
+
 const STATE = {
     /** Artifact not saved, no version yet */
     NO_FILE: "no_file",
@@ -22,7 +24,7 @@ class Log extends Type {
 
         this.name = false;
         this.state = STATE.NO_FILE;
-        this.repository = "Default";
+        this.repository = DEFAULT_REPOSITORY_ID;
         this.fileMeta = {};
 
         if (data) {
@@ -59,12 +61,16 @@ class Log extends Type {
             assertProp(data, "repository", false);
         }
 
-        if (data.repository) {
-            assertType(data.repository, "data.repository", "string");
+        let repoId = data.repository;
+        if (!repoId && event === "create") {
+            repoId = DEFAULT_REPOSITORY_ID;
+        }
+        if (repoId) {
+            assertType(repoId, "data.repository", "string");
 
-            const repository = await Repository.findOne({ _id: data.repository });
-            if (!repository) {
-                throw new Error("Repository doesn't exist");
+            const repoExists = await Repository.exist(repoId);
+            if (!repoExists) {
+                throw new Error(`Repository ${repoId} doesn't exist`);
             }
         }
     }
@@ -72,6 +78,9 @@ class Log extends Type {
     static async append(id, data) {
         const log = await Log.findOne({ _id: id });
         const repository = await Repository.findOne({ _id: log.repository });
+        if (!repository) {
+            throw new Error(`Cannot append to log, repo ${this.repository} doesn't exist`);
+        }
         const tags = [];
 
         // If this is an empty saved log that we append into
@@ -113,6 +122,9 @@ class Log extends Type {
     async _saveHook(/* olddata */) {
         if (this.state === STATE.NO_FILE) {
             const repository = await Repository.findOne({ _id: this.repository });
+            if (!repository) {
+                throw new Error(`Cannot save log, repo ${this.repository} doesn't exist`);
+            }
             await repository.saveLog(this);
             this.state = STATE.CREATED;
         }
@@ -120,6 +132,9 @@ class Log extends Type {
 
     async _removeHook() {
         const repository = await Repository.findOne({ _id: this.repository });
+        if (!repository) {
+            throw new Error(`Cannot remove log, repo ${this.repository} doesn't exist`);
+        }
         await repository.removeLog(this);
     }
 
@@ -129,6 +144,9 @@ class Log extends Type {
         }
 
         const repository = await Repository.findOne({ _id: this.repository });
+        if (!repository) {
+            throw new Error(`Cannot upload log, repo ${this.repository} doesn't exist`);
+        }
 
         const uploadInfo = await repository.uploadLog(this, fileStream);
 
@@ -151,6 +169,9 @@ class Log extends Type {
         }
 
         const repository = await Repository.findOne({ _id: this.repository });
+        if (!repository) {
+            throw new Error(`Cannot download log, repo ${this.repository} doesn't exist`);
+        }
 
         return await BackendProxy.instance.getLogReadStream(repository, this);
     }
@@ -164,6 +185,9 @@ class Log extends Type {
 
         const lines = [];
         const repository = await Repository.findOne({ _id: this.repository });
+        if (!repository) {
+            throw new Error(`Cannot get last log lines, repo ${this.repository} doesn't exist`);
+        }
         const textLines = await BackendProxy.instance.getLastLines(repository, this, limit);
 
         let offset = this.fileMeta.size;
