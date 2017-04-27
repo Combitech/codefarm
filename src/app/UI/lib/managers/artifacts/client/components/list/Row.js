@@ -39,7 +39,7 @@ class Row extends React.PureComponent {
                     >
                         <StatusIcon
                             className={this.props.theme.statusIcon}
-                            status={statuslib.guess(item, step.name)}
+                            status={statuslib.fromTags(item.tags, step.name)}
                             size={24}
                         />
                     </td>

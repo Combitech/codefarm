@@ -11,18 +11,12 @@ const statuslib = {
 
         return "unknown";
     },
-    guess: (item, step) => {
-        const statuses = item.tags
+    fromTags: (tags, step) => {
+        const statuses = tags
             .filter((tag) => tag.startsWith(`step:${step}:`))
             .map((tag) => tag.replace(`step:${step}:`, ""));
 
-        const status = statuslib.select(statuses);
-
-        if (status === "unknown" && item.refs.find((ref) => ref.name === step)) {
-            return "ongoing";
-        }
-
-        return status;
+        return statuslib.select(statuses);
     },
     mood: (statuses) => {
         if (statuses.includes("fail") || statuses.includes("aborted")) {

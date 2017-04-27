@@ -1,13 +1,11 @@
 
 import React from "react";
-import moment from "moment";
 import PropTypes from "prop-types";
 import LightComponent from "ui-lib/light_component";
 import { States as ObservableDataStates } from "ui-lib/observable_data";
 import { StepStatus, Flow as JobFlow } from "ui-components/flow";
 import { Loading } from "ui-components/layout";
 import statuslib from "ui-lib/statuslib";
-import TypeList from "ui-observables/type_list";
 import StepListObservable from "ui-observables/recursive_step_list";
 
 class Flow extends LightComponent {
@@ -19,25 +17,10 @@ class Flow extends LightComponent {
             subscribe: false
         });
 
-        this.jobList = new TypeList({
-            type: "exec.job",
-            query: this.getQuery(props)
-        });
-
         this.state = {
             steps: this.steps.value.getValue(),
-            stepsState: this.steps.state.getValue(),
-            jobs: this.jobList.value.getValue(),
-            jobsState: this.jobList.state.getValue()
+            stepsState: this.steps.state.getValue()
         };
-    }
-
-    getQuery(props) {
-        const ids = props.item.refs
-        .filter((ref) => ref.type === "exec.job")
-        .map((ref) => ref.id);
-
-        return ids.length > 0 ? { _id: { $in: ids } } : false;
     }
 
     componentDidMount() {
@@ -45,33 +28,12 @@ class Flow extends LightComponent {
 
         this.addDisposable(this.steps.value.subscribe((steps) => this.setState({ steps })));
         this.addDisposable(this.steps.state.subscribe((stepsState) => this.setState({ stepsState })));
-
-        this.addDisposable(this.jobList.start());
-        this.addDisposable(this.jobList.value.subscribe((jobs) => this.setState({ jobs })));
-        this.addDisposable(this.jobList.state.subscribe((jobsState) => this.setState({ jobsState })));
     }
 
     componentWillReceiveProps(nextProps) {
         this.steps.setOpts({
             flowId: nextProps.flow._id
         });
-
-        this.jobList.setOpts({
-            type: "exec.job",
-            query: this.getQuery(nextProps)
-        });
-    }
-
-    getJobStatus(jobs, name) {
-        const matchedJobs = jobs.filter((job) => job.name === name);
-
-        if (matchedJobs.length === 0) {
-            return false;
-        }
-
-        matchedJobs.sort((a, b) => moment(a.created).isBefore(b.created) ? 1 : -1);
-
-        return matchedJobs[0].status;
     }
 
     render() {
@@ -97,7 +59,6 @@ class Flow extends LightComponent {
         };
 
         const statuses = [];
-        const jobs = this.state.jobs.toJS();
         const steps = this.state.steps.toJS().map((step) => {
             const parentIds = step.parentSteps.slice(0);
 
@@ -105,7 +66,7 @@ class Flow extends LightComponent {
                 parentIds.push(firstStep.id);
             }
 
-            const status = this.getJobStatus(jobs, step.name) || statuslib.guess(this.props.item, step.name);
+            const status = statuslib.fromTags(this.props.item.tags, step.name);
 
             statuses.push(status);
 

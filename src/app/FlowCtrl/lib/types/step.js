@@ -3,7 +3,7 @@
 const vm = require("vm");
 const { ServiceMgr } = require("service");
 const { ServiceComBus } = require("servicecom");
-const { assertType, assertProp } = require("misc");
+const { assertType, assertProp, ensureArray } = require("misc");
 const { Type } = require("typelib");
 
 const CLEANUP_POLICY = { // Keep in sync with same list in Exec job
@@ -77,6 +77,24 @@ class Step extends Type {
 
         if (data.hasOwnProperty("initialJobTags")) {
             assertType(data.initialJobTags, "data.initialJobTags", "array");
+        }
+    }
+
+    async _doActionOnBaseline(baseline, actionFn) {
+        for (const ref of baseline.content) {
+            const [ serviceId, typeName ] = ref.type.split(".");
+            const client = ServiceComBus.instance.getClient(serviceId);
+
+            const ids = ensureArray(ref.id);
+
+            for (const id of ids) {
+                await actionFn(client, typeName, {
+                    _ref: true,
+                    id: id,
+                    type: ref.type,
+                    name: ref.name
+                });
+            }
         }
     }
 
@@ -161,34 +179,42 @@ class Step extends Type {
         this.jobs.push({ jobId: data._id, baseline: baseline });
         await this.save();
 
-        for (const ref of baseline.content) {
-            const [ serviceId, typeName ] = ref.type.split(".");
-            const client = ServiceComBus.instance.getClient(serviceId);
+        // Add add ref to the job to the items in the baseline
+        await this._doActionOnBaseline(baseline, async (client, typeName, ref) => {
+            await client.addref(typeName, ref.id, {
+                ref: {
+                    _ref: true,
+                    id: data._id,
+                    type: data.type,
+                    name: this.name
+                }
+            });
+        });
 
-            for (const id of ref.id) {
-                await client.addref(typeName, id, {
-                    ref: {
-                        _ref: true,
-                        id: data._id,
-                        type: data.type,
-                        name: this.name
-                    }
-                });
-            }
+        await this.notifyStatus(baseline, data.status);
+    }
+
+    async jobStatusUpdated(jobStatus, status) {
+        const jobs = this.jobs;
+
+        for (const job of jobs) {
+            await this.notifyStatus(job.baseline, status);
         }
     }
 
     async abortJobs(save = true) {
         const client = ServiceComBus.instance.getClient("exec");
+        const jobs = this.jobs;
 
-        const jobIds = this.jobs.map((job) => job.jobId);
         this.jobs.length = 0;
+
         if (save) {
             await this.save();
         }
 
-        for (const jobId of jobIds) {
-            await client.remove("job", jobId);
+        for (const job of jobs) {
+            await client.remove("job", job.jobId);
+            await this.notifyStatus(job.baseline, "aborted");
         }
     }
 
@@ -202,11 +228,16 @@ class Step extends Type {
 
         await this.evaluateStatus();
 
+        await this.notifyStatus(job.baseline, result);
+
         await this.runTagScript(jobId, job.baseline, result);
     }
 
     async runTagScript(jobId, baseline, result) {
-        const defaultTag = `step:${this.name}:${result}`;
+        if (!this.tagScript) {
+            return;
+        }
+
         const sandbox = {
             data: {
                 id: this._id,
@@ -217,51 +248,56 @@ class Step extends Type {
                 content: {},
                 result: result
             },
-            tags: [ defaultTag ],
+            tags: [],
             untag: []
         };
 
-        if (this.tagScript) {
-            ServiceMgr.instance.log("verbose", `Step ${this.name} running tag script`);
-            for (const ref of baseline.content) {
-                const [ serviceId, typeName ] = ref.type.split(".");
-                const client = ServiceComBus.instance.getClient(serviceId);
+        ServiceMgr.instance.log("verbose", `Step ${this.name} running tag script`);
 
-                sandbox.data.content[ref.name] = [];
+        // Collecting data from baseline before running tag script
+        await this._doActionOnBaseline(baseline, async (client, typeName, ref) => {
+            sandbox.data.content[ref.name] = sandbox.data.content[ref.name] || [];
+            sandbox.data.content[ref.name].push(await client.get(typeName, ref.id));
+        });
 
-                for (const id of ref.id) {
-                    sandbox.data.content[ref.name].push(await client.get(typeName, id));
-                }
+        // Run the tag script
+        const script = new vm.Script(this.tagScript);
+        script.runInNewContext(sandbox);
+
+        // Tag all items in the baseline with the output from the tag script
+        await this._doActionOnBaseline(baseline, async (client, typeName, ref) => {
+            if (sandbox.tags.length > 0) {
+                await client.tag(typeName, ref.id, {
+                    tag: sandbox.tags
+                });
             }
 
-            const script = new vm.Script(this.tagScript);
-            script.runInNewContext(sandbox);
-        }
-
-        for (const ref of baseline.content) {
-            const [ serviceId, typeName ] = ref.type.split(".");
-            const client = ServiceComBus.instance.getClient(serviceId);
-
-            for (const id of ref.id) {
-                if (sandbox.tags.length > 0) {
-                    await client.tag(typeName, id, {
-                        tag: sandbox.tags
-                    });
-                }
-
-                if (sandbox.untag.length > 0) {
-                    await client.untag(typeName, id, {
-                        tag: sandbox.untag
-                    });
-                }
+            if (sandbox.untag.length > 0) {
+                await client.untag(typeName, ref.id, {
+                    tag: sandbox.untag
+                });
             }
-        }
+        });
+    }
+
+    async notifyStatus(baseline, status) {
+        const baseTag = `step:${this.name}`;
+        const statusTag = `${baseTag}:${status}`;
 
         // Important to tag baseline after baseline content has been tagged!
         const client = ServiceComBus.instance.getClient("baselinegen");
 
-        await client.tag("baseline", baseline._id, {
-            tag: defaultTag
+        await client.replacetag("baseline", baseline._id, {
+            replace: baseTag,
+            tag: statusTag
+        });
+
+        // Update status tag och baseline content
+        await this._doActionOnBaseline(baseline, async (client, typeName, ref) => {
+            await client.replacetag(typeName, ref.id, {
+                replace: baseTag,
+                tag: statusTag
+            });
         });
     }
 }

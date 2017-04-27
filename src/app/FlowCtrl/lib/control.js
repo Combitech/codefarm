@@ -37,6 +37,18 @@ class Control {
                         ServiceMgr.instance.log("error", `Finish job failed for step ${step._id}`, JSON.stringify(error, null, 2));
                     }
                 }
+            } else if (data.type === "exec.job" &&
+                       data.event === "updated" &&
+                       data.olddata.status !== data.newdata.status) {
+                const steps = await Step.findMany({ "jobs.jobId": data.newdata._id });
+
+                for (const step of steps) {
+                    try {
+                        await step.jobStatusUpdated(data.newdata._id, data.newdata.status);
+                    } catch (error) {
+                        ServiceMgr.instance.log("error", `Job status update failed for step ${step._id}`, JSON.stringify(error, null, 2));
+                    }
+                }
             }
         });
 

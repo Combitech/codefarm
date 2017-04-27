@@ -38,6 +38,7 @@ class Controller {
 
         this._addAction("tag", this._tag);
         this._addAction("untag", this._untag);
+        this._addAction("replacetag", this._replacetag);
 
         this._addAction("addref", this._addRef);
 
@@ -406,6 +407,18 @@ class Controller {
         const obj = await this._getTypeInstance(id);
         const tags = ensureArray(data.tag);
         await obj.untag(tags);
+
+        return obj.serialize();
+    }
+
+    async _replacetag(ctx, id, data) {
+        this._isAllowed(ctx, "tag");
+
+        !data.tag && this._throw("No tag supplied", 400);
+        !data.replace && this._throw("No replace supplied", 400);
+
+        const obj = await this._getTypeInstance(id);
+        await obj.replaceTag(data.replace, data.tag);
 
         return obj.serialize();
     }

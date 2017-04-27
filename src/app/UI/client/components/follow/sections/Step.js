@@ -9,7 +9,7 @@ class Step extends React.PureComponent {
     render() {
         const item = {
             name: this.props.step,
-            status: statuslib.guess(this.props.item, this.props.step)
+            status: statuslib.fromTags(this.props.item.tags, this.props.step)
         };
 
         return (

@@ -24,6 +24,7 @@ class Type {
         synchronize(this, "tag");
         synchronize(this, "untag");
         synchronize(this, "clearTags");
+        synchronize(this, "replaceTag");
         synchronize(this, "addRef");
         synchronize(this, "addAncestorRef");
     }
@@ -310,6 +311,11 @@ class Type {
         if (save) {
             await this.save();
         }
+    }
+
+    async replaceTag(tagStartsWith, newTag) {
+        await this.clearTags(tagStartsWith, [], false);
+        await this.tag(newTag);
     }
 
     async addRef(ref) {
