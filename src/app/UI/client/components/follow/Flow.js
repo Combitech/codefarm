@@ -82,9 +82,12 @@ class Flow extends LightComponent {
             active: () => this.props.selected === "",
             parentIds: [],
             handlers: {
-                onClick: () => this.props.onSelect && this.props.onSelect(null)
             }
         };
+
+        if (!firstStep.active && this.props.onSelect) {
+            firstStep.handlers.onClick = () => this.props.onSelect(null);
+        }
 
         const statuses = [];
         const steps = this.state.steps.toJS().map((step) => {
@@ -108,7 +111,7 @@ class Flow extends LightComponent {
                 jobId = jobRefs[0] ? jobRefs[0].id : false;
             }
 
-            return {
+            const newStep = {
                 id: step._id,
                 type: StepStatus,
                 name: step.name,
@@ -122,9 +125,14 @@ class Flow extends LightComponent {
                 active: () => this.props.selected === jobId,
                 parentIds: parentIds,
                 handlers: {
-                    onClick: () => this.props.onSelect && jobId && this.props.onSelect(jobId)
                 }
             };
+
+            if (!newStep.active && this.props.onSelect && jobId) {
+                newStep.handlers.onClick = () => this.props.onSelect(jobId);
+            }
+
+            return newStep;
         });
 
         firstStep.meta.status = statuslib.mood(statuses);

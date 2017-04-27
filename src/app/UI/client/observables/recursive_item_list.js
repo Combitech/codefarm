@@ -45,8 +45,10 @@ class RecursiveItemList extends ObservableData {
         if (item) {
             list.push(item);
 
-            for (const ref of item.derivatives) {
-                list = list.concat(this._getTree(inputList, ref));
+            if (item.derivatives) {
+                for (const ref of item.derivatives) {
+                    list = list.concat(this._getTree(inputList, ref));
+                }
             }
         }
 
@@ -102,8 +104,10 @@ class RecursiveItemList extends ObservableData {
 
             list.push(item);
 
-            for (const ref of item.derivatives) {
-                list = list.concat(await this._fetch(ref));
+            if (item.derivatives) {
+                for (const ref of item.derivatives) {
+                    list = list.concat(await this._fetch(ref));
+                }
             }
         }
 
