@@ -5,7 +5,7 @@ import api from "api.io/api.io-client";
 import LightComponent from "ui-lib/light_component";
 import {
     Section as TASection,
-    ControlButton as TAControlButton
+    MenuItem
 } from "ui-components/type_admin";
 import { BaselineSpecificationView } from "ui-components/data_view";
 
@@ -23,20 +23,21 @@ class Item extends LightComponent {
     render() {
         this.log("render", this.props, this.state);
 
-        const controls = this.props.controls.slice(0);
+        const menuItems = this.props.menuItems.slice(0);
 
-        controls.push((
-            <TAControlButton
+        menuItems.push((
+            <MenuItem
                 key="force"
-                label="Force request"
+                caption="Force request"
                 onClick={() => this.onForceRequest()}
             />
         ));
 
         return (
             <TASection
-                controls={controls}
+                controls={this.props.controls}
                 breadcrumbs={this.props.breadcrumbs}
+                menuItems={menuItems}
             >
                 <div className={this.props.theme.container}>
                     <BaselineSpecificationView
@@ -53,6 +54,7 @@ Item.propTypes = {
     item: PropTypes.object.isRequired,
     pathname: PropTypes.string.isRequired,
     breadcrumbs: PropTypes.array.isRequired,
+    menuItems: PropTypes.array.isRequired,
     controls: PropTypes.array.isRequired
 };
 

@@ -38,6 +38,7 @@ class List extends LightComponent {
             <TASection
                 controls={controls}
                 breadcrumbs={this.props.breadcrumbs}
+                menuItems={this.props.menuItems}
             >
                 <TAList
                     type={this.props.type}
@@ -58,7 +59,8 @@ List.propTypes = {
     pathname: PropTypes.string.isRequired,
     type: PropTypes.string.isRequired,
     breadcrumbs: PropTypes.array.isRequired,
-    controls: PropTypes.array.isRequired
+    controls: PropTypes.array.isRequired,
+    menuItems: PropTypes.array.isRequired
 };
 
 List.contextTypes = {

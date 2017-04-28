@@ -29,8 +29,4 @@ Page.propTypes = {
     route: PropTypes.object.isRequired
 };
 
-Page.contextTypes = {
-    router: PropTypes.object.isRequired
-};
-
 export default Page;

@@ -9,7 +9,7 @@ import { Follow } from "ui-components/follow";
 import { Container } from "ui-components/layout";
 import {
     Section as TASection,
-    ControlButton as TAControlButton
+    MenuItem
 } from "ui-components/type_admin";
 import Notification from "ui-observables/notification";
 
@@ -55,20 +55,20 @@ class Item extends LightComponent {
     render() {
         this.log("render", this.props, this.state);
 
-        const controls = this.props.controls.slice(0);
-        controls.push((
-            <TAControlButton
+        const menuItems = this.props.menuItems.slice(0);
+        menuItems.push((
+            <MenuItem
                 key="download"
-                label="Download"
+                caption="Download"
                 onClick={() => this.onDownload(this.props.item)}
                 disabled={this.props.item.state === "committed"}
             />
         ));
 
-        controls.push((
-            <TAControlButton
+        menuItems.push((
+            <MenuItem
                 key="validate"
-                label="Validate"
+                caption="Validate"
                 onClick={() => this.onValidate(this.props.item)}
                 disabled={this.props.item.state === "committed"}
             />
@@ -76,8 +76,9 @@ class Item extends LightComponent {
 
         return (
             <TASection
-                controls={controls}
+                controls={this.props.controls}
                 breadcrumbs={this.props.breadcrumbs}
+                menuItems={menuItems}
             >
                 <Container>
                     <Follow
@@ -85,7 +86,7 @@ class Item extends LightComponent {
                         pathname={this.props.pathname}
                         label="Artifact"
                     />
-            </Container>
+                </Container>
             </TASection>
         );
     }
@@ -96,7 +97,8 @@ Item.propTypes = {
     item: PropTypes.object.isRequired,
     pathname: PropTypes.string.isRequired,
     breadcrumbs: PropTypes.array.isRequired,
-    controls: PropTypes.array.isRequired
+    controls: PropTypes.array.isRequired,
+    menuItems: PropTypes.array.isRequired
 };
 
 export default Item;

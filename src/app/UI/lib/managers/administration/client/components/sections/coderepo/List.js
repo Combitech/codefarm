@@ -19,7 +19,8 @@ class CodeRepositoryList extends React.PureComponent {
 CodeRepositoryList.propTypes = {
     theme: PropTypes.object,
     breadcrumbs: PropTypes.array.isRequired,
-    controls: PropTypes.array.isRequired
+    controls: PropTypes.array.isRequired,
+    menuItems: PropTypes.array.isRequired
 };
 
 export default CodeRepositoryList;

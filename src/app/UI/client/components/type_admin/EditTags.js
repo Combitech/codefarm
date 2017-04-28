@@ -239,6 +239,7 @@ class EditTags extends LightComponent {
                 theme={this.props.theme}
                 breadcrumbs={this.props.breadcrumbs}
                 controls={this.props.controls}
+                menuItems={this.props.menuItems}
             >
                 <Choose>
                     <When condition={ accessError }>

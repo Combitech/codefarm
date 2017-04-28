@@ -81,6 +81,7 @@ class Edit extends LightComponent {
             <TASection
                 breadcrumbs={this.props.breadcrumbs}
                 controls={this.props.controls}
+                menuItems={this.props.menuItems}
             >
                 <TAForm
                     confirmAllowed={tautils.isValid(this.state, this.itemProperties)}
@@ -129,6 +130,7 @@ Edit.propTypes = {
     pathname: PropTypes.string.isRequired,
     breadcrumbs: PropTypes.array.isRequired,
     controls: PropTypes.array.isRequired,
+    menuItems: PropTypes.array.isRequired,
     onSave: PropTypes.func.isRequired,
     onCancel: PropTypes.func.isRequired
 };

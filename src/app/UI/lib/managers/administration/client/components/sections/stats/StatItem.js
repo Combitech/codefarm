@@ -7,7 +7,7 @@ import { Row, Column, Header, Section } from "ui-components/layout";
 import { StatStatCard, CardList, StatChartCard } from "ui-components/data_card";
 import {
     Section as TASection,
-    ControlButton as TAControlButton
+    MenuItem
 } from "ui-components/type_admin";
 import TypeList from "ui-observables/type_list";
 import { States as ObservableDataStates } from "ui-lib/observable_data";
@@ -47,12 +47,11 @@ class StatItem extends LightComponent {
     render() {
         this.log("render", this.props, JSON.stringify(this.state, null, 2));
 
-        const controls = this.props.controls.slice(0);
-        controls.push((
-            <TAControlButton
-                theme={this.props.theme}
+        const menuItems = this.props.menuItems.slice(0);
+        menuItems.push((
+            <MenuItem
                 key="explore"
-                label="Explore Data"
+                caption="Explore Data"
                 pathname={`${this.props.pathname}/explore`}
             />
         ));
@@ -77,8 +76,9 @@ class StatItem extends LightComponent {
         return (
             <div>
                 <TASection
-                    controls={controls}
+                    controls={this.props.controls}
                     breadcrumbs={this.props.breadcrumbs}
+                    menuItems={this.props.menuItems}
                 >
                     <div className={this.props.theme.container}>
                         <Row>
@@ -111,7 +111,8 @@ StatItem.propTypes = {
     item: PropTypes.object.isRequired,
     pathname: PropTypes.string.isRequired,
     breadcrumbs: PropTypes.array.isRequired,
-    controls: PropTypes.array.isRequired
+    controls: PropTypes.array.isRequired,
+    menuItems: PropTypes.array.isRequired
 };
 
 export default StatItem;

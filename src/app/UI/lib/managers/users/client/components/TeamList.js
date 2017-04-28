@@ -19,7 +19,8 @@ class TeamList extends React.PureComponent {
 TeamList.propTypes = {
     theme: PropTypes.object,
     breadcrumbs: PropTypes.array.isRequired,
-    controls: PropTypes.array.isRequired
+    controls: PropTypes.array.isRequired,
+    menuItems: PropTypes.array.isRequired
 };
 
 export default TeamList;

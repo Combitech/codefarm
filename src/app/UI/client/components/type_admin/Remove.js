@@ -33,6 +33,7 @@ class Remove extends LightComponent {
             item: this.props.item,
             breadcrumbs: breadcrumbs,
             controls: [],
+            menuItems: [],
             pathname: this.props.pathname,
             context: this.props.context,
             route: this.props.route,

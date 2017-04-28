@@ -38,8 +38,6 @@ class TeamItem extends LightComponent {
     render() {
         this.log("render", this.props);
 
-        const controls = this.props.controls.slice(0);
-
         const users = this.state.users.toJS().map((item) => ({
             id: item._id,
             time: 0,
@@ -53,8 +51,9 @@ class TeamItem extends LightComponent {
         return (
             <div>
                 <TASection
-                    controls={controls}
+                    controls={this.props.controls}
                     breadcrumbs={this.props.breadcrumbs}
+                    menuItems={this.props.menuItems}
                 >
                     <div className={this.props.theme.container}>
                         <Row>
@@ -89,11 +88,8 @@ TeamItem.propTypes = {
     item: PropTypes.object.isRequired,
     pathname: PropTypes.string.isRequired,
     breadcrumbs: PropTypes.array.isRequired,
-    controls: PropTypes.array.isRequired
-};
-
-TeamItem.contextTypes = {
-    router: PropTypes.object.isRequired
+    controls: PropTypes.array.isRequired,
+    menuItems: PropTypes.array.isRequired
 };
 
 export default TeamItem;

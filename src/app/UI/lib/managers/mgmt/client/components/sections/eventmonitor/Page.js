@@ -80,6 +80,7 @@ class Page extends LightComponent {
             <Section
                 breadcrumbs={breadcrumbs}
                 controls={controls}
+                menuItems={[]}
             >
                 <EventMonitor
                     filter={this.state.eventMonitorFilter}

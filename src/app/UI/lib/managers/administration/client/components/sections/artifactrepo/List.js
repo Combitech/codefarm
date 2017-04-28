@@ -19,7 +19,8 @@ class ArtifactRepositoryList extends React.PureComponent {
 ArtifactRepositoryList.propTypes = {
     theme: PropTypes.object,
     breadcrumbs: PropTypes.array.isRequired,
-    controls: PropTypes.array.isRequired
+    controls: PropTypes.array.isRequired,
+    menuItems: PropTypes.array.isRequired
 };
 
 export default ArtifactRepositoryList;

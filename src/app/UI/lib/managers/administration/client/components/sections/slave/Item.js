@@ -2,10 +2,10 @@
 import React from "react";
 import PropTypes from "prop-types";
 import LightComponent from "ui-lib/light_component";
-import { IconMenu, MenuItem } from "react-toolbox/lib/menu";
 import { SlaveView } from "ui-components/data_view";
 import {
-    Section as TASection
+    Section as TASection,
+    MenuItem
 } from "ui-components/type_admin";
 import api from "api.io/api.io-client";
 import Notification from "ui-observables/notification";
@@ -61,47 +61,31 @@ class Item extends LightComponent {
 
         const isSignedIn = !!this.props.activeUser.get("id");
 
-        const controls = [];
+        const menuItems = this.props.menuItems.slice(0);
 
-        controls.push((
-            <IconMenu
-                key="menu"
-                className={this.props.theme.button}
-                icon="more_vert"
-                menuRipple={true}
-            >
-                <If condition={isSignedIn}>
-                    <MenuItem
-                        caption="Edit tags"
-                        onClick={() => this.context.router.push({
-                            pathname: `${this.props.pathname}/tags`
-                        })}
-                    />
+        if (isSignedIn) {
+            menuItems.push(
+                <MenuItem
+                    key="online"
+                    caption={this.props.item.offline ? "Set Online" : "Set Offline"}
+                    onClick={() => this.onSetOfflineOnline()}
+                />
+            );
 
-                    <MenuItem
-                        caption="Edit"
-                        onClick={() => this.context.router.push({
-                            pathname: `${this.props.pathname}/edit`
-                        })}
-                    />
-
-                    <MenuItem
-                        caption={this.props.item.offline ? "Set Online" : "Set Offline"}
-                        onClick={() => this.onSetOfflineOnline()}
-                    />
-
-                    <MenuItem
-                        caption="Test connection"
-                        onClick={() => this.onTestConnection()}
-                    />
-                </If>
-            </IconMenu>
-        ));
+            menuItems.push(
+                <MenuItem
+                    key="test_connection"
+                    caption="Test connection"
+                    onClick={() => this.onTestConnection()}
+                />
+            );
+        }
 
         return (
             <TASection
-                controls={controls}
+                controls={this.props.controls}
                 breadcrumbs={this.props.breadcrumbs}
+                menuItems={menuItems}
             >
                 <div className={this.props.theme.container}>
                     <SlaveView
@@ -118,11 +102,8 @@ Item.propTypes = {
     item: PropTypes.object.isRequired,
     pathname: PropTypes.string.isRequired,
     breadcrumbs: PropTypes.array.isRequired,
-    controls: PropTypes.array.isRequired
-};
-
-Item.contextTypes = {
-    router: PropTypes.object.isRequired
+    controls: PropTypes.array.isRequired,
+    menuItems: PropTypes.array.isRequired
 };
 
 export default Item;

@@ -19,7 +19,8 @@ class UserPolicyList extends React.PureComponent {
 UserPolicyList.propTypes = {
     theme: PropTypes.object,
     breadcrumbs: PropTypes.array.isRequired,
-    controls: PropTypes.array.isRequired
+    controls: PropTypes.array.isRequired,
+    menuItems: PropTypes.array.isRequired
 };
 
 export default UserPolicyList;

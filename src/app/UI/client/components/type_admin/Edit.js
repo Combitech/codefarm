@@ -62,6 +62,7 @@ class Edit extends LightComponent {
             item: item,
             breadcrumbs: breadcrumbs,
             controls: [],
+            menuItems: [],
             pathname: this.props.pathname,
             context: this.props.context,
             onSave: (type, data, options) => {
