@@ -58,7 +58,7 @@ class ArtifactCard extends LightComponent {
                     )}
                 />
                 <If condition={this.state.expanded.value}>
-                    <table className={this.props.theme.table}>
+                    <table className={`${this.props.theme.table} ${this.props.theme.tableFixed}`}>
                         <tbody>
                             <tr>
                                 <td>State</td>
