@@ -27,7 +27,7 @@ const routes = (
             type="logrepo.backend"
         />
         <Route
-            path=":backendId"
+            path=":_id"
             component={TAView}
             Item={Item}
             type="logrepo.backend"

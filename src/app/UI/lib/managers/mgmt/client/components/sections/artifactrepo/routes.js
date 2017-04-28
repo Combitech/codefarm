@@ -27,7 +27,7 @@ const routes = (
             type="artifactrepo.backend"
         />
         <Route
-            path=":backendId"
+            path=":_id"
             component={TAView}
             Item={Item}
             type="artifactrepo.backend"

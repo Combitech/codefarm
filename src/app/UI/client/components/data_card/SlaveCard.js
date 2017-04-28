@@ -8,6 +8,7 @@ import { DateTime } from "ui-components/datetime";
 import { Tags } from "ui-components/tags";
 import DataCard from "./DataCard";
 import { CardTitle } from "react-toolbox/lib/card";
+import { TypeChip } from "ui-components/data_chip";
 import stateVar from "ui-lib/state_var";
 import * as pathBuilder from "ui-lib/path_builder";
 
@@ -59,7 +60,15 @@ class SlaveCard extends LightComponent {
                             </tr>
                             <tr>
                                 <td>Backend</td>
-                                <td>{this.props.item.backend}</td>
+                                <td>
+                                    <TypeChip
+                                        itemRef={{
+                                            _ref: true,
+                                            type: "exec.backend",
+                                            id: this.props.item.backend
+                                        }}
+                                    />
+                                </td>
                             </tr>
                             <tr>
                                 <td>Executors</td>

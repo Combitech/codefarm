@@ -96,6 +96,13 @@ const types = {
         }),
         name: (item) => item._id
     },
+    "exec.backend": {
+        Avatar: Avatar,
+        avatarProps: () => ({
+            title: "B"
+        }),
+        name: (item) => item._id
+    },
     "baselinegen.baseline": {
         Avatar: Avatar,
         avatarProps: () => ({
