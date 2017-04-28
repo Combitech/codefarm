@@ -22,18 +22,22 @@ class JobView extends LightComponent {
         this.log("render", this.props, this.state);
 
         const job = this.props.item;
-        const run = job.runs[this.props.item.lastRunId];
-        const tabs = [ (
-            <Tab
-                key="info"
-                label="Job"
-            >
-                <JobTab
-                    theme={this.props.theme}
-                    job={job}
-                />
-            </Tab>
-        ) ];
+        const run = job._id ? job.runs[this.props.item.lastRunId] : false;
+        const tabs = [];
+
+        if (job._id) {
+            tabs.push(
+                <Tab
+                    key="info"
+                    label="Job"
+                >
+                    <JobTab
+                        theme={this.props.theme}
+                        job={job}
+                    />
+                </Tab>
+            );
+        }
 
         if (run && run.logs && run.logs.length > 0) {
             tabs.push(
