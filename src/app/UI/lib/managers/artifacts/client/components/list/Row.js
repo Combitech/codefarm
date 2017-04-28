@@ -1,14 +1,12 @@
 
 import React from "react";
 import PropTypes from "prop-types";
-import ImmutablePropTypes from "react-immutable-proptypes";
 import { StatusIcon } from "ui-components/status";
-import statuslib from "ui-lib/statuslib";
 import { DateTime } from "ui-components/datetime";
 
 class Row extends React.PureComponent {
     render() {
-        const item = this.props.item.toJS();
+        const item = this.props.item;
 
         return (
             <tr
@@ -28,18 +26,15 @@ class Row extends React.PureComponent {
                 <td>
                     {item.name}
                 </td>
-                <For each="step" of={this.props.steps.toJS()}>
+                <For each="step" of={this.props.steps}>
                     <td
                         className={this.props.theme.runColumn}
-                        key={step.name}
-                        onClick={(event) => {
-                            event.stopPropagation();
-                            this.props.onClick(item, step.name);
-                        }}
+                        key={step.id}
+                        onClick={step.onClick}
                     >
                         <StatusIcon
                             className={this.props.theme.statusIcon}
-                            status={statuslib.fromTags(item.tags, step.name)}
+                            status={step.status}
                             size={24}
                         />
                     </td>
@@ -51,8 +46,8 @@ class Row extends React.PureComponent {
 
 Row.propTypes = {
     theme: PropTypes.object,
-    item: ImmutablePropTypes.map.isRequired,
-    steps: ImmutablePropTypes.list,
+    item: PropTypes.object.isRequired,
+    steps: PropTypes.array.isRequired,
     onClick: PropTypes.func
 };
 

@@ -5,7 +5,8 @@ import LightComponent from "ui-lib/light_component";
 import { States as ObservableDataStates } from "ui-lib/observable_data";
 import { ListPager } from "ui-components/type_admin";
 import { Loading } from "ui-components/layout";
-import StepListObservable from "ui-observables/step_list";
+import StepListObservable from "ui-observables/recursive_step_list";
+import Row from "./Row";
 
 class List extends LightComponent {
     constructor(props) {
@@ -76,10 +77,10 @@ class List extends LightComponent {
         }
     }
 
-    gotoStep(item, step) {
+    gotoStep(item, job) {
         this.context.router.push({
             pathname: `${this.props.pathname}/${item._id}`,
-            query: step ? { step } : {}
+            query: job ? { job } : {}
         });
     }
 
@@ -106,13 +107,14 @@ class List extends LightComponent {
                                 />
                             </tbody>
                             <tbody className={this.props.theme.list}>
-                                <For each="item" of={this.state.items}>
-                                    <this.props.RowComponent
-                                        key={item.get("_id")}
+                                <For each="item" of={this.state.items.toJS()}>
+                                    <Row
+                                        key={item._id}
                                         theme={this.props.theme}
-                                        onClick={(item, step) => this.gotoStep(item, step)}
+                                        onClick={(...args) => this.gotoStep(...args)}
                                         item={item}
                                         steps={steps}
+                                        RowComponent={this.props.RowComponent}
                                     />
                                 </For>
                             </tbody>
