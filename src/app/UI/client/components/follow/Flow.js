@@ -84,7 +84,7 @@ class Flow extends LightComponent {
             }
         };
 
-        if (!firstStep.active && this.props.onSelect) {
+        if (!firstStep.active() && this.props.onSelect) {
             firstStep.handlers.onClick = () => this.props.onSelect(null);
         }
 
@@ -126,7 +126,7 @@ class Flow extends LightComponent {
                 }
             };
 
-            if (!newStep.active && this.props.onSelect && jobId) {
+            if (!newStep.active() && this.props.onSelect && jobId) {
                 newStep.handlers.onClick = () => this.props.onSelect(jobId);
             }
 
