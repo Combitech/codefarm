@@ -15,6 +15,7 @@ class Remove extends LightComponent {
             <TASection
                 breadcrumbs={this.props.breadcrumbs}
                 controls={this.props.controls}
+                menuItems={this.props.menuItems}
             >
                 <TAForm
                     confirmText="Remove"
@@ -38,6 +39,7 @@ Remove.propTypes = {
     pathname: PropTypes.string.isRequired,
     breadcrumbs: PropTypes.array.isRequired,
     controls: PropTypes.array.isRequired,
+    menuItems: PropTypes.array.isRequired,
     onRemove: PropTypes.func.isRequired,
     onCancel: PropTypes.func.isRequired
 };

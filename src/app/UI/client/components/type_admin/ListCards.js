@@ -63,6 +63,7 @@ class ListCards extends LightComponent {
                 theme={this.props.theme}
                 controls={controls}
                 breadcrumbs={this.props.breadcrumbs}
+                menuItems={this.props.menuItems}
             >
                 <div className={this.props.theme.listContainer}>
                     <CardList
@@ -85,6 +86,7 @@ ListCards.propTypes = {
     theme: PropTypes.object,
     breadcrumbs: PropTypes.array.isRequired,
     controls: PropTypes.array.isRequired,
+    menuItems: PropTypes.array.isRequired,
     Observable: PropTypes.func.isRequired,
     linkToAdmin: PropTypes.bool
 };

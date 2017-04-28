@@ -114,6 +114,7 @@ class UserUpdatePolicies extends LightComponent {
             <TASection
                 breadcrumbs={this.props.breadcrumbs}
                 controls={this.props.controls}
+                menuItems={this.props.menuItems}
             >
                 <Choose>
                     <When condition={ accessError }>
@@ -150,6 +151,7 @@ UserUpdatePolicies.propTypes = {
     pathname: PropTypes.string.isRequired,
     breadcrumbs: PropTypes.array.isRequired,
     controls: PropTypes.array.isRequired,
+    menuItems: PropTypes.array.isRequired,
     activeUser: ImmutablePropTypes.map.isRequired
 };
 

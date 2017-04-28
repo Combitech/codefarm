@@ -14,6 +14,7 @@ class Item extends LightComponent {
             <TASection
                 controls={this.props.controls}
                 breadcrumbs={this.props.breadcrumbs}
+                menuItems={this.props.menuItems}
             >
                 <Container>
                     <Follow
@@ -32,7 +33,8 @@ Item.propTypes = {
     item: PropTypes.object.isRequired,
     pathname: PropTypes.string.isRequired,
     breadcrumbs: PropTypes.array.isRequired,
-    controls: PropTypes.array.isRequired
+    controls: PropTypes.array.isRequired,
+    menuItems: PropTypes.array.isRequired
 };
 
 export default Item;

@@ -19,7 +19,8 @@ class BaselineList extends React.PureComponent {
 BaselineList.propTypes = {
     theme: PropTypes.object,
     breadcrumbs: PropTypes.array.isRequired,
-    controls: PropTypes.array.isRequired
+    controls: PropTypes.array.isRequired,
+    menuItems: PropTypes.array.isRequired
 };
 
 export default BaselineList;

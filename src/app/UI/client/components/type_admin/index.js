@@ -6,7 +6,7 @@ import theme from "./theme.scss";
 
 const name = names.TYPE_ADMIN;
 const exports = {
-    ControlButton: require("./ControlButton"),
+    MenuItem: require("./MenuItem"),
     View: require("./View"),
     Edit: require("./Edit"),
     List: require("./List"),

@@ -18,6 +18,7 @@ class Entry extends React.Component {
             theme: this.props.theme,
             pathname: this.props.pathname,
             breadcrumbs: breadcrumbs,
+            menuItems: [],
             ServiceMonitorComponent: this.props.ServiceMonitorComponent
         };
 

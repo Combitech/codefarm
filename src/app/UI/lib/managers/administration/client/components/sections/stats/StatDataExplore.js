@@ -14,7 +14,7 @@ import {
 } from "ui-components/data_card/StatChartCard";
 import {
     Section as TASection,
-    ControlButton as TAControlButton
+    MenuItem
 } from "ui-components/type_admin";
 import StatInfo from "ui-observables/stat_info";
 import { CHART_TYPE, AXIS_TYPE, AXIS_SCALE } from "ui-components/chart";
@@ -228,19 +228,19 @@ class StatDataExplorer extends LightComponent {
 
         const item = this._getChartData();
 
-        const controls = this.props.controls.slice(0);
-        controls.push((
-            <TAControlButton
+        const menuItems = this.props.menuItems.slice(0);
+        menuItems.push((
+            <MenuItem
                 key="save_as_new"
-                label="Save as new"
+                caption="Save as new"
                 onClick={() => this._saveChart(true)}
             />
         ));
         if (item._id) {
-            controls.push((
-                <TAControlButton
+            menuItems.push((
+                <MenuItem
                     key="save"
-                    label="Save"
+                    caption="Save"
                     onClick={() => this._saveChart()}
                 />
             ));
@@ -271,8 +271,9 @@ class StatDataExplorer extends LightComponent {
 
         return (
             <TASection
-                controls={controls}
+                controls={this.props.controls}
                 breadcrumbs={this.props.breadcrumbs}
+                menuItems={menuItems}
             >
                 <div className={this.props.theme.container}>
                     <Row>
@@ -439,7 +440,8 @@ StatDataExplorer.propTypes = {
     statItem: PropTypes.object,
     pathname: PropTypes.string.isRequired,
     breadcrumbs: PropTypes.array.isRequired,
-    controls: PropTypes.array.isRequired
+    controls: PropTypes.array.isRequired,
+    menuItems: PropTypes.array.isRequired
 };
 
 StatDataExplorer.contextTypes = {

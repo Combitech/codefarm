@@ -38,6 +38,7 @@ class List extends LightComponent {
             <TASection
                 controls={controls}
                 breadcrumbs={this.props.breadcrumbs}
+                menuItems={this.props.menuItems}
             >
                 <TAPagedList
                     type={this.props.route.type}
@@ -60,7 +61,8 @@ List.propTypes = {
     pathname: PropTypes.string.isRequired,
     route: PropTypes.object.isRequired,
     breadcrumbs: PropTypes.array.isRequired,
-    controls: PropTypes.array.isRequired
+    controls: PropTypes.array.isRequired,
+    menuItems: PropTypes.array.isRequired
 };
 
 List.contextTypes = {

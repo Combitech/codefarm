@@ -56,6 +56,7 @@ class MonitorPage extends LightComponent {
             <Section
                 breadcrumbs={breadcrumbs}
                 controls={controls}
+                menuItems={[]}
             >
                 <this.props.ServiceMonitorComponent {...props} />
             </Section>

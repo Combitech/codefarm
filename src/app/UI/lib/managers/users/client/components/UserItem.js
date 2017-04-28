@@ -5,10 +5,10 @@ import moment from "moment";
 import Immutable from "immutable";
 import ImmutablePropTypes from "react-immutable-proptypes";
 import LightComponent from "ui-lib/light_component";
-import { IconMenu, MenuItem } from "react-toolbox/lib/menu";
 import {
     Section as TASection,
-    ListPager as TAListPager
+    ListPager as TAListPager,
+    MenuItem
 } from "ui-components/type_admin";
 import { Row, Column, Header, Section } from "ui-components/layout";
 import { CardList, UserCard, ClaimCard, CommentCard, RevisionCard } from "ui-components/data_card";
@@ -145,76 +145,62 @@ class UserItem extends LightComponent {
             }
         }));
 
-        const controls = [];
+        const menuItems = this.props.menuItems.slice(0);
 
-        controls.push((
-            <IconMenu
-                key="menu"
-                className={this.props.theme.button}
-                icon="more_vert"
-                menuRipple={true}
-            >
-                <If condition={isSignedInUser}>
-                    <MenuItem
-                        caption="Edit tags"
-                        onClick={() => this.context.router.push({
-                            pathname: `${this.props.pathname}/tags`
-                        })}
-                    />
-                </If>
+        if (isSignedInUser) {
+            menuItems.push(
+                <MenuItem
+                    key="update_password"
+                    caption="Update password"
+                    pathname={`${this.props.pathname}/updatepassword`}
+                />
+            );
 
-                <If condition={isSignedInUser}>
-                    <MenuItem
-                        caption="Update password"
-                        onClick={() => this.context.router.push({
-                            pathname: `${this.props.pathname}/updatepassword`
-                        })}
-                    />
-                </If>
+            menuItems.push(
+                <MenuItem
+                    key="add_public_key"
+                    caption="Add public key"
+                    pathname={`${this.props.pathname}/addkey`}
+                />
+            );
+        }
 
-                <If condition={isSignedInUser}>
-                    <MenuItem
-                        caption="Add public key"
-                        onClick={() => this.context.router.push({
-                            pathname: `${this.props.pathname}/addkey`
-                        })}
-                    />
-                </If>
+        if (isSetPoliciesGranted) {
+            menuItems.push(
+                <MenuItem
+                    key="update_policies"
+                    caption="Update policies"
+                    pathname={`${this.props.pathname}/updatepolicies`}
+                />
+            );
+        }
 
-                <If condition={isSetPoliciesGranted}>
-                    <MenuItem
-                        caption="Update policies"
-                        onClick={() => this.context.router.push({
-                            pathname: `${this.props.pathname}/updatepolicies`
-                        })}
-                    />
-                </If>
+        if (isSetTeamsGranted) {
+            menuItems.push(
+                <MenuItem
+                    key="update_teams"
+                    caption="Update teams"
+                    pathname={`${this.props.pathname}/updateteams`}
+                />
+            );
+        }
 
-                <If condition={isSetTeamsGranted}>
-                    <MenuItem
-                        caption="Update teams"
-                        onClick={() => this.context.router.push({
-                            pathname: `${this.props.pathname}/updateteams`
-                        })}
-                    />
-                </If>
-
-                <If condition={isUploadAvatarGranted}>
-                    <MenuItem
-                        caption="Upload avatar"
-                        onClick={() => this.context.router.push({
-                            pathname: `${this.props.pathname}/uploadavatar`
-                        })}
-                    />
-                </If>
-            </IconMenu>
-        ));
+        if (isUploadAvatarGranted) {
+            menuItems.push(
+                <MenuItem
+                    key="upload_avatar"
+                    caption="Upload avatar"
+                    pathname={`${this.props.pathname}/uploadavatar`}
+                />
+            );
+        }
 
         return (
             <div>
                 <TASection
-                    controls={controls}
+                    controls={this.props.controls}
                     breadcrumbs={this.props.breadcrumbs}
+                    menuItems={menuItems}
                 >
                     <div className={this.props.theme.container}>
                         <Row>
@@ -286,11 +272,8 @@ UserItem.propTypes = {
     pathname: PropTypes.string.isRequired,
     breadcrumbs: PropTypes.array.isRequired,
     controls: PropTypes.array.isRequired,
+    menuItems: PropTypes.array.isRequired,
     activeUser: ImmutablePropTypes.map.isRequired
-};
-
-UserItem.contextTypes = {
-    router: PropTypes.object.isRequired
 };
 
 export default UserItem;

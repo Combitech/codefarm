@@ -6,7 +6,7 @@ import { States as ObservableDataStates } from "ui-lib/observable_data";
 import stateVar from "ui-lib/state_var";
 import LightComponent from "ui-lib/light_component";
 import LoadIndicator from "./LoadIndicator";
-import ControlButton from "./ControlButton";
+import MenuItem from "./MenuItem";
 import ActiveUser from "ui-observables/active_user";
 import { isTokenValidForAccess } from "auth/lib/util";
 
@@ -85,6 +85,7 @@ class View extends LightComponent {
             item: this.state.item.has("_id") ? this.state.item.toJS() : null,
             breadcrumbs: this.props.breadcrumbs,
             controls: [],
+            menuItems: [],
             pathname: this.getPathname(),
             context: this.props.context || this.state.context
         };
@@ -118,15 +119,16 @@ class View extends LightComponent {
                         userPriv, props.item.type, "create", { throwOnError: false }
                     );
 
-                    props.controls.push((
-                        <ControlButton
-                            theme={this.props.theme}
-                            key="create"
-                            label="Create"
-                            disabled={!hasCreateAccess}
-                            pathname={`${props.pathname}/create`}
-                        />
-                    ));
+                    if (hasCreateAccess) {
+                        props.menuItems.push(
+                            <MenuItem
+                                key="create"
+                                caption="Create"
+                                disabled={!hasCreateAccess}
+                                pathname={`${props.pathname}/create`}
+                            />
+                        );
+                    }
                 }
 
                 if (childRoutes.find((route) => route.path === "edit")) {
@@ -134,15 +136,17 @@ class View extends LightComponent {
                         userPriv, props.item.type, "update", { throwOnError: false }
                     );
 
-                    props.controls.push((
-                        <ControlButton
-                            theme={this.props.theme}
-                            key="edit"
-                            label="Edit"
-                            disabled={!hasUpdateAccess}
-                            pathname={`${props.pathname}/edit`}
-                        />
-                    ));
+                    if (hasUpdateAccess) {
+                        props.menuItems.push((
+                            <MenuItem
+                                theme={this.props.theme}
+                                key="edit"
+                                caption="Edit"
+                                disabled={!hasUpdateAccess}
+                                pathname={`${props.pathname}/edit`}
+                            />
+                        ));
+                    }
                 }
 
                 if (childRoutes.find((route) => route.path === "remove")) {
@@ -150,15 +154,16 @@ class View extends LightComponent {
                         userPriv, props.item.type, "remove", { throwOnError: false }
                     );
 
-                    props.controls.push((
-                        <ControlButton
-                            theme={this.props.theme}
-                            key="remove"
-                            label="Remove"
-                            disabled={!hasRemoveAccess}
-                            pathname={`${props.pathname}/remove`}
-                        />
-                    ));
+                    if (hasRemoveAccess) {
+                        props.menuItems.push((
+                            <MenuItem
+                                theme={this.props.theme}
+                                key="remove"
+                                caption="Remove"
+                                pathname={`${props.pathname}/remove`}
+                            />
+                        ));
+                    }
                 }
 
                 if (childRoutes.find((route) => route.path === "tags")) {
@@ -166,15 +171,16 @@ class View extends LightComponent {
                         userPriv, props.item.type, "tag", { throwOnError: false }
                     );
 
-                    props.controls.push((
-                        <ControlButton
-                            theme={this.props.theme}
-                            key="tags"
-                            label="Edit tags"
-                            disabled={!hasTagAccess}
-                            pathname={`${props.pathname}/tags`}
-                        />
-                    ));
+                    if (hasTagAccess) {
+                        props.menuItems.push((
+                            <MenuItem
+                                theme={this.props.theme}
+                                key="tags"
+                                caption="Edit tags"
+                                pathname={`${props.pathname}/tags`}
+                            />
+                        ));
+                    }
                 }
             }
 
@@ -194,15 +200,16 @@ class View extends LightComponent {
                 userPriv, this.props.route.type, "create", { throwOnError: false }
             );
 
-            props.controls.push((
-                <ControlButton
-                    theme={this.props.theme}
-                    key="create"
-                    label="Create"
-                    disabled={!hasCreateAccess}
-                    pathname={`${props.pathname}/create`}
-                />
-            ));
+            if (hasCreateAccess) {
+                props.menuItems.push((
+                    <MenuItem
+                        theme={this.props.theme}
+                        key="create"
+                        caption="Create"
+                        pathname={`${props.pathname}/create`}
+                    />
+                ));
+            }
         }
 
         if (this.props.route.List) {

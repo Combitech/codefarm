@@ -90,6 +90,7 @@ class List extends LightComponent {
             <TASection
                 controls={controls}
                 breadcrumbs={this.props.breadcrumbs}
+                menuItems={this.props.menuItems}
             >
                 <Container>
                     <Loading show={this.state.state === ObservableDataStates.LOADING}/>
@@ -111,7 +112,8 @@ List.propTypes = {
     item: PropTypes.object,
     pathname: PropTypes.string.isRequired,
     breadcrumbs: PropTypes.array.isRequired,
-    controls: PropTypes.array.isRequired
+    controls: PropTypes.array.isRequired,
+    menuItems: PropTypes.array.isRequired
 };
 
 List.contextTypes = {

@@ -13,12 +13,11 @@ class Item extends LightComponent {
     render() {
         this.log("render", this.props, this.state);
 
-        const controls = this.props.controls.slice(0);
-
         return (
             <TASection
-                controls={controls}
+                controls={this.props.controls}
                 breadcrumbs={this.props.breadcrumbs}
+                menuItems={this.props.menuItems}
             >
                 <div className={this.props.theme.container}>
                     <Row>
@@ -62,7 +61,8 @@ Item.propTypes = {
     item: PropTypes.object.isRequired,
     pathname: PropTypes.string.isRequired,
     breadcrumbs: PropTypes.array.isRequired,
-    controls: PropTypes.array.isRequired
+    controls: PropTypes.array.isRequired,
+    menuItems: PropTypes.array.isRequired
 };
 
 Item.contextTypes = {

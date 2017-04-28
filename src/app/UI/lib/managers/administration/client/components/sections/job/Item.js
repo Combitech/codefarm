@@ -12,6 +12,7 @@ class Item extends React.PureComponent {
             <TASection
                 controls={this.props.controls}
                 breadcrumbs={this.props.breadcrumbs}
+                menuItems={this.props.menuItems}
             >
                 <div className={this.props.theme.container}>
                     <JobView
@@ -29,11 +30,8 @@ Item.propTypes = {
     item: PropTypes.object.isRequired,
     pathname: PropTypes.string.isRequired,
     breadcrumbs: PropTypes.array.isRequired,
-    controls: PropTypes.array.isRequired
-};
-
-Item.contextTypes = {
-    router: PropTypes.object.isRequired
+    controls: PropTypes.array.isRequired,
+    menuItems: PropTypes.array.isRequired
 };
 
 export default Item;

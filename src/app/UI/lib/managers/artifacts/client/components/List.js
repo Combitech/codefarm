@@ -4,10 +4,9 @@ import PropTypes from "prop-types";
 import LightComponent from "ui-lib/light_component";
 import Input from "react-toolbox/lib/input";
 import Dropdown from "react-toolbox/lib/dropdown";
-import { IconMenu, MenuItem } from "react-toolbox/lib/menu";
 import { Container } from "ui-components/layout";
 import { ArtifactRepositoryCard } from "ui-components/data_card";
-import { Section as TASection } from "ui-components/type_admin";
+import { Section as TASection, MenuItem } from "ui-components/type_admin";
 import { List } from "ui-components/follow";
 import RowComponent from "./list/Row";
 import HeaderComponent from "./list/Header";
@@ -54,21 +53,23 @@ class ListTabs extends LightComponent {
         this.log("render", this.props, this.state);
 
         const controls = this.props.controls.slice(0);
+        const menuItems = this.props.menuItems.slice(0);
 
-        controls.push((
-            <IconMenu
-                key="view"
-                className={this.props.theme.button}
-                icon="more_vert"
-                menuRipple={true}
-                selectable={true}
-                selected={this.state.params.get("view") || null}
-                onSelect={(value) => this.setView(value)}
-            >
-                <MenuItem value={null} caption="Show list" />
-                <MenuItem value="info" caption="Show information" />
-            </IconMenu>
-        ));
+        menuItems.push(
+            <MenuItem
+                key="active"
+                caption="Show list"
+                onClick={() => this.setView(null)}
+            />
+        );
+
+        menuItems.push(
+            <MenuItem
+                key="info"
+                caption="Show information"
+                onClick={() => this.setView("info")}
+            />
+        );
 
         controls.push((
             <Input
@@ -99,6 +100,7 @@ class ListTabs extends LightComponent {
             <TASection
                 controls={controls}
                 breadcrumbs={this.props.breadcrumbs}
+                menuItems={menuItems}
             >
                 <Container>
                     <Choose>
@@ -135,11 +137,8 @@ ListTabs.propTypes = {
     item: PropTypes.object,
     pathname: PropTypes.string.isRequired,
     breadcrumbs: PropTypes.array.isRequired,
-    controls: PropTypes.array.isRequired
-};
-
-ListTabs.contextTypes = {
-    router: PropTypes.object.isRequired
+    controls: PropTypes.array.isRequired,
+    menuItems: PropTypes.array.isRequired
 };
 
 export default ListTabs;
