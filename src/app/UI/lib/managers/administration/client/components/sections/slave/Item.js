@@ -79,6 +79,13 @@ class Item extends LightComponent {
                     />
 
                     <MenuItem
+                        caption="Edit"
+                        onClick={() => this.context.router.push({
+                            pathname: `${this.props.pathname}/edit`
+                        })}
+                    />
+
+                    <MenuItem
                         caption={this.props.item.offline ? "Set Online" : "Set Offline"}
                         onClick={() => this.onSetOfflineOnline()}
                     />
