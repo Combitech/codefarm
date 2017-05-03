@@ -43,7 +43,8 @@ class Main extends Service {
         ]);
 
         await RawLogClient.instance.start(Object.assign({
-            uri: this.config.bus.uri
+            uri: this.config.bus.uri,
+            synchronized: true // TODO: serialized handleMessage => bottleneck
         }, this.config.loglib));
         this.addDisposable(RawLogClient.instance);
 
