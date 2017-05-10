@@ -29,6 +29,8 @@
             "port": 19393
         },
         "backendsConfig": {
+            "gitlab": {
+            },
             "github": {
                 "baseUrl": "https://github.com",
                 "apiBaseUrl": "https://api.github.com"

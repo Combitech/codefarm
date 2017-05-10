@@ -14,7 +14,8 @@ import {
 
 const BACKEND_TYPE = {
     GERRIT: "gerrit",
-    GITHUB: "github"
+    GITHUB: "github",
+    GITLAB: "gitlab"
 };
 
 class Edit extends LightComponent {
@@ -47,9 +48,14 @@ class Edit extends LightComponent {
                 required: () => this.state.backendType.value === BACKEND_TYPE.GERRIT,
                 defaultValue: ""
             },
+            "serverUrl": {
+                editable: true,
+                required: () => this.state.backendType.value === BACKEND_TYPE.GITLAB,
+                defaultValue: "https://gitlab.com"
+            },
             "target": {
                 editable: true,
-                required: () => this.state.backendType.value === BACKEND_TYPE.GITHUB,
+                required: () => this.state.backendType.value === BACKEND_TYPE.GITHUB || this.state.backendType.value === BACKEND_TYPE.GITLAB,
                 defaultValue: ""
             },
             "isOrganization": {
@@ -64,17 +70,17 @@ class Edit extends LightComponent {
             },
             "authToken": {
                 editable: true,
-                required: () => this.state.backendType.value === BACKEND_TYPE.GITHUB,
+                required: () => this.state.backendType.value === BACKEND_TYPE.GITHUB || this.state.backendType.value === BACKEND_TYPE.GITLAB,
                 defaultValue: ""
             },
             "webhookURL": {
                 editable: true,
-                required: () => this.state.backendType.value === BACKEND_TYPE.GITHUB,
+                required: () => this.state.backendType.value === BACKEND_TYPE.GITHUB || this.state.backendType.value === BACKEND_TYPE.GITLAB,
                 defaultValue: ""
             },
             "port": {
                 editable: true,
-                required: () => this.state.backendType.value === BACKEND_TYPE.GITHUB,
+                required: () => this.state.backendType.value === BACKEND_TYPE.GITHUB || this.state.backendType.value === BACKEND_TYPE.GITLAB,
                 defaultValue: ""
             }
         };
@@ -85,7 +91,8 @@ class Edit extends LightComponent {
     getBackendTypes() {
         return [
             { value: BACKEND_TYPE.GERRIT, label: "Gerrit" },
-            { value: BACKEND_TYPE.GITHUB, label: "GitHub" }
+            { value: BACKEND_TYPE.GITHUB, label: "GitHub" },
+            { value: BACKEND_TYPE.GITLAB, label: "GitLab" }
         ];
     }
 
@@ -189,6 +196,58 @@ class Edit extends LightComponent {
                             <Input
                                 type="text"
                                 label="GitHub user authentication token"
+                                name="authToken"
+                                floating={true}
+                                required={this.itemProperties.authToken.required()}
+                                disabled={this.props.item && !this.itemProperties.authToken.editable}
+                                value={this.state.authToken.value}
+                                onChange={this.state.authToken.set}
+                            />
+                            <Input
+                                type="url"
+                                label="Webhook callback URL"
+                                name="webhookURL"
+                                floating={true}
+                                required={this.itemProperties.webhookURL.required()}
+                                disabled={this.props.item && !this.itemProperties.webhookURL.editable}
+                                value={this.state.webhookURL.value}
+                                onChange={this.state.webhookURL.set}
+                            />
+                            <Input
+                                type="number"
+                                label="Local port for webhooks"
+                                name="port"
+                                floating={true}
+                                required={this.itemProperties.port.required()}
+                                disabled={this.props.item && !this.itemProperties.port.editable}
+                                value={this.state.port.value}
+                                onChange={this.state.port.set}
+                            />
+                        </When>
+                        <When condition={this.state.backendType.value === BACKEND_TYPE.GITLAB}>
+                            <Input
+                                type="text"
+                                label="GitLab Server URL"
+                                name="server"
+                                floating={true}
+                                required={this.itemProperties.serverUrl.required()}
+                                disabled={this.props.item && !this.itemProperties.serverUrl.editable}
+                                value={this.state.serverUrl.value}
+                                onChange={this.state.serverUrl.set}
+                            />
+                            <Input
+                                type="text"
+                                label="GitLab group"
+                                name="target"
+                                floating={true}
+                                required={this.itemProperties.target.required()}
+                                disabled={this.props.item && !this.itemProperties.target.editable}
+                                value={this.state.target.value}
+                                onChange={this.state.target.set}
+                            />
+                            <Input
+                                type="text"
+                                label="GitLab user private token"
                                 name="authToken"
                                 floating={true}
                                 required={this.itemProperties.authToken.required()}
