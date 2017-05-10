@@ -5,6 +5,8 @@ volumes:
     artifactvolume:
     configdbvolume:
     dbvolume:
+    rmqvolume:
+    rmqlogsvolume:
 services:
     nodebase:
         build:
