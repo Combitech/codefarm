@@ -18,7 +18,7 @@ class RawClient {
         }
 
         this.config = config;
-        this.bus = new Bus();
+        this.bus = new Bus(this.config.synchronized);
 
         await this.bus.start({
             uri: this.config.uri,
