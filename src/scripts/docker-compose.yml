@@ -3,7 +3,8 @@ version: '2'
 volumes:
     logvolume:
     artifactvolume:
-
+    configdbvolume:
+    dbvolume:
 services:
     nodebase:
         build:
@@ -21,12 +22,18 @@ services:
         build:
             context: ../containers/mongo
         image: codefarm/mongo:0.0.0
+        volumes:
+            - configdbvolume:/data/configdb
+            - dbvolume:/data/db
         ports:
             - "27017:27017"
     rabbitmq:
         build:
             context: ../containers/rabbitmq
         image: codefarm/rabbitmq:0.0.0
+        volumes:
+            - rmqvolume:/data/mnesia
+            - rmqlogsvolume:/data/logs
         ports:
             - "8082:15672"
             - "5671:5671"
