@@ -414,6 +414,7 @@ class GithubBackend extends AsyncEventEmitter {
         }
 
         try {
+            // TODO: Check if hooks already exist?
             await this._createWebHook(repository);
         } catch (err) {
             ServiceMgr.instance.log("verbose", `Error creating GitHub repo ${repository._id} webhook: ${err.message}`);

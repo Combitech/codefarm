@@ -23,11 +23,18 @@ class GitLabEventEmitter extends AsyncEventEmitter {
             const header = ctx.request.header;
             const body = ctx.request.body;
 
+            console.log(JSON.stringify(header, null, 2));
+            console.log(JSON.stringify(body, null, 2));
+
             // We need a body with an action and a header with an event type
-            if (body && header && header["X-Gitlab-Event"]) {
-                switch (header["X-GitLab-Event"]) {
+            if (body && header && header["x-gitlab-event"]) {
+                switch (header["x-gitlab-event"]) {
+                case "Push Hook":
+                    await this.emit("push", body);
+                    break;
+
                 default:
-                    console.log(`GitLab event: ${body}`);
+                    console.log("unknown event received");
                     await this.emit("unknown_event", { type: header["x-github-event"], body: body });
                 }
             } else {
