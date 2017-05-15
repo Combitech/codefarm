@@ -13,6 +13,7 @@ import theme from "./theme.scss";
 const name = names.APP_ICON;
 const exports = {
     GitHubMarkerIcon: require("./GitHubMarkerIcon"),
+    GitLabLogoIcon: require("./GitLabLogoIcon"),
     CodeRepoBackendIcon: require("./CodeRepoBackendIcon"),
     ArtifactRepoBackendIcon: require("./ArtifactRepoBackendIcon")
 };

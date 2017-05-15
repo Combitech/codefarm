@@ -4,6 +4,7 @@ import PropTypes from "prop-types";
 import LightComponent from "ui-lib/light_component";
 import GerritDiffyIcon from "./diffymute.svg";
 import GitHubMarkerIcon from "./GitHubMarkerIcon";
+import GitLabLogoIcon from "./GitLabLogoIcon";
 import CodeRepoAndBackend from "ui-observables/code_repo_and_backend";
 
 class CodeRepoBackendIcon extends LightComponent {
@@ -49,6 +50,13 @@ class CodeRepoBackendIcon extends LightComponent {
         if (backendType === "github") {
             icon = (
                 <GitHubMarkerIcon
+                    theme={this.props.theme}
+                    className={classNames.join(" ")}
+                />
+            );
+        } else if (backendType === "gitlab") {
+            icon = (
+                <GitLabLogoIcon
                     theme={this.props.theme}
                     className={classNames.join(" ")}
                 />

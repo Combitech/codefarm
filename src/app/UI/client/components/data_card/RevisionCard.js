@@ -77,6 +77,10 @@ class RevisionCard extends LightComponent {
             labels.review = "Github pull request";
             labels.commit = "Github commit";
             break;
+        case "gitlab":
+            labels.review = "GitLab merge request";
+            labels.commit = "GitLab commit";
+            break;
         }
 
         return labels;
