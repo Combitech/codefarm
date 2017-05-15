@@ -33,9 +33,26 @@ class GitLabEventEmitter extends AsyncEventEmitter {
                     await this.emit("push", body);
                     break;
 
+                case "Merge Request Hook":
+                    switch (body.object_attributes.action) {
+                    case "opened":
+                        await this.emit("merge_request_opened", body);
+                        break;
+                    case "update":
+                        await this.emit("merge_request_updated", body);
+                        break;
+                    case "closed":
+                        await this.emit("merge_request_closed", body);
+                        break;
+
+                    default:
+                        await this.emit("merge_request_unknown", body);
+                    }
+                    break;
+
                 default:
-                    console.log("unknown event received");
-                    await this.emit("unknown_event", { type: header["x-github-event"], body: body });
+                    console.log("unknown event received", body);
+                    await this.emit("unknown_event", { type: header["x-gitlab-event"], body: body });
                 }
             } else {
                 await this.emit("malformed_event", { header: header, body: body });

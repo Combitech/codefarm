@@ -48,6 +48,8 @@ class GitLabBackend extends AsyncEventEmitter {
 
     async _startMonitorEventStream() {
         this.gitLabEmitter.addListener("push", this._onPush.bind(this));
+        this.gitLabEmitter.addListener("merge_request_opened", this._onMergeRequestUpdate.bind(this));
+        this.gitLabEmitter.addListener("merge_request_updated", this._onMergeRequestUpdate.bind(this));
 
         return await this.gitLabEmitter.start(this.backend.port);
     }
@@ -148,7 +150,7 @@ class GitLabBackend extends AsyncEventEmitter {
                 comment: commit.message,
                 pullreqnr: "-1",
                 change: {
-                    oldrev: null, // TODO: set this
+                    oldrev: event.before, // TODO: previous commit?
                     newrev: commit.id,
                     refname: event.ref,
                     commitUrl,
@@ -166,6 +168,93 @@ class GitLabBackend extends AsyncEventEmitter {
             revision.setMerged();
         }
         ServiceMgr.instance.log("verbose", `Merged ${event.commits.length} commits to ${repository._id}`);
+    }
+
+    async _onMergeRequestUpdate(event) {
+        const action = event.object_attributes.action === "open" ? "opened" : "updated";
+        ServiceMgr.instance.log("verbose", `merge_request_${action} received`);
+        ServiceMgr.instance.log("debug", JSON.stringify(event, null, 2));
+
+        const repository = await this._getRepo(event.repository.name);
+        const patch = await this._createPatch(event, repository._id);
+
+        // This will create a new revision or patch on existing revision
+        const revision = await this.Revision.allocate(
+            repository._id,
+            event.object_attributes.id.toString(),
+            patch,
+            repository.initialRevisionTags
+        );
+
+        if (event.object_attributes.last_commit.message.indexOf("SKIP_REVIEW") !== -1) {
+            await revision.skipReview();
+        } else {
+            // Will also clear review tags
+            await revision.clearReviews();
+        }
+    }
+
+    async _onMergeRequestClose(event) {
+        ServiceMgr.instance.log("verbose", "merge-request-closed received");
+        ServiceMgr.instance.log("debug", JSON.stringify(event, null, 2));
+
+        const repository = await this._getRepo(event.repository.name);
+        const revision = await this._getRevision(event.object_attributes.id.toString());
+
+        if (event.object_attributes.merge_status === "merged") {
+            const mergeSha = event.object_attributes.merge_commit_sha;
+
+            // Will create a new patch on existing revision, Override pull request SHA
+            const patch = await this._createPatch(event, repository._id, mergeSha);
+            ServiceMgr.instance.log("verbose", `GitLab merge request  ${event.object_attributes.id} merged`);
+
+            return await revision.setMerged(patch);
+        }
+
+        ServiceMgr.instance.log("verbose", `GitLab merge request  ${event.object_attributes.id} abandoned`);
+
+        return await revision.setAbandoned();
+    }
+
+    async _createPatch(event, repository, overrideSha = null) {
+        const changeSha = overrideSha ? overrideSha : event.object_attributes.last_commit.id;
+//        const commit = await this._getCommit(event.repository.name, changeSha);
+        ServiceMgr.instance.log("verbose", `Creating new patch for merge request ${event.object_attributes.id} (${changeSha})`);
+
+        const files = [];
+/*
+        const files = commit ? commit.files.map((file) => ({
+            name: file.filename,
+            status: file.status,
+            url: "",
+            download: file.raw_url
+        })) : [];
+*/
+        // The github url to a specific diff inside of a pull-request looks like
+        // the github pull request url followed by /files#diff-FILE_INDEX where
+        // FILE_INDEX is the 0-based index of the file within the sorted file list.
+/*
+        const fileNames = files.map((item) => item.name).sort();
+        files.forEach((file) =>
+            file.url = event.object_attributes.url
+        );
+*/
+
+        return {
+            email: event.object_attributes.last_commit.author.email,
+            name: event.object_attributes.last_commit.author.name,
+            submitted: moment.utc().format(),
+            comment: event.object_attributes.title,
+            pullreqnr: event.object_attributes.id.toString(),
+            change: {
+                oldrev: event.object_attributes.oldrev,
+                newrev: changeSha,
+                refname: event.object_attributes.source_branch,
+                commitUrl: event.object_attributes.last_commit.url,
+                reviewUrl: event.object_attributes.url,
+                files
+            }
+        };
     }
 
     async _getRepo(repositoryName) {

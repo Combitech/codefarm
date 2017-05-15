@@ -203,8 +203,7 @@ class GithubBackend extends AsyncEventEmitter {
 
     // This will handle both pull request open and update
     async _onPullRequestUpdate(event) {
-        const action = event.action === "opened" ? "open" : "update";
-        ServiceMgr.instance.log("verbose", `pull_request_${action} received`);
+        ServiceMgr.instance.log("verbose", `pull_request_${event.action} received`);
         ServiceMgr.instance.log("debug", JSON.stringify(event, null, 2));
 
         const repository = await this._getRepo(event.repository.name);
@@ -244,6 +243,8 @@ class GithubBackend extends AsyncEventEmitter {
 
             return await revision.setMerged(patch);
         }
+
+        ServiceMgr.instance.log("verbose", `GitHub pull request  ${event.pull_request.number} abandoned`);
 
         return await revision.setAbandoned();
     }
