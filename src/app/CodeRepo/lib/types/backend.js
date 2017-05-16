@@ -62,6 +62,7 @@ class Backend extends Type {
                 assertType(data.authUser, "data.authUser", "string");
                 assertType(data.authToken, "data.authToken", "string");
                 assertType(data.webhookURL, "data.webhookURL", "string");
+                assertType(data.webhookSecret, "data.webhookSecret", "string");
                 break;
             case "gitlab":
                 if (data.port) {
@@ -72,6 +73,7 @@ class Backend extends Type {
                 assertType(data.target, "data.target", "string");
                 assertType(data.authToken, "data.authToken", "string");
                 assertType(data.webhookURL, "data.webhookURL", "string");
+                assertType(data.webhookSecret, "data.webhookSecret", "string");
                 break;
             default:
                 throw new Error(`Unknown backend type ${data.backendType}`);

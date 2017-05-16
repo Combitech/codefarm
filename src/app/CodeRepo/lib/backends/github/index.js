@@ -363,6 +363,7 @@ class GithubBackend extends AsyncEventEmitter {
             "events": [ "pull_request", "pull_request_review", "push" ],
             "config": {
                 "url": this.backend.webhookURL,
+                "secret": this.backend.webhookSecret,
                 "content_type": "json"
             }
         };

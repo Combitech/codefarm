@@ -4,6 +4,7 @@ const Koa = require("koa");
 const bodyParser = require("koa-bodyparser");
 const { synchronize } = require("misc");
 const { AsyncEventEmitter } = require("emitter");
+const crypto = require("crypto");
 
 class GithubEventEmitter extends AsyncEventEmitter {
     constructor(log = false) {
@@ -14,7 +15,7 @@ class GithubEventEmitter extends AsyncEventEmitter {
         synchronize(this, "emit");
     }
 
-    async _setupWebServer(port) {
+    async _setupWebServer(port, webhookSecret) {
         const app = new Koa();
 
         app.use(bodyParser());
@@ -22,6 +23,14 @@ class GithubEventEmitter extends AsyncEventEmitter {
         app.use(async (ctx) => {
             const header = ctx.request.header;
             const body = ctx.request.body;
+
+            // Verify contents if secret set
+            if (webhookSecret) {
+                const hash = crypto.createHmac("sha1", webhookSecret).update(body).digest("hex");
+                if (!header["X-Hub-Signature"] || header["X-Hub-Signature"] !== hash) {
+                    throw Error("Missing or incorrect signature in GitHub event");
+                }
+            }
 
             // We need a body with an action and a header with an event type
             if (body && header && header["x-github-event"]) {
