@@ -75,7 +75,8 @@ describe("CodeRepo", async () => {
                 isOrganization: true,
                 authUser: "gitHubUser1",
                 authToken: "gitHubUserToken1",
-                webhookURL: "dummyUrl1"
+                webhookURL: "dummyUrl1",
+                webhookSecret: "secret"
             },
             gerritBackend: {
                 _id: "GerritBackend1",

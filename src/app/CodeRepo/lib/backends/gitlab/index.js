@@ -101,7 +101,8 @@ class GitLabBackend extends AsyncEventEmitter {
             "url": this.backend.webhookURL,
             "push_events": true,
             "merge_requests_events": true,
-            "note_events": true
+            "note_events": true,
+            "token": this.backend.webhookSecret
         };
 
         await this._sendRequest(url, data, "POST");

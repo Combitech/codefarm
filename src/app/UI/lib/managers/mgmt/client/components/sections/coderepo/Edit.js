@@ -11,6 +11,7 @@ import {
     Section as TASection,
     utils as tautils
 } from "ui-components/type_admin";
+import { default as UUID } from "uuid";
 
 const BACKEND_TYPE = {
     GERRIT: "gerrit",
@@ -21,6 +22,8 @@ const BACKEND_TYPE = {
 class Edit extends LightComponent {
     constructor(props) {
         super(props);
+
+        const webhookSecret = UUID.v4();
 
         this.itemProperties = {
             "_id": {
@@ -77,6 +80,11 @@ class Edit extends LightComponent {
                 editable: true,
                 required: () => this.state.backendType.value === BACKEND_TYPE.GITHUB || this.state.backendType.value === BACKEND_TYPE.GITLAB,
                 defaultValue: ""
+            },
+            "webhookSecret": {
+                editable: false,
+                required: () => this.state.backendType.value === BACKEND_TYPE.GITHUB || this.state.backendType.value === BACKEND_TYPE.GITLAB,
+                defaultValue: `${webhookSecret}`
             },
             "port": {
                 editable: true,
@@ -214,6 +222,16 @@ class Edit extends LightComponent {
                                 onChange={this.state.webhookURL.set}
                             />
                             <Input
+                                type="text"
+                                label="Webhook secret"
+                                name="webhookSecret"
+                                floating={true}
+                                required={this.itemProperties.webhookSecret.required()}
+                                disabled={this.props.item && !this.itemProperties.webhookSecret.editable}
+                                value={this.state.webhookSecret.value}
+                                onChange={this.state.webhookSecret.set}
+                            />
+                            <Input
                                 type="number"
                                 label="Local port for webhooks"
                                 name="port"
@@ -264,6 +282,16 @@ class Edit extends LightComponent {
                                 disabled={this.props.item && !this.itemProperties.webhookURL.editable}
                                 value={this.state.webhookURL.value}
                                 onChange={this.state.webhookURL.set}
+                            />
+                            <Input
+                                type="text"
+                                label="Webhook secret"
+                                name="webhookSecret"
+                                floating={true}
+                                required={this.itemProperties.webhookSecret.required()}
+                                disabled={this.props.item && !this.itemProperties.webhookSecret.editable}
+                                value={this.state.webhookSecret.value}
+                                onChange={this.state.webhookSecret.set}
                             />
                             <Input
                                 type="number"

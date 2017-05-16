@@ -14,7 +14,7 @@ class GitLabEventEmitter extends AsyncEventEmitter {
         synchronize(this, "emit");
     }
 
-    async _setupWebServer(port) {
+    async _setupWebServer(port, webhookSecret) {
         const app = new Koa();
 
         app.use(bodyParser());
@@ -22,6 +22,12 @@ class GitLabEventEmitter extends AsyncEventEmitter {
         app.use(async (ctx) => {
             const header = ctx.request.header;
             const body = ctx.request.body;
+
+            if (webhookSecret) {
+                if (!header["X-Gitlab-Token"] || header["X-Gitlab-Token"] !== webhookSecret) {
+                    throw Error("Missing or incorrect signature in GitLab webhook event");
+                }
+            }
 
             console.log(JSON.stringify(header, null, 2));
             console.log(JSON.stringify(body, null, 2));

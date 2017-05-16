@@ -84,7 +84,8 @@ describe("GithubBackend", async () => {
                 isOrganization: true,
                 authUser: "gitHubUser1",
                 authToken: "gitHubUserToken1",
-                webhookURL: "dummyUrl1"
+                webhookURL: "dummyUrl1",
+                webhookSecret: "secret"
             },
             gitHubRepo: {
                 _id: "GitHubRepo1",
