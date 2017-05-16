@@ -35,13 +35,13 @@ class GitLabEventEmitter extends AsyncEventEmitter {
 
                 case "Merge Request Hook":
                     switch (body.object_attributes.action) {
-                    case "opened":
+                    case "open":
                         await this.emit("merge_request_opened", body);
                         break;
                     case "update":
                         await this.emit("merge_request_updated", body);
                         break;
-                    case "closed":
+                    case "close":
                         await this.emit("merge_request_closed", body);
                         break;
 
