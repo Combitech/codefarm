@@ -9,7 +9,7 @@ const GitLabEventEmitter = require("./gitlab_event_emitter");
 
 /*
 To get started with GitLab:
-NOTE: Webhook endpoint needs to be up or we hang? Needs testing
+NOTE: Webhook might resend event if not enough time to process, set high enough
 // TODO: fill in
 */
 
@@ -50,6 +50,7 @@ class GitLabBackend extends AsyncEventEmitter {
         this.gitLabEmitter.addListener("push", this._onPush.bind(this));
         this.gitLabEmitter.addListener("merge_request_opened", this._onMergeRequestUpdate.bind(this));
         this.gitLabEmitter.addListener("merge_request_updated", this._onMergeRequestUpdate.bind(this));
+        this.gitLabEmitter.addListener("merge_request_closed", this._onMergeRequestClose.bind(this));
 
         return await this.gitLabEmitter.start(this.backend.port);
     }
@@ -93,6 +94,15 @@ class GitLabBackend extends AsyncEventEmitter {
         return null;
     }
 
+    async _getRevision(revisionId) {
+        const repository = await this.Revision.findOne({ _id: revisionId });
+        if (!repository) {
+            throw Error(`Unknown revision ${revisionId}`);
+        }
+
+        return repository;
+    }
+
     async _createWebHook(repository, projectId) {
         ServiceMgr.instance.log("verbose", `Creating GitLab webhooks in project '${repository._id}'`);
         const url = `${this.apiBaseUrl}/projects/${projectId}/hooks`;
@@ -108,6 +118,7 @@ class GitLabBackend extends AsyncEventEmitter {
         await this._sendRequest(url, data, "POST");
     }
 
+    // TODO: Solve problem with repeating webhook due to webhook time out
     async _onPush(event) {
         ServiceMgr.instance.log("verbose", "push received");
         ServiceMgr.instance.log("debug", JSON.stringify(event, null, 2));
@@ -117,6 +128,17 @@ class GitLabBackend extends AsyncEventEmitter {
             ServiceMgr.instance.log("verbose", `Ignored push to personal branch ${event.ref}`);
 
             return;
+        }
+
+        // Check the latest merged merge-requests to see if we should ignore this one
+        const url = `${this.apiBaseUrl}/projects/${event.project_id}/merge_requests`;
+        const merged = await this._sendRequest(url, { state: "merged" }, "GET");
+        for (const m of merged) {
+            if (m.merge_commit_sha === event.after) {
+                ServiceMgr.instance.log("verbose", "Ignored push initiated by merging of merge request");
+
+                return;
+            }
         }
 
         const repository = await this._getRepo(event.project.name);
@@ -202,7 +224,7 @@ class GitLabBackend extends AsyncEventEmitter {
         const repository = await this._getRepo(event.repository.name);
         const revision = await this._getRevision(event.object_attributes.id.toString());
 
-        if (event.object_attributes.merge_status === "merged") {
+        if (event.object_attributes.state === "merged") {
             const mergeSha = event.object_attributes.merge_commit_sha;
 
             // Will create a new patch on existing revision, Override pull request SHA
@@ -219,27 +241,9 @@ class GitLabBackend extends AsyncEventEmitter {
 
     async _createPatch(event, repository, overrideSha = null) {
         const changeSha = overrideSha ? overrideSha : event.object_attributes.last_commit.id;
-//        const commit = await this._getCommit(event.repository.name, changeSha);
         ServiceMgr.instance.log("verbose", `Creating new patch for merge request ${event.object_attributes.id} (${changeSha})`);
 
         const files = [];
-/*
-        const files = commit ? commit.files.map((file) => ({
-            name: file.filename,
-            status: file.status,
-            url: "",
-            download: file.raw_url
-        })) : [];
-*/
-        // The github url to a specific diff inside of a pull-request looks like
-        // the github pull request url followed by /files#diff-FILE_INDEX where
-        // FILE_INDEX is the 0-based index of the file within the sorted file list.
-/*
-        const fileNames = files.map((item) => item.name).sort();
-        files.forEach((file) =>
-            file.url = event.object_attributes.url
-        );
-*/
 
         return {
             email: event.object_attributes.last_commit.author.email,
