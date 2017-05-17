@@ -24,11 +24,10 @@ class GithubEventEmitter extends AsyncEventEmitter {
             const header = ctx.request.header;
             const body = ctx.request.body;
 
-            // Verify contents if secret set
             if (webhookSecret) {
                 const hash = crypto.createHmac("sha1", webhookSecret).update(body).digest("hex");
                 if (!header["X-Hub-Signature"] || header["X-Hub-Signature"] !== hash) {
-                    throw Error("Missing or incorrect signature in GitHub event");
+                    throw Error("Missing or incorrect signature in GitHub webhook event");
                 }
             }
 

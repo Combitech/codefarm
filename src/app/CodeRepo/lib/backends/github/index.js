@@ -255,7 +255,7 @@ class GithubBackend extends AsyncEventEmitter {
 
         const pullreqrev = await this.Revision.findOne({ "patches.change.newrev": event.head_commit.id });
         if (pullreqrev) {
-            ServiceMgr.instance.log("verbose", "Ignored push initiated by pull request merge");
+            ServiceMgr.instance.log("verbose", "Ignored push initiated merging of pull request");
 
             return;
         }

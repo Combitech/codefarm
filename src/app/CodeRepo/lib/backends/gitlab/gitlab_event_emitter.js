@@ -29,9 +29,6 @@ class GitLabEventEmitter extends AsyncEventEmitter {
                 }
             }
 
-            console.log(JSON.stringify(header, null, 2));
-            console.log(JSON.stringify(body, null, 2));
-
             // We need a body with an action and a header with an event type
             if (body && header && header["x-gitlab-event"]) {
                 switch (header["x-gitlab-event"]) {
@@ -46,6 +43,9 @@ class GitLabEventEmitter extends AsyncEventEmitter {
                         break;
                     case "update":
                         await this.emit("merge_request_updated", body);
+                        break;
+                    case "merge":
+                        await this.emit("merge_request_closed", body);
                         break;
                     case "close":
                         await this.emit("merge_request_closed", body);
