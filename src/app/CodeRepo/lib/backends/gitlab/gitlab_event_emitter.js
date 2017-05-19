@@ -57,7 +57,6 @@ class GitLabEventEmitter extends AsyncEventEmitter {
                     break;
 
                 default:
-                    console.log("unknown event received", body);
                     await this.emit("unknown_event", { type: header["x-gitlab-event"], body: body });
                 }
             } else {

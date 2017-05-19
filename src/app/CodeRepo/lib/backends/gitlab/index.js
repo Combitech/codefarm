@@ -106,7 +106,6 @@ class GitLabBackend extends AsyncEventEmitter {
     async _createWebHook(repository, projectId) {
         ServiceMgr.instance.log("verbose", `Creating GitLab webhooks in project '${repository._id}'`);
         const url = `${this.apiBaseUrl}/projects/${projectId}/hooks`;
-        console.log(url);
         const data = {
             "url": this.backend.webhookURL,
             "push_events": true,
@@ -329,7 +328,6 @@ class GitLabBackend extends AsyncEventEmitter {
         }
 
         try {
-            console.log(project);
             const url = `${this.apiBaseUrl}/projects/${project.id}`;
             await this._sendRequest(url, {}, "DELETE");
         } catch (err) {
@@ -339,8 +337,8 @@ class GitLabBackend extends AsyncEventEmitter {
 
     async dispose() {
         this.removeAllListeners();
-        this.GitLabEmitter.removeAllListeners();
-        await this.GitLabEmitter.dispose();
+        this.gitLabEmitter.removeAllListeners();
+        await this.gitLabEmitter.dispose();
     }
 }
 

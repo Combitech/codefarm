@@ -230,7 +230,6 @@ describe("GithubBackend", async () => {
             assert(deferred.resolved);
         });
 
-        // TODO: Need to do changes in servicecom to have user resolved in this testcase
         it("shall create revision on direct push", async () => {
             const info = {
                 html_url: "html_url", // eslint-disable-line camelcase
