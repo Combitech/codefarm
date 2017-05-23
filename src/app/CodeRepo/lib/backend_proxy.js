@@ -4,13 +4,15 @@ const { BackendProxy: BackendProxyBase } = require("backend");
 const GerritBackend = require("./backends/gerrit/index");
 const GithubBackend = require("./backends/github/index");
 const GitlabBackend = require("./backends/gitlab/index");
+const BitBucketBackend = require("./backends/bitbucket/index");
 
 const Backend = require("./types/backend");
 
 const BackendTypes = {
     gerrit: GerritBackend,
     github: GithubBackend,
-    gitlab: GitlabBackend
+    gitlab: GitlabBackend,
+    bitbucket: BitBucketBackend
 };
 
 class BackendProxy extends BackendProxyBase {

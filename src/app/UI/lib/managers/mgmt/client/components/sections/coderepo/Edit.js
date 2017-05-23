@@ -16,7 +16,8 @@ import { default as UUID } from "uuid";
 const BACKEND_TYPE = {
     GERRIT: "gerrit",
     GITHUB: "github",
-    GITLAB: "gitlab"
+    GITLAB: "gitlab",
+    BITBUCKET: "bitbucket"
 };
 
 class Edit extends LightComponent {
@@ -53,12 +54,12 @@ class Edit extends LightComponent {
             },
             "serverUrl": {
                 editable: true,
-                required: () => this.state.backendType.value === BACKEND_TYPE.GITLAB,
+                required: () => this.state.backendType.value in [ BACKEND_TYPE.GITLAB, BACKEND_TYPE.BITBUCKET ],
                 defaultValue: "https://gitlab.com"
             },
             "target": {
                 editable: true,
-                required: () => this.state.backendType.value === BACKEND_TYPE.GITHUB || this.state.backendType.value === BACKEND_TYPE.GITLAB,
+                required: () => this.state.backendType.value in [ BACKEND_TYPE.GITHUB, BACKEND_TYPE.GITLAB, BACKEND_TYPE.BITBUCKET ],
                 defaultValue: ""
             },
             "isOrganization": {
@@ -68,27 +69,27 @@ class Edit extends LightComponent {
             },
             "authUser": {
                 editable: true,
-                required: () => this.state.backendType.value === BACKEND_TYPE.GITHUB,
+                required: () => this.state.backendType.value in [ BACKEND_TYPE.GITHUB, BACKEND_TYPE.BITBUCKET ],
                 defaultValue: ""
             },
             "authToken": {
                 editable: true,
-                required: () => this.state.backendType.value === BACKEND_TYPE.GITHUB || this.state.backendType.value === BACKEND_TYPE.GITLAB,
+                required: () => this.state.backendType.value in [ BACKEND_TYPE.GITHUB, BACKEND_TYPE.GITLAB, BACKEND_TYPE.BITBUCKET ],
                 defaultValue: ""
             },
             "webhookURL": {
                 editable: true,
-                required: () => this.state.backendType.value === BACKEND_TYPE.GITHUB || this.state.backendType.value === BACKEND_TYPE.GITLAB,
+                required: () => this.state.backendType.value in [ BACKEND_TYPE.GITHUB, BACKEND_TYPE.GITLAB ],
                 defaultValue: ""
             },
             "webhookSecret": {
                 editable: false,
-                required: () => this.state.backendType.value === BACKEND_TYPE.GITHUB || this.state.backendType.value === BACKEND_TYPE.GITLAB,
+                required: () => this.state.backendType.value in [ BACKEND_TYPE.GITHUB, BACKEND_TYPE.GITLAB ],
                 defaultValue: `${webhookSecret}`
             },
             "port": {
                 editable: true,
-                required: () => this.state.backendType.value === BACKEND_TYPE.GITHUB || this.state.backendType.value === BACKEND_TYPE.GITLAB,
+                required: () => this.state.backendType.value in [ BACKEND_TYPE.GITHUB, BACKEND_TYPE.GITLAB, BACKEND_TYPE.BITBUCKET ],
                 defaultValue: ""
             }
         };
@@ -100,7 +101,8 @@ class Edit extends LightComponent {
         return [
             { value: BACKEND_TYPE.GERRIT, label: "Gerrit" },
             { value: BACKEND_TYPE.GITHUB, label: "GitHub" },
-            { value: BACKEND_TYPE.GITLAB, label: "GitLab" }
+            { value: BACKEND_TYPE.GITLAB, label: "GitLab" },
+            { value: BACKEND_TYPE.BITBUCKET, label: "BitBucket" }
         ];
     }
 
@@ -292,6 +294,48 @@ class Edit extends LightComponent {
                                 disabled={this.props.item && !this.itemProperties.webhookSecret.editable}
                                 value={this.state.webhookSecret.value}
                                 onChange={this.state.webhookSecret.set}
+                            />
+                            <Input
+                                type="number"
+                                label="Local port for webhooks"
+                                name="port"
+                                floating={true}
+                                required={this.itemProperties.port.required()}
+                                disabled={this.props.item && !this.itemProperties.port.editable}
+                                value={this.state.port.value}
+                                onChange={this.state.port.set}
+                            />
+                        </When>
+                        <When condition={this.state.backendType.value === BACKEND_TYPE.BITBUCKET}>
+                            <Input
+                                type="text"
+                                label="BitBucket Project name"
+                                name="target"
+                                floating={true}
+                                required={this.itemProperties.target.required()}
+                                disabled={this.props.item && !this.itemProperties.target.editable}
+                                value={this.state.target.value}
+                                onChange={this.state.target.set}
+                            />
+                            <Input
+                                type="text"
+                                label="BitBucket user to authenticate as"
+                                name="authUser"
+                                floating={true}
+                                required={this.itemProperties.authUser.required()}
+                                disabled={this.props.item && !this.itemProperties.authUser.editable}
+                                value={this.state.authUser.value}
+                                onChange={this.state.authUser.set}
+                            />
+                            <Input
+                                type="text"
+                                label="BitBucket user password"
+                                name="authToken"
+                                floating={true}
+                                required={this.itemProperties.authToken.required()}
+                                disabled={this.props.item && !this.itemProperties.authToken.editable}
+                                value={this.state.authToken.value}
+                                onChange={this.state.authToken.set}
                             />
                             <Input
                                 type="number"
