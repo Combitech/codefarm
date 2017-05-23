@@ -75,6 +75,17 @@ class Backend extends Type {
                 assertType(data.webhookURL, "data.webhookURL", "string");
                 assertType(data.webhookSecret, "data.webhookSecret", "string");
                 break;
+            case "bitbucket":
+                if (data.port) {
+                    data.port = parseInt(data.port, 10);
+                }
+                assertType(data.port, "data.port", "number");
+                assertType(data.serverUrl, "data.serverUrl", "string");
+                assertType(data.target, "data.target", "string");
+                assertType(data.authUser, "data.authUser", "string");
+                assertType(data.authToken, "data.authToken", "string");
+                assertType(data.webhookURL, "data.webhookURL", "string");
+                break;
             default:
                 throw new Error(`Unknown backend type ${data.backendType}`);
             }

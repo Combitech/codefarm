@@ -29,6 +29,8 @@
             "port": 19393
         },
         "backendsConfig": {
+            "bitbucket": {
+            },
             "gitlab": {
             },
             "github": {
