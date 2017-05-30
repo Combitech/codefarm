@@ -7,6 +7,7 @@ volumes:
     dbvolume:
     rmqvolume:
     rmqlogsvolume:
+    gerritvolume:
 services:
     nodebase:
         build:
@@ -44,6 +45,8 @@ services:
         build:
             context: ../containers/gerrit
         image: codefarm/gerrit:0.0.0
+        volumes:
+            - gerritvolume:/var/gerrit/review_site
         environment:
             - AUTH_TYPE=DEVELOPMENT_BECOME_ANY_ACCOUNT
         ports:
