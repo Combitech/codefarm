@@ -7,6 +7,12 @@ const { userrepo: configUserRepo } = require("./config.json");
 const argv = yargs
 .help("help")
 .strict()
+.option("service_addr", {
+    describe: "Service address",
+    type: "string",
+    requiresArg: true,
+    default: "localhost"
+})
 .option("i", {
     alias: "id",
     describe: "Policy id",
@@ -94,7 +100,7 @@ const run = async () => {
         .filter((priv, index, self) => self.indexOf(priv) === index);
     const privileges = [].concat(argv.privilege, templatePrivileges);
     const result = await rp.post({
-        url: `http://localhost:${configUserRepo.web.port}/policy`,
+        url: `http://${argv.service_addr}:${configUserRepo.web.port}/policy`,
         body: {
             _id: argv.id,
             name: argv.name,

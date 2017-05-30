@@ -9,6 +9,12 @@ const { userrepo: configUserRepo } = require("./config.json");
 const argv = yargs
 .help("help")
 .strict()
+.option("service_addr", {
+    describe: "Service address",
+    type: "string",
+    requiresArg: true,
+    default: "localhost"
+})
 .option("i", {
     alias: "id",
     describe: "User id",
@@ -86,7 +92,7 @@ const run = async () => {
     if (!argv.no_create) {
         console.log(`Adding user ${argv.id}`);
         result = await rp.post({
-            url: `http://localhost:${configUserRepo.web.port}/user`,
+            url: `http://${argv.service_addr}:${configUserRepo.web.port}/user`,
             body: {
                 _id: argv.id,
                 name: argv.name,
@@ -109,7 +115,7 @@ const run = async () => {
     if (!argv.no_key) {
         console.log(`Adding public key to user ${argv.id}`);
         result = await rp.post({
-            url: `http://localhost:${configUserRepo.web.port}/user/${argv.id}/addkey`,
+            url: `http://${argv.service_addr}:${configUserRepo.web.port}/user/${argv.id}/addkey`,
             headers: {
                 "Content-Type": "text/plain"
             },
@@ -123,7 +129,7 @@ const run = async () => {
         console.log(`Creating avatar for user ${argv.id}`);
         try {
             result = await rp.post({
-                url: `http://localhost:${configUserRepo.web.port}/useravatar`,
+                url: `http://${argv.service_addr}:${configUserRepo.web.port}/useravatar`,
                 body: {
                     _id: argv.id
                 },
@@ -136,7 +142,7 @@ const run = async () => {
         }
         console.log(`Uploading avatar for user ${argv.id}`);
         result = await rp.post({
-            url: `http://localhost:${configUserRepo.web.port}/useravatar/${argv.id}/upload`,
+            url: `http://${argv.service_addr}:${configUserRepo.web.port}/useravatar/${argv.id}/upload`,
             formData: {
                 file: fs.createReadStream(argv.avatar)
             }

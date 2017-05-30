@@ -7,6 +7,12 @@ const { userrepo: configUserRepo } = require("./config.json");
 const argv = yargs
 .help("help")
 .strict()
+.option("service_addr", {
+    describe: "Service address",
+    type: "string",
+    requiresArg: true,
+    default: "localhost"
+})
 .option("i", {
     alias: "id",
     describe: "Backend id",
@@ -26,7 +32,7 @@ const argv = yargs
 const run = async () => {
     console.log(`Adding backend ${argv.id}`);
     const result = await rp.post({
-        url: `http://localhost:${configUserRepo.web.port}/backend`,
+        url: `http://${argv.service_addr}:${configUserRepo.web.port}/backend`,
         body: {
             _id: argv.id,
             backendType: argv.type
