@@ -180,7 +180,7 @@ services:
     ui:
         build:
             context: ../app/UI
-        image: codefarm/iu:0.0.0
+        image: codefarm/ui:0.0.0
         depends_on:
             - appnodebase
             - mongo
