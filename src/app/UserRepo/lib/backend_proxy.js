@@ -2,10 +2,12 @@
 
 const { BackendProxy: BackendProxyBase } = require("backend");
 const BackendDummy = require("./backends/dummy/index");
+const BackendActiveDirectory = require("./backends/activeDirectory/index");
 const Backend = require("./types/backend");
 
 const BackendTypes = {
-    dummy: BackendDummy
+    dummy: BackendDummy,
+    activeDirectory: BackendActiveDirectory
 };
 
 class BackendProxy extends BackendProxyBase {
@@ -25,6 +27,24 @@ class BackendProxy extends BackendProxyBase {
     }
 
     async validateUser(backend, event, data) {
+        if (!backend) {
+            for (const name of Object.keys(this.backends)) {
+                const clearPassword = false;
+                const user = await this.backends[name].lookupUser(data, clearPassword);
+                if (user) {
+                    backend = name;
+                    data.backend = name;
+                    break;
+                }
+            }
+            if (!backend) {
+                // User not found in any backend
+                console.log("User not found in any userRepo backend");
+
+                return false;
+            }
+        }
+
         const instance = this.getBackend(backend);
 
         return instance.validateUser(event, data);
@@ -33,7 +53,6 @@ class BackendProxy extends BackendProxyBase {
     async lookupUser(data) {
         for (const name of Object.keys(this.backends)) {
             const user = await this.backends[name].lookupUser(data);
-
             if (user) {
                 user.backend = name;
 

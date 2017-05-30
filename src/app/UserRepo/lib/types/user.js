@@ -84,6 +84,7 @@ class User extends Type {
 
     static async factory(data) {
         // User doesn't exist, checked in controller...
+        console.log("Here in type user");
         const lookupData = await BackendProxy.instance.lookupUser(data);
         let user;
         if (lookupData) {
@@ -102,6 +103,7 @@ class User extends Type {
     }
 
     static async validate(event, data) {
+        console.log("Inside validate in types/user.js");
         // Keys are never allowed to be set
         assertProp(data, "keys", false);
 
@@ -146,7 +148,7 @@ class User extends Type {
             }
         }
 
-        await BackendProxy.instance.validateUser(data.backend || DEFAULT_BACKEND, event, data);
+        await BackendProxy.instance.validateUser(data.backend || false, event, data);
     }
 
     async addKey(key) {

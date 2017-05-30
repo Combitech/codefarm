@@ -6,6 +6,7 @@ const { Type } = require("typelib");
 
 class Backend extends Type {
     constructor(data) {
+        console.log("Here inside types/backend.js");
         super();
 
         this.backendType = "dummy";
