@@ -5,7 +5,6 @@ RUN yarn compile -- --env.global_modules_dir ${farmerHome}/.node_modules && \
 
 CMD [ \
     "node", \
-    "--harmony_async_await", \
     ".", \
     "--bus", "amqp://rabbitmq:5672/codefarm" \
 ]

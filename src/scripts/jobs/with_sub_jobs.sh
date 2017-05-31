@@ -1,7 +1,7 @@
 #!/bin/bash
 
 echo "I'm running as user $USER in dir $PWD"
-CLI="node --harmony_async_await ${PWD}/cli.js"
+CLI="node ${PWD}/cli.js"
 jobData=( $($CLI -q '$.job.name' -q '$.job.id' --format values load_file ./data.json) )
 jobId=${jobData[1]}
 echo Job name: ${jobData[0]}

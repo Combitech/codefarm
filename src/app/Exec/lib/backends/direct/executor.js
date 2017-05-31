@@ -184,7 +184,7 @@ class DirectExecutor extends Executor {
 
     async _executeSlave() {
         const remoteScriptPath = path.join(this.workspace, REMOTE_SLAVE_SCRIPT);
-        const command = `node --harmony_async_await ${remoteScriptPath} client ${this.workspace} ${this.port}`;
+        const command = `node ${remoteScriptPath} client ${this.workspace} ${this.port}`;
 
         await this._logln(`Executing slave command, ${command}`);
 

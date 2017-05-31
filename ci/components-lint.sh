@@ -24,7 +24,7 @@ shift $(( OPTIND - 1 ))
 if [[ "$CLI" == "" ]]; then
   CLI=`which true`
 else
-  CLI="node --harmony_async_await ${CLI}"
+  CLI="node ${CLI}"
 fi
 
 targets=$1

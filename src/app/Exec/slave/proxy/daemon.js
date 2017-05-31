@@ -17,7 +17,7 @@ class Daemon extends AsyncEventEmitter {
     }
 
     async _run(script) {
-        const args = [ "--harmony_async_await", script, "daemon", this.workspace, this.port ];
+        const args = [ script, "daemon", this.workspace, this.port ];
         const child = spawn("node", args, {
             detached: true,
             stdio: "ignore"

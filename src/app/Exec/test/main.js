@@ -496,9 +496,9 @@ describe("Exec", () => {
              * later on set the sub-job status to success. */
             const testScript3 = `#!/bin/bash -e
                 echo I will create a subjob
-                subJobId=$(node --harmony_async_await ./cli.js -q '$._id' --format values create_subjob test tc1 ongoing)
+                subJobId=$(node ./cli.js -q '$._id' --format values create_subjob test tc1 ongoing)
                 echo Sub-job created id: $subJobId
-                subJobId2=$(node --harmony_async_await ./cli.js -q '$._id' --format values update_subjob -r '${JSON.stringify(subJobResultData)}' -s success "$subJobId")
+                subJobId2=$(node ./cli.js -q '$._id' --format values update_subjob -r '${JSON.stringify(subJobResultData)}' -s success "$subJobId")
                 echo Sub-job updated id: $subJobId2
                 exit 0
             `;
@@ -563,7 +563,7 @@ describe("Exec", () => {
             const testScript = `#!/bin/bash -e
                 echo I will create an artifact
                 echo "${artifactContent}" > artifact.txt
-                response=$(node --harmony_async_await ./cli.js create_artifact -t atag1 -t atag2 --file "$PWD/artifact.txt" artifact2 artifactRepo1)
+                response=$(node ./cli.js create_artifact -t atag1 -t atag2 --file "$PWD/artifact.txt" artifact2 artifactRepo1)
                 echo Upload artifact response: $response
                 exit 0
             `;
@@ -633,14 +633,14 @@ describe("Exec", () => {
              * file containing artifact version and id */
             const testScript = `#!/bin/bash -e
                 echo I will create an artifact
-                response=( $(node --harmony_async_await ./cli.js -q '$._id' -q '$.version' --format values create_artifact -t btag1 -t btag2 artifact1 artifactRepo1) )
+                response=( $(node ./cli.js -q '$._id' -q '$.version' --format values create_artifact -t btag1 -t btag2 artifact1 artifactRepo1) )
                 echo Create response: \${response[*]}
                 artifactId=\${response[0]}
                 artifactVersion=\${response[1]}
                 echo Artifact id: $artifactId
                 echo Artifact version: $artifactVersion
                 echo "artifact:$artifactVersion:$artifactId" > artifact.txt
-                response=$(node --harmony_async_await ./cli.js upload_artifact "$artifactId" "$PWD/artifact.txt")
+                response=$(node ./cli.js upload_artifact "$artifactId" "$PWD/artifact.txt")
                 echo Upload artifact response: $response
                 exit 0
             `;
@@ -711,7 +711,7 @@ describe("Exec", () => {
             const testScript = `#!/bin/bash -e
                 echo I will create a log
                 echo "${logContent}" > log.txt
-                response=$(node --harmony_async_await ./cli.js upload_log -t tag1 -t tag2 "$PWD/log.txt" "log.txt")
+                response=$(node ./cli.js upload_log -t tag1 -t tag2 "$PWD/log.txt" "log.txt")
                 echo Upload log response: $response
                 exit 0
             `;
@@ -780,7 +780,7 @@ describe("Exec", () => {
 
             /* Test script will merge a revision. */
             const testScript = `#!/bin/bash -e
-                CLI="node --harmony_async_await $\{PWD\}/cli.js"
+                CLI="node $\{PWD\}/cli.js"
                 echo I will merge a revision
                 jobData=( $($CLI -q '$.job.baseline.content[?(@.name === "commits")].id[-1:]' --format values load_file $\{PWD\}/data.json) )
                 revision=$\{jobData[0]\}
@@ -915,7 +915,7 @@ describe("Exec", () => {
              * 4. Writes results to result.txt and uploads that file
              */
             const testScript = `#!/bin/bash -e
-                CLI="node --harmony_async_await $\{PWD\}/cli.js"
+                CLI="node $\{PWD\}/cli.js"
                 jobData=( $($CLI -q '$.job.name' -q '$.job.baseline.content[?(@.name === "commits")].id[-1:]' --format values load_file $\{PWD\}/data.json) )
                 jobName=$\{jobData[0]\}
                 echo Job name: $jobName
@@ -923,13 +923,13 @@ describe("Exec", () => {
                 revision=$\{jobData[1]\}
                 echo $revision >> result.txt
                 echo Job works on revision $revision
-                revisionObj=$(node --harmony_async_await ./cli.js read_type coderepo.revision $revision)
+                revisionObj=$(node ./cli.js read_type coderepo.revision $revision)
                 echo Revision object: $revisionObj
                 echo "$revisionObj" >> result.txt
-                uri=$(node --harmony_async_await ./cli.js read_type --getter uri coderepo.repository repo1)
+                uri=$(node ./cli.js read_type --getter uri coderepo.repository repo1)
                 echo Repo uri: $uri
                 echo "$uri" >> result.txt
-                response=$(node --harmony_async_await ./cli.js upload_log "$PWD/result.txt" "result.txt")
+                response=$(node ./cli.js upload_log "$PWD/result.txt" "result.txt")
                 echo Upload log response: $response
                 exit 0
             `;

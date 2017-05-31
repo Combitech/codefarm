@@ -14,8 +14,8 @@
     "shell": "../../bs/run_cmd.sh bash",
     "start": "../../bs/start.sh --expose 19898 -p 19898:19898 --net=\"host\" -d",
     "prestart-dev": "rm -f client/static/bundle.*",
-    "start-dev": "node --harmony_async_await . --bus amqp://localhost/codefarm",
-    "start-rel": "NODE_ENV=production node --harmony_async_await . --bus amqp://localhost/codefarm",
+    "start-dev": "node . --bus amqp://localhost/codefarm",
+    "start-rel": "NODE_ENV=production node . --bus amqp://localhost/codefarm",
     "stop": "../../bs/stop.sh",
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "git ls-files \"*.js\" | xargs eslint",
@@ -71,7 +71,7 @@
     "koa-webpack-dev-middleware": "^1.4.5",
     "material-design-icons": "^3.0.1",
     "moment": "^2.18.1",
-    "node-sass": "^4.5.2",
+    "node-sass": "^4.5.3",
     "prop-types": "^15.5.8",
     "react": "^15.5.4",
     "react-addons-css-transition-group": "^15.5.2",
@@ -91,7 +91,7 @@
     "style-loader": "^0.16.1",
     "uglify-js": "^2.8.22",
     "url-loader": "^0.5.7",
-    "webpack": "^2.4.1",
+    "webpack": "^2.6.1",
     "yargs": "^7.1.0"
   },
   "devDependencies": {

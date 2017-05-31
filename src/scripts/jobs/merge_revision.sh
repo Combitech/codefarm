@@ -3,7 +3,7 @@
 echo "Doing merge"
 
 echo "I'm running as user $USER in dir $PWD"
-CLI="node --harmony_async_await ${PWD}/cli.js"
+CLI="node ${PWD}/cli.js"
 jobData=( $($CLI -q '$.job.name' -q '$.job.id' -q '$.job.baseline.content[?(@.name === "commits")].id[-1:]' --format values load_file ./data.json) )
 echo Job name: ${jobData[0]}
 jobId=${jobData[1]}

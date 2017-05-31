@@ -11,10 +11,10 @@
     "unload": "../../bs/unload.sh",
     "shell": "../../bs/run_cmd.sh bash",
     "start": "../../bs/start.sh --expose 19999 -p 19999:19999 --net=\"host\" -d",
-    "start-dev": "node --harmony_async_await . --bus amqp://localhost/codefarm",
+    "start-dev": "node . --bus amqp://localhost/codefarm",
     "start-rel": "npm run start-dev",
     "stop": "../../bs/stop.sh",
-    "test": "mocha --harmony_async_await --recursive",
+    "test": "mocha --recursive",
     "lint": "git ls-files \"*.js\" | xargs eslint",
     "install": "if [ -n \"$gitroot\" ]; then $gitroot/src/bs/linklibs.sh; else ../../bs/linklibs.sh; fi",
     "deepinstall": "if [ -n \"$gitroot\" ]; then FORCE_INSTALL_LIBS=1 $gitroot/src/bs/linklibs.sh; else FORCE_INSTALL_LIBS=1 ../../bs/linklibs.sh; fi"

@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "compile": "echo 'No compile needed'",
-    "test": "npm run compile && mocha --harmony_async_await --recursive ./test",
+    "test": "npm run compile && mocha --recursive ./test",
     "lint": "git ls-files \"*.js\" | xargs eslint"
   },
   "author": "Mattias Runge <mattias.runge@combitech.se>",
