@@ -25,19 +25,6 @@ class BackendProxy {
         return instance;
     }
 
-    async validate(backendTypeName, event, data) {
-        if (!(backendTypeName in this.backendClasses)) {
-            throw new Error(`Unknown backend type ${backendTypeName}`);
-        }
-
-        if (this.backendClasses[backendTypeName].hasOwnProperty("validate")) {
-            console.log(`validate ${backendTypeName}`);
-            return this.backendClasses[backendTypeName].validate(event, data);
-        } else {
-            console.log(`no validate ${backendTypeName}`);
-        }
-    }
-
     async _addBackend(backend) {
         const typeName = backend.backendType;
 
