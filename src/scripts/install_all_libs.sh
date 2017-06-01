@@ -23,10 +23,6 @@ fi
 install="npm install ${installFlag}"
 install_pkg=$install
 
-if command -v yarn ; then
-    install="yarn ${installFlag}"
-fi
-
 while read -r lib; do
     echo "Installing $lib"
     pushd $lib

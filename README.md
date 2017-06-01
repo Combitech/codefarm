@@ -1,5 +1,5 @@
 # Code Farm
-   
+
 Code Farm is a generic Continous Integration (CI) system for executing CI flows.
 The system is deployed as a number of [micro-services](#micro-services) connected via RabbitMQ
 storing state in a MongoDB database.
@@ -35,7 +35,7 @@ In Code Farm we denote the REST classes and instances; *Types* and *Type instanc
 
 ## Install
 ### Services
-Execute `yarn` or `npm install` in the following directories:
+Execute `npm install` in the following directories:
 * `src/app/*` (services)
 * `src/scripts`
 ```bash
@@ -66,13 +66,13 @@ docker-compose up rabbitmq
 
 ## Start Code Farm
 ### Start services (development mode)
-Execute `yarn start-dev` or `npm start-dev` in `src/app/*`
+Execute `npm start-dev` in `src/app/*`
 
 ### Configure
 All services except *Mgmt* needs a config to go online. The config is owned by *Mgmt*. Make sure *Mgmt* service is running and load [default config](src/scripts/config.json) using helper script:
 ```bash
 cd src/scripts
-yarn create-config
+npm run create-config
 ```
 
 ### Navigate to UI

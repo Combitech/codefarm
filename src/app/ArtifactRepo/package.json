@@ -15,14 +15,12 @@
     "start-rel": "npm run start-dev",
     "stop": "../../bs/stop.sh",
     "test": "mocha --recursive",
-    "lint": "git ls-files \"*.js\" | xargs eslint",
-    "install": "if [ -n \"$gitroot\" ]; then $gitroot/src/bs/linklibs.sh; else ../../bs/linklibs.sh; fi",
-    "deepinstall": "if [ -n \"$gitroot\" ]; then FORCE_INSTALL_LIBS=1 $gitroot/src/bs/linklibs.sh; else FORCE_INSTALL_LIBS=1 ../../bs/linklibs.sh; fi"
+    "lint": "git ls-files \"*.js\" | xargs eslint"
   },
   "author": "Marcus Christensson <marcus.christensson@combitech.se>",
   "license": "MIT",
   "engines": {
-    "node": ">= 7.0.0"
+    "node": ">= 8.0.0"
   },
   "libraries": [
     "auth",
@@ -40,6 +38,19 @@
     "servicecom"
   ],
   "dependencies": {
+    "auth": "file:../../lib/auth",
+    "database": "file:../../lib/database",
+    "msgbus": "file:../../lib/msgbus",
+    "emitter": "file:../../lib/emitter",
+    "log": "file:../../lib/log",
+    "service": "file:../../lib/service",
+    "testsupport": "file:../../lib/testsupport",
+    "misc": "file:../../lib/misc",
+    "web": "file:../../lib/web",
+    "version": "file:../../lib/version",
+    "typelib": "file:../../lib/typelib",
+    "backend": "file:../../lib/backend",
+    "servicecom": "file:../../lib/servicecom",
     "async-busboy": "^0.4.0",
     "digest-stream": "^2.0.0",
     "fs-extra-promise": "^0.4.1",
