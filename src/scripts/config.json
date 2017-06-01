@@ -48,6 +48,11 @@
             "port": 19999
         }
     },
+    "baselinerepo": {
+        "web": {
+            "port": 18686
+        }
+    },
     "exec": {
         "web": {
             "port": 19494

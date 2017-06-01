@@ -138,6 +138,19 @@ services:
             - "rabbitmq"
         ports:
             - "19696:19696"
+    baselinerepo:
+        build:
+            context: ../app/BaselineRepo
+        image: codefarm/baselinerepo:0.0.0
+        depends_on:
+            - appnodebase
+            - mongo
+            - rabbitmq
+        links:
+            - "mongo"
+            - "rabbitmq"
+        ports:
+            - "18686:18686"
     exec:
         build:
             context: ../app/Exec
