@@ -27,6 +27,11 @@ const argv = yargs
     type: "string",
     default: join(__dirname, "cfg", "config.json")
 })
+.option("backendSearchPath", {
+    describe: "Path to search for external backends",
+    type: "array",
+    default: []
+})
 .options(getServiceOpts({ queueName: name }))
 .argv;
 

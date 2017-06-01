@@ -1,12 +1,7 @@
 "use strict";
 
 const { BackendProxy: BackendProxyBase } = require("backend");
-const DummyBackend = require("./backends/dummy/index");
 const Backend = require("./types/backend");
-
-const BackendTypes = {
-    dummy: DummyBackend
-};
 
 class BackendProxy extends BackendProxyBase {
     constructor() {
@@ -14,8 +9,7 @@ class BackendProxy extends BackendProxyBase {
     }
 
     async start(config = {}, ...args) {
-        const backendTypes = Object.assign({}, BackendTypes, config.types);
-        await super.start({ types: backendTypes }, ...args);
+        await super.start(config, ...args);
     }
 
     async createRepo(repository) {

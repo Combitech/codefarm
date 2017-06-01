@@ -35,12 +35,7 @@ class Backend extends Type {
         if (event === "create") {
             assertType(data._id, "data._id", "string");
             assertType(data.backendType, "data.backendType", "string");
-            switch (data.backendType) {
-                case "dummy":
-                break;
-            default:
-                throw new Error(`Unknown backend type ${data.backendType}`);
-            }
+            // TODO: Check that backendType exists and validate per backend
         } else if (event === "update") {
             assertProp(data, "_id", false);
             assertProp(data, "backendType", false);

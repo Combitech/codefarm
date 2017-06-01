@@ -3,6 +3,10 @@
 const { notification } = require("typelib");
 const log = require("log");
 const singleton = require("singleton");
+const fs = require("fs-extra-promise");
+const path = require("path");
+
+const BACKEND_ENTRY_FILE = "index.js";
 
 class BackendProxy {
     constructor(BackendType) {
@@ -19,6 +23,19 @@ class BackendProxy {
         }
 
         return instance;
+    }
+
+    async validate(backendTypeName, event, data) {
+        if (!(backendTypeName in this.backendClasses)) {
+            throw new Error(`Unknown backend type ${backendTypeName}`);
+        }
+
+        if (this.backendClasses[backendTypeName].hasOwnProperty("validate")) {
+            console.log(`validate ${backendTypeName}`);
+            return this.backendClasses[backendTypeName].validate(event, data);
+        } else {
+            console.log(`no validate ${backendTypeName}`);
+        }
     }
 
     async _addBackend(backend) {
@@ -77,9 +94,28 @@ class BackendProxy {
         this.backendConstructorArgs = backendConstructorArgs;
 
         // Add backend types from config
-        if (config.types) {
-            for (const typeKey of Object.keys(config.types)) {
-                this.backendClasses[typeKey] = config.types[typeKey];
+        const backendTypes = Object.assign({}, config.types);
+
+        if (config.searchPaths) {
+            for (const backendDir of config.searchPaths) {
+                const dirContent = await fs.readdirAsync(backendDir);
+                for (const backendName of dirContent) {
+                    const backendPath = path.join(backendDir, backendName);
+                    const backendEntryPath = path.join(backendPath, BACKEND_ENTRY_FILE);
+                    try {
+                        const backend = require(backendEntryPath);
+                        log.info(`Loaded backend ${backendName} at ${backendPath}`);
+                        backendTypes[backendName] = backend;
+                    } catch (err) {
+                        log.warn(`Failed to load backend at ${backendPath}: ${err}`);
+                    }
+                }
+            }
+        }
+
+        if (backendTypes) {
+            for (const typeKey of Object.keys(backendTypes)) {
+                this.backendClasses[typeKey] = backendTypes[typeKey];
             }
         }
 

@@ -36,6 +36,7 @@ describe("BaselineRepo", () => {
                 },
                 backends: {
                 },
+                backendSearchPath: [],
                 servicecom: {
                     testMode: true
                 }
