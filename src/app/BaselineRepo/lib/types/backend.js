@@ -36,6 +36,8 @@ class Backend extends Type {
             assertType(data._id, "data._id", "string");
             assertType(data.backendType, "data.backendType", "string");
             switch (data.backendType) {
+                case "dummy":
+                break;
             default:
                 throw new Error(`Unknown backend type ${data.backendType}`);
             }

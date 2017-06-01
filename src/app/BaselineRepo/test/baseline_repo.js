@@ -3,13 +3,11 @@
 /* global describe it before after */
 
 const { assert } = require("chai");
-const path = require("path");
 const rp = require("request-promise");
 const { mochaPatch } = require("testsupport");
 const getPort = require("get-port");
 const { ServiceMgr } = require("service");
 const Main = require("../lib/main");
-const version = require("version");
 
 mochaPatch();
 
@@ -79,8 +77,6 @@ describe("BaselineRepo", () => {
         assert.strictEqual(data.type, "baselinerepo.baseline");
         assert.strictEqual(data.name, expName);
         assert.strictEqual(data.repository, expRepoId);
-        assert.strictEqual(data.state, "created");
-        assert.property(data, "fileMeta");
         assert.deepEqual(data.tags, [ `belongsTo_${expRepoId}` ]);
         assert.property(data, "created");
         assert.property(data, "saved");
@@ -242,7 +238,7 @@ describe("BaselineRepo", () => {
         let bl1Ver0Id;
 
         before(async () => {
-            repo1Path = await addRepo({
+            await addRepo({
                 _id: repo1Id,
                 backend: testInfo.backend1._id,
                 initialBaselineTags: [ `belongsTo_${repo1Id}` ]
@@ -262,7 +258,7 @@ describe("BaselineRepo", () => {
             const data = await addBaseline({
                 name: "bl1",
                 repository: repo1Id
-            }, repo1Path);
+            });
             bl1Ver0Id = data._id;
         });
 
@@ -312,24 +308,6 @@ describe("BaselineRepo", () => {
                 assert.strictEqual(error.statusCode, 400);
                 assert.strictEqual(error.error.result, "fail");
                 assert.strictEqual(error.error.error, "Repository doesn't exist");
-            }
-        });
-
-        it("shall not add an baseline with old version", async () => {
-            try {
-                await addBaseline({
-                    name: "bl1",
-                    repository: repo1Id,
-                    version: "8.0.0"
-                });
-                assert(false, "unexpected baseline create success");
-            } catch (error) {
-                assert.strictEqual(error.statusCode, 400);
-                assert.strictEqual(error.error.result, "fail");
-                assert.strictEqual(
-                    error.error.error,
-                    "Requested version 8.0.0 smaller than latest 9.0.1"
-                );
             }
         });
     });

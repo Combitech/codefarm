@@ -9,6 +9,7 @@ const Repositories = require("./controllers/repositories");
 const Baselines = require("./controllers/baselines");
 const Backends = require("./controllers/backends");
 const BackendProxy = require("./backend_proxy");
+const Repository = require("./types/repository");
 const Baseline = require("./types/baseline");
 
 class Main extends Service {

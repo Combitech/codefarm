@@ -2,7 +2,6 @@
 
 const Baseline = require("../types/baseline");
 const { Controller } = require("servicecom");
-const { synchronize } = require("misc");
 
 class Baselines extends Controller {
     constructor() {

@@ -31,7 +31,7 @@ class DummyBackend {
         ServiceMgr.instance.log("info", `Dummy backend - remove baseline ${baseline.name} (repo ${repository._id})`);
     }
 
-    async updateBaseline(repository, baseline, olddata) {
+    async updateBaseline(repository, baseline /* olddata */) {
         ServiceMgr.instance.log("info", `Dummy backend - update baseline ${baseline.name} (repo ${repository._id})`);
     }
 

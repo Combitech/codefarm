@@ -6,15 +6,6 @@ const { Type } = require("typelib");
 const BackendProxy = require("../backend_proxy");
 const Repository = require("./repository");
 
-const STATE = {
-    /** Artifact not saved, no version yet */
-    NO_VERSION: "no_version",
-    /** Artifact saved, no data uploaded yet */
-    CREATED: "created",
-    /** Artifact saved and data uploaded */
-    COMMITED: "commited"
-};
-
 class Baseline extends Type {
     constructor(data) {
         super();
@@ -46,6 +37,10 @@ class Baseline extends Type {
     async _saveHook(olddata) {
         const repository = await Repository.findOne({ _id: this.repository });
         if (!olddata) {
+            // Add initial tags configured per repository
+            const initialTags = repository.initialBaselineTags.filter((t) => !this.tags.includes(t));
+            this.tags.splice(this.tags.length, 0, ...initialTags);
+
             await BackendProxy.instance.createBaseline(repository, this);
         } else {
             await BackendProxy.instance.updateBaseline(repository, this, olddata);

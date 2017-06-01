@@ -1,7 +1,7 @@
 "use strict";
 
 const { ServiceMgr } = require("service");
-const { assertType, assertProp, assertAnyOf } = require("misc");
+const { assertType, assertProp } = require("misc");
 const { Type } = require("typelib");
 const BackendProxy = require("../backend_proxy");
 
@@ -56,7 +56,7 @@ class Repository extends Type {
         }
 
         if (data.hasOwnProperty("initialBaselineTags")) {
-            assertType(data.initialArtifactTags, "data.initialBaselineTags", "array");
+            assertType(data.initialBaselineTags, "data.initialBaselineTags", "array");
         }
     }
 }
