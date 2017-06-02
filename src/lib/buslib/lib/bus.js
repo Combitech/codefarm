@@ -38,13 +38,13 @@ class Bus extends AsyncEventEmitter {
         return this.config.uri;
     }
 
-    async assertExchange(name, durable = true) {
+    async assertExchange(name, durable = true, type = "topic") {
         if (!this.config.testMode) {
             if (!this.channel) {
                 throw new Error("Bus must be connected before assertExchange");
             }
 
-            await this.channel.assertExchange(name, "topic", { durable });
+            await this.channel.assertExchange(name, type, { durable });
         }
 
         await this.emit("exchange", name);
@@ -55,7 +55,7 @@ class Bus extends AsyncEventEmitter {
     async assertQueue(exchange, name, durable = true, exclusive = true, routingKey = "") {
         if (!this.config.testMode) {
             if (!this.channel) {
-                throw new Error("Bus must be connected before assertExchange");
+                throw new Error("Bus must be connected before assertQueue");
             }
 
             const queueRef = await this.channel.assertQueue(name, { exclusive, durable, autoDelete: !durable });
@@ -84,12 +84,19 @@ class Bus extends AsyncEventEmitter {
         }
     }
 
-    async _handleMessage(queue, msg) {
+    _deserializeMsgContent(msg) {
         let content = msg.content;
-
-        if (msg.properties.contentType === "application/json") {
-            content = JSON.parse(content.toString());
+        if (typeof this.config.deserializeMsgContent === "function") {
+            content = this.config.deserializeMsgContent(msg);
+        } else if (msg.properties.contentType === "application/json") {
+            content = JSON.parse(msg.content.toString());
         }
+
+        return content;
+    }
+
+    async _handleMessage(queue, msg) {
+        const content = this._deserializeMsgContent(msg);
 
         await this.emit("data", content);
         await this.emit(`data.${queue}`, content);
