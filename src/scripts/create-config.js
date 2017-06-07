@@ -10,6 +10,19 @@ const argv = yargs
 .example("$0 -c ./cfg/config.json", "Specify configuration file to use")
 .help("help")
 .strict()
+.option("service_addr", {
+    describe: "Management REST service address",
+    type: "string",
+    requiresArg: true,
+    default: "localhost"
+})
+.option("p", {
+    alias: "port",
+    describe: "Management REST service port",
+    type: "number",
+    requiresArg: true,
+    default: 19595
+})
 .option("c", {
     alias: "config",
     describe: "Configuration file",
@@ -21,11 +34,6 @@ const argv = yargs
     describe: "Target service(s) (specify \"all\" to target all services)",
     type: "array",
     default: [ "all" ]
-})
-.option("mgmtCfgUri", {
-    describe: "Mgmt config HTTP REST interface",
-    type: "string",
-    default: "http://localhost:19595/config"
 })
 .option("noActivate", {
     describe: "Do not activate created configs by default",
@@ -48,11 +56,13 @@ const argv = yargs
 })
 .argv;
 
+const mgmtCfgUri = `http://${argv.service_addr}:${argv.port}/config`;
+
 const createConfig = async (serviceName, serviceCfg) => {
     serviceCfg.name = serviceName;
     console.log(`Creating config for ${serviceName}`);
     let result = await rp.post({
-        url: argv.mgmtCfgUri,
+        url: mgmtCfgUri,
         body: serviceCfg,
         json: true
     });
@@ -63,7 +73,7 @@ const createConfig = async (serviceName, serviceCfg) => {
         const id = result.data._id;
         console.log(`Tag config ${serviceName} active`);
         result = await rp.post({
-            url: `${argv.mgmtCfgUri}/${id}/tag`,
+            url: `${mgmtCfgUri}/${id}/tag`,
             body: {
                 tag: "active"
             },
