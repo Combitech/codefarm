@@ -309,7 +309,7 @@ class Step extends Type {
             tag: statusTag
         });
 
-        // Update status tag och baseline content
+        // Update status tag and baseline content
         await this._doActionOnBaseline(baseline, async (client, typeName, ref) => {
             await client.replacetag(typeName, ref.id, {
                 replace: baseTag,

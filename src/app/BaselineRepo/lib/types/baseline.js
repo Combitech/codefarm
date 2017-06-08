@@ -36,6 +36,9 @@ class Baseline extends Type {
 
     async _saveHook(olddata) {
         const repository = await Repository.findOne({ _id: this.repository });
+        if (!repository) {
+            throw new Error(`Repository ${this.repository} doesn't exist`);
+        }
         if (!olddata) {
             // Add initial tags configured per repository
             const initialTags = repository.initialBaselineTags.filter((t) => !this.tags.includes(t));
