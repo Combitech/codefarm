@@ -174,6 +174,7 @@ class Web extends AsyncEventEmitter {
         }
 
         await this.emit("start", { port: params.port });
+        log.info(`HTTP server started, listening on port ${params.port}`);
     }
 
     /** Checks api.io request for cookie containing the JWT token and decodes
