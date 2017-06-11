@@ -3,12 +3,14 @@
 const os = require("os");
 const Database = require("database");
 const { RawLogClient } = require("loglib");
+const { flattenArray } = require("misc");
 const Web = require("web");
 const { Service } = require("service");
 const { ServiceComBus, HttpClient } = require("servicecom");
 const Slaves = require("./controllers/slaves");
 const Jobs = require("./controllers/jobs");
 const SubJobs = require("./controllers/sub_jobs");
+const JobSpecs = require("./controllers/jobspecs");
 const Control = require("./control");
 const Backends = require("./controllers/backends");
 const BackendProxy = require("./backend_proxy");
@@ -33,7 +35,17 @@ class Main extends Service {
     }
 
     async onOnline() {
-        const routes = [].concat(Slaves.instance.routes, Backends.instance.routes, Jobs.instance.routes, SubJobs.instance.routes, this.routes);
+        const controllerInstances = [
+            Slaves.instance,
+            Jobs.instance,
+            SubJobs.instance,
+            JobSpecs.instance,
+            Backends.instance,
+            this.statesControllerInstance
+        ];
+        const routes = flattenArray(
+            controllerInstances.map((controller) => controller.routes)
+        );
 
         await ServiceComBus.instance.start(Object.assign({
             name: this.name,
@@ -42,13 +54,7 @@ class Main extends Service {
             token: this.config.token
         }, this.config.servicecom));
         this.addDisposable(ServiceComBus.instance);
-        ServiceComBus.instance.attachControllers([
-            Slaves.instance,
-            Jobs.instance,
-            SubJobs.instance,
-            Backends.instance,
-            this.statesControllerInstance
-        ]);
+        ServiceComBus.instance.attachControllers(controllerInstances);
 
         await RawLogClient.instance.start(Object.assign({
             uri: this.config.bus.uri,

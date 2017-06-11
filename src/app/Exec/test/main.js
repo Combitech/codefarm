@@ -991,4 +991,123 @@ describe("Exec", () => {
             assert.strictEqual(repoUriReadResponse, "ssh://$USER:localhost:1234/repo1");
         });
     });
+
+    describe("Test jobspec REST API", () => {
+        it("should create a backend", async () => {
+            const data = await rp({
+                method: "POST",
+                url: `http://localhost:${testInfo.config.web.port}/backend`,
+                json: true,
+                body: {
+                    _id: "Backend2",
+                    backendType: "direct",
+                    authUser: process.env.USER,
+                    privateKeyPath
+                }
+            });
+
+            assert.equal(data.result, "success");
+            assert.equal(data.data.type, "exec.backend");
+            assert.equal(data.data._id, "Backend2");
+            assert.equal(data.data.backendType, "direct");
+            assert.equal(data.data.privateKeyPath, privateKeyPath);
+        });
+
+        it("should create a slave", async () => {
+            const data = await rp({
+                method: "POST",
+                url: `http://localhost:${testInfo.config.web.port}/slave`,
+                json: true,
+                body: {
+                    _id: "Slave3",
+                    uri: `ssh://localhost:${slavesDir}`,
+                    tags: [ "tag1", "tag2", "tag3" ],
+                    executors: 1,
+                    backend: "Backend2",
+                    workspaceCleanup: "remove_on_finish"
+                }
+            });
+
+            assert.equal(data.result, "success");
+            assert.equal(data.data.uri, `ssh://localhost:${slavesDir}`);
+            assert.deepEqual(data.data.tags, [ "tag1", "tag2", "tag3", data.data._id ]);
+            assert.equal(data.data.executors, 1);
+        });
+
+        const testScript1 = `#!/bin/bash -e
+            echo I will succeed
+        `;
+
+        const jobSpec1 = {
+            name: "Test Job from jobspec",
+            criteria: "tag1 AND tag2 AND tag3",
+            script: testScript1,
+            workspaceCleanup: "remove_on_finish",
+            initialJobTags: [ "jobTag1", "jobTag2" ]
+        };
+
+        it("should create a jobspec", async () => {
+            const data = await rp({
+                method: "POST",
+                url: `http://localhost:${testInfo.config.web.port}/jobspec`,
+                json: true,
+                form: Object.assign({}, jobSpec1, {
+                    script: new Buffer(testScript1)
+                })
+            });
+
+            assert.equal(data.result, "success");
+            assert.equal(data.data.name, jobSpec1.name);
+            assert.equal(data.data.criteria, jobSpec1.criteria);
+            assert.equal(data.data.script, jobSpec1.script);
+            assert.equal(data.data.workspaceCleanup, jobSpec1.workspaceCleanup);
+            assert.deepEqual(data.data.initialJobTags, jobSpec1.initialJobTags);
+            jobSpec1._id = data.data._id;
+        });
+
+        it("should run job from jobspec", async (ctx) => {
+            ctx.timeout(DEFAULT_JOB_TIMEOUT); // eslint-disable-line no-invalid-this
+            const data = await rp({
+                method: "POST",
+                url: `http://localhost:${testInfo.config.web.port}/jobspec/${jobSpec1._id}/run`,
+                json: true,
+                body: {
+                    baseline: {
+                        _id: "baseline1",
+                        name: "myBaseline",
+                        content: [
+                            {
+                                _ref: true,
+                                name: "commits",
+                                type: "coderepo.revision",
+                                id: [ "change1", "change2", "lastChange" ]
+                            }
+                        ]
+                    }
+                }
+            });
+
+            assert.equal(data.result, "success");
+            assert.equal(data.data.name, jobSpec1.name);
+            assert.oneOf(data.data.status, [ "queued", "ongoing" ]);
+            assert.equal(data.data.finished, false);
+            assert.equal(data.data.criteria, jobSpec1.criteria);
+            assert.equal(data.data.script, jobSpec1.script);
+            assert.deepEqual(data.data.tags, jobSpec1.initialJobTags);
+            await waitJobFinished(data.data._id);
+        });
+
+        it("should list job", async () => {
+            const data = await rp({
+                url: `http://localhost:${testInfo.config.web.port}/job`,
+                json: true
+            });
+
+            const jobIndex = data.findIndex((job) => job.name === jobSpec1.name);
+            assert(jobIndex !== -1, "Job created from jobspec not found");
+
+            assert.equal(data[jobIndex].status, "success");
+            assert.notEqual(data[jobIndex].finished, false);
+        });
+    });
 });
