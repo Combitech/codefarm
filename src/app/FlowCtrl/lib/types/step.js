@@ -6,13 +6,6 @@ const { ServiceComBus } = require("servicecom");
 const { assertType, assertProp, ensureArray } = require("misc");
 const { Type } = require("typelib");
 
-const CLEANUP_POLICY = { // Keep in sync with same list in Exec job
-    KEEP: "keep",
-    REMOVE_ON_FINISH: "remove_on_finish",
-    REMOVE_ON_SUCCESS: "remove_on_success",
-    REMOVE_WHEN_NEEDED: "remove_when_needed"
-};
-
 class Step extends Type {
     constructor(data) {
         super();
@@ -22,14 +15,11 @@ class Step extends Type {
         this.schedule = false;
         this.concurrency = 1;
         this.baseline = false;
+        this.jobSpec = false;
         this.connectedFlow = false;
-        this.criteria = false;
-        this.script = false;
         this.tagScript = false;
         this.parentSteps = [];
         this.visible = true;
-        this.workspaceName = false;
-        this.workspaceCleanup = CLEANUP_POLICY.KEEP;
         this.initialJobTags = [];
 
         this.jobs = [];
@@ -72,8 +62,8 @@ class Step extends Type {
             assertType(data.concurrency, "data.concurrency", "number");
             assertProp(data, "baseline", true);
             assertType(data.baseline, "data.baseline", "ref");
-            // assertType(data.script, "data.parentSteps", "array"); TODO: This does not work correctly
-            // TODO: Check workspace and cleanup policy
+            assertProp(data, "jobSpec", true);
+            assertType(data.baseline, "data.jobSpec", "ref");
         }
 
         if (data.connectedFlow) { // False is allowed
@@ -163,22 +153,17 @@ class Step extends Type {
 
         const client = ServiceComBus.instance.getClient("exec");
 
-        const data = await client.create("job", {
+        const data = await client.instantiate("jobspec", this.jobSpec.id, {
             name: this.name,
             criteria: this.criteria,
-            script: this.script,
             baseline: baseline,
-            workspaceName: this.workspaceName,
-            workspaceCleanup: this.workspaceCleanup,
             tags: this.initialJobTags,
-            refs: [
-                {
-                    _ref: true,
-                    type: this.type,
-                    id: this._id,
-                    name: "step"
-                }
-            ]
+            refs: [ {
+                _ref: true,
+                type: this.type,
+                id: this._id,
+                name: "step"
+            } ]
         });
 
         this.jobs.push({ jobId: data._id, baseline: baseline });
