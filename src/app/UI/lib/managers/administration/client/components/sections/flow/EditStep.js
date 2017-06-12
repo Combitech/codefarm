@@ -37,6 +37,9 @@ class EditStep extends LightComponent {
                 "_id": { $ne: flowId }
             }
         });
+        this.jobSpecList = new TypeList({
+            type: "exec.jobspec"
+        });
 
         this.itemProperties = {
             "name": {
@@ -96,6 +99,13 @@ class EditStep extends LightComponent {
                 serialize: (id) => tautils.serializeRef(id, "baselinegen.specification"),
                 deserialize: (ref) => tautils.deserializeRef(ref)
             },
+            "jobSpec": {
+                editable: true,
+                required: () => false,
+                defaultValue: "",
+                serialize: (id) => tautils.serializeRef(id, "exec.jobspec"),
+                deserialize: (ref) => tautils.deserializeRef(ref)
+            },
             "visible": {
                 editable: true,
                 required: () => false,
@@ -116,7 +126,9 @@ class EditStep extends LightComponent {
             baselines: this.baselineList.value.getValue(),
             baselinesState: this.baselineList.state.getValue(),
             flows: this.flowList.value.getValue(),
-            flowsState: this.flowList.state.getValue()
+            flowsState: this.flowList.state.getValue(),
+            jobSpecs: this.jobSpecList.value.getValue(),
+            jobSpecsState: this.jobSpecList.state.getValue()
         }, tautils.createStateProperties(this, this.itemProperties, this.props.item));
     }
 
@@ -132,6 +144,10 @@ class EditStep extends LightComponent {
         this.addDisposable(this.flowList.start());
         this.addDisposable(this.flowList.value.subscribe((flows) => this.setState({ flows })));
         this.addDisposable(this.flowList.state.subscribe((flowsState) => this.setState({ flowsState })));
+
+        this.addDisposable(this.jobSpecList.start());
+        this.addDisposable(this.jobSpecList.value.subscribe((jobSpecs) => this.setState({ jobSpecs })));
+        this.addDisposable(this.jobSpecList.state.subscribe((jobSpecsState) => this.setState({ jobSpecsState })));
     }
 
     getSteps() {
@@ -163,6 +179,16 @@ class EditStep extends LightComponent {
         });
     }
 
+    getJobSpecs() {
+        return this.state.jobSpecs.toJS().map((jobSpec) => ({
+            value: jobSpec._id,
+            label: `${jobSpec.name} (${jobSpec._id})`
+        })).concat({
+            value: "",
+            label: "No job specification"
+        });
+    }
+
     async onConfirm() {
         const data = tautils.serialize(this.state, this.itemProperties, this.props.item);
         data.flow = {
@@ -182,7 +208,8 @@ class EditStep extends LightComponent {
 
         if (this.state.stepsState === ObservableDataStates.LOADING ||
             this.state.baselinesState === ObservableDataStates.LOADING ||
-            this.state.flowsState === ObservableDataStates.LOADING) {
+            this.state.flowsState === ObservableDataStates.LOADING ||
+            this.state.jobSpecsState === ObservableDataStates.LOADING) {
             return (
                 <TALoadIndicator />
             );
@@ -191,6 +218,7 @@ class EditStep extends LightComponent {
         const steps = this.getSteps();
         const baselines = this.getBaselines();
         const flows = this.getFlows();
+        const jobSpecs = this.getJobSpecs();
         const cleanupPolicies = [
             { value: "keep", label: "Do not remove" },
             { value: "remove_on_finish", label: "Remove on finish" },
@@ -272,6 +300,14 @@ class EditStep extends LightComponent {
                         onChange={this.state.baseline.set}
                         source={baselines}
                         value={this.state.baseline.value}
+                    />
+                    <Dropdown
+                        label="Job Specification"
+                        required={this.itemProperties.jobSpec.required()}
+                        disabled={this.props.item && !this.itemProperties.jobSpec.editable}
+                        onChange={this.state.jobSpec.set}
+                        source={jobSpecs}
+                        value={this.state.jobSpec.value}
                     />
                     <Input
                         theme={this.props.theme}

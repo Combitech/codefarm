@@ -27,11 +27,11 @@ class JobSpecs extends Controller {
         if (data.hasOwnProperty("criteria")) {
             assertType(data.criteria, "criteria", "string");
         }
-        if (data.hasOwnProperty("initialJobTags")) {
-            assertType(data.initialJobTags, "initialJobTags", "array");
+        if (data.hasOwnProperty("tags")) {
+            assertType(data.tags, "tags", "array");
         }
         if (data.hasOwnProperty("refs")) {
-            assertType(data.initialJobTags, "refs", "array");
+            assertType(data.refs, "refs", "array");
         }
 
         return obj.run(data);

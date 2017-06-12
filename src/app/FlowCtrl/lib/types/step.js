@@ -53,20 +53,20 @@ class Step extends Type {
             data.concurrency = parseInt(data.concurrency, 10);
         }
 
-        if (event === "create") {
-            assertProp(data, "name", true);
-            assertType(data.name, "data.name", "string");
-            assertProp(data, "flow", true);
-            assertType(data.flow, "data.flow", "ref");
-            assertProp(data, "concurrency", true);
-            assertType(data.concurrency, "data.concurrency", "number");
-            assertProp(data, "baseline", true);
-            assertType(data.baseline, "data.baseline", "ref");
-            assertProp(data, "jobSpec", true);
+        assertProp(data, "name", true);
+        assertType(data.name, "data.name", "string");
+        assertProp(data, "flow", true);
+        assertType(data.flow, "data.flow", "ref");
+        assertProp(data, "concurrency", true);
+        assertType(data.concurrency, "data.concurrency", "number");
+        assertProp(data, "baseline", true);
+        assertType(data.baseline, "data.baseline", "ref");
+        assertProp(data, "jobSpec", true);
+        if (data.jobSpec !== false) { // False is allowed
             assertType(data.baseline, "data.jobSpec", "ref");
         }
 
-        if (data.connectedFlow) { // False is allowed
+        if (data.connectedFlow !== false) { // False is allowed
             assertType(data.connectedFlow, "data.connectedFlow", "ref");
         }
 
@@ -143,7 +143,7 @@ class Step extends Type {
     }
 
     async triggerJob(baseline) {
-        if (!this.script) {
+        if (!this.jobSpec) {
             await this.evaluateStatus();
 
             return await this.runTagScript(null, baseline, "success");
@@ -153,7 +153,7 @@ class Step extends Type {
 
         const client = ServiceComBus.instance.getClient("exec");
 
-        const data = await client.instantiate("jobspec", this.jobSpec.id, {
+        const jobCreateData = {
             name: this.name,
             criteria: this.criteria,
             baseline: baseline,
@@ -164,7 +164,15 @@ class Step extends Type {
                 id: this._id,
                 name: "step"
             } ]
-        });
+        };
+
+        if (!jobCreateData.criteria) {
+            delete jobCreateData.criteria;
+        }
+
+        const data = await client.run("jobspec", this.jobSpec.id, jobCreateData);
+
+        console.log("job data", JSON.stringify(data, null, 2));
 
         this.jobs.push({ jobId: data._id, baseline: baseline });
         await this.save();
