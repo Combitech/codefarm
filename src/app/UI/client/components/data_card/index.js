@@ -8,6 +8,7 @@ const exports = {
     TypeCard: require("./TypeCard"),
     RevisionCard: require("./RevisionCard"),
     JobCard: require("./JobCard"),
+    JobSpecCard: require("./JobSpecCard"),
     SubJobCard: require("./SubJobCard"),
     CommentCard: require("./CommentCard"),
     ClaimCard: require("./ClaimCard"),

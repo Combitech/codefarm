@@ -5,6 +5,7 @@ import {
     View as TAView,
     Edit as TAEdit,
     Remove as TARemove,
+    RemoveForm as TARemoveForm,
     EditTags as TAEditTags
 } from "ui-components/type_admin";
 import List from "./List";
@@ -13,7 +14,6 @@ import StatItem from "./StatItem";
 import StatDataExplore from "./StatDataExplore";
 import ChartItem from "./ChartItem";
 import Edit from "./Edit";
-import Remove from "./Remove";
 import SpecListItem from "./SpecListItem";
 import ChartListItem from "./ChartListItem";
 
@@ -48,7 +48,7 @@ const routes = [
             <Route
                 path="remove"
                 component={TARemove}
-                Remove={Remove}
+                Remove={TARemoveForm}
                 humanTypeName="statistics specification"
             />
             <Route
@@ -66,7 +66,7 @@ const routes = [
                 <Route
                     path="remove"
                     component={TARemove}
-                    Remove={Remove}
+                    Remove={TARemoveForm}
                     humanTypeName="statistics"
                 />
                 <Route
@@ -96,7 +96,7 @@ const routes = [
             <Route
                 path="remove"
                 component={TARemove}
-                Remove={Remove}
+                Remove={TARemoveForm}
                 humanTypeName="chart"
             />
             <Route

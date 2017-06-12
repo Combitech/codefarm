@@ -7,9 +7,14 @@ import {
     Section as TASection
 } from "ui-components/type_admin";
 
-class Remove extends LightComponent {
+class RemoveForm extends LightComponent {
     render() {
         this.log("render", this.props, this.state);
+
+        let humanTypeName = this.props.route.humanTypeName;
+        if (!humanTypeName) {
+            humanTypeName = `instance of ${this.props.item.type}`;
+        }
 
         return (
             <TASection
@@ -19,8 +24,8 @@ class Remove extends LightComponent {
             >
                 <TAForm
                     confirmText="Remove"
-                    primaryText="Remove log repository"
-                    secondaryText={`Area you sure you want to remove ${this.props.item._id}?`}
+                    primaryText={`Remove ${humanTypeName}`}
+                    secondaryText={`Are you sure you want to remove ${this.props.item._id}?`}
                     onConfirm={async () => {
                         await this.props.onRemove(this.props.item.type, this.props.item._id);
                     }}
@@ -33,7 +38,7 @@ class Remove extends LightComponent {
     }
 }
 
-Remove.propTypes = {
+RemoveForm.propTypes = {
     theme: PropTypes.object,
     item: PropTypes.object.isRequired,
     pathname: PropTypes.string.isRequired,
@@ -41,7 +46,8 @@ Remove.propTypes = {
     controls: PropTypes.array.isRequired,
     menuItems: PropTypes.array.isRequired,
     onRemove: PropTypes.func.isRequired,
-    onCancel: PropTypes.func.isRequired
+    onCancel: PropTypes.func.isRequired,
+    route: PropTypes.object.isRequired
 };
 
-export default Remove;
+export default RemoveForm;

@@ -6,10 +6,15 @@ RUN mkdir /var/run/sshd
 
 WORKDIR $farmerHome
 
-RUN mkdir -p $farmerHome/.ssh
+RUN mkdir -p $farmerHome/.ssh && mkdir -p $farmerHome/execKeys
 
-# Copy authorized_keys and set access for $user
-COPY [ "authorized_keys", "$farmerHome/.ssh/" ]
+# Copy keys to use and set access for $user
+COPY [ "id_rsa", "id_rsa.pub", "$farmerHome/execKeys/" ]
+
+RUN cat $farmerHome/execKeys/id_rsa.pub >> $farmerHome/.ssh/authorized_keys
+
+# Set correct rights on execKeys
+RUN chown -R $user $farmerHome/execKeys && chgrp -R $user $farmerHome/execKeys
 
 # Some tests require that the slave can SSH to itself, setup keys
 RUN ssh-keygen -N "" -f $farmerHome/.ssh/id_rsa && cat $farmerHome/.ssh/id_rsa.pub >> $farmerHome/.ssh/authorized_keys

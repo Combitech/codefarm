@@ -4,12 +4,12 @@ import { Route } from "react-router";
 import {
     View as TAView,
     Edit as TAEdit,
-    Remove as TARemove
+    Remove as TARemove,
+    RemoveForm as TARemoveForm
 } from "ui-components/type_admin";
 import List from "./List";
 import Item from "./Item";
 import Edit from "./Edit";
-import Remove from "./Remove";
 import EditStep from "./EditStep";
 
 const routes = (
@@ -41,7 +41,8 @@ const routes = (
             <Route
                 path="remove"
                 component={TARemove}
-                Remove={Remove}
+                Remove={TARemoveForm}
+                humanTypeName="flow"
             />
             <Route
                 path="create"
@@ -62,7 +63,8 @@ const routes = (
                 <Route
                     path="remove"
                     component={TARemove}
-                    Remove={Remove}
+                    Remove={TARemoveForm}
+                    humanTypeName="step"
                 />
             </Route>
         </Route>

@@ -45,8 +45,6 @@ class JobSpec extends Type {
     }
 
     static async validate(event, data) {
-        assertProp(data, "_id", false);
-
         assertProp(data, "name", true);
         assertType(data.name, "data.name", "string");
         assertProp(data, "criteria", true);
