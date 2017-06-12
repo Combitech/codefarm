@@ -5,6 +5,7 @@ import theme from "./theme.scss";
 const name = names.DATA_VIEW;
 const exports = {
     JobView: require("./JobView"),
+    JobSpecView: require("./JobSpecView"),
     CodeRepositoryView: require("./CodeRepositoryView"),
     ArtifactRepositoryView: require("./ArtifactRepositoryView"),
     LogRepositoryView: require("./LogRepositoryView"),

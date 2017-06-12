@@ -19,7 +19,8 @@ const exports = {
     ListItemIcon: require("./ListItemIcon"),
     ListPager: require("./ListPager"),
     ListCards: require("./ListCards"),
-    EditTags: require("./EditTags")
+    EditTags: require("./EditTags"),
+    RemoveForm: require("./RemoveForm")
 };
 
 module.exports = Object.assign({

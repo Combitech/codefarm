@@ -82,6 +82,13 @@ const types = {
         }),
         name: (item) => item._id
     },
+    "exec.jobspec": {
+        Avatar: Avatar,
+        avatarProps: () => ({
+            title: "S"
+        }),
+        name: (item) => item.name
+    },
     "exec.job": {
         Avatar: Avatar,
         avatarProps: () => ({
