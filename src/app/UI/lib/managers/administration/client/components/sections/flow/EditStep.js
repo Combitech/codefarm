@@ -216,7 +216,7 @@ class EditStep extends LightComponent {
                     confirmAllowed={tautils.isValid(this.state, this.itemProperties)}
                     confirmText={this.props.item ? "Save" : "Create"}
                     primaryText={`${this.props.item ? "Edit" : "Create"} flow step`}
-                    secondaryText="A flow step specifies things to listen for and then take action based on that"
+                    secondaryText="A flow step defines a set of actions that is performed when the associated collector specification generates a collection."
                     onConfirm={() => this.onConfirm()}
                     onCancel={() => this.props.onCancel()}
                 >
