@@ -18,7 +18,7 @@ const routes = (
         component={TAView}
         List={List}
         type="baselinegen.specification"
-        label="Baseline Specifications"
+        label="Collector Specifications"
         icon="linear_scale"
     >
         <Route
@@ -42,7 +42,7 @@ const routes = (
                 path="remove"
                 component={TARemove}
                 Remove={TARemoveForm}
-                humanTypeName="baseline"
+                humanTypeName="collector specification"
             />
             <Route
                 path=":_id_baseline"

@@ -60,7 +60,8 @@ class Edit extends LightComponent {
     getCollectTypes() {
         return [
             { value: "coderepo.revision", label: "Revision" },
-            { value: "artifactrepo.artifact", label: "Artifact" }
+            { value: "artifactrepo.artifact", label: "Artifact" },
+            { value: "baselinerepo.baseline", label: "Baseline" }
         ];
     }
 
@@ -85,8 +86,8 @@ class Edit extends LightComponent {
                 <TAForm
                     confirmAllowed={tautils.isValid(this.state, this.itemProperties)}
                     confirmText={this.props.item ? "Save" : "Create"}
-                    primaryText={`${this.props.item ? "Edit" : "Create"} baseline`}
-                    secondaryText="A baseline collects ids based on a criteria"
+                    primaryText={`${this.props.item ? "Edit" : "Create"} collector specification`}
+                    secondaryText="A collector specification specifies how to collect ids based on a criteria"
                     onConfirm={() => this.onConfirm()}
                     onCancel={() => this.props.onCancel()}
                 >

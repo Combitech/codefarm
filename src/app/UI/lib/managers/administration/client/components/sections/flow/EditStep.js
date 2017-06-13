@@ -294,7 +294,7 @@ class EditStep extends LightComponent {
                         />
                     </div>
                     <Dropdown
-                        label="Baseline"
+                        label="Collector specification"
                         required={this.itemProperties.baseline.required()}
                         disabled={this.props.item && !this.itemProperties.baseline.editable}
                         onChange={this.state.baseline.set}
