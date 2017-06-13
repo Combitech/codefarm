@@ -6,13 +6,6 @@ const { ServiceComBus } = require("servicecom");
 const { assertType, assertProp, ensureArray } = require("misc");
 const { Type } = require("typelib");
 
-const CLEANUP_POLICY = { // Keep in sync with same list in Exec job
-    KEEP: "keep",
-    REMOVE_ON_FINISH: "remove_on_finish",
-    REMOVE_ON_SUCCESS: "remove_on_success",
-    REMOVE_WHEN_NEEDED: "remove_when_needed"
-};
-
 class Step extends Type {
     constructor(data) {
         super();
@@ -22,14 +15,11 @@ class Step extends Type {
         this.schedule = false;
         this.concurrency = 1;
         this.baseline = false;
+        this.jobSpec = false;
         this.connectedFlow = false;
-        this.criteria = false;
-        this.script = false;
         this.tagScript = false;
         this.parentSteps = [];
         this.visible = true;
-        this.workspaceName = false;
-        this.workspaceCleanup = CLEANUP_POLICY.KEEP;
         this.initialJobTags = [];
 
         this.jobs = [];
@@ -63,20 +53,20 @@ class Step extends Type {
             data.concurrency = parseInt(data.concurrency, 10);
         }
 
-        if (event === "create") {
-            assertProp(data, "name", true);
-            assertType(data.name, "data.name", "string");
-            assertProp(data, "flow", true);
-            assertType(data.flow, "data.flow", "ref");
-            assertProp(data, "concurrency", true);
-            assertType(data.concurrency, "data.concurrency", "number");
-            assertProp(data, "baseline", true);
-            assertType(data.baseline, "data.baseline", "ref");
-            // assertType(data.script, "data.parentSteps", "array"); TODO: This does not work correctly
-            // TODO: Check workspace and cleanup policy
+        assertProp(data, "name", true);
+        assertType(data.name, "data.name", "string");
+        assertProp(data, "flow", true);
+        assertType(data.flow, "data.flow", "ref");
+        assertProp(data, "concurrency", true);
+        assertType(data.concurrency, "data.concurrency", "number");
+        assertProp(data, "baseline", true);
+        assertType(data.baseline, "data.baseline", "ref");
+        assertProp(data, "jobSpec", true);
+        if (data.jobSpec !== false) { // False is allowed
+            assertType(data.baseline, "data.jobSpec", "ref");
         }
 
-        if (data.connectedFlow) { // False is allowed
+        if (data.connectedFlow !== false) { // False is allowed
             assertType(data.connectedFlow, "data.connectedFlow", "ref");
         }
 
@@ -153,33 +143,38 @@ class Step extends Type {
     }
 
     async triggerJob(baseline) {
-        if (!this.script) {
+        if (!this.jobSpec) {
+            ServiceMgr.instance.log("verbose", `Step ${this.name} trigger job: no jobspec, finalizing step`);
             await this.evaluateStatus();
+            await this.notifyStatus(baseline, "success");
+            await this.runTagScript();
 
-            return await this.runTagScript(null, baseline, "success");
+            return;
         }
 
-        ServiceMgr.instance.log("verbose", `Step ${this.name} creating exec.job`);
+        ServiceMgr.instance.log("verbose", `Step ${this.name} trigger job: starting job from exec.jobspec ${this.jobSpec.id}`);
 
         const client = ServiceComBus.instance.getClient("exec");
 
-        const data = await client.create("job", {
+        const jobCreateData = {
             name: this.name,
             criteria: this.criteria,
-            script: this.script,
             baseline: baseline,
-            workspaceName: this.workspaceName,
-            workspaceCleanup: this.workspaceCleanup,
             tags: this.initialJobTags,
-            refs: [
-                {
-                    _ref: true,
-                    type: this.type,
-                    id: this._id,
-                    name: "step"
-                }
-            ]
-        });
+            refs: [ {
+                _ref: true,
+                type: this.type,
+                id: this._id,
+                name: "step"
+            } ]
+        };
+
+        if (!jobCreateData.criteria) {
+            delete jobCreateData.criteria;
+        }
+
+        const data = await client.run("jobspec", this.jobSpec.id, jobCreateData);
+        ServiceMgr.instance.log("verbose", `Step ${this.name} trigger job: job ${data._id} started`);
 
         this.jobs.push({ jobId: data._id, baseline: baseline });
         await this.save();
@@ -196,6 +191,7 @@ class Step extends Type {
             });
         });
 
+        // TODO: It is possible that the job has finished by now... What if finishJob already has completed?
         await this.notifyStatus(baseline, data.status);
     }
 
@@ -236,7 +232,7 @@ class Step extends Type {
     }
 
     async finishJob(jobId, result) {
-        ServiceMgr.instance.log("verbose", `Step ${this.name} finishing job, result=${result}`);
+        ServiceMgr.instance.log("verbose", `Step ${this.name} finish job: jobId=${jobId}, result=${result}`);
         const index = this.jobs.findIndex((job) => job.jobId === jobId);
         const job = this.jobs[index];
 
@@ -244,14 +240,13 @@ class Step extends Type {
         await this.save();
 
         await this.evaluateStatus();
-
         await this.notifyStatus(job.baseline, result);
-
         await this.runTagScript(jobId, job.baseline, result);
     }
 
     async runTagScript(jobId, baseline, result) {
         if (!this.tagScript) {
+            ServiceMgr.instance.log("verbose", `Step ${this.name} run tag script: no tag script`);
             return;
         }
 
@@ -269,7 +264,7 @@ class Step extends Type {
             untag: []
         };
 
-        ServiceMgr.instance.log("verbose", `Step ${this.name} running tag script`);
+        ServiceMgr.instance.log("verbose", `Step ${this.name} run tag script: running script`);
 
         // Collecting data from baseline before running tag script
         await this._doActionOnBaseline(baseline, async (client, typeName, ref) => {

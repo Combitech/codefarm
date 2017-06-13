@@ -45,7 +45,7 @@ const run = async () => {
         url: `${baseUrl}/backend`,
         body: {
             _id: argv.id,
-            backendType: argv.type,
+            backendType: argv.type
         },
         json: true
     });

@@ -7,6 +7,7 @@ import Slider from "react-toolbox/lib/slider";
 import Dropdown from "react-toolbox/lib/dropdown";
 import Autocomplete from "react-toolbox/lib/autocomplete";
 import Checkbox from "react-toolbox/lib/checkbox";
+import { Card, CardTitle, CardText } from "react-toolbox/lib/card";
 import {
     Form as TAForm,
     Section as TASection,
@@ -37,6 +38,9 @@ class EditStep extends LightComponent {
                 "_id": { $ne: flowId }
             }
         });
+        this.jobSpecList = new TypeList({
+            type: "exec.jobspec"
+        });
 
         this.itemProperties = {
             "name": {
@@ -54,35 +58,10 @@ class EditStep extends LightComponent {
                 required: () => false,
                 defaultValue: ""
             },
-            "criteria": {
-                editable: true,
-                required: () => this.state.script.value !== "",
-                defaultValue: ""
-            },
-            "script": {
-                editable: true,
-                required: () => false,
-                defaultValue: ""
-            },
             "tagScript": {
                 editable: true,
                 required: () => false,
                 defaultValue: ""
-            },
-            "workspaceName": {
-                editable: true,
-                required: () => false,
-                defaultValue: ""
-            },
-            "workspaceCleanup": {
-                editable: true,
-                required: () => true,
-                defaultValue: "keep"
-            },
-            "initialJobTags": {
-                editable: true,
-                required: () => false,
-                defaultValue: []
             },
             "parentSteps": {
                 editable: true,
@@ -95,6 +74,23 @@ class EditStep extends LightComponent {
                 defaultValue: "",
                 serialize: (id) => tautils.serializeRef(id, "baselinegen.specification"),
                 deserialize: (ref) => tautils.deserializeRef(ref)
+            },
+            "jobSpec": {
+                editable: true,
+                required: () => false,
+                defaultValue: "",
+                serialize: (id) => tautils.serializeRef(id, "exec.jobspec"),
+                deserialize: (ref) => tautils.deserializeRef(ref)
+            },
+            "initialJobTags": {
+                editable: true,
+                required: () => false,
+                defaultValue: []
+            },
+            "criteria": {
+                editable: true,
+                required: () => false,
+                defaultValue: ""
             },
             "visible": {
                 editable: true,
@@ -116,7 +112,9 @@ class EditStep extends LightComponent {
             baselines: this.baselineList.value.getValue(),
             baselinesState: this.baselineList.state.getValue(),
             flows: this.flowList.value.getValue(),
-            flowsState: this.flowList.state.getValue()
+            flowsState: this.flowList.state.getValue(),
+            jobSpecs: this.jobSpecList.value.getValue(),
+            jobSpecsState: this.jobSpecList.state.getValue()
         }, tautils.createStateProperties(this, this.itemProperties, this.props.item));
     }
 
@@ -132,6 +130,10 @@ class EditStep extends LightComponent {
         this.addDisposable(this.flowList.start());
         this.addDisposable(this.flowList.value.subscribe((flows) => this.setState({ flows })));
         this.addDisposable(this.flowList.state.subscribe((flowsState) => this.setState({ flowsState })));
+
+        this.addDisposable(this.jobSpecList.start());
+        this.addDisposable(this.jobSpecList.value.subscribe((jobSpecs) => this.setState({ jobSpecs })));
+        this.addDisposable(this.jobSpecList.state.subscribe((jobSpecsState) => this.setState({ jobSpecsState })));
     }
 
     getSteps() {
@@ -163,6 +165,16 @@ class EditStep extends LightComponent {
         });
     }
 
+    getJobSpecs() {
+        return this.state.jobSpecs.toJS().map((jobSpec) => ({
+            value: jobSpec._id,
+            label: `${jobSpec.name} (${jobSpec._id})`
+        })).concat({
+            value: "",
+            label: "No job specification"
+        });
+    }
+
     async onConfirm() {
         const data = tautils.serialize(this.state, this.itemProperties, this.props.item);
         data.flow = {
@@ -182,7 +194,8 @@ class EditStep extends LightComponent {
 
         if (this.state.stepsState === ObservableDataStates.LOADING ||
             this.state.baselinesState === ObservableDataStates.LOADING ||
-            this.state.flowsState === ObservableDataStates.LOADING) {
+            this.state.flowsState === ObservableDataStates.LOADING ||
+            this.state.jobSpecsState === ObservableDataStates.LOADING) {
             return (
                 <TALoadIndicator />
             );
@@ -191,12 +204,7 @@ class EditStep extends LightComponent {
         const steps = this.getSteps();
         const baselines = this.getBaselines();
         const flows = this.getFlows();
-        const cleanupPolicies = [
-            { value: "keep", label: "Do not remove" },
-            { value: "remove_on_finish", label: "Remove on finish" },
-            { value: "remove_on_success", label: "Remove on success" },
-            { value: "remove_when_needed", label: "Remove when needed" }
-        ];
+        const jobSpecs = this.getJobSpecs();
 
         return (
             <TASection
@@ -208,7 +216,7 @@ class EditStep extends LightComponent {
                     confirmAllowed={tautils.isValid(this.state, this.itemProperties)}
                     confirmText={this.props.item ? "Save" : "Create"}
                     primaryText={`${this.props.item ? "Edit" : "Create"} flow step`}
-                    secondaryText="A flow step specifies things to listen for and then take action based on that"
+                    secondaryText="A flow step defines a set of actions that is performed when the associated collector specification generates a collection."
                     onConfirm={() => this.onConfirm()}
                     onCancel={() => this.props.onCancel()}
                 >
@@ -266,37 +274,56 @@ class EditStep extends LightComponent {
                         />
                     </div>
                     <Dropdown
-                        label="Baseline"
+                        label="Collector specification"
                         required={this.itemProperties.baseline.required()}
                         disabled={this.props.item && !this.itemProperties.baseline.editable}
                         onChange={this.state.baseline.set}
                         source={baselines}
                         value={this.state.baseline.value}
                     />
-                    <Input
-                        theme={this.props.theme}
-                        className={this.props.theme.monospaceInput}
-                        type="text"
-                        label="Slave Script"
-                        name="script"
-                        floating={true}
-                        multiline={true}
-                        required={this.itemProperties.script.required()}
-                        disabled={this.props.item && !this.itemProperties.script.editable}
-                        value={this.state.script.value}
-                        onChange={this.state.script.set}
+                    <Dropdown
+                        label="Connected Flow"
+                        required={this.itemProperties.connectedFlow.required()}
+                        disabled={this.props.item && !this.itemProperties.connectedFlow.editable}
+                        onChange={this.state.connectedFlow.set}
+                        source={flows}
+                        value={this.state.connectedFlow.value}
                     />
-                    <Input
-                        type="text"
-                        label="Slave Criteria"
-                        hint="Tag criteria to match slave"
-                        name="criteria"
-                        floating={true}
-                        required={this.itemProperties.criteria.required()}
-                        disabled={this.props.item && !this.itemProperties.criteria.editable}
-                        value={this.state.criteria.value}
-                        onChange={this.state.criteria.set}
+                    <Dropdown
+                        label="Job Specification"
+                        required={this.itemProperties.jobSpec.required()}
+                        disabled={this.props.item && !this.itemProperties.jobSpec.editable}
+                        onChange={this.state.jobSpec.set}
+                        source={jobSpecs}
+                        value={this.state.jobSpec.value}
                     />
+                    <If condition={this.state.jobSpec.value}>
+                        <Card>
+                            <CardTitle subtitle="Job Specification paramters" />
+                            <CardText>
+                                <Input
+                                    type="text"
+                                    label="Override Slave Criteria"
+                                    hint="Tag criteria to match slave"
+                                    name="criteria"
+                                    floating={true}
+                                    required={this.itemProperties.criteria.required()}
+                                    disabled={this.props.item && !this.itemProperties.criteria.editable}
+                                    value={this.state.criteria.value}
+                                    onChange={this.state.criteria.set}
+                                />
+                                <Autocomplete
+                                    selectedPosition="below"
+                                    allowCreate={true}
+                                    label="Additional tags to add to jobs"
+                                    disabled={this.props.item && !this.itemProperties.initialJobTags.editable}
+                                    onChange={this.state.initialJobTags.set}
+                                    source={this.state.initialJobTags.value}
+                                    value={this.state.initialJobTags.value}
+                                />
+                            </CardText>
+                        </Card>
+                    </If>
                     <Input
                         theme={this.props.theme}
                         className={this.props.theme.monospaceInput}
@@ -309,41 +336,6 @@ class EditStep extends LightComponent {
                         disabled={this.props.item && !this.itemProperties.tagScript.editable}
                         value={this.state.tagScript.value}
                         onChange={this.state.tagScript.set}
-                    />
-                    <Autocomplete
-                        selectedPosition="below"
-                        allowCreate={true}
-                        label="Tags to add to jobs"
-                        disabled={this.props.item && !this.itemProperties.initialJobTags.editable}
-                        onChange={this.state.initialJobTags.set}
-                        source={this.state.initialJobTags.value}
-                        value={this.state.initialJobTags.value}
-                    />
-                    <Input
-                        type="text"
-                        label="Workspace Name"
-                        name="workspaceName"
-                        floating={true}
-                        required={this.itemProperties.workspaceName.required()}
-                        disabled={this.props.item && !this.itemProperties.workspaceName.editable}
-                        value={this.state.workspaceName.value}
-                        onChange={this.state.workspaceName.set}
-                    />
-                    <Dropdown
-                        label="Workspace Cleanup Policy"
-                        required={this.itemProperties.workspaceCleanup.required()}
-                        disabled={this.props.item && !this.itemProperties.workspaceCleanup.editable}
-                        onChange={this.state.workspaceCleanup.set}
-                        source={cleanupPolicies}
-                        value={this.state.workspaceCleanup.value}
-                    />
-                    <Dropdown
-                        label="Connected Flow"
-                        required={this.itemProperties.connectedFlow.required()}
-                        disabled={this.props.item && !this.itemProperties.connectedFlow.editable}
-                        onChange={this.state.connectedFlow.set}
-                        source={flows}
-                        value={this.state.connectedFlow.value}
                     />
                 </TAForm>
             </TASection>
