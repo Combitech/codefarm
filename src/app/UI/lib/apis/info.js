@@ -3,6 +3,9 @@
 const api = require("api.io");
 const singleton = require("singleton");
 const exec = require("child_process").exec;
+const { ServiceMgr } = require("service");
+
+const GIT_HASH_ENV_VARIABLE_NAME = "CF_GIT_HASH";
 
 const info = {
     name: "noname",
@@ -37,12 +40,22 @@ class InfoApi {
         info.config = config._id;
 
         if (info.version === "0.0.0") {
-            try {
-                info.version = await this.getHash();
-            } catch (error) {
-                console.error("Failed to get git hash", error);
+            let gitHash = process.env[GIT_HASH_ENV_VARIABLE_NAME];
+
+            if (!gitHash) {
+                try {
+                    gitHash = await this.getHash();
+                } catch (error) {
+                    console.error("Failed to get git hash", error);
+                }
+            }
+
+            if (gitHash) {
+                info.version = gitHash;
             }
         }
+
+        ServiceMgr.instance.log("info", `Info API started, info=${JSON.stringify(info)}`);
     }
 
     async dispose() {
