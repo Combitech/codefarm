@@ -12,6 +12,11 @@ services:
     nodebase:
         build:
             context: ../containers/NodeBase
+            args:
+                - http_proxy
+                - https_proxy
+                - ftp_proxy
+                - no_proxy
         image: codefarm/nodebase:0.0.0
         command: echo "Not supposed to run..."
     appnodebase:

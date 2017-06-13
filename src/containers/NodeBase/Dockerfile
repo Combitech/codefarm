@@ -7,35 +7,28 @@
 # FROM codefarm/nodebase:0.0.0
 #
 
-FROM node:8
+FROM node:8.1
 LABEL Description="Base image for Code Farm node applications" Version="1.0"
 
-ENV http_proxy http://httppxgot.srv.volvo.com:8080
-ENV ftp_proxy http://httppxgot.srv.volvo.com:8080
-ENV https_proxy http://httppxgot.srv.volvo.com:8080
-ENV no_proxy localhost,127.0.0.1,.volvo.net
+ARG http_proxy
+ARG https_proxy
+ARG ftp_proxy
+ARG no_proxy
 
-#ENV http_proxy ${http_proxy:-}
-#ENV https_proxy ${https_proxy:-}
-#ENV no_proxy ${no_proxy:-}
-RUN env | grep proxy
-
+ENV http_proxy ${http_proxy}
+ENV https_proxy ${https_proxy}
+ENV ftp_proxy ${ftp_proxy}
+ENV no_proxy ${no_proxy}
 ENV user farmer
 ENV farmerHome /home/$user
 ENV appRoot ${farmerHome}/codefarm
 
+RUN env
 
 RUN groupadd --system $user && useradd --system --create-home --gid $user $user
 
 # Dependency weak-value-map needs node-gyp
 RUN npm install -g node-gyp
-
-# Upgrade npm to latest version
-#RUN ls -al $(npm root -g)
-#RUN cd $(npm root -g)/../ && npm install npm@latest && npm -v
-#RUN exit 1
-#RUN export npm_home=$(npm root -g)/npm && mkdir -p $farmerHome/temp && cd $farmerHome/temp && npm install npm@latest && rm -rf $npm_home && mv $farmerHome/temp/node_modules/npm $npm_home && npm -v && exit 1
-
 
 USER ${user}
 
@@ -54,7 +47,7 @@ ONBUILD RUN chown $user --recursive ${appRoot}
 ONBUILD USER $user
 ONBUILD ENV gitroot ${appRoot}
 ONBUILD RUN test -f package.json && \
-  npm install --production || \
+  npm install --production --dd || \
   echo "No package.json"
 
 # 2. Add app source

@@ -31,11 +31,13 @@ ONBUILD RUN for i in $(ls -1 ${appRoot}/src/lib/*/package.json); do \
     moduleDir=$(echo $i|sed -e 's/\/package\.json//g'); \
     echo "Installing library package $moduleDir"; \
     cd ${moduleDir}; \
-    npm install --production; \
+    rm -rf package-lock.json; \
+    npm install --production --dd; \
   done
 
 ONBUILD RUN test -f package.json && \
-  npm install --production || \
+  rm -rf package-lock.json && \
+  npm install --production --dd || \
   echo "No package.json"
 
 # 2. Add app source
