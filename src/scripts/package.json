@@ -29,6 +29,7 @@
     "create-logrepo-backend": "node ./create-logrepo-backend.js",
     "create-log-repo": "node ./create-log-repo.js",
     "create-log": "node ./create-log.js",
+    "create-baselinerepo-repository": "node ./create-baselinerepo-repository.js",
     "create-slave": "node ./create-slave.js",
     "create-baseline": "node ./create-baseline.js",
     "create-flow": "node ./create-flow.js",
