@@ -247,6 +247,7 @@ class Step extends Type {
     async runTagScript(jobId, baseline, result) {
         if (!this.tagScript) {
             ServiceMgr.instance.log("verbose", `Step ${this.name} run tag script: no tag script`);
+
             return;
         }
 
