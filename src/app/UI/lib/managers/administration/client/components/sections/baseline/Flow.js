@@ -2,11 +2,11 @@
 import React from "react";
 import PropTypes from "prop-types";
 import LightComponent from "ui-lib/light_component";
-import { JobFlow, StepStatus } from "ui-components/flow";
-import { ensureArray } from "misc";
+import { Flow as JobFlow, StepStatus } from "ui-components/flow";
 import {
     LoadIndicator as TALoadIndicator
 } from "ui-components/type_admin";
+import statuslib from "ui-lib/statuslib";
 import StepListObservable from "ui-observables/step_list";
 import { States as ObservableDataStates } from "ui-lib/observable_data";
 
@@ -60,7 +60,7 @@ class FlowComponent extends LightComponent {
             active: () => this.props.step === "",
             parentIds: [],
             handlers: {
-                onClick: () => this.props.onStepSelect && this.props.onStepSelect(null)
+                onClick: () => this.props.onSelect && this.props.onSelect(null)
             }
         };
 
@@ -81,6 +81,7 @@ class FlowComponent extends LightComponent {
         );
         mySteps = mySteps.concat(myBlChildSteps);
 
+        const statuses = [];
         const steps = mySteps.map((step) => {
             const parentIds = step.parentSteps.slice(0)
                 // Remove references to parents not included in flow
@@ -91,39 +92,38 @@ class FlowComponent extends LightComponent {
                 parentIds.push(firstStep.id);
             }
 
-            const item = {
+            const status = statuslib.fromTags(this.props.item ? this.props.item.tags : [], step.name);
+            statuses.push(status);
+
+            const newStep = {
                 id: step._id,
                 type: StepStatus,
                 name: step.name,
                 meta: {
                     item: this.props.item,
                     flow: this.props.flow,
-                    step: step
+                    step,
+                    status
                 },
                 disabled: () => false,
                 active: () => this.props.step === step.name,
                 parentIds: parentIds,
                 handlers: {
-                    onClick: () => this.props.onStepSelect && this.props.onStepSelect(step.name)
+                    onClick: () => this.props.onSelect && this.props.onSelect(step.name)
                 }
             };
 
-            return item;
+            return newStep;
         });
 
+        firstStep.meta.status = statuslib.mood(statuses);
         steps.push(firstStep);
-
-        const jobRefs = [];
-        for (const data of ensureArray(this.props.itemExt.data)) {
-            jobRefs.push(...data.refs);
-        }
 
         return (
             <div>
                 {loadIndicator}
                 <JobFlow
                     theme={this.props.theme}
-                    jobRefs={jobRefs}
                     firstStep={firstStep}
                     steps={steps}
                     columnSpan={8}
@@ -134,18 +134,16 @@ class FlowComponent extends LightComponent {
 }
 
 FlowComponent.defaultProps = {
-    firstStepName: "Baseline"
+    firstStepName: "Collection"
 };
 
 FlowComponent.propTypes = {
     theme: PropTypes.object,
     item: PropTypes.object.isRequired,
-    itemExt: PropTypes.object.isRequired,
-    pathname: PropTypes.string.isRequired,
     flow: PropTypes.object.isRequired,
     step: PropTypes.string,
     firstStepName: PropTypes.string,
-    onStepSelect: PropTypes.func
+    onSelect: PropTypes.func
 };
 
 FlowComponent.contextTypes = {

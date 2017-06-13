@@ -82,6 +82,27 @@ const types = {
         }),
         name: (item) => item._id
     },
+    "baselinerepo.repository": {
+        Avatar: Avatar,
+        avatarProps: () => ({
+            title: "R"
+        }),
+        name: (item) => item._id
+    },
+    "baselinerepo.baseline": {
+        Avatar: Avatar,
+        avatarProps: () => ({
+            title: "B"
+        }),
+        name: (item) => item.name
+    },
+    "baselinerepo.backend": {
+        Avatar: Avatar,
+        avatarProps: () => ({
+            title: "B"
+        }),
+        name: (item) => item._id
+    },
     "exec.jobspec": {
         Avatar: Avatar,
         avatarProps: () => ({
@@ -171,9 +192,15 @@ class TypeChip extends LightComponent {
             throw new Error(`Type ${this.props.itemRef.type} is not recognized`);
         }
 
-        const myItemPath = pathBuilder.fromType(this.props.itemRef.type, item, {
-            idMap: type.pathIdMap || {}
-        });
+        let myItemPath;
+
+        try {
+            myItemPath = pathBuilder.fromType(this.props.itemRef.type, item, {
+                idMap: type.pathIdMap || {}
+            });
+        } catch (error) {
+            this.logError(`Cannot build path from type ${this.props.itemRef.type}, item=`, item, "error=", error);
+        }
 
         return (
             <DataChip
