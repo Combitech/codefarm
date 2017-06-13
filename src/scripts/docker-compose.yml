@@ -206,6 +206,8 @@ services:
             - "rabbitmq"
         ports:
             - "19898:19898"
+        env_file:
+            - ui-env.list
     dataresolve:
         build:
             context: ../app/DataResolve
