@@ -24,8 +24,10 @@ class RecursiveItemList extends ObservableData {
     }
 
     _disposeEventHandler(eventName) {
-        api.type.off(this._evtSubs[eventName]);
-        delete this._evtSubs[eventName];
+        if (eventName in this._evtSubs) {
+            api.type.off(this._evtSubs[eventName]);
+            delete this._evtSubs[eventName];
+        }
     }
 
     _disposeEventHandlers() {
