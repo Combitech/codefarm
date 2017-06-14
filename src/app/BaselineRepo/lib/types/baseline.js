@@ -65,7 +65,7 @@ class Baseline extends Type {
             // Check that repository exists
             const repository = await Repository.findOne({ _id: data.repository });
             if (!repository) {
-                throw new Error("Repository doesn't exist");
+                throw new Error(`Repository ${data.repository} doesn't exist`);
             }
         } else if (event === "update") {
             assertProp(data, "_id", false);
