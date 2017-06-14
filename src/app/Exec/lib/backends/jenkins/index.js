@@ -5,6 +5,7 @@ const { ServiceMgr } = require("service");
 const rp = require("request-promise");
 const JenkinsEventEmitter = require("./jenkins_event_emitter");
 const Job = require("../../types/job");
+const JenkinsExecutor = require("./executor");
 
 /*
 To get started with Jenkins integration:
@@ -222,5 +223,7 @@ class JenkinsBackend extends AsyncEventEmitter {
         await this.jenkinsEmitter.dispose();
     }
 }
+
+JenkinsBackend.Executor = JenkinsExecutor;
 
 module.exports = JenkinsBackend;

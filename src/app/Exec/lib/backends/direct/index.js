@@ -2,6 +2,7 @@
 
 const { AsyncEventEmitter } = require("emitter");
 const Job = require("../../types/job");
+const DirectExecutor = require("./executor");
 
 class DirectBackend extends AsyncEventEmitter {
     constructor(id, backend) {
@@ -42,5 +43,7 @@ class DirectBackend extends AsyncEventEmitter {
         return this.backend.backendType;
     }
 }
+
+DirectBackend.Executor = DirectExecutor;
 
 module.exports = DirectBackend;

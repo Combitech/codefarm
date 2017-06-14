@@ -15,8 +15,6 @@ const JobSpecs = require("./controllers/jobspecs");
 const Control = require("./control");
 const Backends = require("./controllers/backends");
 const BackendProxy = require("./backend_proxy");
-const DirectExecutor = require("./backends/direct/executor");
-const JenkinsExecutor = require("./backends/jenkins/executor");
 
 class Main extends Service {
     constructor(name, version) {
@@ -63,18 +61,13 @@ class Main extends Service {
         }, this.config.loglib));
         this.addDisposable(RawLogClient.instance);
 
-        const executorClasses = {
-            direct: DirectExecutor,
-            jenkins: JenkinsExecutor
-        };
-
         const backendConfig = Object.assign({
             searchPaths: [
                 path.join(__dirname, "backends"),
                 ...this.config.backendSearchPath
             ]
         }, this.config.backends);
-        await BackendProxy.instance.start(backendConfig, executorClasses, this.config.backendsConfig);
+        await BackendProxy.instance.start(backendConfig, this.config.backendsConfig);
         this.addDisposable(BackendProxy.instance);
 
         await Control.instance.start();

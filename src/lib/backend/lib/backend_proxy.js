@@ -25,14 +25,19 @@ class BackendProxy {
         return instance;
     }
 
-    async _addBackend(backend) {
-        const typeName = backend.backendType;
-
+    getBackendClass(typeName) {
         if (!(typeName in this.backendClasses)) {
             throw new Error(`Unknown backend type ${typeName}`);
         }
 
-        this.backends[backend._id] = new this.backendClasses[typeName](
+        return this.backendClasses[typeName];
+    }
+
+    async _addBackend(backend) {
+        const typeName = backend.backendType;
+        const backendClass = this.getBackendClass(typeName);
+
+        this.backends[backend._id] = new backendClass(
             backend._id,
             backend,
             ...this.backendConstructorArgs
