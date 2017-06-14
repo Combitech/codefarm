@@ -48,8 +48,7 @@ class Main extends Service {
                 path.join(__dirname, "backends"),
                 ...this.config.backendSearchPath
             ]
-        },
-        this.config.backends);
+        }, this.config.backends);
         await BackendProxy.instance.start(backendConfig, Repository, Baseline);
         this.addDisposable(BackendProxy.instance);
 
