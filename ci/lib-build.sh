@@ -57,7 +57,7 @@ pushd ${gitroot}/src/lib/${target}
   subJobName="${target}_build_${mode}"
   subJobId=$($CLI -q '$._id' --format values create_subjob build "${subJobName}" ongoing)
 
-  yarn install ${installFlag} |& tee ${subJobName}.log
+  npm install ${installFlag} |& tee ${subJobName}.log
   result=${PIPESTATUS[0]}
 
   $CLI upload_log ${PWD}/${subJobName}.log ${subJobName}.log

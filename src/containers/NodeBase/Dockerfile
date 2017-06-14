@@ -7,13 +7,23 @@
 # FROM codefarm/nodebase:0.0.0
 #
 
-FROM node:7
+FROM node:8.1
 LABEL Description="Base image for Code Farm node applications" Version="1.0"
 
+ARG http_proxy
+ARG https_proxy
+ARG ftp_proxy
+ARG no_proxy
+
+ENV http_proxy ${http_proxy}
+ENV https_proxy ${https_proxy}
+ENV ftp_proxy ${ftp_proxy}
+ENV no_proxy ${no_proxy}
 ENV user farmer
 ENV farmerHome /home/$user
-ENV npmDir ${farmerHome}/npm
 ENV appRoot ${farmerHome}/codefarm
+
+RUN env
 
 RUN groupadd --system $user && useradd --system --create-home --gid $user $user
 
@@ -21,8 +31,6 @@ RUN groupadd --system $user && useradd --system --create-home --gid $user $user
 RUN npm install -g node-gyp
 
 USER ${user}
-
-ENV DISABLE_LINK_LIBS "npm installation disabled"
 
 # Create data directory where default volume can be mounted
 RUN mkdir -p $farmerHome/data && chown -R $user $farmerHome/data -R && chgrp -R $user $farmerHome/data
@@ -32,20 +40,14 @@ RUN mkdir -p ${appRoot}/src/app/me
 WORKDIR ${appRoot}/src/app/me
 
 # 1. Add app dependency specification. This is done first to utilize docker caching.
-ONBUILD COPY [ "package.json", "yarn.lock", "${appRoot}/src/app/me/" ]
+ONBUILD COPY [ "package.json", "${appRoot}/src/app/me/" ]
 
 ONBUILD USER root
 ONBUILD RUN chown $user --recursive ${appRoot}
 ONBUILD USER $user
-
-# Create a link .node_modules in home directory to let nodejs require()
-# resolve globally installed modules.
-# See https://nodejs.org/api/modules.html#modules_loading_from_the_global_folders
-ONBUILD RUN ln -s ${farmerHome}/.config/yarn/global/node_modules ${farmerHome}/.node_modules
-
 ONBUILD ENV gitroot ${appRoot}
 ONBUILD RUN test -f package.json && \
-  yarn --production || \
+  npm install --production --dd || \
   echo "No package.json"
 
 # 2. Add app source
@@ -54,4 +56,4 @@ ONBUILD USER root
 ONBUILD RUN find ${appRoot}/src/app/me -path './node_modules' -prune -o -print0 | xargs -0 chown $user
 ONBUILD USER $user
 
-CMD [ "yarn", "run", "start-rel" ]
+CMD [ "npm", "run", "start-rel" ]

@@ -61,7 +61,7 @@ for testDir in ${dirs[@]}; do
     startTime=$(($(date +%s%N)/1000000))
 
     testResult=0
-    yarn build -- --no-cache || testResult=1
+    npm run build -- --no-cache || testResult=1
 
     #Calculate test time and store in string as '{"timeMs":x}'
     stopTime=$(($(date +%s%N)/1000000))

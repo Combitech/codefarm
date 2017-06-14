@@ -53,7 +53,7 @@ for target in ${targets[@]}; do
   subJobName="${target}_test"
   subJobId=$($CLI -q '$._id' --format values create_subjob test "${subJobName}" ongoing)
 
-  yarn test |& tee ${subJobName}.log
+  npm run test |& tee ${subJobName}.log
   result=${PIPESTATUS[0]}
 
   $CLI upload_log ${PWD}/${subJobName}.log ${subJobName}.log

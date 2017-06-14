@@ -15,14 +15,12 @@
     "start-rel": "npm run start-dev",
     "stop": "../../bs/stop.sh",
     "test": "mocha --recursive",
-    "lint": "git ls-files \"*.js\" | xargs eslint",
-    "install": "if [ -n \"$gitroot\" ]; then $gitroot/src/bs/linklibs.sh; else ../../bs/linklibs.sh; fi",
-    "deepinstall": "if [ -n \"$gitroot\" ]; then FORCE_INSTALL_LIBS=1 $gitroot/src/bs/linklibs.sh; else FORCE_INSTALL_LIBS=1 ../../bs/linklibs.sh; fi"
+    "lint": "git ls-files \"*.js\" | xargs eslint"
   },
   "author": "Mattias Runge <mattias.runge@combitech.se>",
   "license": "MIT",
   "engines": {
-    "node": ">= 7.0.0"
+    "node": ">= 8.0.0"
   },
   "libraries": [
     "auth",
@@ -37,6 +35,16 @@
     "servicecom"
   ],
   "dependencies": {
+    "service": "file:../../lib/service",
+    "database": "file:../../lib/database",
+    "msgbus": "file:../../lib/msgbus",
+    "emitter": "file:../../lib/emitter",
+    "typelib": "file:../../lib/typelib",
+    "web": "file:../../lib/web",
+    "misc": "file:../../lib/misc",
+    "backend": "file:../../lib/backend",
+    "servicecom": "file:../../lib/servicecom",
+    "auth": "file:../../lib/auth",
     "argon2": "^0.15.0",
     "async-busboy": "^0.4.0",
     "yargs": "^7.0.2"

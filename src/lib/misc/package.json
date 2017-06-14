@@ -6,19 +6,18 @@
   "scripts": {
     "compile": "echo 'No compile needed'",
     "test": "mocha --recursive",
-    "lint": "git ls-files \"*.js\" | xargs eslint",
-    "install": "if [ -n \"$gitroot\" ]; then $gitroot/src/bs/linklibs.sh; else ../../bs/linklibs.sh; fi",
-    "deepinstall": "if [ -n \"$gitroot\" ]; then FORCE_INSTALL_LIBS=1 $gitroot/src/bs/linklibs.sh; else FORCE_INSTALL_LIBS=1 ../../bs/linklibs.sh; fi"
+    "lint": "git ls-files \"*.js\" | xargs eslint"
   },
   "author": "Marcus Christensson <marcus.christensson@combitech.se>",
   "license": "MIT",
   "engines": {
-    "node": ">= 7.0.0"
+    "node": ">= 8.0.0"
   },
   "libraries": [
     "testsupport"
   ],
   "dependencies": {
+    "testsupport": "file:../../lib/testsupport",
     "boolean-parser": "^0.0.2",
     "flat": "^2.0.1",
     "traverse": "^0.6.6"
