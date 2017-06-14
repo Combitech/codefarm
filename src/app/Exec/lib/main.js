@@ -1,6 +1,7 @@
 "use strict";
 
 const os = require("os");
+const path = require("path");
 const Database = require("database");
 const { RawLogClient } = require("loglib");
 const { flattenArray } = require("misc");
@@ -67,7 +68,13 @@ class Main extends Service {
             jenkins: JenkinsExecutor
         };
 
-        await BackendProxy.instance.start(this.config.backends, executorClasses, this.config.backendsConfig);
+        const backendConfig = Object.assign({
+            searchPaths: [
+                path.join(__dirname, "backends"),
+                ...this.config.backendSearchPath
+            ]
+        }, this.config.backends);
+        await BackendProxy.instance.start(backendConfig, executorClasses, this.config.backendsConfig);
         this.addDisposable(BackendProxy.instance);
 
         await Control.instance.start();

@@ -1,18 +1,16 @@
 "use strict";
 
 const { BackendProxy: BackendProxyBase } = require("backend");
-const DirectBackend = require("./backends/direct/index");
-const JenkinsBackend = require("./backends/jenkins/index");
 const Backend = require("./types/backend");
-
-const BackendTypes = {
-    direct: DirectBackend,
-    jenkins: JenkinsBackend
-};
 
 class BackendProxy extends BackendProxyBase {
     constructor() {
         super(Backend);
+    }
+
+    async start(config = {}, executorClasses, ...args) {
+        this.executorClasses = executorClasses;
+        await super.start(config, ...args);
     }
 
     createExecutor(backend, data = null) {
@@ -32,12 +30,6 @@ class BackendProxy extends BackendProxyBase {
 
     async verifySlaveJob(slave) {
         return this.getBackend(slave.backend).verifySlaveJob(slave);
-    }
-
-    async start(config = {}, executorClasses, ...args) {
-        const backendTypes = Object.assign({}, BackendTypes, config.types);
-        this.executorClasses = executorClasses;
-        await super.start({ types: backendTypes }, ...args);
     }
 
     async dispose() {

@@ -41,8 +41,17 @@ describe("Exec", () => {
     let lastCodeRepoMergeRevisionId;
 
     before(async () => {
+        process.on("uncaughtException", (error) => {
+            console.error("Uncaught exception", error);
+            assert(false, `Uncaught exception, error: ${error.message}`);
+        });
+        process.on("unhandledRejection", (error, promise) => {
+            console.error("Unhandled promise rejection", error);
+            console.error("Promise", promise);
+            assert(false, `Unhandled promise rejection, error: ${error.message}`);
+        });
+
         slavesDir = await fs.mkdtempAsync(path.join(__dirname, "tmp-"));
-        console.log("SLAVES_DIR", slavesDir);
         const restServicePort = await getPort();
         testInfo = {
             name: "exec",
@@ -50,6 +59,9 @@ describe("Exec", () => {
             config: {
                 autoUseMgmt: false,
                 level: "info",
+                backends: {
+                },
+                backendSearchPath: [],
                 bus: {
                     testMode: true
                 },
