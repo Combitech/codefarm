@@ -20,32 +20,35 @@ class Form extends React.Component {
                                 title={this.props.primaryText}
                                 subtitle={this.props.secondaryText}
                             />
-                            <CardText>
-                                {this.props.children}
-                            </CardText>
-                            <CardActions>
-                                <div className={this.props.theme.buttons}>
-                                    <Button
-                                        label="Cancel"
-                                        onClick={() => {
-                                            this.props.onCancel();
-                                        }}
-                                    />
-                                    <Button
-                                        label={this.props.confirmText}
-                                        primary={true}
-                                        raised={true}
-                                        disabled={!this.props.confirmAllowed}
-                                        onClick={() => {
-                                            this.props.onConfirm()
-                                            .catch((error) => {
-                                                console.error(error);
-                                                // TODO: Print error to user
-                                            });
-                                        }}
-                                    />
-                                </div>
-                            </CardActions>
+                            <form onSubmit={(e) => {
+                                e.preventDefault();
+                                this.props.onConfirm()
+                                .catch((error) => {
+                                    console.error(error);
+                                    // TODO: Print error to user
+                                });
+                            }}>
+                                <CardText>
+                                    {this.props.children}
+                                </CardText>
+                                <CardActions>
+                                    <div className={this.props.theme.buttons}>
+                                        <Button
+                                            label="Cancel"
+                                            onClick={() => {
+                                                this.props.onCancel();
+                                            }}
+                                        />
+                                        <Button
+                                            label={this.props.confirmText}
+                                            primary={true}
+                                            raised={true}
+                                            disabled={!this.props.confirmAllowed}
+                                            type="submit"
+                                        />
+                                    </div>
+                                </CardActions>
+                            </form>
                         </Card>
                     </Col>
                 </Row>
