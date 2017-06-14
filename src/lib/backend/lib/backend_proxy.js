@@ -35,9 +35,9 @@ class BackendProxy {
 
     async _addBackend(backend) {
         const typeName = backend.backendType;
-        const backendClass = this.getBackendClass(typeName);
+        const BackendClass = this.getBackendClass(typeName);
 
-        this.backends[backend._id] = new backendClass(
+        this.backends[backend._id] = new BackendClass(
             backend._id,
             backend,
             ...this.backendConstructorArgs

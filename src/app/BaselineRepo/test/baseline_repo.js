@@ -308,7 +308,7 @@ describe("BaselineRepo", () => {
             } catch (error) {
                 assert.strictEqual(error.statusCode, 400);
                 assert.strictEqual(error.error.result, "fail");
-                assert.strictEqual(error.error.error, "Repository doesn't exist");
+                assert.strictEqual(error.error.error, "Repository non-existing-repo doesn't exist");
             }
         });
     });
