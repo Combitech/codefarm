@@ -78,6 +78,11 @@ class Auth {
                 { email: emailOrId }
             ]
         });
+        if (users.length === 0) {
+            // If no user is found try to create which will check against other backends for the user
+            // for example an activeDirectory and if password is ok add user to userrepo backend
+            users.push(await client.create("user", { _id: emailOrId, name: emailOrId, password: password }));
+        }
         if (!(users instanceof Array)) {
             throw new Error(`Expected array result, got data: ${JSON.stringify(users)}`);
         }

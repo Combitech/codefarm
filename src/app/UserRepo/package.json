@@ -37,6 +37,7 @@
     "servicecom"
   ],
   "dependencies": {
+    "activedirectory2": "^1.2.1",
     "argon2": "^0.15.0",
     "async-busboy": "^0.4.0",
     "yargs": "^7.0.2"

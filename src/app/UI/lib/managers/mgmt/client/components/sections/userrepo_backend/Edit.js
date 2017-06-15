@@ -5,6 +5,7 @@ import LightComponent from "ui-lib/light_component";
 import Input from "react-toolbox/lib/input";
 import Dropdown from "react-toolbox/lib/dropdown";
 import Autocomplete from "react-toolbox/lib/autocomplete";
+import TypeList from "ui-observables/type_list";
 import {
     Form as TAForm,
     Section as TASection,
@@ -12,12 +13,17 @@ import {
 } from "ui-components/type_admin";
 
 const BACKEND_TYPE = {
-    DUMMY: "dummy"
+    DUMMY: "dummy",
+    ACTIVEDIRECTORY: "activeDirectory"
 };
 
 class Edit extends LightComponent {
     constructor(props) {
         super(props);
+
+        this.availablePolicyList = new TypeList({
+            type: "userrepo.policy"
+        });
 
         this.itemProperties = {
             "_id": {
@@ -34,15 +40,39 @@ class Edit extends LightComponent {
                 editable: false,
                 required: () => true,
                 defaultValue: BACKEND_TYPE.DUMMY
+            },
+            "url": {
+                editable: true,
+                required: () => this.state.backendType.value === BACKEND_TYPE.ACTIVEDIRECTORY,
+                defaultValue: "ldap://dc.ad.codefarm.lan"
+            },
+            "baseDN": {
+                editable: true,
+                required: () => this.state.backendType.value === BACKEND_TYPE.ACTIVEDIRECTORY,
+                defaultValue: "dc=ad,dc=codefarm,dc=lan"
+            },
+            "userPolicy": {
+                editable: false,
+                required: () => this.state.backendType.value === BACKEND_TYPE.ACTIVEDIRECTORY,
+                defaultValue: ""
             }
         };
 
-        this.state = tautils.createStateProperties(this, this.itemProperties, this.props.item);
+        this.state = Object.assign({
+            availablePolicies: this.availablePolicyList.value.getValue()
+        }, tautils.createStateProperties(this, this.itemProperties, this.props.item));
+    }
+
+    componentDidMount() {
+        this.log("componentDidMount", this.props, this.state);
+        this.addDisposable(this.availablePolicyList.start());
+        this.addDisposable(this.availablePolicyList.value.subscribe((availablePolicies) => this.setState({ availablePolicies })));
     }
 
     getBackendTypes() {
         return [
-            { value: BACKEND_TYPE.DUMMY, label: "Dummy" }
+            { value: BACKEND_TYPE.DUMMY, label: "Dummy" },
+            { value: BACKEND_TYPE.ACTIVEDIRECTORY, label: "Active Directory" }
         ];
     }
 
@@ -57,6 +87,15 @@ class Edit extends LightComponent {
         console.log("EditLocal-RENDER", this.props, this.state);
 
         const backendTypes = this.getBackendTypes();
+
+        const availablePolicies = [];
+        for (const policy of this.state.availablePolicies.toJS()) {
+            let policyItemText = `${policy._id}`;
+            if (policy.description) {
+                policyItemText = `${policyItemText} - ${policy.description}`;
+            }
+            availablePolicies.push({ value: policy._id, label: policyItemText });
+        }
 
         return (
             <TASection
@@ -90,6 +129,38 @@ class Edit extends LightComponent {
                         source={backendTypes}
                         value={this.state.backendType.value}
                     />
+                    <Choose>
+                        <When condition={this.state.backendType.value === BACKEND_TYPE.ACTIVEDIRECTORY}>
+                            <Input
+                                type="url"
+                                label="URL to use when connecting to AD"
+                                name="url"
+                                floating={true}
+                                required={this.itemProperties.url.required()}
+                                disabled={this.props.item && !this.itemProperties.url.editable}
+                                value={this.state.url.value}
+                                onChange={this.state.url.set}
+                            />
+                            <Input
+                                type="text"
+                                label="baseDN for the AD/Ldap"
+                                name="baseDN"
+                                floating={true}
+                                required={this.itemProperties.baseDN.required()}
+                                disabled={this.props.item && !this.itemProperties.baseDN.editable}
+                                value={this.state.baseDN.value}
+                                onChange={this.state.baseDN.set}
+                            />
+                            <Dropdown
+                                label="The default user policy to use for new users"
+                                required={this.itemProperties.userPolicy.required()}
+                                disabled={this.props.item && !this.itemProperties.userPolicy.editable}
+                                source={availablePolicies}
+                                value={this.state.userPolicy.value}
+                                onChange={this.state.userPolicy.set}
+                            />
+                        </When>
+                    </Choose>
                     <Autocomplete
                         selectedPosition="below"
                         allowCreate={true}
