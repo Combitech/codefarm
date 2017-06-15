@@ -11,6 +11,9 @@ class ActiveDirectory {
     async start() {
     }
 
+    constructUser(/* user */) {
+    }
+
     async _userExists(data) {
         if (!this.params.baseDN && !this.params.url) {
             console.log("baseDN or url not specified for ", this.name);

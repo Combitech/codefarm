@@ -72,7 +72,7 @@ class Auth {
 
         const client = ServiceComBus.instance.getClient("userrepo");
         // Get user with email or _id
-        let users = await client.list("user", {
+        const users = await client.list("user", {
             $or: [
                 { _id: emailOrId },
                 { email: emailOrId }
@@ -81,7 +81,7 @@ class Auth {
         if (users.length === 0) {
             // If no user is found try to create which will check against other backends for the user
             // for example an activeDirectory and if password is ok add user to userrepo backend
-            users = [ (await client.create("user", { _id: emailOrId, name: emailOrId, password: password })) ];
+            users.push(await client.create("user", { _id: emailOrId, name: emailOrId, password: password }));
         }
         if (!(users instanceof Array)) {
             throw new Error(`Expected array result, got data: ${JSON.stringify(users)}`);
