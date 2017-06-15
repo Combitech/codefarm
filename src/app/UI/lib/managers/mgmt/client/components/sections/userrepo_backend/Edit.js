@@ -14,7 +14,7 @@ import {
 
 const BACKEND_TYPE = {
     DUMMY: "dummy",
-    ACTIVEDIRECTORY: "Active Directory"
+    ACTIVEDIRECTORY: "activeDirectory"
 };
 
 class Edit extends LightComponent {
@@ -72,7 +72,7 @@ class Edit extends LightComponent {
     getBackendTypes() {
         return [
             { value: BACKEND_TYPE.DUMMY, label: "Dummy" },
-            { value: BACKEND_TYPE.ACTIVEDIRECTORY, label: "activeDirectory" }
+            { value: BACKEND_TYPE.ACTIVEDIRECTORY, label: "Active Directory" }
         ];
     }
 
