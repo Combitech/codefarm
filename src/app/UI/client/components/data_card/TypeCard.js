@@ -5,6 +5,7 @@ import RevisionCard from "./RevisionCard";
 import CodeRepositoryCard from "./CodeRepositoryCard";
 import ArtifactCard from "./ArtifactCard";
 import ArtifactRepositoryCard from "./ArtifactRepositoryCard";
+import BaselineRepositoryBaselineCard from "./BaselineRepositoryBaselineCard";
 import JobSpecCard from "./JobSpecCard";
 import JobCard from "./JobCard";
 import SubJobCard from "./SubJobCard";
@@ -27,6 +28,7 @@ const Cards = {
     "coderepo.repository": CodeRepositoryCard,
     "artifactrepo.artifact": ArtifactCard,
     "artifactrepo.repository": ArtifactRepositoryCard,
+    "baselinerepo.baseline": BaselineRepositoryBaselineCard,
     "exec.jobspec": JobSpecCard,
     "exec.job": JobCard,
     "exec.subjob": SubJobCard,

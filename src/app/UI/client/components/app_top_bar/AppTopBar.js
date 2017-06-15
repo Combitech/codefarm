@@ -177,6 +177,12 @@ class AppTopBar extends LightComponent {
                             onMouseUp={this.onClick.bind(this, "/artifacts")}
                         />
                         <Button
+                            label="Baselines"
+                            flat={true}
+                            inverse={true}
+                            onMouseUp={this.onClick.bind(this, "/baselines")}
+                        />
+                        <Button
                             label="Collaborators"
                             flat={true}
                             inverse={true}
