@@ -83,7 +83,6 @@ class Auth {
             // for example an activeDirectory and if password is ok add user to userrepo backend
             users = [ (await client.create("user", { _id: emailOrId, name: emailOrId, password: password })) ];
         }
-        console.log("How many users: ", users);
         if (!(users instanceof Array)) {
             throw new Error(`Expected array result, got data: ${JSON.stringify(users)}`);
         }
