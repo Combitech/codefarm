@@ -19,6 +19,8 @@ const exports = {
     StepResultCard: require("./StepResultCard"),
     CodeRepositoryCard: require("./CodeRepositoryCard"),
     ArtifactRepositoryCard: require("./ArtifactRepositoryCard"),
+    BaselineRepositoryCard: require("./BaselineRepositoryCard"),
+    BaselineRepositoryBaselineCard: require("./BaselineRepositoryBaselineCard"),
     UserCard: require("./UserCard"),
     TeamCard: require("./TeamCard"),
     UserPolicyCard: require("./UserPolicyCard"),

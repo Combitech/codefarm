@@ -1,0 +1,14 @@
+
+@import "react-toolbox/components/colors";
+@import "react-toolbox/components/globals";
+
+.content {
+    margin-left: $baseline-grid * 40;
+    margin-top: $standard-increment-desktop;
+}
+
+.repoBackendIcon {
+    width: 32px;
+    height: 32px;
+    margin-right: $unit * 1.3;
+}

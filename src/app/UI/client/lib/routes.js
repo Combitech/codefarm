@@ -5,6 +5,7 @@ import { AppLayout } from "ui-components/app_layout";
 import { AppIndex, NotFoundPage } from "ui-components/app_index";
 import { AppNotificationsPage } from "ui-components/app_notification";
 import CodePage from "ui-mgr/code/client/components";
+import BaselinePage from "ui-mgr/baseline/client/components";
 import ArtifactsPage from "ui-mgr/artifacts/client/components";
 import UsersPage from "ui-mgr/users/client/components";
 import PlaygroundPage from "ui-mgr/playground/client/components";
@@ -14,6 +15,7 @@ import StatisticsPage from "ui-mgr/statistics/client/components";
 
 import authRoutes from "ui-mgr/auth/client/components/routes";
 import codePageRoutes from "ui-mgr/code/client/components/routes";
+import baselinePageRoutes from "ui-mgr/baseline/client/components/routes";
 import artifactsPageRoutes from "ui-mgr/artifacts/client/components/routes";
 import usersPageRoutes from "ui-mgr/users/client/components/routes";
 import statisticsRoutes from "ui-mgr/statistics/client/components/routes";
@@ -67,6 +69,9 @@ const routes = (
         </Route>
         <Route path="code" component={CodePage}>
             {codePageRoutes}
+        </Route>
+        <Route path="baselines" component={BaselinePage}>
+            {baselinePageRoutes}
         </Route>
         <Route path="artifacts" component={ArtifactsPage}>
             {artifactsPageRoutes}
