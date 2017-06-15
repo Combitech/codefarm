@@ -8,32 +8,16 @@ import { Tags } from "ui-components/tags";
 import DataCard from "./DataCard";
 import { CardTitle } from "react-toolbox/lib/card";
 import stateVar from "ui-lib/state_var";
-import BaselineRepositoryUri from "ui-observables/baseline_repository_uri";
 import { TypeChip } from "ui-components/data_chip";
 import * as pathBuilder from "ui-lib/path_builder";
 
 class BaselineRepositoryCard extends LightComponent {
     constructor(props) {
         super(props);
-        this.repositoryUri = new BaselineRepositoryUri({
-            id: props.item._id
-        });
 
         this.state = {
-            expanded: stateVar(this, "expanded", this.props.expanded),
-            repositoryUri: this.repositoryUri.value.getValue()
+            expanded: stateVar(this, "expanded", this.props.expanded)
         };
-    }
-
-    componentDidMount() {
-        this.addDisposable(this.repositoryUri.start());
-        this.addDisposable(this.repositoryUri.value.subscribe((repositoryUri) => this.setState({ repositoryUri })));
-    }
-
-    componentWillReceiveProps(nextProps) {
-        this.repositoryUri.setOpts({
-            id: nextProps.item._id
-        });
     }
 
     render() {
