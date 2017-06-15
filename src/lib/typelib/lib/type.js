@@ -179,6 +179,10 @@ class Type {
             throw new Error("ref.type doesn't match type");
         }
         if (ref.id.constructor === Array) {
+            if (ref.id.length === 0) {
+                return [];
+            }
+
             return this.findMany({
                 _id: {
                     $in: ref.id

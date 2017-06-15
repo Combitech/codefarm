@@ -3,6 +3,7 @@
 const { ServiceMgr } = require("service");
 const { assertType, assertProp } = require("misc");
 const { Type, notification } = require("typelib");
+const BackendProxy = require("../backend_proxy");
 
 class Slave extends Type {
     constructor(data) {
@@ -11,6 +12,7 @@ class Slave extends Type {
         this.uri = false;
         this.executors = 1;
         this.offline = false;
+        this.backend = false;
 
         if (data) {
             this.set(data);
@@ -46,13 +48,17 @@ class Slave extends Type {
             assertProp(data, "_id", true);
             assertProp(data, "uri", true);
             assertType(data.uri, "data.uri", "string");
+
             assertProp(data, "executors", true);
             assertType(data.executors, "data.executors", "number");
-            assertProp(data, "backend", true);
-            assertType(data.backend, "data.backend", "string");
             if (isNaN(data.executors)) {
                 throw new Error("executors must be a number");
             }
+
+            assertProp(data, "backend", true);
+            assertType(data.backend, "data.backend", "string");
+            // Check that backend exists
+            BackendProxy.instance.getBackend(data.backend);
 
             // Add id as tag
             data.tags = data.tags || [];

@@ -79,8 +79,14 @@ class JenkinsExecutor extends Executor {
             this.logId = await this.allocateLog("interactive", [ "stdout", "stderr" ]);
 
             const jenkinsBackend = BackendProxy.instance.getBackend(this.backend);
-            jenkinsBackend.addListener("job_started", this._onJobStarted.bind(this));
-            jenkinsBackend.addListener("job_consoletext", this._onConsoleText.bind(this));
+            if (!this._onJobStartedHandler) {
+                this._onJobStartedHandler = this._onJobStarted.bind(this);
+                jenkinsBackend.addListener("job_started", this._onJobStartedHandler);
+            }
+            if (!this._onConsoleTextHandler) {
+                this._onConsoleTextHandler = this._onConsoleText.bind(this);
+                jenkinsBackend.addListener("job_consoletext", this._onConsoleTextHandler);
+            }
             this.queuenr = await jenkinsBackend.startJob(job);
         } catch (error) {
             await this._logln("Error while trying to start execution", LEVEL.ERROR);
@@ -102,12 +108,21 @@ class JenkinsExecutor extends Executor {
 
             if (this.started) {
                 await this._logln(`Job resumed as started, requesting log from offset: ${this.consoleOffset}`);
-                jenkinsBackend.addListener("job_consoletext", this._onConsoleText.bind(this));
+                if (!this._onConsoleTextHandler) {
+                    this._onConsoleTextHandler = this._onConsoleText.bind(this);
+                    jenkinsBackend.addListener("job_consoletext", this._onConsoleTextHandler);
+                }
                 await jenkinsBackend.getConsoleText(this.queuenr, this.jenkinsJobUrl, this.consoleOffset);
             } else if (this.queuenr) {
                 await this._logln("Job resumed with queue number, listening for start");
-                jenkinsBackend.addListener("job_started", this._onJobStarted.bind(this));
-                jenkinsBackend.addListener("job_consoletext", this._onConsoleText.bind(this));
+                if (!this._onJobStartedHandler) {
+                    this._onJobStartedHandler = this._onJobStarted.bind(this);
+                    jenkinsBackend.addListener("job_started", this._onJobStartedHandler);
+                }
+                if (!this._onConsoleTextHandler) {
+                    this._onConsoleTextHandler = this._onConsoleText.bind(this);
+                    jenkinsBackend.addListener("job_consoletext", this._onConsoleTextHandler);
+                }
             } else {
                 await this._logln("Job resumed without queue number, rerunning");
                 const job = await Job.findOne({ _id: this.jobId });
@@ -125,8 +140,14 @@ class JenkinsExecutor extends Executor {
 
     async detach(reason) {
         const jenkinsBackend = BackendProxy.instance.getBackend(this.backend);
-        jenkinsBackend.removeListener("job_started", this._onJobStarted);
-        jenkinsBackend.removeListener("job_consoletext", this._onConsoleText);
+        if (this._onJobStartedHandler) {
+            jenkinsBackend.removeListener("job_started", this._onJobStartedHandler);
+            delete this._onJobStartedHandler;
+        }
+        if (this._onConsoleTextHandler) {
+            jenkinsBackend.removeListener("job_consoletext", this._onConsoleTextHandler);
+            delete this._onConsoleTextHandler;
+        }
         await this._logln(`Detached, reason: ${reason}`);
     }
 
