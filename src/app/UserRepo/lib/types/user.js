@@ -146,7 +146,7 @@ class User extends Type {
             }
         }
 
-        await BackendProxy.instance.validateUser(data.backend || false, event, data);
+        await BackendProxy.instance.validateUser(data.backend || DEFAULT_BACKEND , event, data);
     }
 
     async addKey(key) {

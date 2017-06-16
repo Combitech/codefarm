@@ -27,21 +27,14 @@ class BackendProxy extends BackendProxyBase {
     }
 
     async validateUser(backend, event, data) {
-        if (!backend) {
-            for (const name of Object.keys(this.backends)) {
-                const clearPassword = false;
-                const user = await this.backends[name].lookupUser(data, clearPassword);
-                if (user) {
-                    backend = name;
-                    data.backend = name;
-                    break;
-                }
-            }
-            if (!backend) {
-                // User not found in any backend
-                console.log("User not found in any userRepo backend");
-
-                return false;
+        // Check if user exist in any backend
+        for (const name of Object.keys(this.backends)) {
+            const clearPassword = false;
+            const user = await this.backends[name].lookupUser(data, clearPassword);
+            if (user) {
+                backend = name;
+                data.backend = name;
+                break;
             }
         }
 
