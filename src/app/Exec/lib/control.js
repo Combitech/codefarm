@@ -70,6 +70,16 @@ class Control {
             }
         });
 
+        notification.on("job.aborted", async (job) => {
+            const executor = this.executors.find((executor) => executor.jobId === job._id);
+
+            if (executor) {
+                await executor.abort();
+            } else {
+                await job.setFinished("aborted");
+            }
+        });
+
         notification.on("executor.removed", async (executor) => {
             this.executors.splice(this.executors.indexOf(executor), 1);
             await this._startJobs();

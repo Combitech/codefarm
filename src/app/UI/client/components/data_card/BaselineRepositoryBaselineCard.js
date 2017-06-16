@@ -3,6 +3,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import LightComponent from "ui-lib/light_component";
 import { DateTime } from "ui-components/datetime";
+import { Tags } from "ui-components/tags";
 import DataCard from "./DataCard";
 import { CardTitle } from "react-toolbox/lib/card";
 import stateVar from "ui-lib/state_var";
@@ -40,6 +41,18 @@ class BaselineRepositoryBaselineCard extends LightComponent {
                         />
                     )}
                 />
+                <If condition={this.state.expanded.value}>
+                    <table className={`${this.props.theme.table} ${this.props.theme.tableFixed}`}>
+                        <tbody>
+                            <tr>
+                                <td>Tags</td>
+                                <td>
+                                    <Tags list={this.props.item.tags} />
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </If>
             </DataCard>
         );
     }

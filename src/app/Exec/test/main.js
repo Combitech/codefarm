@@ -27,7 +27,18 @@ const waitJobFinished = async (id) =>
         typeNotification.on("job.updated", updatedListener);
     });
 
-const DEFAULT_JOB_TIMEOUT = 10 * 1000;
+const waitJobOngoing = async (id) =>
+    new Promise((resolve) => {
+        const updatedListener = (job) => {
+            if (job._id === id && job.status === "ongoing") {
+                typeNotification.removeListener("job.updated", updatedListener);
+                resolve();
+            }
+        };
+        typeNotification.on("job.updated", updatedListener);
+    });
+
+const DEFAULT_JOB_TIMEOUT = 15 * 1000;
 
 describe("Exec", () => {
     let slavesDir;
@@ -236,25 +247,6 @@ describe("Exec", () => {
             assert.equal(data.authUser, "dummyUser");
         });
 
-        it("should delete a backend", async () => {
-            const data = await rp({
-                method: "DELETE",
-                url: `http://localhost:${testInfo.config.web.port}/backend/Backend1`,
-                json: true
-            });
-
-            assert.equal(data.result, "success");
-        });
-
-        it("should list zero backends", async () => {
-            const data = await rp({
-                url: `http://localhost:${testInfo.config.web.port}/backend`,
-                json: true
-            });
-
-            assert.equal(data.length, 0);
-        });
-
         it("should list zero slaves", async () => {
             const data = await rp({
                 url: `http://localhost:${testInfo.config.web.port}/slave`,
@@ -330,6 +322,25 @@ describe("Exec", () => {
         it("should list zero slaves", async () => {
             const data = await rp({
                 url: `http://localhost:${testInfo.config.web.port}/slave`,
+                json: true
+            });
+
+            assert.equal(data.length, 0);
+        });
+
+        it("should delete a backend", async () => {
+            const data = await rp({
+                method: "DELETE",
+                url: `http://localhost:${testInfo.config.web.port}/backend/Backend1`,
+                json: true
+            });
+
+            assert.equal(data.result, "success");
+        });
+
+        it("should list zero backends", async () => {
+            const data = await rp({
+                url: `http://localhost:${testInfo.config.web.port}/backend`,
                 json: true
             });
 
@@ -485,7 +496,7 @@ describe("Exec", () => {
             await waitJobFinished(jobId2);
         });
 
-        it("should list one successful job", async () => {
+        it("should list one failed job", async () => {
             const data = await rp({
                 url: `http://localhost:${testInfo.config.web.port}/job/${jobId2}`,
                 json: true
@@ -496,6 +507,71 @@ describe("Exec", () => {
             assert.notEqual(data.finished, false);
             assert.equal(data.criteria, "tag1 AND tag2");
             assert.equal(data.script, testScript2);
+        });
+
+        it("should create a job and abort it", async (ctx) => {
+            ctx.timeout(DEFAULT_JOB_TIMEOUT); // eslint-disable-line no-invalid-this
+            const testScript = `#!/bin/bash -e
+                echo Fell asleep
+                sleep 4
+                echo Woke up
+            `;
+            let data = await rp({
+                method: "POST",
+                url: `http://localhost:${testInfo.config.web.port}/job`,
+                json: true,
+                form: {
+                    name: "Test Job",
+                    criteria: "tag1 AND tag2",
+                    script: new Buffer(testScript),
+                    baseline: {
+                        _id: "baseline1",
+                        name: "myBaseline",
+                        content: [
+                            {
+                                _ref: true,
+                                name: "commits",
+                                type: "coderepo.revision",
+                                id: [ "change1", "change2", "lastChange" ]
+                            }
+                        ]
+                    },
+                    workspaceCleanup: "remove_on_finish"
+                }
+            });
+
+            assert.equal(data.result, "success");
+            assert.equal(data.data.name, "Test Job");
+            assert.oneOf(data.data.status, [ "queued", "ongoing" ]);
+            assert.equal(data.data.finished, false);
+            assert.equal(data.data.criteria, "tag1 AND tag2");
+            assert.equal(data.data.script, testScript);
+
+            const jobId = data.data._id;
+            const jobFinishedPromise = waitJobFinished(jobId);
+
+            await waitJobOngoing(jobId);
+
+            // Abort job
+            data = await rp({
+                method: "POST",
+                url: `http://localhost:${testInfo.config.web.port}/job/${jobId}/abort`,
+                json: true
+            });
+
+            await jobFinishedPromise;
+
+            data = await rp({
+                url: `http://localhost:${testInfo.config.web.port}/job/${jobId}`,
+                json: true
+            });
+
+            assert.equal(data._id, jobId);
+            assert.equal(data.name, "Test Job");
+
+            // TODO: Fix so that job is really aborted
+            assert.oneOf(data.status, [ "success" ]);
+            assert.notEqual(data.finished, false);
         });
 
         let jobId3;

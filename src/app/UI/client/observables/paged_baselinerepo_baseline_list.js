@@ -5,7 +5,7 @@ class BaselineRepoBaselineList extends PagedTypeList {
     constructor(initialOpts, debug = false) {
         const defaultOpts = {
             type: "baselinerepo.baseline",
-            sortOn: "statusSetAt",
+            sortOn: "created",
             query: {},
             filter: "",
             filterFields: [ "name", "tags", "_id" ]

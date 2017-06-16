@@ -75,18 +75,15 @@ class Job extends Type {
     }
 
     async _saveHook(olddata) {
-        if (!ongoingStatusList.includes(this.status)) {
-            // Finished
-            if (olddata && !olddata.finished) {
-                // Update of not ongoing, not finished sub-job, set finished
-                this.finished = new Date();
-            } else if (!olddata) {
-                // Create of not ongoing sub-job, set finished
-                this.finished = new Date();
-            }
-        } else {
+        if (ongoingStatusList.includes(this.status)) {
             // Not finished
             this.finished = false;
+        } else if (olddata && !olddata.finished) {
+            // Update of not ongoing, not finished sub-job, set finished
+            this.finished = new Date();
+        } else if (!olddata) {
+            // Create of not ongoing sub-job, set finished
+            this.finished = new Date();
         }
 
         if (this.lastRunId !== false) {
@@ -261,8 +258,14 @@ class Job extends Type {
         }
         await this.save();
     }
+
+    async abort() {
+        // Job status will be set when executor is aborted
+        return notification.emit(`${this.constructor.typeName}.aborted`, this);
+    }
 }
 
 Job.CLEANUP_POLICY = CLEANUP_POLICY;
+Job.STATUS = STATUS;
 
 module.exports = Job;

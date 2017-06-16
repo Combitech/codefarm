@@ -46,17 +46,19 @@ class Backend extends Type {
         if (event === "create") {
             assertProp(data, "_id", true);
             assertProp(data, "backendType", true);
-            assertProp(data, "authUser", true);
 
             assertType(data._id, "data._id", "string");
             assertType(data.backendType, "data.backendType", "string");
-            assertType(data.authUser, "data.authUser", "string");
 
             switch (data.backendType) {
             case "direct":
+                assertProp(data, "authUser", true);
+                assertType(data.authUser, "data.authUser", "string");
                 assertType(data.privateKeyPath, "data.privateKeyPath", "string");
                 break;
             case "jenkins":
+                assertProp(data, "authUser", true);
+                assertType(data.authUser, "data.authUser", "string");
                 if (data.port) {
                     data.port = parseInt(data.port, 10);
                 }
@@ -65,8 +67,6 @@ class Backend extends Type {
                 assertType(data.authToken, "data.authToken", "string");
                 assertType(data.pollDelay, "data.pollDelay", "number");
                 break;
-            default:
-                throw new Error(`Unknown backend type ${data.backendType}`);
             }
         } else if (event === "update") {
             assertProp(data, "_id", false);
