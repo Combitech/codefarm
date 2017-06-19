@@ -146,8 +146,8 @@ class Step extends Type {
         if (!this.jobSpec) {
             ServiceMgr.instance.log("verbose", `Step ${this.name} trigger job: no jobspec, finalizing step`);
             await this.evaluateStatus();
+            await this.runTagScript(null, baseline, "success");
             await this.notifyStatus(baseline, "success");
-            await this.runTagScript();
 
             return;
         }
