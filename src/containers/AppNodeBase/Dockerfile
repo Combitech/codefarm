@@ -11,7 +11,7 @@ FROM codefarm/nodebase:0.0.0
 LABEL Description="Base image for Code Farm node applications including libraries" Version="1.0"
 ENV depTmpRoot ${farmerHome}/deps
 RUN mkdir -p ${depTmpRoot}/src
-ADD deps/deps.tgz ${depTmpRoot}/src
+ADD deps/deps.tar ${depTmpRoot}/src
 USER root
 RUN chown -R ${user} ${depTmpRoot}
 USER ${user}

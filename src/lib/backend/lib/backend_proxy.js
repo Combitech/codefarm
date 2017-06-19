@@ -98,8 +98,8 @@ class BackendProxy {
                         const backend = require(backendEntryPath);
                         log.info(`Loaded backend ${backendName} at ${backendPath}`);
                         backendTypes[backendName] = backend;
-                    } catch (err) {
-                        log.warn(`Failed to load backend at ${backendPath}: ${err}`);
+                    } catch (error) {
+                        log.error(`Failed to load backend at ${backendPath}`, error);
                     }
                 }
             }
