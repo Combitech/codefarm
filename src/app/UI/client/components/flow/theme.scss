@@ -191,6 +191,16 @@
         }
 
         .allocated {
+            display: inline-block;
+
+            &-1 {
+                animation: pend 2s infinite ease-in-out;
+            }
+
+            &-2 {
+                animation: pendHalf 4s infinite ease-in-out;
+            }
+
             .icon {
                 fill: $cf-color-job-allocated;
             }
