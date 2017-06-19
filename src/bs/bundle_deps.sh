@@ -12,5 +12,5 @@ rm -f $dep_path
 
 # Bundle deps
 pushd $gitroot/src
-tar -czf $dep_path lib bs --exclude='*/node_modules' --exclude='*/build'
+tar --exclude='*/node_modules' --exclude='*/build' -czf $dep_path lib bs
 popd
