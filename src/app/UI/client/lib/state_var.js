@@ -66,7 +66,7 @@ const stateVar = (inst, propName, initialValue) => {
 
             return varInst;
         },
-        set: (value) => {
+        set: (value, callback) => {
             const newVarInst = varInst.create(value);
 
             if (varInst !== newVarInst) {
@@ -89,9 +89,10 @@ const stateVar = (inst, propName, initialValue) => {
                         query: query
                     });
                 } else {
+                    const optArgs = (typeof callback === "function") ? [ callback ] : [];
                     inst.setState({
                         [propName]: newVarInst
-                    });
+                    }, ...optArgs);
                 }
 
                 return newVarInst;

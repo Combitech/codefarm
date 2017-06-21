@@ -95,7 +95,10 @@ class Main extends Service {
             const webpack = require("webpack");
             const webpackMiddleware = require("koa-webpack-dev-middleware");
 
-            const webpackCfg = buildWebpackCfg({ dev: true });
+            const webpackCfg = buildWebpackCfg({
+                dev: true,
+                plugin: this.config.plugin
+            });
             webConfig.webpackMiddleware = webpackMiddleware(
                 webpack(webpackCfg), {
                     log: this.log.bind(this, "info"),
