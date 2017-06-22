@@ -53,6 +53,7 @@ describe("CodeRepo", async () => {
                 },
                 backends: {
                 },
+                backendSearchPath: [],
                 servicecom: {
                     testMode: true
                 },

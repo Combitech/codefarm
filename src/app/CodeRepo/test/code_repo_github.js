@@ -62,6 +62,7 @@ describe("GithubBackend", async () => {
                 },
                 backends: {
                 },
+                backendSearchPath: [],
                 servicecom: {
                     testMode: true
                 },

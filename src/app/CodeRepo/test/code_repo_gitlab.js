@@ -62,6 +62,7 @@ describe("GitlabBackend", async () => {
                 },
                 backends: {
                 },
+                backendSearchPath: [],
                 servicecom: {
                     testMode: true
                 },
