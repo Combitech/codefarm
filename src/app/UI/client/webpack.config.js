@@ -25,12 +25,24 @@ module.exports = function(options) {
 
     const extractStyles = new ExtractTextPlugin("[name].css");
 
+    const entryPoints = [
+        "babel-polyfill"
+    ];
+    const pluginPaths = [];
+    if (options && options.plugin) {
+        const plugins = (options.plugin instanceof Array) ? options.plugin : [ options.plugin ];
+        for (const plugin of plugins) {
+            const pluginAbsPath = path.resolve(plugin);
+            console.log("webpack.config using plugin", pluginAbsPath);
+            entryPoints.push(pluginAbsPath);
+            pluginPaths.push(path.dirname(pluginAbsPath));
+        }
+    }
+    entryPoints.push(path.join(__dirname, "lib", "client.js"));
+
     const cfg = {
         entry: {
-            bundle: [
-                "babel-polyfill",
-                path.join(__dirname, "lib", "client.js")
-            ]
+            bundle: entryPoints
         },
         output: {
             path: path.join(__dirname, "static"),
@@ -47,7 +59,8 @@ module.exports = function(options) {
                         __dirname,
                         /\/managers\/[^\/]+\/client\//,
                         ...explicitCodeFarmLibIncludes,
-                        ...explicitModuleIncludes
+                        ...explicitModuleIncludes,
+                        ...pluginPaths
                     ],
                     exclude: (absPath) => {
                         const isNodeModule = /node_modules/.test(absPath);

@@ -12,6 +12,7 @@ import "react-toolbox/lib/commons.scss";
 // Add global styles to html head
 import "ui-styles/global.scss";
 import ActiveUser from "ui-observables/active_user";
+import { startPlugins, getRegisteredPluginNames } from "ui-lib/plugin_util";
 
 // https://github.com/petkaantonov/bluebird/issues/903
 // https://github.com/babel/babel/issues/3922
@@ -49,9 +50,9 @@ const checkServerInfo = () => {
     });
 };
 
-window.onload = () => {
+const startUI = async () => {
     console.log("Connecting to backend...", params);
-    api.connect(params, (status, message) => {
+    await api.connect(params, (status, message) => {
         if (status === "timeout") {
             console.error(message);
         } else if (status === "disconnect") {
@@ -61,16 +62,25 @@ window.onload = () => {
 
             checkServerInfo();
         }
-    })
-    .then(() => {
-        console.log(`Connected to backend, available APIs are ${Object.keys(JSON.parse(JSON.stringify(api))).join(", ")}`);
+    });
 
-        checkServerInfo();
+    console.log(`Connected to backend, available APIs are ${Object.keys(JSON.parse(JSON.stringify(api))).join(", ")}`);
+    checkServerInfo();
 
-        ActiveUser.instance.start();
-        ReactDOM.render(<AppRoutes routes={routes} />, document.getElementById("main"));
-    })
+    ActiveUser.instance.start();
+    console.log(`Registered plugins: ${getRegisteredPluginNames().join(",")}`);
+    try {
+        await startPlugins();
+    } catch (error) {
+        console.error("Failed to start plugins", error);
+    }
+
+    ReactDOM.render(<AppRoutes routes={routes} />, document.getElementById("main"));
+};
+
+window.onload = () => {
+    startUI()
     .catch((error) => {
-        console.error("Failed to connect to backend", error);
+        console.error("Failed to start UI", error);
     });
 };

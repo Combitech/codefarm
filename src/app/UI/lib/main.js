@@ -1,7 +1,7 @@
 "use strict";
 
 const os = require("os");
-const { join } = require("path");
+const path = require("path");
 const clone = require("clone");
 const api = require("api.io");
 const Web = require("web");
@@ -11,6 +11,7 @@ const { Service } = require("service");
 const MgmtMgr = require("./managers/mgmt");
 const AuthMgr = require("./managers/auth");
 const ServiceProxy = require("./service_proxy");
+const { findDirsWithEntry } = require("backend");
 
 const Apis = [
     require("./apis/auth"),
@@ -86,8 +87,8 @@ class Main extends Service {
         }
 
         webConfig.serveStatic = [
-            join(__dirname, "..", "client", "static"),
-            join(__dirname, "..", "node_modules", "cheser-icon-theme")
+            path.join(__dirname, "..", "client", "static"),
+            path.join(__dirname, "..", "node_modules", "cheser-icon-theme")
         ];
 
         if (!this.productionMode) {
@@ -95,7 +96,19 @@ class Main extends Service {
             const webpack = require("webpack");
             const webpackMiddleware = require("koa-webpack-dev-middleware");
 
-            const webpackCfg = buildWebpackCfg({ dev: true });
+            const plugins = [];
+            const pluginSearchPaths = [
+                path.join(__dirname, "..", "client", "plugins"),
+                ...this.config.pluginSearchPath
+            ];
+            for (const searchPath of pluginSearchPaths) {
+                const entries = await findDirsWithEntry(searchPath);
+                plugins.push(...entries);
+            }
+            const webpackCfg = buildWebpackCfg({
+                dev: true,
+                plugin: plugins.map((p) => p.path)
+            });
             webConfig.webpackMiddleware = webpackMiddleware(
                 webpack(webpackCfg), {
                     log: this.log.bind(this, "info"),

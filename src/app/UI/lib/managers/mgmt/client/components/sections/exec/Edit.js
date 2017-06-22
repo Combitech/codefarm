@@ -5,12 +5,15 @@ import LightComponent from "ui-lib/light_component";
 import Input from "react-toolbox/lib/input";
 import Dropdown from "react-toolbox/lib/dropdown";
 import Autocomplete from "react-toolbox/lib/autocomplete";
-import Slider from "react-toolbox/lib/slider";
 import {
     Form as TAForm,
     Section as TASection,
     utils as tautils
 } from "ui-components/type_admin";
+import stateVar from "ui-lib/state_var";
+import DirectBackendEdit from "./DirectBackendEdit";
+import JenkinsBackendEdit from "./JenkinsBackendEdit";
+import { getPluginProp } from "ui-lib/plugin_util";
 
 const BACKEND_TYPE = {
     DIRECT: "direct",
@@ -36,60 +39,80 @@ class Edit extends LightComponent {
                 editable: false,
                 required: () => true,
                 defaultValue: BACKEND_TYPE.DIRECT
-            },
-            "privateKeyPath": {
-                editable: true,
-                required: () => this.state.backendType.value === BACKEND_TYPE.DIRECT,
-                defaultValue: ""
-            },
-            "hostUrl": {
-                editable: true,
-                required: () => this.state.backendType.value === BACKEND_TYPE.JENKINS,
-                defaultValue: ""
-            },
-            "authUser": {
-                editable: true,
-                required: () => true,
-                defaultValue: ""
-            },
-            "authToken": {
-                editable: true,
-                required: () => this.state.backendType.value === BACKEND_TYPE.JENKINS,
-                defaultValue: ""
-            },
-            "port": {
-                editable: true,
-                required: () => this.state.backendType.value === BACKEND_TYPE.JENKINS,
-                defaultValue: ""
-            },
-            "pollDelay": {
-                editable: true,
-                required: () => this.state.backendType.value === BACKEND_TYPE.JENKINS,
-                defaultValue: 5000
             }
         };
 
-        this.state = tautils.createStateProperties(this, this.itemProperties, this.props.item);
+        this.state = Object.assign({
+            backendData: stateVar(this, "backendData", {}),
+            backendDataValid: stateVar(this, "backendDataValid", false)
+        }, tautils.createStateProperties(this, this.itemProperties, this.props.item));
     }
 
     getBackendTypes() {
-        return [
+        const backendTypes = [
             { value: BACKEND_TYPE.DIRECT, label: "Direct" },
             { value: BACKEND_TYPE.JENKINS, label: "Jenkins" }
         ];
+        const fromPlugins = getPluginProp("exec.backend.edit.types");
+        fromPlugins.forEach((v) => backendTypes.push(...v));
+
+        return backendTypes;
     }
 
     async onConfirm() {
-        const data = tautils.serialize(this.state, this.itemProperties, this.props.item);
+        const commonData = tautils.serialize(this.state, this.itemProperties, this.props.item);
+        const backendData = this.state.backendData.value;
+        const data = Object.assign({}, commonData, backendData);
+
         await this.props.onSave("exec.backend", data, {
             create: !this.props.item
         });
     }
 
+    _isValid() {
+        const commonValid = tautils.isValid(this.state, this.itemProperties);
+        const backendValid = this.state.backendDataValid.value;
+
+        return commonValid && backendValid;
+    }
+
     render() {
-        console.log("EditLocal-RENDER", this.props, this.state);
+        this.log("render", this.props, this.state);
 
         const backendTypes = this.getBackendTypes();
+        let backendComponent;
+        if (this.state.backendType.value === BACKEND_TYPE.DIRECT) {
+            backendComponent = (
+                <DirectBackendEdit
+                    theme={this.props.theme}
+                    item={this.props.item}
+                    data={this.state.backendData}
+                    isValid={this.state.backendDataValid}
+                />
+            );
+        } else if (this.state.backendType.value === BACKEND_TYPE.JENKINS) {
+            backendComponent = (
+                <JenkinsBackendEdit
+                    theme={this.props.theme}
+                    item={this.props.item}
+                    data={this.state.backendData}
+                    isValid={this.state.backendDataValid}
+                />
+            );
+        } else {
+            const componentKey = `exec.backend.edit.component.${this.state.backendType.value}`;
+            const PluginBackendComponent = getPluginProp(componentKey)[0];
+            if (PluginBackendComponent) {
+                backendComponent = (
+                    <PluginBackendComponent
+                        theme={this.props.theme}
+                        item={this.props.item}
+                        data={this.state.backendData}
+                        isValid={this.state.backendDataValid}
+                    />
+                );
+            }
+        }
 
         return (
             <TASection
@@ -98,7 +121,7 @@ class Edit extends LightComponent {
                 menuItems={this.props.menuItems}
             >
                 <TAForm
-                    confirmAllowed={tautils.isValid(this.state, this.itemProperties)}
+                    confirmAllowed={this._isValid()}
                     confirmText={this.props.item ? "Save" : "Create"}
                     primaryText={`${this.props.item ? "Edit" : "Create"} execution backend`}
                     secondaryText="An execution backend contains information about..."
@@ -123,88 +146,7 @@ class Edit extends LightComponent {
                         source={backendTypes}
                         value={this.state.backendType.value}
                     />
-                    {this.state.backendType.value === BACKEND_TYPE.DIRECT &&
-                        <div>
-                            <Input
-                                type="text"
-                                label="Path to private key for the login user"
-                                name="privateKeyPath"
-                                floating={true}
-                                required={this.itemProperties.privateKeyPath.required()}
-                                disabled={this.props.item && !this.itemProperties.privateKeyPath.editable}
-                                value={this.state.privateKeyPath.value}
-                                onChange={this.state.privateKeyPath.set}
-                            />
-                            <Input
-                                type="text"
-                                label="User to authenticate as"
-                                name="authUser"
-                                floating={true}
-                                required={this.itemProperties.authUser.required()}
-                                disabled={this.props.item && !this.itemProperties.authUser.editable}
-                                value={this.state.authUser.value}
-                                onChange={this.state.authUser.set}
-                            />
-                        </div>
-                    }
-                    {this.state.backendType.value === BACKEND_TYPE.JENKINS &&
-                        <div>
-                            <Input
-                                type="text"
-                                label="Jenkins host URL"
-                                name="hostUrl"
-                                floating={true}
-                                required={this.itemProperties.hostUrl.required()}
-                                disabled={this.props.item && !this.itemProperties.hostUrl.editable}
-                                value={this.state.hostUrl.value}
-                                onChange={this.state.hostUrl.set}
-                            />
-                            <Input
-                                type="text"
-                                label="Jenkins user to authenticate as"
-                                name="authUser"
-                                floating={true}
-                                required={this.itemProperties.authUser.required()}
-                                disabled={this.props.item && !this.itemProperties.authUser.editable}
-                                value={this.state.authUser.value}
-                                onChange={this.state.authUser.set}
-                            />
-                            <Input
-                                type="text"
-                                label="Jenkins user token to authenticate with"
-                                name="authToken"
-                                floating={true}
-                                required={this.itemProperties.authToken.required()}
-                                disabled={this.props.item && !this.itemProperties.authToken.editable}
-                                value={this.state.authToken.value}
-                                onChange={this.state.authToken.set}
-                            />
-                            <Input
-                                type="number"
-                                label="Notification port for Jenkins events"
-                                name="port"
-                                floating={true}
-                                required={this.itemProperties.port.required()}
-                                disabled={this.props.item && !this.itemProperties.port.editable}
-                                value={this.state.port.value}
-                                onChange={this.state.port.set}
-                            />
-                            <div>
-                                <div className={this.props.theme.subtitle}>Jenkins console poll delay (msec)</div>
-                                <Slider
-                                    pinned={true}
-                                    snaps={true}
-                                    min={1000}
-                                    max={25000}
-                                    step={1000}
-                                    required={this.itemProperties.pollDelay.required()}
-                                    editable={!(this.props.item && !this.itemProperties.pollDelay.editable)}
-                                    value={this.state.pollDelay.value}
-                                    onChange={this.state.pollDelay.set}
-                                />
-                            </div>
-                        </div>
-                    }
+                    {backendComponent}
                     <Autocomplete
                         selectedPosition="below"
                         allowCreate={true}
