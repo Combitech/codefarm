@@ -50,6 +50,10 @@ class JenkinsBackendEdit extends LightComponent {
         this.props.isValid.set(isValid);
     }
 
+    componentDidMount() {
+        this._formDataUpdated();
+    }
+
     render() {
         return (
             <div>

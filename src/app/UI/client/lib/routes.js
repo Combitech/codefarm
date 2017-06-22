@@ -33,6 +33,7 @@ import mgmtPageUserrepoBackendRoutes from "ui-mgr/mgmt/client/components/section
 import mgmtPageUserrepoPolicyRoutes from "ui-mgr/mgmt/client/components/sections/userrepo_policy/routes";
 import mgmtPageCoderepoRoutes from "ui-mgr/mgmt/client/components/sections/coderepo/routes";
 import mgmtPageArtifactrepoRoutes from "ui-mgr/mgmt/client/components/sections/artifactrepo/routes";
+import mgmtPageBaselinerepoRoutes from "ui-mgr/mgmt/client/components/sections/baselinerepo/routes";
 import mgmtPageLogrepoRoutes from "ui-mgr/mgmt/client/components/sections/logrepo/routes";
 import mgmtPageExecRoutes from "ui-mgr/mgmt/client/components/sections/exec/routes";
 
@@ -64,6 +65,7 @@ const routes = (
             {mgmtPageUserrepoPolicyRoutes}
             {mgmtPageCoderepoRoutes}
             {mgmtPageArtifactrepoRoutes}
+            {mgmtPageBaselinerepoRoutes}
             {mgmtPageLogrepoRoutes}
             {mgmtPageExecRoutes}
         </Route>

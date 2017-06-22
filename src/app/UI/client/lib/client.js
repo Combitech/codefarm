@@ -68,7 +68,7 @@ const startUI = async () => {
     checkServerInfo();
 
     ActiveUser.instance.start();
-    console.log(`Registered plugins: ${getRegisteredPluginNames().join(",")}`);
+    console.log(`Registered plugins: ${getRegisteredPluginNames().join(", ")}`);
     try {
         await startPlugins();
     } catch (error) {
