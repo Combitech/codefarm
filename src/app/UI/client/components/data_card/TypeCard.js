@@ -22,6 +22,7 @@ import FlowCard from "./FlowCard";
 import BaselineSpecificationCard from "./BaselineSpecificationCard";
 import BaselineCard from "./BaselineCard";
 import CollectorCard from "./CollectorCard";
+import { getPluginProp } from "ui-lib/plugin_util";
 
 const Cards = {
     "coderepo.revision": RevisionCard,
@@ -49,7 +50,11 @@ const Cards = {
 
 class TypeCard extends React.PureComponent {
     render() {
-        const Card = Cards[this.props.item.type];
+        // Check if any plugin matches type
+        let Card = getPluginProp(`ui.type_card.component.${this.props.item.type}`)[0];
+        if (!Card) {
+            Card = Cards[this.props.item.type];
+        }
 
         if (!Card) {
             return (
