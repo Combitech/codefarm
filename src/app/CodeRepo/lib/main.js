@@ -1,6 +1,7 @@
 "use strict";
 
 const os = require("os");
+const path = require("path");
 const Database = require("database");
 const Web = require("web");
 const { Service } = require("service");
@@ -42,7 +43,13 @@ class Main extends Service {
             this.statesControllerInstance
         ]);
 
-        await BackendProxy.instance.start(this.config.backends, Repository, Revision, this.config.backendsConfig);
+        const backendConfig = Object.assign({
+            searchPaths: [
+                path.join(__dirname, "backends"),
+                ...this.config.backendSearchPath
+            ]
+        }, this.config.backends);
+        await BackendProxy.instance.start(backendConfig, Repository, Revision, this.config.backendsConfig);
         this.addDisposable(BackendProxy.instance);
 
         await Web.instance.start(this.config.web, routes);
