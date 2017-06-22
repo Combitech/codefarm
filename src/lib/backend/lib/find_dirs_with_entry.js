@@ -10,15 +10,19 @@ const findDirsWithEntry = async (baseDir, entryFile = "index.js") => {
     for (const dirName of dirContent) {
         const dirPath = path.join(baseDir, dirName);
         const entryPath = path.join(dirPath, entryFile);
+
         try {
-            fs.accessAsync(entryPath, fs.constants.R_OK);
-            res.push({
-                path: entryPath,
-                name: dirName,
-                dir: dirPath
-            });
+            const dirStat = await fs.statAsync(dirPath);
+            if (dirStat.isDirectory()) {
+                await fs.accessAsync(entryPath, fs.constants.R_OK);
+                res.push({
+                    path: entryPath,
+                    name: dirName,
+                    dir: dirPath
+                });
+            }
         } catch (error) {
-            log.warn(`Path ${entryPath} isn't readable, skipping...`, error);
+            log.warn(`Path ${entryPath} isn't accessible, skipping...`, error);
         }
     }
 
