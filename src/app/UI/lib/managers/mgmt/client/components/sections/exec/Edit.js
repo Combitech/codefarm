@@ -101,10 +101,10 @@ class Edit extends LightComponent {
             );
         } else {
             const componentKey = `exec.backend.edit.component.${this.state.backendType.value}`;
-            const pluginBackendComponent = getPluginProp(componentKey)[0];
-            if (pluginBackendComponent) {
+            const PluginBackendComponent = getPluginProp(componentKey)[0];
+            if (PluginBackendComponent) {
                 backendComponent = (
-                    <pluginBackendComponent
+                    <PluginBackendComponent
                         theme={this.props.theme}
                         item={this.props.item}
                         data={this.state.backendData}

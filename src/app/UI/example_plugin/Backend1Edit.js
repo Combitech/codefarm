@@ -1,16 +1,20 @@
+"use strict";
 
 import React from "react";
 import PropTypes from "prop-types";
 import LightComponent from "ui-lib/light_component";
 import Input from "react-toolbox/lib/input";
+/*
+TODO: For some reason importing utils via type_admin using index.js doesn't work.
 import {
     utils as tautils
 } from "ui-components/type_admin";
+*/
+import tautils from "ui-components/type_admin/utils";
 
 class Backend1Edit extends LightComponent {
     constructor(props) {
         super(props);
-        console.log("!! backend1Edit ctor");
 
         this.itemProperties = {
             "prop1": {

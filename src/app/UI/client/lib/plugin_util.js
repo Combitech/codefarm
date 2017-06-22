@@ -20,22 +20,8 @@ const getPluginProp = (key) => plugins
     .map((p) => p.PluginClass.getProp(key))
     .filter((v) => v != null); // eslint-disable-line eqeqeq,no-eq-null
 
-const getPluginComponent = (key) => {
-    for (const p of plugins) {
-        if (p.instance) {
-            const comp = p.instance.getComponent(key);
-            if (comp) {
-                return comp;
-            }
-        }
-    }
-
-    return null;
-};
-
 export {
     registerPlugin,
     startPlugins,
-    getPluginProp,
-    getPluginComponent
+    getPluginProp
 };
