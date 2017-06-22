@@ -1,7 +1,7 @@
 "use strict";
 
 const os = require("os");
-const { join } = require("path");
+const path = require("path");
 const clone = require("clone");
 const api = require("api.io");
 const Web = require("web");
@@ -87,8 +87,8 @@ class Main extends Service {
         }
 
         webConfig.serveStatic = [
-            join(__dirname, "..", "client", "static"),
-            join(__dirname, "..", "node_modules", "cheser-icon-theme")
+            path.join(__dirname, "..", "client", "static"),
+            path.join(__dirname, "..", "node_modules", "cheser-icon-theme")
         ];
 
         if (!this.productionMode) {
@@ -97,7 +97,11 @@ class Main extends Service {
             const webpackMiddleware = require("koa-webpack-dev-middleware");
 
             const plugins = [];
-            for (const searchPath of this.config.pluginSearchPath) {
+            const pluginSearchPaths = [
+                path.join(__dirname, "..", "client", "plugins"),
+                ...this.config.pluginSearchPath
+            ];
+            for (const searchPath of pluginSearchPaths) {
                 const entries = await findDirsWithEntry(searchPath);
                 plugins.push(...entries);
             }
