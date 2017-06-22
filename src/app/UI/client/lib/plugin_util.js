@@ -8,6 +8,9 @@ const registerPlugin = (plugin) => {
     });
 };
 
+const getRegisteredPluginNames = () => plugins
+    .map((p) => p.PluginClass.getName());
+
 const startPlugins = async (...args) => {
     for (const plugin of plugins) {
         console.log(`Starting plugin ${plugin.PluginClass.getName()}...`);
@@ -22,6 +25,7 @@ const getPluginProp = (key) => plugins
 
 export {
     registerPlugin,
+    getRegisteredPluginNames,
     startPlugins,
     getPluginProp
 };
