@@ -2,6 +2,7 @@
 
 const fs = require("fs-extra-promise");
 const path = require("path");
+const log = require("log");
 
 const findDirsWithEntry = async (baseDir, entryFile = "index.js") => {
     const res = [];

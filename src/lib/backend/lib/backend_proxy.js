@@ -3,8 +3,6 @@
 const { notification } = require("typelib");
 const log = require("log");
 const singleton = require("singleton");
-const fs = require("fs-extra-promise");
-const path = require("path");
 const findDirsWithEntry = require("./find_dirs_with_entry");
 
 const BACKEND_ENTRY_FILE = "index.js";
