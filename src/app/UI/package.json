@@ -36,7 +36,8 @@
     "misc",
     "servicecom",
     "singleton",
-    "loglib"
+    "loglib",
+    "backend"
   ],
   "dependencies": {
     "api.io": "^0.7.1",

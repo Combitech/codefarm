@@ -11,6 +11,7 @@ const { Service } = require("service");
 const MgmtMgr = require("./managers/mgmt");
 const AuthMgr = require("./managers/auth");
 const ServiceProxy = require("./service_proxy");
+const { findDirsWithEntry } = require("backend");
 
 const Apis = [
     require("./apis/auth"),
@@ -95,9 +96,14 @@ class Main extends Service {
             const webpack = require("webpack");
             const webpackMiddleware = require("koa-webpack-dev-middleware");
 
+            const plugins = [];
+            for (const searchPath of this.config.pluginSearchPath) {
+                const entries = await findDirsWithEntry(searchPath);
+                plugins.push(...entries);
+            }
             const webpackCfg = buildWebpackCfg({
                 dev: true,
-                plugin: this.config.plugin
+                plugin: plugins.map((p) => p.path)
             });
             webConfig.webpackMiddleware = webpackMiddleware(
                 webpack(webpackCfg), {

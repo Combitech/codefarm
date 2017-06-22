@@ -27,8 +27,8 @@ const argv = yargs
     type: "string",
     default: path.join(__dirname, "cfg", "config.json")
 })
-.option("plugin", {
-    describe: "Path to plugin entry point",
+.option("pluginSearchPath", {
+    describe: "Path to search for plugins",
     type: "array",
     // Need to resolve relative paths into absolute paths here
     // since they are given relative to this file and used elsewhere.

@@ -5,6 +5,7 @@ const log = require("log");
 const singleton = require("singleton");
 const fs = require("fs-extra-promise");
 const path = require("path");
+const findDirsWithEntry = require("./find_dirs_with_entry");
 
 const BACKEND_ENTRY_FILE = "index.js";
 
@@ -90,16 +91,14 @@ class BackendProxy {
 
         if (config.searchPaths) {
             for (const backendDir of config.searchPaths) {
-                const dirContent = await fs.readdirAsync(backendDir);
-                for (const backendName of dirContent) {
-                    const backendPath = path.join(backendDir, backendName);
-                    const backendEntryPath = path.join(backendPath, BACKEND_ENTRY_FILE);
+                const backendEntries = await findDirsWithEntry(backendDir, BACKEND_ENTRY_FILE);
+                for (const entry of backendEntries) {
                     try {
-                        const backend = require(backendEntryPath);
-                        log.info(`Loaded backend ${backendName} at ${backendPath}`);
-                        backendTypes[backendName] = backend;
+                        const backend = require(entry.path);
+                        log.info(`Loaded backend ${entry.name} at ${entry.dir}`);
+                        backendTypes[entry.name] = backend;
                     } catch (error) {
-                        log.error(`Failed to load backend at ${backendPath}`, error);
+                        log.error(`Failed to load backend at ${entry.dir}`, error);
                     }
                 }
             }
