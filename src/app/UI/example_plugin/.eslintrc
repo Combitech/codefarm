@@ -1,0 +1,16 @@
+{
+    "extends": [
+        "../.eslintrc",
+        "plugin:react/recommended",
+        "plugin:jsx-control-statements/recommended"
+    ],
+    "parserOptions": {
+        "ecmaFeatures": {
+            "jsx": true
+        }
+    },
+    "plugins": [
+        "react",
+        "jsx-control-statements"
+    ]
+}

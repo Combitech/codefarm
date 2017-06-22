@@ -30,10 +30,6 @@ class ExamplePlugin {
     static getProp(key) {
         return props[key];
     }
-
-    static getComponent(key) {
-        return components[key];
-    }
 }
 
 registerPlugin(ExamplePlugin);

@@ -12,7 +12,7 @@ import "react-toolbox/lib/commons.scss";
 // Add global styles to html head
 import "ui-styles/global.scss";
 import ActiveUser from "ui-observables/active_user";
-import { startPlugins } from "ui-lib/plugin_util";
+import { startPlugins, getRegisteredPluginNames } from "ui-lib/plugin_util";
 
 // https://github.com/petkaantonov/bluebird/issues/903
 // https://github.com/babel/babel/issues/3922
@@ -68,6 +68,7 @@ const startUI = async () => {
     checkServerInfo();
 
     ActiveUser.instance.start();
+    console.log(`Registered plugins: ${getRegisteredPluginNames().join(",")}`);
     try {
         await startPlugins();
     } catch (error) {
