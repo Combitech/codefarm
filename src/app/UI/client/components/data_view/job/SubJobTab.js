@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 import moment from "moment";
 import Immutable from "immutable";
 import LightComponent from "ui-lib/light_component";
-import { CardList, SubJobCard } from "ui-components/data_card";
+import { CardList, TypeCard } from "ui-components/data_card";
 import SubJobs from "ui-observables/subjob_list";
 
 class SubJobTab extends LightComponent {
@@ -37,7 +37,7 @@ class SubJobTab extends LightComponent {
             id: subjob.get("_id"),
             time: moment(subjob.get("finished") ? subjob.get("finished") : subjob.get("created")).unix(),
             item: subjob.toJS(),
-            Card: SubJobCard,
+            Card: TypeCard,
             props: {}
         }));
 
