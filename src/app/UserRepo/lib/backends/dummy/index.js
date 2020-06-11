@@ -3,7 +3,7 @@
 const { assertType, assertProp } = require("misc");
 const argon2 = require("argon2");
 
-const MIN_PASSWORD_LENGTH = 8;
+const MIN_PASSWORD_LENGTH = 5;
 
 class Dummy {
     constructor(name, params) {

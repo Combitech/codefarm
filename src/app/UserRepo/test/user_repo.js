@@ -281,7 +281,7 @@ describe("UserRepo", () => {
             const testUser = {
                 _id: "failedTestUser",
                 name: "failed test user",
-                password: "1234567"
+                password: "1234"
             };
 
             try {
@@ -289,7 +289,7 @@ describe("UserRepo", () => {
                 assert(false, "Unexpected user add");
             } catch (error) {
                 assert.strictEqual(error.statusCode, 400);
-                assert.match(error.message, /Password to short, minimum length is 8/);
+                assert.match(error.message, /Password to short, minimum length is 5/);
             }
         });
 

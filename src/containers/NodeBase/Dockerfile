@@ -7,10 +7,10 @@
 # FROM codefarm/nodebase:0.0.0
 #
 
-FROM node:7
+FROM node:8
 LABEL Description="Base image for Code Farm node applications" Version="1.0"
 
-ENV user farmer
+ENV user codefarm
 ENV farmerHome /home/$user
 ENV npmDir ${farmerHome}/npm
 ENV appRoot ${farmerHome}/codefarm
