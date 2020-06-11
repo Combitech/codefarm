@@ -274,10 +274,21 @@ class GerritBackend extends AsyncEventEmitter {
                 if (!userRef) {
                     ServiceMgr.instance.log("info", `Failed to resolve reviewer gerrit email '${event.patchSet.uploader.email}' to user`);
                 } else {
-                    ServiceMgr.instance.log("verbose", `Reviewer gerrit email '${event.patchSet.uploader.email}' resolved to user '${userRef.id}'`);
+                    ServiceMgr.instance.log("info", `Reviewer gerrit email '${event.patchSet.uploader.email}' resolved to user '${userRef.id}'`);
                 }
 
-                const state = parseInt(event.approvals[0].value, 10);
+                const state = event.approvals.reduce((acc, set) => {
+                    if (set.type === "Code-Review") {
+                        if (acc < 0 || +set.value < 0) {
+                            return Math.min(acc, set.value);
+                        } else {
+                            return Math.max(acc, set.value);
+                        }
+                    }
+
+                    return acc;
+                }, 0);
+                
                 if (state === 0) {
                     await revision.addReview(userRef, alias, this.Revision.ReviewState.NEUTRAL);
                 } else if (state < 0) {
@@ -285,7 +296,7 @@ class GerritBackend extends AsyncEventEmitter {
                 } else if (state > 0) {
                     await revision.addReview(userRef, alias, this.Revision.ReviewState.APPROVED);
                 } else {
-                    ServiceMgr.instance.log("verbose", `unknown review state ${state} on ${revision._id}`);
+                    ServiceMgr.instance.log("info", `unknown review state ${state} on ${revision._id}`);
                 }
             }
         }

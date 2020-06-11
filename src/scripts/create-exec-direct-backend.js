@@ -22,6 +22,13 @@ const argv = yargs
     requiresArg: true,
     default: "direct"
 })
+.option("u", {
+    alias: "user",
+    describe: "User for authentification",
+    type: "string",
+    requiresArg: true,
+    default: "admin"
+})
 .option("privateKeyPath", {
     describe: "Private key matching the public key uploaded for the user specified with the --uri option",
     type: "string",
@@ -37,6 +44,7 @@ const run = async () => {
         body: {
             _id: argv.id,
             backendType: argv.type,
+            authUser: argv.user,
             privateKeyPath: argv.privateKeyPath
         },
         json: true
