@@ -56,7 +56,8 @@ class NotificationList extends LightComponent {
         );
     }
 }
-
+/*
+*/
 NotificationList.propTypes = {
     theme: PropTypes.object
 };

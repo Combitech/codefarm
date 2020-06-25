@@ -347,7 +347,7 @@ class Control {
     async _allocateJob(excludeJobIds = []) {
         const job = await this._getOldestJob(excludeJobIds);
         if (!job) {
-            ServiceMgr.instance.log("verbose", "_allocateJob - found no jobs");
+            ServiceMgr.instance.log("info", "_allocateJob - found no jobs");
 
             return false;
         }
@@ -355,7 +355,7 @@ class Control {
         const tagCriteria = new TagCriteria(job.criteria);
         const leastUtlizedSlave = await this._getLeastUtilizedSlave(tagCriteria);
         if (!leastUtlizedSlave) {
-            ServiceMgr.instance.log("verbose", `_allocateJob - found no available slave matching criteria ${job.criteria}`);
+            ServiceMgr.instance.log("info", `_allocateJob - found no available slave matching criteria ${job.criteria}`);
 
             return false;
         }
@@ -367,7 +367,7 @@ class Control {
             // allocate on an executor will trigger the event executor.allocated which
             // will set the job to ongoing
             await executor.allocate(job, leastUtlizedSlave);
-            ServiceMgr.instance.log("verbose", `_allocateJob - Allocated executor ${executor._id} on slave ${leastUtlizedSlave._id} for job ${job._id}`);
+            ServiceMgr.instance.log("info", `_allocateJob - Allocated executor ${executor._id} on slave ${leastUtlizedSlave._id} for job ${job._id}`);
         } catch (error) {
             ServiceMgr.instance.log("error", "Error allocating executor", error);
             executor = null;
@@ -399,7 +399,7 @@ class Control {
                 skipJobIds.push(alloc.job._id);
             }
         }
-        ServiceMgr.instance.log("verbose", `_startJobs - started ${numJobsStarted} jobs`);
+        ServiceMgr.instance.log("info", `_startJobs - started ${numJobsStarted} jobs`);
     }
 
     async _waitForJobCompletion(jobId) {

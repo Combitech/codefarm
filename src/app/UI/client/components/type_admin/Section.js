@@ -13,7 +13,7 @@ class Section extends LightComponent {
             <div className={this.props.theme.section}>
                 <If condition={this.props.breadcrumbs || this.props.controls || this.props.menuItems}>
                     <div className={this.props.theme.header}>
-                        <If condition={this.props.menuItems.length > 0}>
+                        <If condition={this.props.menuitems && this.props.menuItems.length > 0}>
                             <IconMenu
                                 className={this.props.theme.button}
                                 icon="more_vert"

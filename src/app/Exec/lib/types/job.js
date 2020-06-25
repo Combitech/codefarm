@@ -36,15 +36,14 @@ class Job extends Type {
 
         this.name = false;
         this.criteria = "";
-        this.executeOnSlaveId = false;
         this.script = false;
-        this.baseline = false;
-        this.jobSpec = false;
-        this.requeueOnFailure = true;
         this.workspaceName = false;
         this.workspaceCleanup = CLEANUP_POLICY.KEEP;
+        this.jobSpec = false;
+        
+        this.baseline = false;
+        this.requeueOnFailure = true;
 
-        this.slaveId = false;
         this.started = false;
         this.finished = false;
         this.status = STATUS.QUEUED;
