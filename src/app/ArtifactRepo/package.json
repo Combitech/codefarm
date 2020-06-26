@@ -40,20 +40,20 @@
     "servicecom"
   ],
   "dependencies": {
-    "async-busboy": "^0.4.0",
+    "async-busboy": "^1.0.1",
     "digest-stream": "^2.0.0",
-    "fs-extra-promise": "^0.4.1",
+    "fs-extra-promise": "^1.0.1",
     "git-list-pack": "0.0.10",
-    "moment": "^2.18.1",
-    "request": "^2.81.0",
-    "request-promise": "^4.2.0",
-    "yargs": "^7.0.2"
+    "moment": "^2.27.0",
+    "request": "^2.88.2",
+    "request-promise": "^4.2.5",
+    "yargs": "^15.3.1"
   },
   "devDependencies": {
-    "babel-eslint": "^7.2.1",
-    "chai": "^3.5.0",
-    "eslint": "^3.19.0",
-    "get-port": "^3.1.0",
-    "mocha": "^3.1.2"
+    "babel-eslint": "^10.1.0",
+    "chai": "^4.2.0",
+    "eslint": "^6.8.0",
+    "get-port": "^5.1.1",
+    "mocha": "^7.2.0"
   }
 }
