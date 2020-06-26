@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "compile": "echo 'No compile needed'",
-    "test": "mocha --recursive",
+    "test": "mocha --exit --recursive",
     "lint": "git ls-files \"*.js\" | xargs eslint"
   },
   "author": "Mattias Runge <mattias.runge@combitech.se>",
@@ -20,6 +20,6 @@
     "babel-eslint": "^7.2.1",
     "chai": "^3.5.0",
     "eslint": "^3.19.0",
-    "mocha": "^3.1.0"
+    "mocha": "^6.0.0"
   }
 }

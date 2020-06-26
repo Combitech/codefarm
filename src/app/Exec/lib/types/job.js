@@ -40,7 +40,7 @@ class Job extends Type {
         this.workspaceName = false;
         this.workspaceCleanup = CLEANUP_POLICY.KEEP;
         this.jobSpec = false;
-        
+
         this.baseline = false;
         this.requeueOnFailure = true;
 

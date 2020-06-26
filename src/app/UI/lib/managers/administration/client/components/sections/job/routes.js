@@ -9,7 +9,6 @@ import {
 } from "ui-components/type_admin";
 import JobList from "./JobList";
 import JobItem from "./JobItem";
-import JobEdit from "./JobEdit";
 import JobSpecList from "./JobSpecList";
 import JobSpecItem from "./JobSpecItem";
 import JobSpecEdit from "./JobSpecEdit";

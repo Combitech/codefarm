@@ -17,7 +17,7 @@
     "start-dev": "node . --bus amqp://localhost/codefarm",
     "start-rel": "NODE_ENV=production node . --bus amqp://localhost/codefarm",
     "stop": "../../bs/stop.sh",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "mocha --exit --recursive",
     "lint": "git ls-files \"*.js\" | xargs eslint",
     "install": "if [ -n \"$gitroot\" ]; then $gitroot/src/bs/linklibs.sh; else ../../bs/linklibs.sh; fi",
     "deepinstall": "if [ -n \"$gitroot\" ]; then FORCE_INSTALL_LIBS=1 $gitroot/src/bs/linklibs.sh; else FORCE_INSTALL_LIBS=1 ../../bs/linklibs.sh; fi"
@@ -100,6 +100,7 @@
   },
   "devDependencies": {
     "babel-eslint": "^7.2.2",
-    "eslint": "^3.19.0"
+    "eslint": "^3.19.0",
+    "mocha": "^6.0.0"
   }
 }
