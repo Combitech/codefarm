@@ -37,9 +37,6 @@ class Job extends Type {
         this.name = false;
         this.criteria = "";
         this.script = false;
-        this.baseline = false;
-        this.jobSpec = false;
-        this.requeueOnFailure = true;
         this.workspaceName = false;
         this.workspaceCleanup = CLEANUP_POLICY.KEEP;
         this.jobSpec = false;
