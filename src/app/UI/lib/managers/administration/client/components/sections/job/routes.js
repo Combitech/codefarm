@@ -60,12 +60,6 @@ const routes = (
             icon="assignment"
         >
             <Route
-                path="create"
-                component={TAEdit}
-                Create={JobEdit}
-                type="exec.job"
-            />
-            <Route
                 path=":_id"
                 component={TAView}
                 Item={JobItem}
