@@ -17,10 +17,10 @@
   },
   "libraries": [],
   "dependencies": {
-    "weak-value-map": "^1.0.1"
+    "weak-value-map": "^0.2.0"
   },
   "devDependencies": {
-    "babel-eslint": "^10.1.0",
-    "eslint": "^6.8.0"
+    "babel-eslint": "^7.2.1",
+    "eslint": "^3.19.0"
   }
 }

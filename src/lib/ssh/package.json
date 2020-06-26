@@ -19,15 +19,15 @@
     "misc"
   ],
   "dependencies": {
-    "bluebird": "^3.7.2",
-    "fs-extra-promise": "^1.0.1",
-    "ssh2": "^0.8.9",
-    "string-argv": "0.3.1"
+    "bluebird": "^3.5.0",
+    "fs-extra-promise": "^0.4.1",
+    "ssh2": "^0.5.4",
+    "string-argv": "0.0.2"
   },
   "devDependencies": {
-    "babel-eslint": "^10.1.0",
-    "chai": "^4.2.0",
-    "eslint": "^6.8.0",
-    "mocha": "^7.2.0"
+    "babel-eslint": "^7.2.1",
+    "chai": "^3.5.0",
+    "eslint": "^3.19.0",
+    "mocha": "^3.1.0"
   }
 }
