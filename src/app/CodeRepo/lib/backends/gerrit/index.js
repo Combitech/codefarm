@@ -281,14 +281,14 @@ class GerritBackend extends AsyncEventEmitter {
                     if (set.type === "Code-Review") {
                         if (acc < 0 || +set.value < 0) {
                             return Math.min(acc, set.value);
-                        } else {
-                            return Math.max(acc, set.value);
                         }
+
+                        return Math.max(acc, set.value);
                     }
 
                     return acc;
                 }, 0);
-                
+
                 if (state === 0) {
                     await revision.addReview(userRef, alias, this.Revision.ReviewState.NEUTRAL);
                 } else if (state < 0) {

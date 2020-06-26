@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "compile": "echo 'No compile needed'",
-    "test": "mocha --recursive",
+    "test": "mocha --exit --recursive",
     "lint": "git ls-files \"*.js\" | xargs eslint",
     "install": "if [ -n \"$gitroot\" ]; then $gitroot/src/bs/linklibs.sh; else ../../bs/linklibs.sh; fi",
     "deepinstall": "if [ -n \"$gitroot\" ]; then FORCE_INSTALL_LIBS=1 $gitroot/src/bs/linklibs.sh; else FORCE_INSTALL_LIBS=1 ../../bs/linklibs.sh; fi"
@@ -41,7 +41,7 @@
     "chai-spies": "^0.7.1",
     "deep-assign": "^2.0.0",
     "eslint": "^3.19.0",
-    "mocha": "^3.1.0",
+    "mocha": "^6.0.0",
     "sinon": "^2.1.0"
   }
 }

@@ -61,11 +61,12 @@ describe("slave_cli", () => {
         it("shall output help", async () => {
             cli.parseArgs(DEFAULT_ARGV);
             const output = await cli.run();
+
             const lines = output.split("\n");
             assert.isAbove(lines.length, 1);
 
             // Check that usage string is shown
-            assert.match(lines[1], /^\s*Usage: cli/);
+            assert.match(lines[0], /^\s*Usage: cli/);
 
             // Check that merge_revision help is shown
             const mergeRevLine = lines.find((str) => str.match(/^\s*merge_revision\s<id>/) !== null);
