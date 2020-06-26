@@ -8,7 +8,7 @@ import TAForm from "./Form";
 class RemoveForm extends LightComponent {
     render() {
         this.log("render", this.props, this.state);
-	
+
         let humanTypeName = this.props.route.humanTypeName;
         if (!humanTypeName) {
             humanTypeName = `instance of ${this.props.item.type}`;

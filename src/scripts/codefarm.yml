@@ -1,0 +1,70 @@
+name: codefarm
+root: ~/
+
+windows:
+ - mongodb:
+   - cd <%= @settings["git_root"] %>/src/scripts
+   - docker-compose -f docker-compose.yml up --remove-orphans mongo
+ - rabbitmq:
+   - cd <%= @settings["git_root"] %>/src/scripts
+   - docker-compose -f docker-compose.yml up --remove-orphans rabbitmq
+ - gerrit:
+   - cd <%= @settings["git_root"] %>/src/scripts
+   - docker-compose -f docker-compose.yml up --remove-orphans gerrit
+ - ArtifactRepo:
+   - <%= @settings["git_root"] %>/src/scripts/wait_on_port.sh 5672
+   - cd <%= @settings["git_root"] %>/src/app/ArtifactRepo
+   - yarn start-dev
+ - BaselineGen:
+   - <%= @settings["git_root"] %>/src/scripts/wait_on_port.sh 5672
+   - cd <%= @settings["git_root"] %>/src/app/BaselineGen
+   - yarn start-dev
+ - BaselineRepo:
+   - <%= @settings["git_root"] %>/src/scripts/wait_on_port.sh 5672
+   - cd <%= @settings["git_root"] %>/src/app/BaselineRepo
+   - yarn start-dev
+ - CodeRepo:
+   - <%= @settings["git_root"] %>/src/scripts/wait_on_port.sh 5672
+   - cd <%= @settings["git_root"] %>/src/app/CodeRepo
+   - yarn start-dev
+ - DataResolve:
+   - <%= @settings["git_root"] %>/src/scripts/wait_on_port.sh 5672
+   - cd <%= @settings["git_root"] %>/src/app/DataResolve
+   - yarn start-dev
+ - EventRepo:
+   - <%= @settings["git_root"] %>/src/scripts/wait_on_port.sh 5672
+   - cd <%= @settings["git_root"] %>/src/app/EventRepo
+   - yarn start-dev
+ - Exec:
+   - <%= @settings["git_root"] %>/src/scripts/wait_on_port.sh 5672
+   - cd <%= @settings["git_root"] %>/src/app/Exec
+   - yarn start-dev
+ - FlowCtrl:
+   - <%= @settings["git_root"] %>/src/scripts/wait_on_port.sh 5672
+   - cd <%= @settings["git_root"] %>/src/app/FlowCtrl
+   - yarn start-dev
+ - LogRepo:
+   - <%= @settings["git_root"] %>/src/scripts/wait_on_port.sh 5672
+   - cd <%= @settings["git_root"] %>/src/app/LogRepo
+   - yarn start-dev
+ - MetaData:
+   - <%= @settings["git_root"] %>/src/scripts/wait_on_port.sh 5672
+   - cd <%= @settings["git_root"] %>/src/app/MetaData
+   - yarn start-dev
+ - mgmt:
+   - <%= @settings["git_root"] %>/src/scripts/wait_on_port.sh 5672
+   - cd <%= @settings["git_root"] %>/src/app/Mgmt
+   - yarn start-dev
+ - Stat:
+   - <%= @settings["git_root"] %>/src/scripts/wait_on_port.sh 5672
+   - cd <%= @settings["git_root"] %>/src/app/Stat
+   - yarn start-dev
+ - UI:
+   - <%= @settings["git_root"] %>/src/scripts/wait_on_port.sh 5672
+   - cd <%= @settings["git_root"] %>/src/app/UI
+   - yarn start-dev
+ - UserRepo:
+   - <%= @settings["git_root"] %>/src/scripts/wait_on_port.sh 5672
+   - cd <%= @settings["git_root"] %>/src/app/UserRepo
+   - yarn start-dev
+   
