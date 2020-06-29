@@ -183,26 +183,36 @@ class Revision extends Type {
         await this.save();
     }
 
+    _verifiedStateToStatus(state) {
+        if (state < 0) {
+            return ReviewState.REJECTED;
+        } else if (state > 0) {
+            return ReviewState.APPROVED;
+        }
+
+        return ReviewState.NEUTRAL;
+    }
+
     async updateVerified(state) {
-        const repository = await Repository.findOne({ _id: this.repository });
-        // TODO: Any asynchronous updates done by backend isn't updated in this
-        console.log("Started updating Verified from type");
-        await BackendProxy.instance.setVerified(repository, this, state);
-        console.log("Finished updating Verified from type");
+        if (this.verified !== this._verifiedStateToStatus(state)) {
+            const repository = await Repository.findOne({ _id: this.repository });
+            // TODO: Any asynchronous updates done by backend isn't updated in this
+            console.log("Started updating Verified from type");
+            await BackendProxy.instance.setVerified(repository, this, state);
+            console.log("Finished updating Verified from type");
+        }
     }
 
     async setVerified(state) {
-        if (!Object.values(ReviewState).includes(state)) {
-            throw new Error(`Invalid verified state: ${state}`);
-        }
+        const status = this._verifiedStateToStatus(state);
 
         // Clear and regenerate verified tag
         await this.clearTags("verify:", [], false);
-        if (state !== ReviewState.NEUTRAL) {
-            this.tags.push(`verify:${state}`);
+        if (status !== ReviewState.NEUTRAL) {
+            this.tags.push(`verify:${status}`);
         }
 
-        this.verified = state;
+        this.verified = status;
         await this.save();
     }
 
