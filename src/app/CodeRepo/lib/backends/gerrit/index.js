@@ -302,15 +302,14 @@ class GerritBackend extends AsyncEventEmitter {
                 }
 
                 if ("Verified" in state) {
+                    /* eslint-disable dot-notation */
                     if (!Number.isFinite(state["Verified"])) {
                         ServiceMgr.instance.log("error", `unknown verified state ${state["Code-Review"]} on ${revision._id}`);
                     } else {
-                        // esline-disable-next-line dot-notation
                         await revision.setVerified(state["Verified"]);
-
-                        // esline-disable-next-line dot-notation
                         await this.emit("revision.verified", revision, state["Verified"]);
                     }
+                    /* eslint-enable dot-notation */
                 }
             }
         }

@@ -22,10 +22,10 @@ class Revisions extends Controller {
         return await this._getTypeInstance(id);
     }
 
-    async setVerified(ctx, id, state, data) {
+    async setVerified(ctx, id, state) {
         const revision = await this._getTypeInstance(id);
 
-        await revision.updateVerified(state)
+        await revision.updateVerified(state);
 
         return await this._getTypeInstance(id);
     }
