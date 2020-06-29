@@ -457,6 +457,11 @@ class GithubBackend extends AsyncEventEmitter {
         // TODO: Implement update
     }
 
+    async setVerified(/* repository, revision */) {
+        // TODO: Implement setVerified
+        throw Error("Not implemented");
+    }
+
     async remove(repository) {
         ServiceMgr.instance.log("verbose", `Deleting GitHub repo ${repository._id}`);
         try {

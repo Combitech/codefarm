@@ -38,6 +38,12 @@ class BackendProxy extends BackendProxyBase {
         return await instance.merge(repository, revision);
     }
 
+    async setVerified(repository, revision, state) {
+        const instance = this.getBackend(repository.backend);
+
+        return await instance.setVerified(repository, revision, state);
+    }
+
     async getUri(repository) {
         const instance = this.getBackend(repository.backend);
         const backendData = await Backend.findOne({ _id: repository.backend });

@@ -27,6 +27,7 @@ class Revision extends Type {
         this.statusSetAt = new Date();
         this.patches = [];
         this.reviews = [];
+        this.verified = ReviewState.NEUTRAL;
 
         if (data) {
             this.set(data);
@@ -179,6 +180,37 @@ class Revision extends Type {
         });
 
         this.tag(reviewTags);
+        await this.save();
+    }
+
+    _verifiedStateToStatus(state) {
+        if (state < 0) {
+            return ReviewState.REJECTED;
+        } else if (state > 0) {
+            return ReviewState.APPROVED;
+        }
+
+        return ReviewState.NEUTRAL;
+    }
+
+    async updateVerified(state) {
+        if (this.verified !== this._verifiedStateToStatus(state)) {
+            const repository = await Repository.findOne({ _id: this.repository });
+            // TODO: Any asynchronous updates done by backend isn't updated in this
+            await BackendProxy.instance.setVerified(repository, this, state);
+        }
+    }
+
+    async setVerified(state) {
+        const status = this._verifiedStateToStatus(state);
+
+        // Clear and regenerate verified tag
+        await this.clearTags("verify:", [], false);
+        if (status !== ReviewState.NEUTRAL) {
+            this.tags.push(`verify:${status}`);
+        }
+
+        this.verified = status;
         await this.save();
     }
 

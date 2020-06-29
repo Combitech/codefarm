@@ -350,6 +350,11 @@ class DirectExecutor extends Executor {
                 notification.emit(`${this.constructor.typeName}.revision_merge`, data.contextId, this, data.revisionId, data.data);
             });
 
+            this.__com.on("revision_verified", async (data) => {
+                await this._logln(`Job set verified revision ${data.revisionId} to ${data.state} requested in context ${data.contextId}`);
+                notification.emit(`${this.constructor.typeName}.revision_verified`, data.contextId, this, data.revisionId, data.state, data.data);
+            });
+
             this.__com.on("executing", async () => {
                 await this._logln("Script has started executing");
                 this.executing = true;

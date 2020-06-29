@@ -24,7 +24,7 @@ module.exports = {
     init: (commander) => {
         commander
             .command("update_subjob <id>")
-            .description("Create subjob (stable)")
+            .description("Update subjob (stable)")
             .option("-t, --tag <tag>", "Add extra tag", addToList, [])
             .option("-r, --result <json>", "Result data", JSON.parse)
             .option("-s, --status <status>", "Sub-job status", oneOf.bind(null, ALLOWED_STATUS))

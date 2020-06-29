@@ -64,6 +64,11 @@ class BitBucketBackend extends AsyncEventEmitter {
         throw Error("Not implemented");
     }
 
+    async setVerified(/* repository, revision */) {
+        // TODO: Implement setVerified
+        throw Error("Not implemented");
+    }
+
     async remove(/* repository */) {
         throw Error("Not implemented");
     }

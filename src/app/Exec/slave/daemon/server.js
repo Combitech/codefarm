@@ -175,6 +175,15 @@ class Server extends AsyncEventEmitter {
         });
     }
 
+    async revisionVerified(contextId, revisionId, state, data = null) {
+        await this._sendOut("revision_verified", {
+            revisionId,
+            state,
+            data,
+            contextId
+        });
+    }
+
     _log(line) {
         fs.appendFileSync(this.logfile, `${new Date()}  SRV[${this.name}]  ${line}\n`);
     }
