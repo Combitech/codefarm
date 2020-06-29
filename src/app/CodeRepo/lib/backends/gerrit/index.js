@@ -441,11 +441,13 @@ class GerritBackend extends AsyncEventEmitter {
         } catch (error) {
             throw error;
         } finally {
+            log.info("Removing verified listener");
             if (revisionVerifiedListener) {
                 this.removeListener("revision.verified", revisionVerifiedListener);
             }
         }
 
+        log.info("Exiting with status null");
         return null;
     }
 

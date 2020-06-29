@@ -299,11 +299,11 @@ class Control {
                     throw new Error(`Job ${executor.jobId} not found`);
                 }
                 if (revisionId) {
-                    await setVerifiedRevision(revisionId, state, data);
+                    obj = await setVerifiedRevision(revisionId, state, data);
                 } else {
                     throw new Error("No revision id");
                 }
-                await executor.notifyInfo("revision_verified", contextId, obj);
+                await executor.notifyInfo("revision_verified_set", contextId, obj);
             } catch (error) {
                 ServiceMgr.instance.log("error", "revision_verified error", error);
                 await executor.notifyError(contextId, error.message || error);

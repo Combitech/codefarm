@@ -27,7 +27,9 @@ class Revisions extends Controller {
 
         const revision = await this._getTypeInstance(id);
 
-        await revision.updateVerified(state);
+        console.log("Updating verified status");
+        await revision.updateVerified(state)
+        console.log("Updated verified status");;
 
         return await this._getTypeInstance(id);
     }

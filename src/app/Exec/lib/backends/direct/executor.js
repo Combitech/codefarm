@@ -435,6 +435,7 @@ class DirectExecutor extends Executor {
 
         await this._logln(`Notify event ${event} in context ${contextId}: ${JSON.stringify(obj)}`);
         await this.__com.sendCommand(`notify_${event}`, obj, contextId);
+        await this._logln(`SENT: Notify event ${event} in context ${contextId}: ${JSON.stringify(obj)}`);
     }
 
     async notifyError(contextId = false, obj = null) {
