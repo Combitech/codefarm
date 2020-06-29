@@ -119,7 +119,7 @@ class GerritBackend extends AsyncEventEmitter {
     }
 
     async _execGerritCommand(cmd) {
-        log.verbose("gerrit command:", cmd);
+        log.info("gerrit command:", cmd);
 
         return this.__ssh.execute(`gerrit ${cmd}`);
     }
@@ -135,7 +135,7 @@ class GerritBackend extends AsyncEventEmitter {
                 log.error(`gerrit command: ${cmd} produced error output, stderr:`, errLines.join("\n"));
             }
             if (outLines.length > 0) {
-                log.verbose(`gerrit command: ${cmd} produced output, stdout:`, outLines.join("\n"));
+                log.info(`gerrit command: ${cmd} produced output, stdout:`, outLines.join("\n"));
             }
             const exitCode = await exitCodePromise;
             resolve({ exitCode, outLines, errLines });
@@ -262,11 +262,17 @@ class GerritBackend extends AsyncEventEmitter {
     }
 
     async _onCodeReviewed(event) {
+        ServiceMgr.instance.log("info", "Got code review event!");
+        console.log("Code reviewed", event);
+
         const repository = await this.Repository.findOne({ _id: event.project });
         if (repository) {
-            const changeId = event.changeKey.id;
+            console.log("  Found repository");
+            const changeId = event.changeKey.id || event.change.id;
             const revision = await this.Revision.findOne({ _id: changeId });
+            console.log("  Looking for revision with id", changeId);
             if (revision) {
+                console.log("  Found revision");
                 const query = { email: event.patchSet.uploader.email };
                 const alias = event.patchSet.uploader.name;
                 const userRef = await revision.getUserRef(query);
@@ -278,27 +284,51 @@ class GerritBackend extends AsyncEventEmitter {
                 }
 
                 const state = event.approvals.reduce((acc, set) => {
-                    if (set.type === "Code-Review") {
-                        if (acc < 0 || +set.value < 0) {
-                            return Math.min(acc, set.value);
-                        }
+                    const val = +set.value;
+                    console.log("State", val, acc, set);
 
-                        return Math.max(acc, set.value);
+                    if (acc[set.type] < 0 || val < 0) {
+                        acc[set.type] = Math.min(acc[set.type] || 0, val);
+                    } else {
+                        acc[set.type] = Math.max(acc[set.type] || 0, val);
                     }
 
                     return acc;
-                }, 0);
+                }, {});
 
-                if (state === 0) {
-                    await revision.addReview(userRef, alias, this.Revision.ReviewState.NEUTRAL);
-                } else if (state < 0) {
-                    await revision.addReview(userRef, alias, this.Revision.ReviewState.REJECTED);
-                } else if (state > 0) {
-                    await revision.addReview(userRef, alias, this.Revision.ReviewState.APPROVED);
-                } else {
-                    ServiceMgr.instance.log("info", `unknown review state ${state} on ${revision._id}`);
+                if ("Code-Review" in state) {
+                    if (state["Code-Review"] < 0) {
+                        await revision.addReview(userRef, alias, this.Revision.ReviewState.REJECTED);
+                    } else if (state["Code-Review"] < 2) {
+                        await revision.addReview(userRef, alias, this.Revision.ReviewState.NEUTRAL);
+                    } else if (state["Code-Review"] >= 2) {
+                        await revision.addReview(userRef, alias, this.Revision.ReviewState.APPROVED);
+                    } else {
+                        ServiceMgr.instance.log("error", `unknown review state ${state["Code-Review"]} on ${revision._id}`);
+                    }
                 }
+
+                if ("Verified" in state) {
+                    /* eslint-disable dot-notation */
+                    if (!Number.isFinite(state["Verified"])) {
+                        ServiceMgr.instance.log("error", `unknown verified state ${state["Code-Review"]} on ${revision._id}`);
+                    } else {
+                        if (state["Verified"] < 0) {
+                            await revision.setVerified(this.Revision.ReviewState.REJECTED);
+                        } else if (state["Verified"] === 0) {
+                            await revision.setVerified(this.Revision.ReviewState.NEUTRAL);
+                        } else {
+                            await revision.setVerified(this.Revision.ReviewState.APPROVED);
+                        }
+                        await this.emit("revision.verified", revision, state["Verified"]);
+                    }
+                    /* eslint-enable dot-notation */
+                }
+            } else {
+                console.log("    Did not find revision");
             }
+        } else {
+            console.log("  Did not find repository");
         }
     }
 
@@ -372,6 +402,47 @@ class GerritBackend extends AsyncEventEmitter {
         } finally {
             if (revisionMergedListener) {
                 this.removeListener("revision.merged", revisionMergedListener);
+            }
+        }
+
+        return null;
+    }
+
+    async setVerified(repository, revision, value) {
+        log.info(`gerrit set verified ${revision._id} in repo ${repository._id}`);
+        // ssh -p 29418 $USER@localhost gerrit review `git rev-parse HEAD` --label Verified=<value>
+
+        let revisionVerifiedListener;
+        const revisionVerifiedPromise = new Promise((resolve) => {
+            revisionVerifiedListener = (resolve, verifiedRev) => {
+                if (verifiedRev._id === revision._id) {
+                    resolve(verifiedRev);
+                }
+            };
+            revisionVerifiedListener = revisionVerifiedListener.bind(this, resolve);
+            this.on("revision.verified", revisionVerifiedListener);
+        });
+
+        try {
+            const patch = revision.patches[revision.patches.length - 1];
+            const { exitCode, errLines } = await this._execGerritCommandReadOutput(
+                `review ${patch.change.newrev} --label Verified=${value}`
+            );
+
+            if (exitCode !== 0) {
+                throw new Error(`Gerrit command failed with exit code ${exitCode}. stderr=${errLines.join("\n")}`);
+            }
+
+            await asyncWithTmo(
+                revisionVerifiedPromise,
+                this.defaultTimeoutMs,
+                new Error(`Timeout while waiting for verified of revision ${revision._id} to complete`)
+            );
+        } catch (error) {
+            throw error;
+        } finally {
+            if (revisionVerifiedListener) {
+                this.removeListener("revision.verified", revisionVerifiedListener);
             }
         }
 

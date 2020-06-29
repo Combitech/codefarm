@@ -320,6 +320,11 @@ class GitLabBackend extends AsyncEventEmitter {
         throw Error("Not implemented");
     }
 
+    async setVerified(/* repository, revision */) {
+        // TODO: Implement setVerified
+        throw Error("Not implemented");
+    }
+
     async remove(repository) {
         ServiceMgr.instance.log("verbose", `Deleting GitLab repo ${repository._id}`);
         const project = await this._getProject(this.groupId, repository._id);

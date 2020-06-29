@@ -25,6 +25,7 @@ const commands = [
     require("./commands/create_subjob"),
     require("./commands/update_subjob"),
     require("./commands/merge_revision"),
+    require("./commands/set_verified"),
     require("./commands/load_file")
 ];
 
@@ -52,7 +53,7 @@ module.exports = {
             .version(version)
             .option(
                 "--format <fmt>",
-                `Output format specified by one of ${outputFormatter.FORMATS.join(", ")}, defaults is ${DEFAULT_OUTPUT_FORMAT}`,
+                `Output format specified by one of ${outputFormatter.FORMATS.join(", ")}`,
                 oneOf.bind(null, outputFormatter.FORMATS),
                 DEFAULT_OUTPUT_FORMAT
             )
@@ -64,7 +65,7 @@ module.exports = {
             )
             .option(
                 "--queryEngine <engine>",
-                `Query engine for interpreting query option as one of ${jsonQuery.ENGINES.join(", ")}, defaults is ${DEFAULT_QUERY_ENGINE}`,
+                `Query engine for interpreting query option as one of ${jsonQuery.ENGINES.join(", ")}`,
                 oneOf.bind(null, jsonQuery.ENGINES),
                 DEFAULT_QUERY_ENGINE
             )
@@ -74,7 +75,7 @@ module.exports = {
             )
             .option(
                 "--timeout <seconds>",
-                `Command socket timeout in seconds, defaults is ${DEFAULT_SOCKET_TIMEOUT}`,
+                "Command socket timeout in seconds",
                 DEFAULT_SOCKET_TIMEOUT
             )
             .option("-v, --verbose", "Be more verbose", () => {

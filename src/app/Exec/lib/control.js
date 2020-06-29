@@ -125,6 +125,12 @@ class Control {
             return client.merge("revision", id);
         };
 
+        const setVerifiedRevision = async (id, status) => {
+            const client = ServiceComBus.instance.getClient("coderepo");
+
+            return client.setVerified("revision", id, status);
+        };
+
         const readType = async (type, id, getter) => {
             const [ serviceName, typeName ] = type.split(".");
             const client = ServiceComBus.instance.getClient(serviceName);
@@ -281,6 +287,25 @@ class Control {
                 await executor.notifyInfo("revision_merged", contextId, obj);
             } catch (error) {
                 ServiceMgr.instance.log("error", "revision_merge error", error);
+                await executor.notifyError(contextId, error.message || error);
+            }
+        });
+
+        notification.on("executor.revision_verified", async (contextId, executor, revisionId, state, data) => {
+            try {
+                let obj;
+                const job = await Job.findOne({ _id: executor.jobId });
+                if (!job) {
+                    throw new Error(`Job ${executor.jobId} not found`);
+                }
+                if (revisionId) {
+                    await setVerifiedRevision(revisionId, state, data);
+                } else {
+                    throw new Error("No revision id");
+                }
+                await executor.notifyInfo("revision_verified", contextId, obj);
+            } catch (error) {
+                ServiceMgr.instance.log("error", "revision_verified error", error);
                 await executor.notifyError(contextId, error.message || error);
             }
         });
@@ -465,6 +490,7 @@ class Control {
         notification.removeAllListeners("executor.type_update");
         notification.removeAllListeners("executor.file_upload");
         notification.removeAllListeners("executor.revision_merge");
+        notification.removeAllListeners("executor.revision_verified");
 
         for (const executor of this.executors) {
             await executor.detach();

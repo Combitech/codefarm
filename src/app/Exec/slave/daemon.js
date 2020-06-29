@@ -49,6 +49,11 @@ module.exports = {
             await server.revisionMerge(contextId, data.revisionId, data.data);
         });
 
+        scriptServer.on("revision_verified", async (data, contextId) => {
+            console.log("\n\nrevisionVerified\n\n", data, contextId);
+            await server.revisionVerified(contextId, data.revisionId, data.state, data.data);
+        });
+
         server.on("abort", async () => {
             log("Abort requested");
             await server.info("Abort requested");
@@ -97,6 +102,13 @@ module.exports = {
 
         server.on("notify_revision_merged", async (data, contextId) => {
             log(`Server response in context ${contextId}: Merged revision ${data.type} with id ${data._id}`);
+            await scriptServer.response(data, contextId);
+            await scriptServer.end();
+        });
+
+        server.on("notify_revision_verified", async (data, contextId) => {
+            console.log("\ndaemon.js notify_revision_verified\n", contextId, data);
+            log(`Server response in context ${contextId}: Set verified revision ${data.type} with id ${data._id}`);
             await scriptServer.response(data, contextId);
             await scriptServer.end();
         });
