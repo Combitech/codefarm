@@ -50,9 +50,7 @@ module.exports = {
         });
 
         scriptServer.on("revision_verified", async (data, contextId) => {
-            console.log("\n\nrevisionVerified\n\n", data, contextId);
             await server.revisionVerified(contextId, data.revisionId, data.state, data.data);
-            console.log("\nServer completed\n");
         });
 
         server.on("abort", async () => {
@@ -108,7 +106,6 @@ module.exports = {
         });
 
         server.on("notify_revision_verified_set", async (data, contextId) => {
-            console.log("\ndaemon.js notify_revision_verified_set\n", contextId, data);
             log(`Server response in context ${contextId}: Set verified revision ${data.type} with id ${data._id}`);
             await scriptServer.response(data, contextId);
             await scriptServer.end();

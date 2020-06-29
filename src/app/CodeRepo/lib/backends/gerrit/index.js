@@ -119,7 +119,7 @@ class GerritBackend extends AsyncEventEmitter {
     }
 
     async _execGerritCommand(cmd) {
-        log.info("gerrit command:", cmd);
+        log.verbose("gerrit command:", cmd);
 
         return this.__ssh.execute(`gerrit ${cmd}`);
     }
@@ -135,7 +135,7 @@ class GerritBackend extends AsyncEventEmitter {
                 log.error(`gerrit command: ${cmd} produced error output, stderr:`, errLines.join("\n"));
             }
             if (outLines.length > 0) {
-                log.info(`gerrit command: ${cmd} produced output, stdout:`, outLines.join("\n"));
+                log.verbose(`gerrit command: ${cmd} produced output, stdout:`, outLines.join("\n"));
             }
             const exitCode = await exitCodePromise;
             resolve({ exitCode, outLines, errLines });
@@ -262,17 +262,11 @@ class GerritBackend extends AsyncEventEmitter {
     }
 
     async _onCodeReviewed(event) {
-        ServiceMgr.instance.log("info", "Got code review event!");
-        console.log("Code reviewed", event);
-
         const repository = await this.Repository.findOne({ _id: event.project });
         if (repository) {
-            console.log("  Found repository");
             const changeId = event.changeKey.id || event.change.id;
             const revision = await this.Revision.findOne({ _id: changeId });
-            console.log("  Looking for revision with id", changeId);
             if (revision) {
-                console.log("  Found revision");
                 const query = { email: event.patchSet.uploader.email };
                 const alias = event.patchSet.uploader.name;
                 const userRef = await revision.getUserRef(query);
@@ -285,7 +279,6 @@ class GerritBackend extends AsyncEventEmitter {
 
                 const state = event.approvals.reduce((acc, set) => {
                     const val = +set.value;
-                    console.log("State", val, acc, set);
 
                     if (acc[set.type] < 0 || val < 0) {
                         acc[set.type] = Math.min(acc[set.type] || 0, val);
@@ -319,11 +312,7 @@ class GerritBackend extends AsyncEventEmitter {
                         await this.emit("revision.verified", revision, state["Verified"]);
                     }
                 }
-            } else {
-                console.log("    Did not find revision");
             }
-        } else {
-            console.log("  Did not find repository");
         }
     }
 
@@ -442,7 +431,6 @@ class GerritBackend extends AsyncEventEmitter {
             }
         }
 
-        log.info("Exiting with status null");
         return null;
     }
 

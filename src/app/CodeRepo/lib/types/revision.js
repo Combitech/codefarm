@@ -197,9 +197,7 @@ class Revision extends Type {
         if (this.verified !== this._verifiedStateToStatus(state)) {
             const repository = await Repository.findOne({ _id: this.repository });
             // TODO: Any asynchronous updates done by backend isn't updated in this
-            console.log("Started updating Verified from type");
             await BackendProxy.instance.setVerified(repository, this, state);
-            console.log("Finished updating Verified from type");
         }
     }
 

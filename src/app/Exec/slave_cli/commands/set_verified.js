@@ -40,7 +40,6 @@ module.exports = {
                     state: args.state
                 }
             };
-            console.log(`Setting code revision ${args.id} verified state to ${args.state}`);
             log.verbose(`Setting code revision ${args.id} verified state to ${args.state}`);
             cmdInfo = null;
 

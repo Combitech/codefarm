@@ -23,13 +23,9 @@ class Revisions extends Controller {
     }
 
     async setVerified(ctx, id, state, data) {
-        console.log("Set verified", id, state, data);
-
         const revision = await this._getTypeInstance(id);
 
-        console.log("Updating verified status");
         await revision.updateVerified(state)
-        console.log("Updated verified status");;
 
         return await this._getTypeInstance(id);
     }
