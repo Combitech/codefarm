@@ -19,7 +19,7 @@
     "providerclient"
   ],
   "dependencies": {
-    "mongodb": "^2.2.25",
+    "mongodb": "^3.1.13",
     "uuid": "^3.0.1"
   },
   "devDependencies": {
