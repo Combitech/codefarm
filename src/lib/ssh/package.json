@@ -21,7 +21,7 @@
   "dependencies": {
     "bluebird": "^3.5.0",
     "fs-extra-promise": "^0.4.1",
-    "ssh2": "^0.5.4",
+    "ssh2": "^1.4.0",
     "string-argv": "0.0.2"
   },
   "devDependencies": {
