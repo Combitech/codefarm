@@ -38,7 +38,7 @@
   ],
   "dependencies": {
     "moment": "^2.18.1",
-    "qs": "^6.4.0",
+    "qs": "^6.9.7",
     "yargs": "^7.0.2"
   },
   "devDependencies": {
