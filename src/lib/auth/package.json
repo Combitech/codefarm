@@ -20,7 +20,7 @@
     "singleton"
   ],
   "dependencies": {
-    "jsonwebtoken": "^7.3.0"
+    "jsonwebtoken": "^9.0.0"
   },
   "devDependencies": {
     "babel-eslint": "^7.2.1",
