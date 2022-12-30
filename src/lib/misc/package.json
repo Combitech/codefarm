@@ -20,7 +20,7 @@
   ],
   "dependencies": {
     "boolean-parser": "^0.0.2",
-    "flat": "^2.0.1",
+    "flat": "^5.0.1",
     "traverse": "^0.6.6"
   },
   "devDependencies": {
